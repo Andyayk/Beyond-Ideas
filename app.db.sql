@@ -1,4 +1,3 @@
-BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS `ab_view_menu` (
 	`id`	INTEGER NOT NULL,
 	`name`	VARCHAR ( 100 ) NOT NULL UNIQUE,
@@ -179,4 +178,3 @@ INSERT INTO `ab_permission` VALUES (12,'userinfoedit');
 INSERT INTO `ab_permission` VALUES (13,'menu_access');
 INSERT INTO `ab_permission` VALUES (14,'Copy Role');
 INSERT INTO `ab_permission` VALUES (15,'can_chart');
-COMMIT;
