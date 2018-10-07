@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS `ab_view_menu` (
-	`id`	INTEGER NOT NULL,
+	`id`	INTEGER NOT NULL AUTO_INCREMENT,
 	`name`	VARCHAR ( 100 ) NOT NULL UNIQUE,
 	PRIMARY KEY(`id`)
 );
@@ -25,7 +25,7 @@ INSERT INTO `ab_view_menu` VALUES (19,'PermissionViewModelView');
 INSERT INTO `ab_view_menu` VALUES (20,'Permission on Views/Menus');
 
 CREATE TABLE IF NOT EXISTS `ab_user` (
-	`id`	INTEGER NOT NULL,
+	`id`	INTEGER NOT NULL AUTO_INCREMENT,
 	`first_name`	VARCHAR ( 64 ) NOT NULL,
 	`last_name`	VARCHAR ( 64 ) NOT NULL,
 	`username`	VARCHAR ( 64 ) NOT NULL UNIQUE,
@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS `ab_user` (
 	FOREIGN KEY(`changed_by_fk`) REFERENCES `ab_user`(`id`)
 );
 INSERT INTO `ab_user` VALUES (1,'admin','admin','admin','pbkdf2:sha256:50000$KAVDFm5y$e9940e253beb7234342172e745915cd33418552238a02d8efeb24b9731a530c2',1,'admin.org',NULL,NULL,NULL,'2018-10-05 22:44:48.507291','2018-10-05 22:44:48.507291',NULL,NULL);
+
 CREATE TABLE IF NOT EXISTS `ab_role` (
 	`id`	INTEGER NOT NULL,
 	`name`	VARCHAR ( 64 ) NOT NULL UNIQUE,
@@ -65,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `ab_user_role` (
 INSERT INTO `ab_user_role` VALUES (1,1,1);
 
 CREATE TABLE IF NOT EXISTS `ab_register_user` (
-	`id`	INTEGER NOT NULL,
+	`id`	INTEGER NOT NULL AUTO_INCREMENT,
 	`first_name`	VARCHAR ( 64 ) NOT NULL,
 	`last_name`	VARCHAR ( 64 ) NOT NULL,
 	`username`	VARCHAR ( 64 ) NOT NULL UNIQUE,
@@ -78,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `ab_register_user` (
 
 
 CREATE TABLE IF NOT EXISTS `ab_permission` (
-	`id`	INTEGER NOT NULL,
+	`id`	INTEGER NOT NULL AUTO_INCREMENT,
 	`name`	VARCHAR ( 100 ) NOT NULL UNIQUE,
 	PRIMARY KEY(`id`)
 );
@@ -99,7 +100,7 @@ INSERT INTO `ab_permission` VALUES (14,'Copy Role');
 INSERT INTO `ab_permission` VALUES (15,'can_chart');
 
 CREATE TABLE IF NOT EXISTS `ab_permission_view` (
-	`id`	INTEGER NOT NULL,
+	`id`	INTEGER NOT NULL AUTO_INCREMENT,
 	`permission_id`	INTEGER,
 	`view_menu_id`	INTEGER,
 	UNIQUE(`permission_id`,`view_menu_id`),
@@ -143,7 +144,7 @@ INSERT INTO `ab_permission_view` VALUES (33,7,19);
 INSERT INTO `ab_permission_view` VALUES (34,13,20);
 
 CREATE TABLE IF NOT EXISTS `ab_permission_view_role` (
-	`id`	INTEGER NOT NULL,
+	`id`	INTEGER NOT NULL AUTO_INCREMENT,
 	`permission_view_id`	INTEGER,
 	`role_id`	INTEGER,
 	FOREIGN KEY(`permission_view_id`) REFERENCES `ab_permission_view`(`id`),
