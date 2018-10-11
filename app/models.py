@@ -102,7 +102,8 @@ def importCSV(filename, filepath):
             values = ""
             conn.commit()
             
-        cursor.close()
+        #cursor.close()
+        #conn.close()
         csvfile.close()  
         
         return message
