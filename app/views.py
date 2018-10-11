@@ -1,4 +1,4 @@
-import calendar
+import calendar, csv, os
 
 from flask import Flask, render_template, request
 from flask_appbuilder.models.sqla.interface import SQLAInterface
@@ -9,7 +9,7 @@ from flask_appbuilder.widgets import FormHorizontalWidget, FormInlineWidget, For
 from flask_babel import lazy_gettext as _
 
 from app import appbuilder, db
-from .models import ContactGroup, Gender, Contact
+from .models import ContactGroup, Gender, Contact, importCSV
 
 class MyView(BaseView):  
     
@@ -153,8 +153,12 @@ class UploadClass(BaseView):
     @expose('/upload/', methods=['POST'])    
     def upload(self):
         file = request.files['inputFile']
+
+        message =  importCSV(os.getcwd() + "\\" + file.filename)
+
         
-        return file.filename
+        return message
+    
 
 
 """
