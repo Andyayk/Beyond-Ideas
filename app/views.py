@@ -143,11 +143,11 @@ class ContactTimeChartView(GroupByChartView):
 
 class UploadClass(BaseView):
     
-    default_view = 'index'
+    default_view = 'uploadpage'
     
-    @expose('/index/')
-    def index(self):
-        return render_template('index.html')   
+    @expose('/uploadpage/')
+    def uploadpage(self):
+        return render_template('uploadpage.html')   
 
     
     @expose('/upload/', methods=['POST'])    
@@ -184,7 +184,7 @@ appbuilder.add_view(MyView, "Method1", category='My View')
 appbuilder.add_link("Method2", href='/myview/method2/john', category='My View')
 appbuilder.add_link("Method3", href='/myview/method3/john', category='My View')
 
-appbuilder.add_view(UploadClass, "index", category='Upload')
+appbuilder.add_view(UploadClass, "Upload Page", category='Upload')
 
 
 
