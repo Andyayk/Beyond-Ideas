@@ -39,14 +39,12 @@ class ContactGroup(Model):
     def __repr__(self):
         return self.name
 
-
 class Gender(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique = True, nullable=False)
 
     def __repr__(self):
         return self.name
-
 
 class Contact(Model):
     id = Column(Integer, primary_key=True)
@@ -72,41 +70,41 @@ class Contact(Model):
         return datetime.datetime(date.year, 1, 1)
     
 def importCSV(filename, filepath):
-    message = "success"
-    with open(filepath, "r") as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        tableName = filename.split(".")[0]
-        cursor.execute("DROP TABLE IF EXISTS `" + tableName + "`")
-        
-        header = next(reader)
-        createStmt = "CREATE TABLE " + tableName + "("
-        
-        for col in header:
-            createStmt += col + " varchar(255) NOT NULL,"
-
-        createStmt = createStmt + "CONSTRAINT " + tableName + "_pk PRIMARY KEY (" + header[0] + "));"
-        #print(createStmt)               
-        cursor.execute(createStmt)
-        values = ""
-        
-        
-        
-        for row in reader:
-            #print(str(header)[1:-1])
-            for col in range(0,len(header)):
-                values += '"' + row[col] + '",'
-            #print(values[:-1])
-            cursor.execute('INSERT INTO ' + tableName + '(' + str(header)[1:-1].replace("'","") + ')' \
-            'VALUES(' + values[:-1] + ')' \
-            )
-            values = ""
-            conn.commit()
+    try:
+        with open(filepath, "r") as csvfile:
+            reader = csv.reader(csvfile, delimiter=',')
+            tableName = filename.split(".")[0]
+            cursor.execute("DROP TABLE IF EXISTS `" + tableName + "`")
             
-        #cursor.close()
-        #conn.close()
-        csvfile.close()  
-        
-        return message
+            header = next(reader)
+            createStmt = "CREATE TABLE " + tableName + "("
+            
+            for col in header:
+                createStmt += col + " varchar(255) NOT NULL,"
+    
+            createStmt = createStmt + "CONSTRAINT " + tableName + "_pk PRIMARY KEY (" + header[0] + "));"
+            #print(createStmt)               
+            cursor.execute(createStmt)
+            values = ""
+            
+            for row in reader:
+                #print(str(header)[1:-1])
+                for col in range(0,len(header)):
+                    values += '"' + row[col] + '",'
+                #print(values[:-1])
+                cursor.execute('INSERT INTO ' + tableName + '(' + str(header)[1:-1].replace("'","") + ')' \
+                'VALUES(' + values[:-1] + ')' \
+                )
+                values = ""
+                conn.commit()
+                
+            #cursor.close()
+            #conn.close()
+            csvfile.close()  
+            
+            return "You have successfully uploaded " + filename + " to the database"
+    except Exception as e:
+        return "Upload fail, please try again later"
     
 def exportCSV():
     cursor.execute("USE app")
@@ -120,21 +118,21 @@ def exportCSV():
         #print(result[i])
     return tables
 
-
 def writeCSV(table_name):
-    message = "success"
-    csv_file_dest = table_name + "upload.csv"
-    outputFile = open(csv_file_dest,'w') # 'wb'
-    output = csv.writer(outputFile,dialect='excel')
-    cursor.execute("SELECT * FROM `" + table_name + "`")
-    cols = []
-    for col in cursor.description: # add table cols
-        cols.append(col[0])
-    output.writerow(cols) # print table cols
-    for col2 in cols: # for each table col
-        for row_data in cursor: #add table rows
-            print (row_data)
-            output.writerow(row_data) # print table rows
-    outputFile.close()
-    
-    return message
+    try:
+        csv_file_dest = table_name + ".csv"
+        outputFile = open(csv_file_dest,'w') # 'wb'
+        output = csv.writer(outputFile,dialect='excel')
+        cursor.execute("SELECT * FROM `" + table_name + "`")
+        cols = []
+        for col in cursor.description: # add table cols
+            cols.append(col[0])
+        output.writerow(cols) # print table cols
+        for col2 in cols: # for each table col
+            for row_data in cursor: #add table rows
+                #print (row_data)
+                output.writerow(row_data) # print table rows
+        outputFile.close()
+        return "You have successfully exported " + table_name + " to this folder"
+    except Exception as e:
+        return "Export fail, please try again later"
