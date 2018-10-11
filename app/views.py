@@ -1,6 +1,6 @@
 import calendar
 
-from flask import render_template
+from flask import Flask, render_template, request
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder import ModelView, AppBuilder, expose, BaseView, has_access
 from flask_appbuilder.charts.views import GroupByChartView
@@ -127,6 +127,36 @@ class ContactTimeChartView(GroupByChartView):
     ]
 
 
+    
+"""
+    def cool_form():
+        if request.method == 'POST':
+            # do stuff when the form is submitted
+    
+            # redirect to end the POST handling
+            # the redirect can be to the same route or somewhere else
+            return redirect(url_for('index'))
+    
+        # show the form, it wasn't submitted
+        return render_template('cool_form.html')
+"""
+
+class UploadClass(BaseView):
+    
+    default_view = 'index'
+    
+    @expose('/index/')
+    def index(self):
+        return render_template('index.html')   
+
+    
+    @expose('/upload/', methods=['POST'])    
+    def upload(self):
+        file = request.files['inputFile']
+        
+        return file.filename
+
+
 """
     Create your Views::
 
@@ -153,6 +183,10 @@ db.create_all()
 appbuilder.add_view(MyView, "Method1", category='My View')
 appbuilder.add_link("Method2", href='/myview/method2/john', category='My View')
 appbuilder.add_link("Method3", href='/myview/method3/john', category='My View')
+
+appbuilder.add_view(UploadClass, "index", category='Upload')
+
+
 
 fill_gender()
 appbuilder.add_view(GroupModelView, "List Groups", icon="fa-folder-open-o", category="Contacts", category_icon='fa-envelope')
