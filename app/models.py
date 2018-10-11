@@ -71,21 +71,38 @@ class Contact(Model):
         date = self.birthday or mindate
         return datetime.datetime(date.year, 1, 1)
     
-def importCSV(filename):
+def importCSV(filename, filepath):
     message = "success"
-    with open(filename, "r") as csvfile:
+    with open(filepath, "r") as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
+        tableName = filename.split(".")[0]
+        cursor.execute("DROP TABLE IF EXISTS `" + tableName + "`")
+        
+        header = next(reader)
+        createStmt = "CREATE TABLE " + tableName + "("
+        
+        for col in header:
+            createStmt += col + " varchar(255) NOT NULL,"
 
-        next(reader)
+        createStmt = createStmt + "CONSTRAINT " + tableName + "_pk PRIMARY KEY (" + header[0] + "));"
+        #print(createStmt)               
+        cursor.execute(createStmt)
+        values = ""
+        
+        
+        
         for row in reader:
-            cursor.execute('INSERT INTO inventory_data(id, depot, SKU, customer, activityDate, inventory)'
-            'VALUES("' + row[0]+'","'+ row[1]+'","'+ row[2]+'","'+row[3]+'","'+row[4]+'","'+row[5] + '")'
+            #print(str(header)[1:-1])
+            for col in range(0,len(header)):
+                values += '"' + row[col] + '",'
+            #print(values[:-1])
+            cursor.execute('INSERT INTO ' + tableName + '(' + str(header)[1:-1].replace("'","") + ')' \
+            'VALUES(' + values[:-1] + ')' \
             )
+            values = ""
             conn.commit()
             
         cursor.close()
         csvfile.close()  
         
         return message
-#"' + data[0]+'","'+ data[1]+'","'+ data[2]+'","'+data[3]+'","'+data[4]+'","'+data[5] + '")' 
-            

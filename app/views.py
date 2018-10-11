@@ -154,8 +154,7 @@ class UploadClass(BaseView):
     def upload(self):
         file = request.files['inputFile']
 
-        message =  importCSV(os.getcwd() + "\\" + file.filename)
-
+        message =  importCSV(file.filename, os.getcwd() + "\\" + file.filename)
         
         return message
     
