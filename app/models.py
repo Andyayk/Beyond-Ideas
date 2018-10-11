@@ -1,4 +1,4 @@
-import datetime, csv, re
+import datetime, csv, re, sys
 
 from flask import Flask
 from flask.ext.mysql import MySQL
@@ -122,15 +122,19 @@ def exportCSV():
 
 
 def writeCSV(table_name):
-    message = 'success'
-    cursor.execute('SELECT * FROM ' + table_name)
-    data = cursor.fetchall()
-
-    with open( table_name + '.csv', 'w') as csvfile:
-        writer = csv.writer(csvfile)
-        for row in data:
-            print(row)
-            writer.writerow(row)
-            print(row)
-        csvfile.close()
+    message = "success"
+    csv_file_dest = table_name + "upload.csv"
+    outputFile = open(csv_file_dest,'w') # 'wb'
+    output = csv.writer(outputFile,dialect='excel')
+    cursor.execute("SELECT * FROM `" + table_name + "`")
+    cols = []
+    for col in cursor.description: # add table cols
+        cols.append(col[0])
+    output.writerow(cols) # print table cols
+    for col2 in cols: # for each table col
+        for row_data in cursor: #add table rows
+            print (row_data)
+            output.writerow(row_data) # print table rows
+    outputFile.close()
+    
     return message
