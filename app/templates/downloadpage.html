@@ -1,0 +1,25 @@
+<html>
+
+<head>
+
+
+
+</head>
+
+<body>
+    <div>
+    <h1>CSV Export</h1>
+   
+    </div>
+    <form method="POST" action="/downloadclass/export/" enctype="multipart/form-data">
+    
+        <select name="tablelist" method="GET" action="/downloadclass/downloadpage">
+        {% for table in tables %}
+        <option value= "{{table}}" SELECTED>{{table}}</option>"
+        {% endfor %}
+        </select>
+        <button type="submit">Export</button>
+    </form>
+</body>
+
+</html>

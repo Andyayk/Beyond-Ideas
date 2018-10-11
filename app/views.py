@@ -9,7 +9,7 @@ from flask_appbuilder.widgets import FormHorizontalWidget, FormInlineWidget, For
 from flask_babel import lazy_gettext as _
 
 from app import appbuilder, db
-from .models import ContactGroup, Gender, Contact, importCSV
+from .models import ContactGroup, Gender, Contact, importCSV, exportCSV, writeCSV
 
 class MyView(BaseView):  
     
@@ -158,7 +158,19 @@ class UploadClass(BaseView):
         
         return message
     
-
+class DownloadClass(BaseView):
+    default_view = "downloadpage"
+    @expose('/downloadpage/', methods=['GET'])
+    def downloadpage(self):
+        tables = exportCSV()
+        return render_template('downloadpage.html', tables=tables)    
+    @expose('/export/', methods=['POST'])    
+    def export(self):
+        tablename = request.form.get("tablelist")
+        print(tablename)
+        message = writeCSV(tablename)
+        return message
+    
 
 """
     Create your Views::
@@ -188,7 +200,7 @@ appbuilder.add_link("Method2", href='/myview/method2/john', category='My View')
 appbuilder.add_link("Method3", href='/myview/method3/john', category='My View')
 
 appbuilder.add_view(UploadClass, "Upload Page", category='Upload')
-
+appbuilder.add_view(DownloadClass, "Download Page", category='Download')
 
 
 fill_gender()

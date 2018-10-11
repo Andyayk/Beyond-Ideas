@@ -1,4 +1,4 @@
-import datetime, csv
+import datetime, csv, re
 
 from flask import Flask
 from flask.ext.mysql import MySQL
@@ -107,3 +107,30 @@ def importCSV(filename, filepath):
         csvfile.close()  
         
         return message
+    
+def exportCSV():
+    cursor.execute("USE app")
+    cursor.execute("SHOW TABLES")
+    #result = cursor.fetchall()
+    tables = []
+    for (table_name,) in cursor:
+        if re.match('ab_*',table_name):
+            tables.append(table_name)
+    #for i in range(len(result)):
+        #print(result[i])
+    return tables
+
+
+def writeCSV(table_name):
+    message = 'success'
+    cursor.execute('SELECT * FROM ' + table_name)
+    data = cursor.fetchall()
+
+    with open( table_name + '.csv', 'w') as csvfile:
+        writer = csv.writer(csvfile)
+        for row in data:
+            print(row)
+            writer.writerow(row)
+            print(row)
+        csvfile.close()
+    return message
