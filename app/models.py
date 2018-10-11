@@ -1,7 +1,7 @@
 import datetime, csv, re, sys
 
 from flask import Flask
-from flask.ext.mysql import MySQL
+from flaskext.mysql import MySQL
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import AuditMixin, FileColumn, ImageColumn
 from sqlalchemy import Column, Integer, String, ForeignKey, Date
