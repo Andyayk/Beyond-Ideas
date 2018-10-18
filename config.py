@@ -33,16 +33,27 @@ APP_NAME = "External Data Correlation System"
 AUTH_TYPE = AUTH_DB
 
 # Uncomment to setup Full admin role name
-#AUTH_ROLE_ADMIN = 'Admin'
+AUTH_ROLE_ADMIN = 'Admin'
 
 # Uncomment to setup Public role name, no authentication needed
-#AUTH_ROLE_PUBLIC = 'Public'
+AUTH_ROLE_PUBLIC = 'Public'
 
 # Will allow user self registration
-#AUTH_USER_REGISTRATION = True
+AUTH_USER_REGISTRATION = True
 
 # The default user self registration role
-#AUTH_USER_REGISTRATION_ROLE = "Public"
+AUTH_USER_REGISTRATION_ROLE = "Public"
+
+# Config for Flask-WTF Recaptcha necessary for user registration
+RECAPTCHA_PUBLIC_KEY = '6LeUsHUUAAAAAK1bMUM_4pPxoERVguJ2rpkbWp-M'
+RECAPTCHA_PRIVATE_KEY = '6LeUsHUUAAAAAPr_ZHdTKLs36UX82Z3cfTtTSQkt'
+
+# Config for Flask-Mail necessary for user registration
+MAIL_SERVER = 'mail.smtp2go.com'
+MAIL_USE_TLS = True
+MAIL_USERNAME = 'Beyond-Ideas@FYP.com'
+MAIL_PASSWORD = 'OThxcTZ4bnUxYnEw'
+MAIL_DEFAULT_SENDER = 'Beyond-Ideas@FYP.com'
 
 # When using LDAP Auth, setup the ldap server
 #AUTH_LDAP_SERVER = "ldap://ldapserver.new"

@@ -55,7 +55,7 @@ INSERT INTO `ab_role` VALUES (1,'Admin');
 INSERT INTO `ab_role` VALUES (2,'Public');
 
 CREATE TABLE IF NOT EXISTS `ab_user_role` (
-	`id`	INTEGER NOT NULL,
+	`id`	INTEGER NOT NULL AUTO_INCREMENT,
 	`user_id`	INTEGER,
 	`role_id`	INTEGER,
 	UNIQUE(`user_id`,`role_id`),
