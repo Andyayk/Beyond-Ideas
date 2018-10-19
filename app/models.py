@@ -140,18 +140,6 @@ def writeCSV(table_name):
 def displayTable(table_name):
     try:
         cursor.execute("SELECT * FROM `" + table_name + "`")
-        cols = []
-        htmlData = "<table><th>"
-        for col in cursor.description: # add table cols
-            htmlData += "1"
-        htmlData += "</th>"
-        """
-        #for col2 in cols: # for each table col
-        for row_data in cursor: #add table rows
-            #print (row_data)
-            htmlData += "<tr><td>" + row_data + "</td></tr>" # print table rows
-        """
-        htmlData += "</table>"
         return cursor
     except Exception as e:
         return "Export fail, please try again later"

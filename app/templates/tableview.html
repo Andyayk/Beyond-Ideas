@@ -1,8 +1,18 @@
 {% extends "appbuilder/base.html" %}
 {% block content %}
     <h1>Table Page</h1>
-    <table>
-    <th>Hello</th>
-    {{tables}}
+    <table border="1">
+	{% 
+	for col in tables.description 
+	%}
+	<th>{{col[0]}}</th>
+	{% endfor %}
+	{% for item in tables %}
+		<tr>
+			{% for col in item %}
+			<td>{{col}}</td>
+			{% endfor %}
+		</tr>
+	{% endfor %}
     </table>
 {% endblock %}
