@@ -36,14 +36,14 @@ class UploadClass(BaseView):
         message =  importCSV(file.filename, os.getcwd() + "\\" + file.filename)   
         return self.render_template('successpage.html', message = message)   
     
-class DownloadClass(BaseView):
+class ExportClass(BaseView):
     
-    default_view = "downloadpage"
+    default_view = "exportpage"
     
-    @expose('/downloadpage/', methods=['GET'])
-    def downloadpage(self):
+    @expose('/exportpage/', methods=['GET'])
+    def exportpage(self):
         tables = exportCSV()
-        return self.render_template('downloadpage.html', tables=tables)  
+        return self.render_template('exportpage.html', tables=tables)  
     
     @expose('/export/', methods=['POST'])    
     def export(self):
@@ -59,13 +59,15 @@ class CorrelationClass(BaseView):
     @expose('/tablepage/', methods=['GET'])
     def tablepage(self):
         tables = exportCSV()
-        return self.render_template('tablepage.html', tables=tables) 
+        tabledata = ''
+        return self.render_template('tablepage.html', tables=tables, tabledata=tabledata) 
     
     @expose('/tableview/', methods=['POST'])
     def tableview(self):
+        tables = exportCSV()        
         tablename = request.form.get("tablelist")        
-        tables = displayTable(tablename)
-        return self.render_template('tableview.html', tables=tables) 
+        tabledata = displayTable(tablename)
+        return self.render_template('tablepage.html', tables=tables, tabledata=tabledata) 
 
 def fill_gender():
     try:
@@ -158,7 +160,7 @@ def page_not_found(e):
 db.create_all()
 
 appbuilder.add_view(UploadClass, "Upload Page", category='Upload')
-appbuilder.add_view(DownloadClass, "Download Page", category='Download')
+appbuilder.add_view(ExportClass, "Export Page", category='Export')
 appbuilder.add_view(CorrelationClass, "Correlation Page", category='Correlation')
 
 fill_gender()

@@ -9,4 +9,18 @@
         </select>
         <button type="submit">Display</button>
     </form>
+    <table border="1">
+    {% 
+    for col in tabledata.description 
+    %}
+    <th>{{col[0]}}</th>
+    {% endfor %}
+    {% for item in tabledata %}
+        <tr>
+            {% for col in item %}
+            <td>{{col}}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>    
 {% endblock %}

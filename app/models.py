@@ -1,4 +1,4 @@
-import datetime, csv, re, sys
+import datetime, csv, re, sys, os
 
 from flask import Flask
 from flaskext.mysql import MySQL
@@ -120,7 +120,8 @@ def exportCSV():
 
 def writeCSV(table_name):
     try:
-        csv_file_dest = table_name + ".csv"
+        desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')        
+        csv_file_dest = desktop + "\\" + table_name + ".csv"
         outputFile = open(csv_file_dest,'w') # 'wb'
         output = csv.writer(outputFile,dialect='excel')
         cursor.execute("SELECT * FROM `" + table_name + "`")
@@ -133,7 +134,7 @@ def writeCSV(table_name):
                 #print (row_data)
                 output.writerow(row_data) # print table rows
         outputFile.close()
-        return "You have successfully exported " + table_name + " to this folder"
+        return "You have successfully exported " + table_name + " to " + desktop
     except Exception as e:
         return "Export fail, please try again later"
 
@@ -142,7 +143,4 @@ def displayTable(table_name):
         cursor.execute("SELECT * FROM `" + table_name + "`")
         return cursor
     except Exception as e:
-        return "Export fail, please try again later"
-#SQL get statement
-#put object table format
-#return >
+        return "Server down, please try again later"
