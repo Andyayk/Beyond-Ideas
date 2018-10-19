@@ -1,0 +1,12 @@
+{% extends "appbuilder/base.html" %}
+{% block content %}
+    <h1>Table Page</h1>
+    <form method="POST" action="/correlationclass/tableview/" enctype="multipart/form-data">
+        <select name="tablelist" method="GET" action="/correlationclass/tablepage/">
+        {% for table in tables %}
+        <option value= "{{table}}" SELECTED>{{table}}</option>"
+        {% endfor %}
+        </select>
+        <button type="submit">Display</button>
+    </form>
+{% endblock %}

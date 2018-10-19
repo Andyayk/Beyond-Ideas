@@ -52,6 +52,21 @@ class DownloadClass(BaseView):
         message = writeCSV(tablename)
         return self.render_template('successpage.html', message = message)  
 
+class CorrelationClass(BaseView):
+    
+    default_view = "tablepage"
+    
+    @expose('/tablepage/', methods=['GET'])
+    def tablepage(self):
+        tables = exportCSV()
+        return self.render_template('tablepage.html', tables=tables) 
+    
+    @expose('/tableview/', methods=['POST'])
+    def tableview(self):
+        tablename = request.form.get("tablelist")        
+        tables = displayTable(tablename)
+        return self.render_template('tableview.html', tables=tables) 
+
 def fill_gender():
     try:
         db.session.add(Gender(name='Male'))
@@ -144,6 +159,7 @@ db.create_all()
 
 appbuilder.add_view(UploadClass, "Upload Page", category='Upload')
 appbuilder.add_view(DownloadClass, "Download Page", category='Download')
+appbuilder.add_view(CorrelationClass, "Correlation Page", category='Correlation')
 
 fill_gender()
 appbuilder.add_view(GroupModelView, "List Groups", icon="fa-folder-open-o", category="Contacts", category_icon='fa-envelope')

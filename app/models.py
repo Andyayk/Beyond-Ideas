@@ -112,7 +112,7 @@ def exportCSV():
     #result = cursor.fetchall()
     tables = []
     for (table_name,) in cursor:
-        if re.match('ab_*',table_name):
+        if not re.match('ab_*',table_name):
             tables.append(table_name)
     #for i in range(len(result)):
         #print(result[i])
@@ -136,3 +136,25 @@ def writeCSV(table_name):
         return "You have successfully exported " + table_name + " to this folder"
     except Exception as e:
         return "Export fail, please try again later"
+
+def displayTable(table_name):
+    try:
+        cursor.execute("SELECT * FROM `" + table_name + "`")
+        cols = []
+        htmlData = "<table><th>"
+        for col in cursor.description: # add table cols
+            htmlData += "1"
+        htmlData += "</th>"
+        """
+        #for col2 in cols: # for each table col
+        for row_data in cursor: #add table rows
+            #print (row_data)
+            htmlData += "<tr><td>" + row_data + "</td></tr>" # print table rows
+        """
+        htmlData += "</table>"
+        return cursor
+    except Exception as e:
+        return "Export fail, please try again later"
+#SQL get statement
+#put object table format
+#return >
