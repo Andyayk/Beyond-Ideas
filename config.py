@@ -49,10 +49,10 @@ RECAPTCHA_PUBLIC_KEY = '6LeUsHUUAAAAAK1bMUM_4pPxoERVguJ2rpkbWp-M'
 RECAPTCHA_PRIVATE_KEY = '6LeUsHUUAAAAAPr_ZHdTKLs36UX82Z3cfTtTSQkt'
 
 # Config for Flask-Mail necessary for user registration
-MAIL_SERVER = 'smtp.sendgrid.net'
+MAIL_SERVER = ''
 MAIL_USE_TLS = True
-MAIL_USERNAME = 'apikey'
-MAIL_PASSWORD = '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'
+MAIL_USERNAME = ''
+MAIL_PASSWORD = ''
 MAIL_DEFAULT_SENDER = 'Beyond-Ideas@FYP.com'
 
 # When using LDAP Auth, setup the ldap server
