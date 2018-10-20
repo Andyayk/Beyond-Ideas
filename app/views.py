@@ -27,7 +27,6 @@ class UploadClass(BaseView):
     #@has_access
     def uploadpage(self):
         return self.render_template('uploadpage.html')   
-
     
     @expose('/upload/', methods=['POST'])    
     def upload(self):
@@ -161,7 +160,7 @@ db.create_all()
 
 appbuilder.add_view(UploadClass, "Upload Page", category='Upload')
 appbuilder.add_view(ExportClass, "Export Page", category='Export')
-appbuilder.add_view(CorrelationClass, "Correlation Page", category='Correlation')
+appbuilder.add_view(CorrelationClass, "Table View Page", category='Correlation')
 
 fill_gender()
 appbuilder.add_view(GroupModelView, "List Groups", icon="fa-folder-open-o", category="Contacts", category_icon='fa-envelope')

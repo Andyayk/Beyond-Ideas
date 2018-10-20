@@ -17,7 +17,7 @@ CSRF_ENABLED = True
 # GLOBALS FOR APP Builder 
 #------------------------------
 # Uncomment to setup Your App name
-APP_NAME = "External Data Correlation System"
+APP_NAME = "Beyond Ideas"
 
 # Uncomment to setup Setup an App icon
 #APP_ICON = "static/img/logo.jpg"
