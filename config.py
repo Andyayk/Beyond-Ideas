@@ -1,9 +1,9 @@
-import os
+import os, credentials
 from flask_appbuilder.security.manager import AUTH_OID, AUTH_REMOTE_USER, AUTH_DB, AUTH_LDAP, AUTH_OAUTH
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Your App secret key
-SECRET_KEY = '\2\1thisismyscretkey\1\2\e\y\y\h'
+SECRET_KEY = credentials.SECRETKEY['password']
 
 # The SQLAlchemy connection string.
 #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
@@ -45,15 +45,15 @@ AUTH_USER_REGISTRATION = True
 AUTH_USER_REGISTRATION_ROLE = "Public"
 
 # Config for Flask-WTF Recaptcha necessary for user registration
-RECAPTCHA_PUBLIC_KEY = '6LeUsHUUAAAAAK1bMUM_4pPxoERVguJ2rpkbWp-M'
-RECAPTCHA_PRIVATE_KEY = '6LeUsHUUAAAAAPr_ZHdTKLs36UX82Z3cfTtTSQkt'
+RECAPTCHA_PUBLIC_KEY = credentials.RECAPTCHA['public_key']
+RECAPTCHA_PRIVATE_KEY = credentials.RECAPTCHA['private_key']
 
 # Config for Flask-Mail necessary for user registration
-MAIL_SERVER = ''
+MAIL_SERVER = credentials.SMTP['server']
 MAIL_USE_TLS = True
-MAIL_USERNAME = ''
-MAIL_PASSWORD = ''
-MAIL_DEFAULT_SENDER = 'Beyond-Ideas@FYP.com'
+MAIL_USERNAME = credentials.SMTP['username']
+MAIL_PASSWORD = credentials.SMTP['password']
+MAIL_DEFAULT_SENDER = credentials.SMTP['default']
 
 # When using LDAP Auth, setup the ldap server
 #AUTH_LDAP_SERVER = "ldap://ldapserver.new"

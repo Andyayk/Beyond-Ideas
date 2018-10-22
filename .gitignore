@@ -4,6 +4,7 @@ app.db
 ./build/*
 ./.idea
 ./.idea/*
+credentials.py
 env
 venv
 *.sublime*
