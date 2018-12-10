@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}    
+    <br><br>    
+    <div>
+        <table style="width:100%">
+            <tr>
+                <td style="width:25%" valign="top" align="center" bgcolor="white">
+                    <br>
+                    <font size="6"><b>Datasources</b></font>
+                    <form>
+                        Data Source 1:
+                        <br>
+                        <label for="tablel1"><b>{{tablename}}</b></label>
+                        <br><br>
+                        Data Source 2:
+                        <br>
+                        <label for="tablel2"><b>{{tablename2}}</b></label>
+                        <br><br>
+                        <input type="button" value="Edit Data Sources" onclick="history.go(-2)">
+                    </form>
+                    <br><br>
+                    <font size="6"><b>Variables</b></font>
+                    <form>
+                        Variable (X):
+                        <br>
+                        <label for="varialble1"><b>{{variablename}}</b></label>
+                        <br><br>
+                        Variable (Y):
+                        <br>
+                        <label for="varialble1"><b>{{variablename2}}</b></label>
+                        <br><br>
+                        <input type="button" value="Edit Variables" onclick="history.go(-1)">                
+                    </form>
+                </td>
+
+                <td></td>
+                <td align="center" style="width:74%" bgcolor="white">
+                    <div style="background-color:white">                
+                        <img src="data:image/png;base64, {{ plot_url }}">
+                    </div>
+                    <br>
+                    <b>Max:</b> {{maximumY}} <b>Min:</b> {{minimumY}}
+                    <br>
+                    <br>
+                </td>
+                <br>
+            </tr>
+        </table>
+    </div>
+{% endblock content %}

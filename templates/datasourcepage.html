@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+    <br><br>
+    <div>
+        <table style="width:100%">
+            <tr>
+                <td style="width:25%" valign="top" align="center" bgcolor="white">      
+                    <br>               
+                    <font size="6"><b>Datasources</b></font>                      
+                    <form method="POST" action="/variablespage/" enctype="multipart/form-data">
+                        <label for="tablelist">Data Source 1:</label>
+                        <br>
+                        <select name="tablelist" method="GET" action="/datasourcepage/">
+                            {% for table in tables %}
+                            <option value= "{{table}}" SELECTED>{{table}}</option>"
+                            {% endfor %}
+                        </select>
+                        <br><br>
+                        <label for="tablelist2">Data Source 2:</label>        
+                        <br>
+                        <select name="tablelist2" method="GET" action="/datasourcepage/">
+                            {% for table in tables %}
+                            <option value= "{{table}}" SELECTED >{{table}}</option>"
+                            {% endfor %}
+                        </select>
+                        <br><br>        
+                        <button type="submit">Get Variables</button>
+                    </form>
+                    <br><br>
+                    <font size="6"><b>Variables</b></font>
+                    <form>
+                        Variable (X):
+                        <br>
+                        <font color="red"><b>Please Load a Datasource</b></font>
+                        <br><br>
+                        Variable (Y):
+                        <br>
+                        <font color="red"><b>Please Load a Datasource</b></font>
+                        <br><br><br><br><br><br>   
+                    </form>                         
+                </td>
+                <td></td>
+                <td align="center" style="width:74%" bgcolor="white">
+                    <h3>Select Datasources</h3>
+                    <p>Click "Get Variables" to load Variables</p>             
+                </td>
+            </tr>
+        </table>
+    </div>                
+{% endblock content %}
