@@ -14,8 +14,6 @@ app = Flask(__name__)
 UPLOAD_FOLDER = os.getcwd() + '\\static\\uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-plotly.tools.set_credentials_file(username='andyayk', api_key='YaGhzlOLt8duiCbg1urw')
-
 class HomeClass():
 
     @app.route("/")
