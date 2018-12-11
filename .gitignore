@@ -15,3 +15,7 @@ env
 venv
 
 *.sublime*
+
+node_modules
+
+dist

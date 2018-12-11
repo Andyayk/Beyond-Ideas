@@ -1,4 +1,8 @@
 import os
+import json
+import plotly
+import pandas as pd
+import numpy as np
 
 from model import *
 from flask import Flask, render_template, request
@@ -9,6 +13,8 @@ from werkzeug.utils import secure_filename #for uploading
 app = Flask(__name__)
 UPLOAD_FOLDER = os.getcwd() + '\\static\\uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+plotly.tools.set_credentials_file(username='andyayk', api_key='YaGhzlOLt8duiCbg1urw')
 
 class HomeClass():
 
@@ -78,47 +84,104 @@ class ChartClass():
     
     @app.route('/chartpage/', methods=['POST'])
     def chartpage():
-        plt.clf()
+        #plt.clf()
         tablename = request.form.get("tablename")  
         tablename2 = request.form.get("tablename2")           
         variablename = request.form.get("variablelist")  
         variablename2 = request.form.get("variablelist2")  
         
         combinedxyarray = tablesJoin(variablename, variablename2, tablename, tablename2)
-        """        
-        img = io.BytesIO()
 
-        xi = array(combinedxyarray[0]).astype(np.float)
-        A = array([ xi, ones(len(combinedxyarray[0]))])
+        maximumY = 1
+        minimumY = 2
         
-        # (Almost) linear sequence
-        y = array(combinedxyarray[1]).astype(np.float)
-        maximumY = max(y)
-        minimumY = min(y)
-        # Generated linear fit
-        slope, intercept, r_value, p_value, std_err = stats.linregress(xi,y)
-        line = slope*xi+intercept
-        
-        plt.plot(xi,y,'o', xi, line)
-        
-        pylab.title('Linear Fit with Matplotlib')
-        pylab.xlabel(variablename)
-        pylab.ylabel(variablename2)  
-        
-        plt.autoscale(True)
-        plt.grid(True)
-
-        ax = plt.gca()     
-        ax.legend(['Observations', 'y = {} + {}x'.format(np.round(intercept,2), np.round(slope,2)) + ', ' + 'r = {}'.format(np.round(r_value, 2))])
- 
-        fig = plt.gcf()
-        plt.savefig(img, format='png')
-        img.seek(0)
+        rng = pd.date_range('1/1/2011', periods=7500, freq='H')
+        ts = pd.Series(np.random.randn(len(rng)), index=rng)
     
-        plot_url = base64.b64encode(img.getvalue()).decode()
-        """
-        return render_template('chartpage.html', plot_url=plot_url, variablename = variablename, variablename2 = variablename2, tablename = tablename, tablename2 = tablename2, maximumY = maximumY, minimumY = minimumY)  
+        graphs = [
+            dict(
+                data=[
+                    dict(
+                        x=[1, 2, 3],
+                        y=[10, 20, 30],
+                        type='scatter'
+                    ),
+                ],
+                layout=dict(
+                    title='first graph'
+                )
+            ),
+    
+            dict(
+                data=[
+                    dict(
+                        x=[1, 3, 5],
+                        y=[10, 50, 30],
+                        type='bar'
+                    ),
+                ],
+                layout=dict(
+                    title='second graph'
+                )
+            ),
+    
+            dict(
+                data=[
+                    dict(
+                        x=ts.index,  # Can use the pandas data structures directly
+                        y=ts
+                    )
+                ]
+            )
+        ]
+    
+        # Add "ids" to each of the graphs to pass up to the client
+        # for templating
+        ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
+    
+        # Convert the figures to JSON
+        # PlotlyJSONEncoder appropriately converts pandas, datetime, etc
+        # objects to their JSON equivalents
+        graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+    
+        return render_template('chartpage.html',
+                               ids=ids,
+                               graphJSON=graphJSON)
+    
+          
+        #img = io.BytesIO()
 
+        #xi = array(combinedxyarray[0]).astype(np.float)
+        #A = array([ xi, ones(len(combinedxyarray[0]))])
+        
+        ## (Almost) linear sequence
+        #y = array(combinedxyarray[1]).astype(np.float)
+        #maximumY = max(y)
+        #minimumY = min(y)
+        ## Generated linear fit
+        #slope, intercept, r_value, p_value, std_err = stats.linregress(xi,y)
+        #line = slope*xi+intercept
+        
+        #plt.plot(xi,y,'o', xi, line)
+        
+        #pylab.title('Linear Fit with Matplotlib')
+        #pylab.xlabel(variablename)
+        #pylab.ylabel(variablename2)  
+        
+        #plt.autoscale(True)
+        #plt.grid(True)
+
+        #ax = plt.gca()     
+        #ax.legend(['Observations', 'y = {} + {}x'.format(np.round(intercept,2), np.round(slope,2)) + ', ' + 'r = {}'.format(np.round(r_value, 2))])
+ 
+        #fig = plt.gcf()
+        #plt.savefig(img, format='png')
+        #img.seek(0)
+    
+        #plot_url = base64.b64encode(img.getvalue()).decode()
+        
+        #return render_template('chartpage.html', plot_url = plot_url, variablename = variablename, variablename2 = variablename2, tablename = tablename, tablename2 = tablename2, maximumY = maximumY, minimumY = minimumY)  
+        
 class WebCrawlingClass():
 
     @app.route("/webcrawlingpage/")

@@ -10,11 +10,11 @@
                     <form>
                         Data Source 1:
                         <br>
-                        <label for="tablel1"><b>{{tablename}}</b></label>
+                        <label for="table1"><b>{{tablename}}</b></label>
                         <br><br>
                         Data Source 2:
                         <br>
-                        <label for="tablel2"><b>{{tablename2}}</b></label>
+                        <label for="table2"><b>{{tablename2}}</b></label>
                         <br><br>
                         <input type="button" value="Edit Data Sources" onclick="history.go(-2)">
                     </form>
@@ -23,11 +23,11 @@
                     <form>
                         Variable (X):
                         <br>
-                        <label for="varialble1"><b>{{variablename}}</b></label>
+                        <label for="variable1"><b>{{variablename}}</b></label>
                         <br><br>
                         Variable (Y):
                         <br>
-                        <label for="varialble1"><b>{{variablename2}}</b></label>
+                        <label for="variable2"><b>{{variablename2}}</b></label>
                         <br><br>
                         <input type="button" value="Edit Variables" onclick="history.go(-1)">                
                     </form>
@@ -36,7 +36,27 @@
                 <td></td>
                 <td align="center" style="width:74%" bgcolor="white">
                     <div style="background-color:white">                
-                        <img src="data:image/png;base64, {{ plot_url }}">
+                        
+                        <div id="chart"></div>
+                        
+                        <script>
+                            function getData() {
+                                return Math.random();
+                            }
+                            
+                            Plotly.plot('chart',[{
+                                y:[getData()],
+                                type:'line'
+                            }]);
+                        </script>
+
+                        <!-- D3.js -->
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+                        <!-- jQuery -->
+                        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+                        <!-- Plotly.js -->
+                        <script src="https://d14fo0winaifog.cloudfront.net/plotly-basic.js"></script>
+
                     </div>
                     <br>
                     <b>Max:</b> {{maximumY}} <b>Min:</b> {{minimumY}}
