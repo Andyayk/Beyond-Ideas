@@ -1,1 +1,1 @@
-import FormContainer from "./js/components/container/FormContainer";
+import App from "./App";
