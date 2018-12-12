@@ -1,14 +1,16 @@
 import os
-import json
-import plotly
-import pandas as pd
-import numpy as np
+import json #for correlation
+import plotly #for correlation
+import plotly.plotly as py #for correlation
+import plotly.graph_objs as go #for correlation
+import numpy as np #for correlation
 
 from model import *
 from flask import Flask, render_template, request
 from urllib.request import urlopen as uReq #for crawling
 from bs4 import BeautifulSoup as soup #for crawling
 from werkzeug.utils import secure_filename #for uploading
+from array import array
 
 app = Flask(__name__)
 UPLOAD_FOLDER = os.getcwd() + '\\static\\uploads'
@@ -78,108 +80,52 @@ class ChartClass():
         tablename = request.form.get("tablelist")  
         tablename2 = request.form.get("tablelist2")          
         combinedcolsarray = getVariables(tablename, tablename2)       
-        return render_template('variablespage.html', cols = combinedcolsarray[0], cols2 = combinedcolsarray[1], tablename = tablename, tablename2 = tablename2)    
+        return render_template('variablespage.html', cols = combinedcolsarray[0], cols2 = combinedcolsarray[1], tablename = tablename, 
+            tablename2 = tablename2)    
     
     @app.route('/chartpage/', methods=['POST'])
     def chartpage():
-        #plt.clf()
         tablename = request.form.get("tablename")  
         tablename2 = request.form.get("tablename2")           
-        variablename = request.form.get("variablelist")  
-        variablename2 = request.form.get("variablelist2")  
+        variablenameX = request.form.get("variablelist")  
+        variablenameY = request.form.get("variablelist2")  
         
-        combinedxyarray = tablesJoin(variablename, variablename2, tablename, tablename2)
+        combinedxyarray = tablesJoin(variablenameX, variablenameY, tablename, tablename2)
 
-        maximumY = 1
-        minimumY = 2
-        
-        rng = pd.date_range('1/1/2011', periods=7500, freq='H')
-        ts = pd.Series(np.random.randn(len(rng)), index=rng)
-    
-        graphs = [
-            dict(
-                data=[
-                    dict(
-                        x=[1, 2, 3],
-                        y=[10, 20, 30],
-                        type='scatter'
-                    ),
-                ],
-                layout=dict(
-                    title='first graph'
-                )
+        xScale = list(np.float_(combinedxyarray[0]))
+        yScale = list(np.float_(combinedxyarray[1]))
+        maximumY = max(yScale)
+        minimumY = min(yScale)
+
+        trace = go.Scatter(
+            x = xScale,
+            y = yScale,
+            mode = 'markers'
+        )
+
+        layout= go.Layout(
+            title= 'Correlation between ' + variablenameX + ' and ' + variablenameY,
+            hovermode= 'closest',
+            xaxis= dict(
+                title = variablenameX,
+                ticklen = 5,
+                zeroline = False,
+                gridwidth = 2,
             ),
-    
-            dict(
-                data=[
-                    dict(
-                        x=[1, 3, 5],
-                        y=[10, 50, 30],
-                        type='bar'
-                    ),
-                ],
-                layout=dict(
-                    title='second graph'
-                )
+            yaxis = dict(
+                title = variablenameY,
+                ticklen = 5,
+                gridwidth = 2,
             ),
+            showlegend = False
+        )
+        data = go.Data([trace])
+        figure = go.Figure(data = data, layout = layout)
+        graphJSON = json.dumps(figure, cls = plotly.utils.PlotlyJSONEncoder)
     
-            dict(
-                data=[
-                    dict(
-                        x=ts.index,  # Can use the pandas data structures directly
-                        y=ts
-                    )
-                ]
-            )
-        ]
+        return render_template('chartpage.html', graphJSON = graphJSON, variablenameX = variablenameX, variablenameY = variablenameY, 
+            tablename = tablename, tablename2 = tablename2, maximumY = maximumY, minimumY = minimumY)
     
-        # Add "ids" to each of the graphs to pass up to the client
-        # for templating
-        ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
-    
-        # Convert the figures to JSON
-        # PlotlyJSONEncoder appropriately converts pandas, datetime, etc
-        # objects to their JSON equivalents
-        graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-    
-        return render_template('chartpage.html',
-                               ids=ids,
-                               graphJSON=graphJSON)
-    
-          
-        #img = io.BytesIO()
-
-        #xi = array(combinedxyarray[0]).astype(np.float)
-        #A = array([ xi, ones(len(combinedxyarray[0]))])
-        
-        ## (Almost) linear sequence
-        #y = array(combinedxyarray[1]).astype(np.float)
-        #maximumY = max(y)
-        #minimumY = min(y)
-        ## Generated linear fit
-        #slope, intercept, r_value, p_value, std_err = stats.linregress(xi,y)
-        #line = slope*xi+intercept
-        
-        #plt.plot(xi,y,'o', xi, line)
-        
-        #pylab.title('Linear Fit with Matplotlib')
-        #pylab.xlabel(variablename)
-        #pylab.ylabel(variablename2)  
-        
-        #plt.autoscale(True)
-        #plt.grid(True)
-
-        #ax = plt.gca()     
-        #ax.legend(['Observations', 'y = {} + {}x'.format(np.round(intercept,2), np.round(slope,2)) + ', ' + 'r = {}'.format(np.round(r_value, 2))])
- 
-        #fig = plt.gcf()
-        #plt.savefig(img, format='png')
-        #img.seek(0)
-    
-        #plot_url = base64.b64encode(img.getvalue()).decode()
-        
-        #return render_template('chartpage.html', plot_url = plot_url, variablename = variablename, variablename2 = variablename2, tablename = tablename, tablename2 = tablename2, maximumY = maximumY, minimumY = minimumY)  
-        
 class WebCrawlingClass():
 
     @app.route("/webcrawlingpage/")

@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
-{% block content %}    
+{% block content %}   
+    <!-- D3.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
     <br><br>    
     <div>
         <table style="width:100%">
@@ -23,11 +28,11 @@
                     <form>
                         Variable (X):
                         <br>
-                        <label for="variable1"><b>{{variablename}}</b></label>
+                        <label for="variableX"><b>{{variablenameX}}</b></label>
                         <br><br>
                         Variable (Y):
                         <br>
-                        <label for="variable2"><b>{{variablename2}}</b></label>
+                        <label for="variableY"><b>{{variablenameY}}</b></label>
                         <br><br>
                         <input type="button" value="Edit Variables" onclick="history.go(-1)">                
                     </form>
@@ -36,27 +41,7 @@
                 <td></td>
                 <td align="center" style="width:74%" bgcolor="white">
                     <div style="background-color:white">                
-                        
-                        <div id="chart"></div>
-                        
-                        <script>
-                            function getData() {
-                                return Math.random();
-                            }
-                            
-                            Plotly.plot('chart',[{
-                                y:[getData()],
-                                type:'line'
-                            }]);
-                        </script>
-
-                        <!-- D3.js -->
-                        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
-                        <!-- jQuery -->
-                        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-                        <!-- Plotly.js -->
-                        <script src="https://d14fo0winaifog.cloudfront.net/plotly-basic.js"></script>
-
+                        <div id="chart" class="chart"></div>
                     </div>
                     <br>
                     <b>Max:</b> {{maximumY}} <b>Min:</b> {{minimumY}}
@@ -67,4 +52,11 @@
             </tr>
         </table>
     </div>
+    <script type="text/javascript">
+         
+        var graphs = {{graphJSON | safe}};
+        
+        Plotly.plot('chart',graphs,{});        
+ 
+    </script>
 {% endblock content %}
