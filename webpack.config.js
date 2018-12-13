@@ -1,5 +1,17 @@
-const HtmlWebPackPlugin = require("html-webpack-plugin");
-module.exports = {
+const webpack = require("webpack");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
+const config = {
+  entry: {
+    main: __dirname + '/static/js/index.js'
+  },
+  output: {
+    path: __dirname + '/dist',
+    filename: '[name].js'
+  },
+  resolve: {
+    extensions: ['.js', '.jsx', '.css']
+  },
   module: {
     rules: [
       {
@@ -16,13 +28,18 @@ module.exports = {
             loader: "html-loader"
           }
         ]
-      }
+      },
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: "css-loader"
+        })
+      }, 
     ]
   },
   plugins: [
-    new HtmlWebPackPlugin({
-      template: "./src/index.html",
-      filename: "./index.html"
-    })
+    new ExtractTextPlugin('styles.css')
   ]
 };
+module.exports = config

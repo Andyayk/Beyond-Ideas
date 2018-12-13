@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup as soup #for crawling
 from werkzeug.utils import secure_filename #for uploading
 from array import array
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="./dist", template_folder="./static")
 UPLOAD_FOLDER = os.getcwd() + '\\static\\uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
