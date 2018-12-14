@@ -6,7 +6,7 @@ import plotly.graph_objs as go #for correlation
 import numpy as np #for correlation
 
 from model import *
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from urllib.request import urlopen as uReq #for crawling
 from bs4 import BeautifulSoup as soup #for crawling
 from werkzeug.utils import secure_filename #for uploading
@@ -150,6 +150,15 @@ class WebCrawlingClass():
             product_names += product_name + " "
             
         return render_template('webcrawlingpage.html', product_names = product_names)    
+
+class Hello():
+
+    @app.route("/hello")
+    def hellopage():
+        tables = getMySQLTables() 
+        return jsonify(
+            tables=tables
+        )
 
 if __name__ == '__main__': #this will run only if you run from this file
     app.run(debug=True)

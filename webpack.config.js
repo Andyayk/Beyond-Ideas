@@ -1,17 +1,25 @@
 const webpack = require("webpack");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const config = {
-  entry: {
-    main: __dirname + '/static/js/index.js'
-  },
+  entry: __dirname + '/static/js/index.js',
   output: {
     path: __dirname + '/dist',
-    filename: '[name].js'
+    filename: 'main.js'
   },
   resolve: {
     extensions: ['.js', '.jsx', '.css']
   },
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        test: /\.js(\?.*)?$/i,
+        cache: true,
+        parallel: true
+      })
+    ]
+  },   
   module: {
     rules: [
       {
@@ -34,8 +42,8 @@ const config = {
         use: ExtractTextPlugin.extract({
           fallback: "style-loader",
           use: "css-loader"
-        })
-      }, 
+        })      
+      },        
     ]
   },
   plugins: [
