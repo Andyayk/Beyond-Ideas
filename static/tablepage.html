@@ -1,33 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>Table View Page</h1>
-    <form method="POST" action="/tableview/" enctype="multipart/form-data">
-    <div>
-        <label for="tablelist">Table View Display</label>
-        <br>    
-        <select name="tablelist" method="GET" action="/tablepage/">
-        {% for table in tables %}
-        <option value= "{{table}}" SELECTED>{{table}}</option>"
-        {% endfor %}
-        </select>
-        <button type="submit">Display Table</button>
-    </div>
-    <br>
-    </form>
-    <div style="overflow:auto; max-height:500px;">
-        <table border="1">
-        {% 
-        for col in tabledata.description 
-        %}
-        <th style="width:130px; max-width:130px; word-wrap: break-word;"><center>{{col[0]}}</center></th>
-        {% endfor %}
-        {% for item in tabledata %}
-            <tr>
-                {% for col in item %}
-                <td style="width:130px; max-width:130px; word-wrap: break-word;"><center>{{col}}</center></td>
-                {% endfor %}
-            </tr>
-        {% endfor %}
-        </table>
-    </div>    
+    <div id="tableview"></div>
+    <script type="text/javascript" src="../dist/main.js"></script></body>
 {% endblock content %}

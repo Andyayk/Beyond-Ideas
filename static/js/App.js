@@ -22,11 +22,8 @@ class App extends Component {
             ]}
             layout={ {width: 600, height: 500, title: 'A Fancy Plot'} }
          />
-         
          </div>
       );
    }
 }
 export default App;
-
-ReactDOM.render(<App />, document.getElementById('app'));

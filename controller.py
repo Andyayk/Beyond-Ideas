@@ -55,18 +55,34 @@ class ExportClass():
 
 class TableClass():
     
-    @app.route('/tablepage/', methods=['GET'])
+    @app.route('/tablepage/')
     def tablepage():
-        tables = getMySQLTables()
-        tabledata = ''
-        return render_template('tablepage.html', tables = tables, tabledata = tabledata) 
+        return render_template('tablepage.html') 
     
     @app.route('/tableview/', methods=['POST'])
-    def tableview():
-        tables = getMySQLTables()        
-        tablename = request.form.get("tablelist")        
+    def tableview():       
+        tablename = request.form.get("tablename")        
         tabledata = displayTable(tablename)
-        return render_template('tablepage.html', tables = tables, tabledata = tabledata) 
+
+        table = ""
+
+        for col in tabledata.description:
+            table += "<th style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col[0] + "</center></th>"
+
+        for item in tabledata:
+            table += "<tr>"
+            for col in item:
+                table += "<td style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col + "</center></td>"
+            table += "</tr>"
+
+        return table
+
+    @app.route("/mysqltables/")
+    def mysqltables():
+        tables = getMySQLTables() 
+        return jsonify(
+            tables=tables
+        )
 
 class ChartClass():
     
@@ -150,15 +166,6 @@ class WebCrawlingClass():
             product_names += product_name + " "
             
         return render_template('webcrawlingpage.html', product_names = product_names)    
-
-class Hello():
-
-    @app.route("/hello")
-    def hellopage():
-        tables = getMySQLTables() 
-        return jsonify(
-            tables=tables
-        )
 
 if __name__ == '__main__': #this will run only if you run from this file
     app.run(debug=True)

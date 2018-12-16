@@ -7,16 +7,18 @@ class Hello extends Component {
    constructor(props) {
       super(props);
 
-      this.state = {greeting: 'Hello ' + this.props.name};
+      this.state = {
+         greeting: "Hello "  + this.props.name
+      };
       // This binding is necessary to make 'this'
       // work in the button callback
       this.getPythonHello = this.getPythonHello.bind(this);
    }
 
    getPythonHello() {
-      $.getJSON(window.location.href + 'hello', (data) => {
-         var value = '';
-         $.each( data, function( key, val ) {
+      $.getJSON(window.location.origin + "/mysqltables/", (data) => {
+         var value = "";
+         $.each(data, function(key, val) {
             value = val;
          });  
          this.personaliseGreeting(value);           
@@ -24,7 +26,9 @@ class Hello extends Component {
    }  
 
    personaliseGreeting(greeting) {
-      this.setState({greeting: greeting + ' ' + this.props.name + '!'});
+      this.setState({
+         greeting: greeting + " " + this.props.name + "!"
+      });
    }   
 
    render() {
