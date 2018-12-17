@@ -42,16 +42,15 @@ class UploadClass():
 
 class ExportClass():
     
-    @app.route('/exportpage/', methods=['GET'])
+    @app.route('/exportpage/')
     def exportpage():
-        tables = getMySQLTables()
-        return render_template('exportpage.html', tables = tables)  
+        return render_template('exportpage.html')  
     
     @app.route('/export/', methods=['POST'])    
     def export():
         tablename = request.form.get("tablename")
         datacontent = writeToCSV(tablename)
-        return render_template('savingpage.html', datacontent = datacontent, tablename = tablename)  
+        return datacontent  
 
 class TableClass():
     
@@ -59,6 +58,13 @@ class TableClass():
     def tablepage():
         return render_template('tablepage.html') 
     
+    @app.route("/mysqltables/")
+    def mysqltables():
+        tables = getMySQLTables() 
+        return jsonify(
+            tables=tables
+        )
+
     @app.route('/tableview/', methods=['POST'])
     def tableview():       
         tablename = request.form.get("tablename")        
@@ -77,30 +83,11 @@ class TableClass():
 
         return table
 
-    @app.route("/mysqltables/")
-    def mysqltables():
-        tables = getMySQLTables() 
-        return jsonify(
-            tables=tables
-        )
-
 class ChartClass():
     
-    @app.route('/datasourcepage/', methods=['GET'])   
-    def datasourcepage():
-        tables = getMySQLTables()        
-        return render_template('datasourcepage.html', tables = tables)
-    
-    @app.route('/variablespage/', methods=['POST'])
-    def variablespage():
-        tablename = request.form.get("tablelist")  
-        tablename2 = request.form.get("tablelist2")          
-        combinedcolsarray = getVariables(tablename, tablename2)       
-        return render_template('variablespage.html', cols = combinedcolsarray[0], cols2 = combinedcolsarray[1], tablename = tablename, 
-            tablename2 = tablename2)    
-    
-    @app.route('/chartpage/', methods=['POST'])
+    @app.route('/chartpage/')
     def chartpage():
+        """
         tablename = request.form.get("tablename")  
         tablename2 = request.form.get("tablename2")           
         variablenameX = request.form.get("variablelist")  
@@ -138,9 +125,19 @@ class ChartClass():
         data = go.Data([trace])
         figure = go.Figure(data = data, layout = layout)
         graphJSON = json.dumps(figure, cls = plotly.utils.PlotlyJSONEncoder)
-    
+
         return render_template('chartpage.html', graphJSON = graphJSON, variablenameX = variablenameX, variablenameY = variablenameY, 
             tablename = tablename, tablename2 = tablename2, maximumY = maximumY, minimumY = minimumY)
+        """
+        return render_template('chartpage.html')
+    
+    @app.route('/variables/', methods=['POST'])
+    def variables():
+        tablename = request.form.get("tablename")           
+        variablelist = getVariables(tablename)       
+        return jsonify(
+            variablelist=variablelist
+        )
     
 class WebCrawlingClass():
 

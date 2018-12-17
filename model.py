@@ -71,7 +71,7 @@ def writeToCSV(table_name):
                 row_data = str(row_data).replace(" ", "")
                 colsString += ";" + str(row_data)[1:-1]
                 
-        return '"' + str(colsString) + '"'
+        return str(colsString)
     except Exception as e:
         return "Something is wrong with writeToCSV method"
     
@@ -84,23 +84,14 @@ def displayTable(table_name):
         return "Something is wrong with displayTable method"
     
 #Get selected variables data
-def getVariables(table_name, table_name2):
+def getVariables(table_name):
     cols = []
-    cols2 = []
     
     cursor.execute("SELECT * FROM " + table_name + "")
     for col in cursor.description: # add table cols
         cols.append(col[0])   
-        
-    cursor.execute("SELECT * FROM " + table_name2 + "")        
-    for col in cursor.description: # add table cols
-        cols2.append(col[0])          
-        
-    combinedcolsarray = []
-    combinedcolsarray.append(cols)
-    combinedcolsarray.append(cols2)
     
-    return combinedcolsarray
+    return cols
 
 #Checking something is empty or not
 def is_empty(any_structure):

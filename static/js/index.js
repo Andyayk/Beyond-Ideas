@@ -3,7 +3,9 @@ import ReactDOM from "react-dom";
 
 import App from "./App";
 import TableView from "./TableView";
-import Hello from "./Hello";
+import ExportTables from "./ExportTables";
+import Chart from "./Chart";
+
 require('../main.css');
 
 const app = document.getElementById('app');
@@ -16,7 +18,12 @@ if (tableview) {
    ReactDOM.render(<TableView />, tableview);
 }
 
-const hello = document.getElementById('hello');
-if (hello) {
-   ReactDOM.render(<Hello />, hello);
+const exporttables = document.getElementById('exporttables');
+if (exporttables) {
+   ReactDOM.render(<ExportTables />, exporttables);
+}
+
+const chart = document.getElementById('chart');
+if (chart) {
+   ReactDOM.render(<Chart />, chart);
 }

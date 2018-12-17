@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
 var $ = require('jquery');
 
@@ -60,7 +61,7 @@ class TableView extends Component {
                {this.state.options}
             </select>
             <table border="1">
-               {this.state.returnedData}
+               {ReactHtmlParser(this.state.returnedData)}
             </table>
          </div>
       );

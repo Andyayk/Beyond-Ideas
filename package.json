@@ -41,6 +41,7 @@
   "dependencies": {
     "jquery": "^3.3.1",
     "plotly.js": "^1.42.5",
+    "react-html-parser": "^2.0.2",
     "react-plotly.js": "^2.2.0"
   }
 }

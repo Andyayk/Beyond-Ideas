@@ -1,17 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>Export Page</h1>
-    <form method="POST" action="/export/" enctype="multipart/form-data">
-    <div>
-        <label for="tablename">Select Table to be Exported</label>
-        <br>
-        <b>Table Name:</b>
-        <select name="tablename" method="GET" action="/exportpage/">
-        {% for table in tables %}
-        <option value= "{{table}}" SELECTED>{{table}}</option>"
-        {% endfor %}
-        </select>
-        <button type="submit">Select</button>
-    </div>    
-    </form>
+    <div id="exporttables"></div>
+    <script type="text/javascript" src="../dist/main.js"></script></body>
 {% endblock content %}
