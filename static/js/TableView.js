@@ -55,7 +55,7 @@ class TableView extends Component {
 
    render() {
       return (
-         <div>
+         <div style={{"overflow":"auto", "max-height":"500px"}}>
             <select onChange={this.display}>
                <option value="" disabled selected>Select a Table to View</option>
                {this.state.options}

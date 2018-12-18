@@ -29,7 +29,7 @@ class UploadClass():
     def uploadpage():
         return render_template('uploadpage.html')   
     
-    @app.route('/upload/', methods=['POST'])    
+    @app.route('/upload/', methods = ['POST'])    
     def upload():
         file = request.files['inputFile']
         if file:
@@ -46,7 +46,7 @@ class ExportClass():
     def exportpage():
         return render_template('exportpage.html')  
     
-    @app.route('/export/', methods=['POST'])    
+    @app.route('/export/', methods = ['POST'])    
     def export():
         tablename = request.form.get("tablename")
         datacontent = writeToCSV(tablename)
@@ -62,10 +62,10 @@ class TableClass():
     def mysqltables():
         tables = getMySQLTables() 
         return jsonify(
-            tables=tables
+            tables = tables
         )
 
-    @app.route('/tableview/', methods=['POST'])
+    @app.route('/tableview/', methods = ['POST'])
     def tableview():       
         tablename = request.form.get("tablename")        
         tabledata = displayTable(tablename)
@@ -87,56 +87,32 @@ class ChartClass():
     
     @app.route('/chartpage/')
     def chartpage():
-        """
-        tablename = request.form.get("tablename")  
-        tablename2 = request.form.get("tablename2")           
-        variablenameX = request.form.get("variablelist")  
-        variablenameY = request.form.get("variablelist2")  
-        
-        combinedxyarray = tablesJoin(variablenameX, variablenameY, tablename, tablename2)
-
-        xScale = list(np.float_(combinedxyarray[0]))
-        yScale = list(np.float_(combinedxyarray[1]))
-        maximumY = max(yScale)
-        minimumY = min(yScale)
-
-        trace = go.Scatter(
-            x = xScale,
-            y = yScale,
-            mode = 'markers'
-        )
-
-        layout= go.Layout(
-            title= 'Correlation between ' + variablenameX + ' and ' + variablenameY,
-            hovermode= 'closest',
-            xaxis= dict(
-                title = variablenameX,
-                ticklen = 5,
-                zeroline = False,
-                gridwidth = 2,
-            ),
-            yaxis = dict(
-                title = variablenameY,
-                ticklen = 5,
-                gridwidth = 2,
-            ),
-            showlegend = False
-        )
-        data = go.Data([trace])
-        figure = go.Figure(data = data, layout = layout)
-        graphJSON = json.dumps(figure, cls = plotly.utils.PlotlyJSONEncoder)
-
-        return render_template('chartpage.html', graphJSON = graphJSON, variablenameX = variablenameX, variablenameY = variablenameY, 
-            tablename = tablename, tablename2 = tablename2, maximumY = maximumY, minimumY = minimumY)
-        """
         return render_template('chartpage.html')
     
-    @app.route('/variables/', methods=['POST'])
+    @app.route('/variables/', methods = ['POST'])
     def variables():
         tablename = request.form.get("tablename")           
         variablelist = getVariables(tablename)       
         return jsonify(
-            variablelist=variablelist
+            variablelist = variablelist
+        )
+
+    @app.route('/scatterplotdata/', methods = ['POST'])
+    def scatterplotdata():
+        tablename = request.form.get("selectedtable")  
+        tablename2 = request.form.get("selectedtable2")   
+
+        variablenameX = request.form.get("selectedvariable")  
+        variablenameY = request.form.get("selectedvariable2") 
+
+        joinvariable = request.form.get("joinvariable") 
+        joinvariable2 = request.form.get("joinvariable2")                  
+        
+        combinedxyarray = tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2)
+
+        return jsonify(
+            xarray = combinedxyarray[0],
+            yarray = combinedxyarray[1]
         )
     
 class WebCrawlingClass():
@@ -165,4 +141,4 @@ class WebCrawlingClass():
         return render_template('webcrawlingpage.html', product_names = product_names)    
 
 if __name__ == '__main__': #this will run only if you run from this file
-    app.run(debug=True)
+    app.run(debug = True)

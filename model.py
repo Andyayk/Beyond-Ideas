@@ -101,8 +101,8 @@ def is_empty(any_structure):
         return True
 
 #Joining tables together
-def tablesJoin(variablename, variablename2, tablename, tablename2):
-    cursor.execute("SELECT t1." + variablename + " , t2." + variablename2 + " FROM " + tablename + " as t1 , " + tablename2 + " as t2 WHERE t1.ID = t2.ID")    
+def tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2):
+    cursor.execute("SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2 WHERE t1." + joinvariable + " = t2." + joinvariable2)    
     
     cols = []
     x = []
