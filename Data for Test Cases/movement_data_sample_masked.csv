@@ -1,4 +1,4 @@
-ID,Depot,SKU,Customer,ActivityDate,OrderQuantity
+id,Depot,SKU,Customer,ActivityDate,OrderQuantity
 0,13,40,6,3/1/2017,50
 1,13,40,6,4/1/2017,10
 2,13,40,6,5/1/2017,3

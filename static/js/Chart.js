@@ -1,7 +1,9 @@
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import Plot from 'react-plotly.js';
+import regression from 'regression';
+import Correlation from 'node-correlation';
 
 var $ = require('jquery');
 
@@ -153,28 +155,54 @@ class Chart extends Component {
          joinvariable2: this.state.joinvariable2,  
       },
       (data) => {
-         var xarray = "";
-         var yarray = "";
+         var xarray = [];
+         var yarray = [];
          $.each(data, function(key, val) {
             if(xarray == "") {
-               xarray = val;
+               xarray = val.toString().split(",").map(Number);
             } else {
-               yarray = val;
+               yarray = val.toString().split(",").map(Number);
             }
          });   
 
+         var twoDArray = [];
+
+         for (var i = 0; i < xarray.length; i++) {
+            twoDArray.push([xarray[i], yarray[i]]);
+         }
+         
+         var result = regression.linear(twoDArray);
+         var gradient = result.equation[0];
+         var yIntercept = result.equation[1];
+         var r2 = result.r2;
+         var equation = result.string;
+
+         var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; });
+         var r = Correlation.calc(xarray, yarray).toFixed(2);
+
+         var maxY = Math.max(...yarray);
+         var minY = Math.min(...yarray);
+
          this.setState({
             scatterplot: <Plot data={[{
-                           x: xarray.toString().split(",").map(Number),
-                           y: yarray.toString().split(",").map(Number),
+                           x: xarray,
+                           y: yarray,
                            type: 'scatter',
                            mode: 'markers',
-                           marker: {color: 'red'}
+                           marker: {color: 'blue'},
+                           showlegend: false
+                           },{
+                           x: xarray,
+                           y: predictedyarray,
+                           type: 'lines',
+                           mode: 'lines',
+                           marker: {color: 'red'},
+                           name: "Equation: " + equation
                            }]}
                            layout={{
                               width: 1000, 
                               height: 900, 
-                              title: 'Correlation between ' + this.state.selectedvariable + ' and ' + this.state.selectedvariable2,
+                              title: '<b>Correlation between ' + this.state.selectedvariable + ' and ' + this.state.selectedvariable2 + '</b><br>R: ' + r + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
                               hovermode: 'closest',
                               xaxis: {
                                  title: this.state.selectedvariable,
@@ -187,8 +215,7 @@ class Chart extends Component {
                                  ticklen: 5,
                                  zeroline: false,
                                  gridwidth: 2,
-                              },
-                              showlegend: false,                           
+                              }                          
                            }}
                         />   
          });       

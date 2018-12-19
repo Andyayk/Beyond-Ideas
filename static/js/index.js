@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
-import TableView from "./TableView";
-import ExportTables from "./ExportTables";
-import Chart from "./Chart";
+import TableView from './TableView';
+import ExportTables from './ExportTables';
+import Chart from './Chart';
 
 require('../main.css');
 
