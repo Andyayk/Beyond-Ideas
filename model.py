@@ -9,7 +9,7 @@ mydb = mysql.connector.connect(
 )
 cursor = mydb.cursor(buffered=True)    
 
-#Upload files into MySQL tables  
+#upload files into MySQL tables  
 def uploadCSV(filename, filepath):
     try:
         with open(filepath, "r") as csvfile:
@@ -45,7 +45,7 @@ def uploadCSV(filename, filepath):
     except Exception as e:
         return "Upload fail, please upload only csv files"
 
-#Get all MySQL tables
+#get all MySQL tables
 def getMySQLTables():
     cursor.execute("USE app")
     cursor.execute("SHOW TABLES")
@@ -54,7 +54,7 @@ def getMySQLTables():
         tables.append(table_name)
     return tables
 
-#Export MySQL tables into CSV format
+#export MySQL tables into CSV format
 def writeToCSV(table_name):
     try:
         cursor.execute("SELECT * FROM " + table_name + "")
@@ -75,7 +75,7 @@ def writeToCSV(table_name):
     except Exception as e:
         return "Something is wrong with writeToCSV method"
     
-#Display table    
+#display table    
 def displayTable(table_name):
     try:
         cursor.execute("SELECT * FROM `" + table_name + "`")
@@ -83,7 +83,7 @@ def displayTable(table_name):
     except Exception as e:
         return "Something is wrong with displayTable method"
     
-#Get selected variables data
+#get selected variables data
 def getVariables(table_name):
     cols = []
     
@@ -93,14 +93,14 @@ def getVariables(table_name):
     
     return cols
 
-#Checking something is empty or not
+#checking something is empty or not
 def is_empty(any_structure):
     if any_structure:
         return False
     else:
         return True
 
-#Joining tables together
+#joining tables together
 def tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2):
     cursor.execute("SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2 WHERE t1." + joinvariable + " = t2." + joinvariable2)    
     

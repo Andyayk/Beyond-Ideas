@@ -1,9 +1,4 @@
 import os
-import json #for correlation
-import plotly #for correlation
-import plotly.plotly as py #for correlation
-import plotly.graph_objs as go #for correlation
-import numpy as np #for correlation
 
 from model import *
 from flask import Flask, render_template, request, jsonify
@@ -12,25 +7,25 @@ from bs4 import BeautifulSoup as soup #for crawling
 from werkzeug.utils import secure_filename #for uploading
 from array import array
 
-app = Flask(__name__, static_folder="./dist", template_folder="./static")
-UPLOAD_FOLDER = os.getcwd() + '\\static\\uploads'
+app = Flask(__name__, static_folder="./dist", template_folder="./static") #defining how flask find our html, css and javascript
+UPLOAD_FOLDER = os.getcwd() + '\\static\\uploads' #setting a path to our upload folder
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 class HomeClass():
 
     @app.route("/")
     @app.route("/home/")
-    def home():
+    def home(): #rendering our home page
         return render_template('home.html')
 
 class UploadClass():
     
     @app.route('/uploadpage/')
-    def uploadpage():
+    def uploadpage(): #rendering our upload page
         return render_template('uploadpage.html')   
     
     @app.route('/upload/', methods = ['POST'])    
-    def upload():
+    def upload(): #processing our upload
         file = request.files['inputFile']
         if file:
             filename = secure_filename(file.filename)
@@ -43,11 +38,11 @@ class UploadClass():
 class ExportClass():
     
     @app.route('/exportpage/')
-    def exportpage():
+    def exportpage(): #rendering our export page
         return render_template('exportpage.html')  
     
     @app.route('/export/', methods = ['POST'])    
-    def export():
+    def export(): #processing export for API call from react
         tablename = request.form.get("tablename")
         datacontent = writeToCSV(tablename)
         return datacontent  
@@ -55,18 +50,18 @@ class ExportClass():
 class TableClass():
     
     @app.route('/tablepage/')
-    def tablepage():
+    def tablepage(): #rendering our table view page
         return render_template('tablepage.html') 
     
     @app.route("/mysqltables/")
-    def mysqltables():
+    def mysqltables(): #retrieving mysqltables for API call from react
         tables = getMySQLTables() 
         return jsonify(
             tables = tables
         )
 
     @app.route('/tableview/', methods = ['POST'])
-    def tableview():       
+    def tableview(): #retrieving table display for API call from react       
         tablename = request.form.get("tablename")        
         tabledata = displayTable(tablename)
 
@@ -86,11 +81,11 @@ class TableClass():
 class ChartClass():
     
     @app.route('/chartpage/')
-    def chartpage():
+    def chartpage(): #rendering our chart page
         return render_template('chartpage.html')
     
     @app.route('/variables/', methods = ['POST'])
-    def variables():
+    def variables(): #retrieving variables for API call from react
         tablename = request.form.get("tablename")           
         variablelist = getVariables(tablename)       
         return jsonify(
@@ -98,7 +93,7 @@ class ChartClass():
         )
 
     @app.route('/scatterplotdata/', methods = ['POST'])
-    def scatterplotdata():
+    def scatterplotdata(): #retrieving mysql data for API call from react
         tablename = request.form.get("selectedtable")  
         tablename2 = request.form.get("selectedtable2")   
 
@@ -118,7 +113,7 @@ class ChartClass():
 class WebCrawlingClass():
 
     @app.route("/webcrawlingpage/")
-    def webcrawlingpage():
+    def webcrawlingpage(): #rendering our web crawling page
         my_url = 'https://www.newegg.com/Product/ProductList.aspx?Submit=ENE&DEPA=0&Order=BESTMATCH&Description=graphic+card&N=-1&isNodeId=1'
         
         #opening up connection, grabbing the page
@@ -138,7 +133,4 @@ class WebCrawlingClass():
             product_name = container.a.img["title"]
             product_names += product_name + " "
             
-        return render_template('webcrawlingpage.html', product_names = product_names)    
-
-if __name__ == '__main__': #this will run only if you run from this file
-    app.run(debug = True)
+        return render_template('webcrawlingpage.html', product_names = product_names)

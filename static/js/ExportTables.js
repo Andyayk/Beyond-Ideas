@@ -17,20 +17,24 @@ class ExportTables extends Component {
       this.select = this.select.bind(this);      
       this.save = this.save.bind(this);
 
-      this.getMySQLTables();
+      this.getMySQLTables(); //retrieving user's uploaded tables
    }
 
+   //retrieving user's uploaded tables
    getMySQLTables() {
       $.getJSON(window.location.origin + "/mysqltables/", (data) => {
          var mySQLTables = "";
          $.each(data, function(key, val) {
             mySQLTables = val;
          });
-
-         this.createOptions(mySQLTables);                     
+         
+         if (mySQLTables.toString().replace(/\s/g, '').length) { //checking data is not empty 
+            this.createOptions(mySQLTables);                     
+         }                 
       });
    }    
 
+   //creating select options for drop down list based on data from flask
    createOptions(data) {
       let options = [];
       var mySQLTables = data.toString().split(",");
@@ -43,12 +47,14 @@ class ExportTables extends Component {
       });
    }   
 
+   //store the table name that the user has selected
    select(event) {
       this.setState({
          selected: event.target.value,
       });
    }
 
+   //retrieving csv export from flask
    save(event) {
       $.post(window.location.origin + "/export/",
       {
@@ -74,6 +80,7 @@ class ExportTables extends Component {
       });        
    }
 
+   //rendering the html for export
    render() {
       return (
          <div>
@@ -82,7 +89,6 @@ class ExportTables extends Component {
                {this.state.options}
             </select>
             <button onClick={this.save}>Save File</button>
-            <br />
             <font color="red">{this.state.error}</font>
          </div>
       );

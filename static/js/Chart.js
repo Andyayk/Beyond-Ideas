@@ -34,20 +34,24 @@ class Chart extends Component {
       this.joinVariable2 = this.joinVariable2.bind(this);    
       this.generateScatterplot = this.generateScatterplot.bind(this);                 
 
-      this.getMySQLTables();
+      this.getMySQLTables(); //retrieving user's uploaded tables
    }
 
-   getMySQLTables() {
+   //retrieving user's uploaded tables
+   getMySQLTables() { 
       $.getJSON(window.location.origin + "/mysqltables/", (data) => {
          var mySQLTables = "";
          $.each(data, function(key, val) {
             mySQLTables = val;
          });
 
-         this.createOptions(mySQLTables);                     
+         if (mySQLTables.toString().replace(/\s/g, '').length) { //checking data is not empty 
+            this.createOptions(mySQLTables);                     
+         }
       });
    }    
 
+   //creating select options for drop down list based on data from flask
    createOptions(data) {
       let options = [];
       var mySQLTables = data.toString().split(",");
@@ -60,6 +64,7 @@ class Chart extends Component {
       });
    }   
 
+   //retrieving variables from flask
    getVariables(event) {
       this.setState({
          selectedtable: event.target.value
@@ -78,6 +83,7 @@ class Chart extends Component {
       });     
    }
 
+   //retrieving variables from flask
    getVariables2(event) {
       this.setState({
          selectedtable2: event.target.value
@@ -96,6 +102,7 @@ class Chart extends Component {
       });   
    }       
 
+   //creating select options for drop down list based on data from flask
    createVariables(data) {
       let variables = [];
       var variablelist = data.toString().split(",");
@@ -108,6 +115,7 @@ class Chart extends Component {
       });
    }    
 
+   //creating select options for drop down list based on data from flask
    createVariables2(data) {
       let variables = [];
       var variablelist = data.toString().split(",");
@@ -120,30 +128,35 @@ class Chart extends Component {
       });
    }     
 
+   //store the variable that the user has selected
    selectVariable(event) {
       this.setState({
          selectedvariable: event.target.value
       });      
    }
 
+   //store the variable that the user has selected
    selectVariable2(event) {
       this.setState({
          selectedvariable2: event.target.value
       });      
    }   
 
+   //store the variable that the user has selected
    joinVariable(event) {
       this.setState({
          joinvariable: event.target.value
       });      
    }
 
+   //store the variable that the user has selected
    joinVariable2(event) {
       this.setState({
          joinvariable2: event.target.value
       });      
    } 
 
+   //retrieving chart data from flask and creating chart using plotly
    generateScatterplot(event) {
       $.post(window.location.origin + "/scatterplotdata/",
       {
@@ -167,7 +180,7 @@ class Chart extends Component {
 
          var twoDArray = [];
 
-         for (var i = 0; i < xarray.length; i++) {
+         for (var i = 0; i < xarray.length; i++) { //2D array needed for regression calculation only
             twoDArray.push([xarray[i], yarray[i]]);
          }
          
@@ -177,8 +190,8 @@ class Chart extends Component {
          var r2 = result.r2;
          var equation = result.string;
 
-         var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; });
-         var r = Correlation.calc(xarray, yarray).toFixed(2);
+         var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; }); //calculating the predicted y values, y = mx+c
+         var r = Correlation.calc(xarray, yarray).toFixed(2); //rounding r to 2 decimal place
 
          var maxY = Math.max(...yarray);
          var minY = Math.min(...yarray);
@@ -222,6 +235,7 @@ class Chart extends Component {
       });    
    }         
 
+   //rendering the html for chart
    render() {
       return (
          <div>

@@ -9,15 +9,16 @@ class TableView extends Component {
       super();
       this.state = {
          options: "",         
-         returnedData: "",
+         table: "",
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
       this.display = this.display.bind(this);
 
-      this.getMySQLTables();
+      this.getMySQLTables(); //retrieving user's uploaded tables
    }
 
+   //retrieving user's uploaded tables
    getMySQLTables() {
       $.getJSON(window.location.origin + "/mysqltables/", (data) => {
          var mySQLTables = "";
@@ -25,10 +26,13 @@ class TableView extends Component {
             mySQLTables = val;
          });
 
-         this.createOptions(mySQLTables);                     
+         if (mySQLTables.toString().replace(/\s/g, '').length) { //checking data is not empty 
+            this.createOptions(mySQLTables);                     
+         }                  
       });
    }    
 
+   //creating select options for drop down list based on data from flask
    createOptions(data) {
       let options = [];
       var mySQLTables = data.toString().split(",");
@@ -41,6 +45,7 @@ class TableView extends Component {
       });
    }   
 
+   //retrieving table display from flask
    display(event) {
       $.post(window.location.origin + "/tableview/",
       {
@@ -48,11 +53,12 @@ class TableView extends Component {
       },
       (data) => {
          this.setState({
-            returnedData: data
+            table: data
          });         
       });        
    }
 
+   //rendering the html for table view
    render() {
       return (
          <div style={{"overflow":"auto", "max-height":"500px"}}>
@@ -61,7 +67,7 @@ class TableView extends Component {
                {this.state.options}
             </select>
             <table border="1">
-               {ReactHtmlParser(this.state.returnedData)}
+               {ReactHtmlParser(this.state.table)}
             </table>
          </div>
       );
