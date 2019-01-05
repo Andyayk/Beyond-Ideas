@@ -135,6 +135,11 @@ class WebCrawlingClass():
             
         return render_template('webcrawlingpage.html', product_names = product_names)
 
+        
+class DiuLei():
+    print("dog")
+
+
 class andy():
 
  @app.route("/andy/")
