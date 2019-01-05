@@ -134,6 +134,33 @@ class WebCrawlingClass():
             product_names += product_name + " "
             
         return render_template('webcrawlingpage.html', product_names = product_names)
+
         
 class DiuLei():
     print("dog")
+
+
+class andy():
+
+ @app.route("/andy/")
+    def andy(): #rendering our web crawling page
+        my_url = 'https://www.newegg.com/Product/ProductList.aspx?Submit=ENE&DEPA=0&Order=BESTMATCH&Description=graphic+card&N=-1&isNodeId=1'
+        
+        #opening up connection, grabbing the page
+        uClient = uReq(my_url)
+        page_html = uClient.read()
+        uClient.close()
+        
+        #format the html page
+        page_soup = soup(page_html, "html.parser")
+        
+        #grabs each product
+        containers = page_soup.findAll("div", {"class":"item-container"})
+        
+        product_names = ""
+        
+        for container in containers:
+            product_name = container.a.img["title"]
+            product_names += product_name + " "
+            
+        return render_template('webcrawlingpage.html', product_names = product_names)
