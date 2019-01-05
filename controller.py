@@ -139,7 +139,7 @@ class WebCrawlingClass():
 class DiuLei():
     print("dog")
 
-class Seksi()
+class Seksi():
     print("poop")
 
 class andy():
