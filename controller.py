@@ -139,6 +139,8 @@ class WebCrawlingClass():
 class DiuLei():
     print("dog")
 
+class Seksi()
+    print("poop")
 
 class andy():
 
