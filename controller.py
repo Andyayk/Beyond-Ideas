@@ -166,3 +166,6 @@ class andy():
             product_names += product_name + " "
             
         return render_template('webcrawlingpage.html', product_names = product_names)
+        
+class BItest():
+    print("bitest")
