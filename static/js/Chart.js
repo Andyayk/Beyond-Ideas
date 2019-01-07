@@ -20,7 +20,11 @@ class Chart extends Component {
          selectedvariable2: "",    
          joinvariable: "",
          joinvariable2: "",  
-         scatterplot: "",                 
+         scatterplot: "",
+         filterstartdate: "",
+         filterenddate: "",    
+         datevariables: "", 
+         datevariables2: "",            
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);    
@@ -32,7 +36,11 @@ class Chart extends Component {
       this.selectVariable2 = this.selectVariable2.bind(this);   
       this.joinVariable = this.joinVariable.bind(this);   
       this.joinVariable2 = this.joinVariable2.bind(this);    
-      this.generateScatterplot = this.generateScatterplot.bind(this);                 
+      this.generateScatterplot = this.generateScatterplot.bind(this);       
+      this.filterStartDate = this.filterStartDate.bind(this);  
+      this.filterEndDate = this.filterEndDate.bind(this); 
+      this.createDateVariables = this.createDateVariables.bind(this); 
+      this.createDateVariables2 = this.createDateVariables2.bind(this);                        
 
       this.getMySQLTables(); //retrieving user's uploaded tables
    }
@@ -75,12 +83,17 @@ class Chart extends Component {
          tablename: event.target.value,
       },
       (data) => {
-         var variablelist = "";
-         $.each(data, function(key, val) {
-            variablelist = val;
-         });         
-         this.createVariables(variablelist);          
-      });     
+         var variablelist = data['variablelist'];
+         var datevariablelist = data['datevariablelist'];
+   
+         if (variablelist.toString().replace(/\s/g, '').length) { //checking data is not empty 
+            this.createVariables(variablelist);  
+         }
+
+         if (datevariablelist.toString().replace(/\s/g, '').length) { //checking data is not empty          
+            this.createDateVariables(datevariablelist);   
+         }    
+      });          
    }
 
    //retrieving variables from flask
@@ -94,11 +107,16 @@ class Chart extends Component {
          tablename: event.target.value,
       },
       (data) => {
-         var variablelist = "";
-         $.each(data, function(key, val) {
-            variablelist = val;
-         });         
-         this.createVariables2(variablelist);        
+         var variablelist = data['variablelist'];
+         var datevariablelist = data['datevariablelist'];
+   
+         if (variablelist.toString().replace(/\s/g, '').length) { //checking data is not empty 
+            this.createVariables2(variablelist);  
+         }
+
+         if (datevariablelist.toString().replace(/\s/g, '').length) { //checking data is not empty          
+            this.createDateVariables2(datevariablelist);   
+         }                        
       });   
    }       
 
@@ -126,7 +144,33 @@ class Chart extends Component {
       this.setState({
          variablesoptions2: variables
       });
+   }    
+
+   //creating select options for drop down list based on date data from flask
+   createDateVariables(data) {
+      let datevariables = [];
+      var datevariablelist = data.toString().split(",");
+      for (let i = 0; i < datevariablelist.length; i++) {
+         datevariables.push(<option value={datevariablelist[i]}>1: {datevariablelist[i]}</option>);
+      };
+
+      this.setState({
+         datevariables: datevariables
+      });
    }     
+
+   //creating select options for drop down list based on date data from flask
+   createDateVariables2(data) {
+      let datevariables = [];
+      var datevariablelist = data.toString().split(",");
+      for (let i = 0; i < datevariablelist.length; i++) {
+         datevariables.push(<option value={datevariablelist[i]}>2: {datevariablelist[i]}</option>);
+      };
+
+      this.setState({
+         datevariables2: datevariables
+      });
+   }      
 
    //store the variable that the user has selected
    selectVariable(event) {
@@ -156,6 +200,20 @@ class Chart extends Component {
       });      
    } 
 
+   //store the start date that the user has selected
+   filterStartDate(event) {
+      this.setState({
+         filterstartdate: event.target.value
+      });      
+   } 
+
+   //store the end date that the user has selected
+   filterEndDate(event) {
+      this.setState({
+         filterenddate: event.target.value
+      });      
+   } 
+
    //retrieving chart data from flask and creating chart using plotly
    generateScatterplot(event) {
       $.post(window.location.origin + "/scatterplotdata/",
@@ -165,7 +223,9 @@ class Chart extends Component {
          selectedvariable: this.state.selectedvariable,
          selectedvariable2: this.state.selectedvariable2,    
          joinvariable: this.state.joinvariable,
-         joinvariable2: this.state.joinvariable2,  
+         joinvariable2: this.state.joinvariable2, 
+         filterstartdate: this.state.filterstartdate,
+         filterenddate: this.state.filterenddate,
       },
       (data) => {
          var xarray = [];
@@ -290,7 +350,26 @@ class Chart extends Component {
                         <option value="" disabled selected>Select a Variable</option>
                         {this.state.variablesoptions2}
                      </select>     
-                     <br /><br />                     
+                     <br /><br /><br /><br /> 
+                     <font size="6"><b>Filter</b></font>
+                     <br /><br />                      
+                     <label for="filterstartdate">Start Date:</label>
+                     <br />                     
+                        <input type="date" name="filterstartdate" onChange={this.filterStartDate} />
+                     <br /><br />                           
+                     <label for="filterenddate">End Date:</label>
+                     <br />                        
+                        <input type="date" name="filterenddate" onChange={this.filterEndDate} />                        
+                     <br /><br />    
+                     <br /><br />   
+                     <label for="filterdatelist">Date Variable:</label>
+                     <br />
+                     <select name="filterdatelist">
+                        <option value="" disabled selected>Select a Variable</option>
+                        {this.state.datevariables}
+                        {this.state.datevariables2}
+                     </select>
+                     <br /><br />
                      <button onClick={this.generateScatterplot}>Generate Scatterplot</button>
                      <br /><br /><br />                
                   </td>

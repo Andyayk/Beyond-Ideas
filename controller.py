@@ -87,9 +87,13 @@ class ChartClass():
     @app.route('/variables/', methods = ['POST'])
     def variables(): #retrieving variables for API call from react
         tablename = request.form.get("tablename")           
-        variablelist = getVariables(tablename)       
+        variablelist = getVariables(tablename)    
+        
+        datevariablelist = getDateVariable(tablename)  
+
         return jsonify(
-            variablelist = variablelist
+            variablelist = variablelist,            
+            datevariablelist = datevariablelist
         )
 
     @app.route('/scatterplotdata/', methods = ['POST'])
@@ -101,9 +105,12 @@ class ChartClass():
         variablenameY = request.form.get("selectedvariable2") 
 
         joinvariable = request.form.get("joinvariable") 
-        joinvariable2 = request.form.get("joinvariable2")                  
+        joinvariable2 = request.form.get("joinvariable2")   
+
+        filterstartdate = request.form.get("filterstartdate")
+        filterenddate = request.form.get("filterenddate")               
         
-        combinedxyarray = tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2)
+        combinedxyarray = tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2, filterstartdate, filterenddate)
 
         return jsonify(
             xarray = combinedxyarray[0],

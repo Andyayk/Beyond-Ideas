@@ -90,7 +90,7 @@ def getVariables(table_name):
     cursor.execute("SELECT * FROM " + table_name + "")
     for col in cursor.description: # add table cols
         cols.append(col[0])   
-    
+
     return cols
 
 #checking something is empty or not
@@ -101,8 +101,8 @@ def is_empty(any_structure):
         return True
 
 #joining tables together
-def tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2):
-    cursor.execute("SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2 WHERE t1." + joinvariable + " = t2." + joinvariable2)    
+def tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2, filterstartdate, filterenddate):
+    cursor.execute("SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2 WHERE t1." + joinvariable + " = t2." + joinvariable2 + " AND t1.ActivityDate BETWEEN '" + filterstartdate + "' AND '" + filterenddate + "'")    
     
     cols = []
     x = []
@@ -126,3 +126,14 @@ def tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable
     combinedxyarray.append(y)
     
     return combinedxyarray
+
+#get date variables only
+def getDateVariable(tablename):
+    cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND DATA_TYPE = 'date'")
+
+    dates = []
+
+    for row_data in cursor: #add table rows
+        dates.append(row_data[0])
+    print(dates)
+    return dates
