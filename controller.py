@@ -110,7 +110,9 @@ class ChartClass():
         filterstartdate = request.form.get("filterstartdate")
         filterenddate = request.form.get("filterenddate")               
         
-        combinedxyarray = tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2, filterstartdate, filterenddate)
+        selecteddatevariable = request.form.get("selecteddatevariable")
+
+        combinedxyarray = tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2, filterstartdate, filterenddate, selecteddatevariable)
 
         return jsonify(
             xarray = combinedxyarray[0],
