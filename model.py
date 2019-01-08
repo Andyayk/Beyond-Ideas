@@ -124,7 +124,7 @@ def tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable
     combinedxyarray = []
     combinedxyarray.append(x)
     combinedxyarray.append(y)
-    
+
     return combinedxyarray
 
 #get date variables only

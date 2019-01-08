@@ -389,12 +389,12 @@ class Chart extends Component {
 
                      <label for="filterstartdate">Start Date:</label>
                      <br />                     
-                        <input type="date" name="filterstartdate" value="2017-01-01" onChange={this.filterStartDate} />
+                        <input type="date" name="filterstartdate" onChange={this.filterStartDate} />
                      <br /><br />     
 
                      <label for="filterenddate">End Date:</label>
                      <br />                        
-                        <input type="date" name="filterenddate" value="2017-02-01" onChange={this.filterEndDate} />                        
+                        <input type="date" name="filterenddate" onChange={this.filterEndDate} />                        
                      <br /><br />
 
                      <button onClick={this.generateScatterplot}>Generate Scatterplot</button>
