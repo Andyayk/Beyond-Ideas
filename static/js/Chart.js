@@ -24,23 +24,33 @@ class Chart extends Component {
          filterstartdate: "",
          filterenddate: "",    
          datevariables: "", 
-         datevariables2: "",            
+         datevariables2: "", 
+         selecteddatevariable: "",           
       };
 
-      this.getMySQLTables = this.getMySQLTables.bind(this);    
+      this.getMySQLTables = this.getMySQLTables.bind(this);
+
       this.getVariables = this.getVariables.bind(this);  
-      this.getVariables2 = this.getVariables2.bind(this);        
+      this.getVariables2 = this.getVariables2.bind(this);
+
       this.createVariables = this.createVariables.bind(this);   
-      this.createVariables2 = this.createVariables2.bind(this);    
+      this.createVariables2 = this.createVariables2.bind(this);  
+
       this.selectVariable = this.selectVariable.bind(this);   
-      this.selectVariable2 = this.selectVariable2.bind(this);   
+      this.selectVariable2 = this.selectVariable2.bind(this);  
+
       this.joinVariable = this.joinVariable.bind(this);   
       this.joinVariable2 = this.joinVariable2.bind(this);    
-      this.generateScatterplot = this.generateScatterplot.bind(this);       
+
+      this.generateScatterplot = this.generateScatterplot.bind(this); 
+
       this.filterStartDate = this.filterStartDate.bind(this);  
       this.filterEndDate = this.filterEndDate.bind(this); 
+
       this.createDateVariables = this.createDateVariables.bind(this); 
-      this.createDateVariables2 = this.createDateVariables2.bind(this);                        
+      this.createDateVariables2 = this.createDateVariables2.bind(this);
+
+      this.selectDateVariable = this.selectDateVariable.bind(this);                        
 
       this.getMySQLTables(); //retrieving user's uploaded tables
    }
@@ -53,19 +63,19 @@ class Chart extends Component {
             mySQLTables = val;
          });
 
-         if (mySQLTables.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            this.createOptions(mySQLTables);                     
-         }
+         this.createOptions(mySQLTables);                     
       });
    }    
 
    //creating select options for drop down list based on data from flask
    createOptions(data) {
       let options = [];
-      var mySQLTables = data.toString().split(",");
-      for (let i = 0; i < mySQLTables.length; i++) {
-         options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
-      };
+      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
+         var mySQLTables = data.toString().split(",");
+         for (let i = 0; i < mySQLTables.length; i++) {
+            options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+         };
+      }
 
       this.setState({
          options: options
@@ -85,14 +95,9 @@ class Chart extends Component {
       (data) => {
          var variablelist = data['variablelist'];
          var datevariablelist = data['datevariablelist'];
-   
-         if (variablelist.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            this.createVariables(variablelist);  
-         }
-
-         if (datevariablelist.toString().replace(/\s/g, '').length) { //checking data is not empty          
-            this.createDateVariables(datevariablelist);   
-         }    
+         
+         this.createVariables(variablelist);       
+         this.createDateVariables(datevariablelist);   
       });          
    }
 
@@ -110,23 +115,20 @@ class Chart extends Component {
          var variablelist = data['variablelist'];
          var datevariablelist = data['datevariablelist'];
    
-         if (variablelist.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            this.createVariables2(variablelist);  
-         }
-
-         if (datevariablelist.toString().replace(/\s/g, '').length) { //checking data is not empty          
-            this.createDateVariables2(datevariablelist);   
-         }                        
+         this.createVariables2(variablelist);         
+         this.createDateVariables2(datevariablelist);                       
       });   
    }       
 
    //creating select options for drop down list based on data from flask
    createVariables(data) {
       let variables = [];
-      var variablelist = data.toString().split(",");
-      for (let i = 0; i < variablelist.length; i++) {
-         variables.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
-      };
+      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
+         var variablelist = data.toString().split(",");
+         for (let i = 0; i < variablelist.length; i++) {
+            variables.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
+         };
+      }
 
       this.setState({
          variablesoptions: variables
@@ -136,10 +138,12 @@ class Chart extends Component {
    //creating select options for drop down list based on data from flask
    createVariables2(data) {
       let variables = [];
-      var variablelist = data.toString().split(",");
-      for (let i = 0; i < variablelist.length; i++) {
-         variables.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
-      };
+      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
+         var variablelist = data.toString().split(",");
+         for (let i = 0; i < variablelist.length; i++) {
+            variables.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
+         };
+      }
 
       this.setState({
          variablesoptions2: variables
@@ -149,10 +153,12 @@ class Chart extends Component {
    //creating select options for drop down list based on date data from flask
    createDateVariables(data) {
       let datevariables = [];
-      var datevariablelist = data.toString().split(",");
-      for (let i = 0; i < datevariablelist.length; i++) {
-         datevariables.push(<option value={datevariablelist[i]}>1: {datevariablelist[i]}</option>);
-      };
+      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
+         var datevariablelist = data.toString().split(",");
+         for (let i = 0; i < datevariablelist.length; i++) {
+            datevariables.push(<option value={"t1."+datevariablelist[i]}>1: {datevariablelist[i]}</option>);
+         };
+      }
 
       this.setState({
          datevariables: datevariables
@@ -162,10 +168,12 @@ class Chart extends Component {
    //creating select options for drop down list based on date data from flask
    createDateVariables2(data) {
       let datevariables = [];
-      var datevariablelist = data.toString().split(",");
-      for (let i = 0; i < datevariablelist.length; i++) {
-         datevariables.push(<option value={datevariablelist[i]}>2: {datevariablelist[i]}</option>);
-      };
+      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
+         var datevariablelist = data.toString().split(",");
+         for (let i = 0; i < datevariablelist.length; i++) {
+            datevariables.push(<option value={"t2."+datevariablelist[i]}>2: {datevariablelist[i]}</option>);
+         };
+      }
 
       this.setState({
          datevariables2: datevariables
@@ -214,6 +222,13 @@ class Chart extends Component {
       });      
    } 
 
+   //store the date variable that the user has selected
+   selectDateVariable(event) {
+      this.setState({
+         selecteddatevariable: event.target.value
+      });      
+   }    
+
    //retrieving chart data from flask and creating chart using plotly
    generateScatterplot(event) {
       $.post(window.location.origin + "/scatterplotdata/",
@@ -226,6 +241,7 @@ class Chart extends Component {
          joinvariable2: this.state.joinvariable2, 
          filterstartdate: this.state.filterstartdate,
          filterenddate: this.state.filterenddate,
+         selecteddatevariable: this.state.selecteddatevariable
       },
       (data) => {
          var xarray = [];
@@ -302,8 +318,8 @@ class Chart extends Component {
             <table style={{"width":"100%"}}>
                <tr>
                   <td style={{"width":"25%"}} valign="top" align="center" bgcolor="white">      
-                     <br />               
-                     <font size="6"><b>Datasources</b></font> 
+                     <br />
+                     <font size="6"><b>Datasources</b></font>
                      <br /><br />                      
                      <label for="tablelist">Data Source 1:</label>
                      <br /> 
@@ -312,13 +328,16 @@ class Chart extends Component {
                         {this.state.options}
                      </select>
                      <br /><br /> 
+                     
                      <label for="tablelist2">Data Source 2:</label>        
                      <br />
                      <select name="tablelist2" onChange={this.getVariables2}>
                         <option value="" disabled selected>Select a Table</option>
                         {this.state.options}
                      </select>  
+                     
                      <br /><br /><br /><br /> 
+
                      <font size="6"><b>Variables</b></font>
                      <br /><br />   
                      <label for="variablelist">Variable (X):</label>
@@ -328,13 +347,16 @@ class Chart extends Component {
                         {this.state.variablesoptions}
                      </select>
                      <br /><br />
+                     
                      <label for="variablelist2">Variable (Y):</label>        
                      <br />
                      <select name="variablelist2" onChange={this.selectVariable2}>
                         <option value="" disabled selected>Select a Variable</option>
                         {this.state.variablesoptions2}
                      </select>     
+                     
                      <br /><br /><br /><br /> 
+                     
                      <font size="6"><b>Join</b></font>
                      <br /><br />   
                      <label for="variablelist3">Joining Variable From Data Source 1:</label>
@@ -344,34 +366,39 @@ class Chart extends Component {
                         {this.state.variablesoptions}
                      </select>
                      <br /><br />
+
                      <label for="variablelist4">Joining Variable From Data Source 2:</label>        
                      <br />
                      <select name="variablelist4" onChange={this.joinVariable2}>
                         <option value="" disabled selected>Select a Variable</option>
                         {this.state.variablesoptions2}
                      </select>     
+
                      <br /><br /><br /><br /> 
+
                      <font size="6"><b>Filter</b></font>
-                     <br /><br />                      
-                     <label for="filterstartdate">Start Date:</label>
-                     <br />                     
-                        <input type="date" name="filterstartdate" onChange={this.filterStartDate} />
-                     <br /><br />                           
-                     <label for="filterenddate">End Date:</label>
-                     <br />                        
-                        <input type="date" name="filterenddate" onChange={this.filterEndDate} />                        
-                     <br /><br />    
                      <br /><br />   
-                     <label for="filterdatelist">Date Variable:</label>
-                     <br />
-                     <select name="filterdatelist">
+                     <label for="filterdatelist">Date Variable:</label> 
+                     <br />    
+                     <select name="filterdatelist" onChange={this.selectDateVariable}>
                         <option value="" disabled selected>Select a Variable</option>
                         {this.state.datevariables}
                         {this.state.datevariables2}
                      </select>
                      <br /><br />
+
+                     <label for="filterstartdate">Start Date:</label>
+                     <br />                     
+                        <input type="date" name="filterstartdate" value="2017-01-01" onChange={this.filterStartDate} />
+                     <br /><br />     
+
+                     <label for="filterenddate">End Date:</label>
+                     <br />                        
+                        <input type="date" name="filterenddate" value="2017-02-01" onChange={this.filterEndDate} />                        
+                     <br /><br />
+
                      <button onClick={this.generateScatterplot}>Generate Scatterplot</button>
-                     <br /><br /><br />                
+                     <br /><br />              
                   </td>
                   <td></td>
                   <td align="center" style={{"width":"74%"}} bgcolor="white">

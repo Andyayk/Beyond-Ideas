@@ -28,19 +28,19 @@ class ExportTables extends Component {
             mySQLTables = val;
          });
          
-         if (mySQLTables.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            this.createOptions(mySQLTables);                     
-         }                 
+         this.createOptions(mySQLTables);                                     
       });
    }    
 
    //creating select options for drop down list based on data from flask
    createOptions(data) {
       let options = [];
-      var mySQLTables = data.toString().split(",");
-      for (let i = 0; i < mySQLTables.length; i++) {
-         options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
-      };
+      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
+         var mySQLTables = data.toString().split(",");
+         for (let i = 0; i < mySQLTables.length; i++) {
+            options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+         };
+      }
 
       this.setState({
          options: options

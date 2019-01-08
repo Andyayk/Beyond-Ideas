@@ -101,8 +101,8 @@ def is_empty(any_structure):
         return True
 
 #joining tables together
-def tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2, filterstartdate, filterenddate):
-    cursor.execute("SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2 WHERE t1." + joinvariable + " = t2." + joinvariable2 + " AND t1.ActivityDate BETWEEN '" + filterstartdate + "' AND '" + filterenddate + "'")    
+def tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2, filterstartdate, filterenddate, selecteddatevariable):
+    cursor.execute("SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2 WHERE t1." + joinvariable + " = t2." + joinvariable2 + " AND " + selecteddatevariable + " BETWEEN '" + filterstartdate + "' AND '" + filterenddate + "'")    
     
     cols = []
     x = []
@@ -135,5 +135,5 @@ def getDateVariable(tablename):
 
     for row_data in cursor: #add table rows
         dates.append(row_data[0])
-    print(dates)
+
     return dates
