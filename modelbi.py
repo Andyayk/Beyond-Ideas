@@ -10,7 +10,7 @@ mydb = mysql.connector.connect(
 cursor = mydb.cursor(buffered=True)    
 
 #upload files into MySQL tables  
-def uploadCSV(filename, filepath):
+def uploadCSVbi(filename, filepath):
     try:
         with open(filepath, "r") as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
@@ -46,7 +46,7 @@ def uploadCSV(filename, filepath):
         return "Upload fail, please upload only csv files"
 
 #get all MySQL tables
-def getMySQLTables():
+def getMySQLTablesbi():
     cursor.execute("USE app")
     cursor.execute("SHOW TABLES")
     tables = []
@@ -55,7 +55,7 @@ def getMySQLTables():
     return tables
 
 #export MySQL tables into CSV format
-def writeToCSV(table_name):
+def writeToCSVbi(table_name):
     try:
         cursor.execute("SELECT * FROM " + table_name + "")
         cols = []
@@ -76,7 +76,7 @@ def writeToCSV(table_name):
         return "Something is wrong with writeToCSV method"
     
 #display table    
-def displayTable(table_name):
+def displayTablebi(table_name):
     try:
         cursor.execute("SELECT * FROM `" + table_name + "`")
         return cursor
@@ -84,7 +84,7 @@ def displayTable(table_name):
         return "Something is wrong with displayTable method"
     
 #get selected variables data
-def getVariables(table_name):
+def getVariablesbi(table_name):
     cols = []
     
     cursor.execute("SELECT * FROM " + table_name + "")
@@ -94,14 +94,14 @@ def getVariables(table_name):
     return cols
 
 #checking something is empty or not
-def is_empty(any_structure):
+def is_emptybi(any_structure):
     if any_structure:
         return False
     else:
         return True
 
 #joining tables together
-def tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2, filterstartdate, filterenddate, selecteddatevariable):
+def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2, filterstartdate, filterenddate, selecteddatevariable):
     cursor.execute("SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2 WHERE t1." + joinvariable + " = t2." + joinvariable2 + " AND " + selecteddatevariable + " BETWEEN '" + filterstartdate + "' AND '" + filterenddate + "'")    
     
     cols = []
@@ -111,12 +111,12 @@ def tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable
         cols.append(col[0])    
     
     for row_data in cursor: #add table rows
-        if is_empty(row_data[0]):
+        if is_emptybi(row_data[0]):
             x.append(0)
         else: 
             x.append(row_data[0])
         
-        if is_empty(row_data[1]):    
+        if is_emptybi(row_data[1]):    
             y.append(0)
         else:             
             y.append(row_data[1])
@@ -128,7 +128,7 @@ def tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable
     return combinedxyarray
 
 #get date variables only
-def getDateVariable(tablename):
+def getDateVariablebi(tablename):
     cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND DATA_TYPE = 'date'")
 
     dates = []
