@@ -4,7 +4,7 @@ import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from
 
 var $ = require('jquery');
 
-class TableView extends Component {  
+class TableViewbi extends Component {  
    constructor() {
       super();
       this.state = {
@@ -20,7 +20,7 @@ class TableView extends Component {
 
    //retrieving user's uploaded tables
    getMySQLTables() {
-      $.getJSON(window.location.origin + "/mysqltables/", (data) => {
+      $.getJSON(window.location.origin + "/mysqltablesbi/", (data) => {
          var mySQLTables = "";
          $.each(data, function(key, val) {
             mySQLTables = val;
@@ -47,7 +47,7 @@ class TableView extends Component {
 
    //retrieving table display from flask
    display(event) {
-      $.post(window.location.origin + "/tableview/",
+      $.post(window.location.origin + "/tableviewbi/",
       {
          tablename: event.target.value,
       },
@@ -73,4 +73,4 @@ class TableView extends Component {
       );
    }
 }
-export default TableView;
+export default TableViewbi;

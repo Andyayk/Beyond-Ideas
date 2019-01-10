@@ -7,7 +7,7 @@ import Correlation from 'node-correlation';
 
 var $ = require('jquery');
 
-class Chart extends Component {  
+class Chartbi extends Component {  
    constructor() {
       super();
       this.state = {
@@ -57,7 +57,7 @@ class Chart extends Component {
 
    //retrieving user's uploaded tables
    getMySQLTables() { 
-      $.getJSON(window.location.origin + "/mysqltables/", (data) => {
+      $.getJSON(window.location.origin + "/mysqltablesbi/", (data) => {
          var mySQLTables = "";
          $.each(data, function(key, val) {
             mySQLTables = val;
@@ -88,7 +88,7 @@ class Chart extends Component {
          selectedtable: event.target.value
       });
 
-      $.post(window.location.origin + "/variables/",
+      $.post(window.location.origin + "/variablesbi/",
       {
          tablename: event.target.value,
       },
@@ -107,7 +107,7 @@ class Chart extends Component {
          selectedtable2: event.target.value
       });
 
-      $.post(window.location.origin + "/variables/",
+      $.post(window.location.origin + "/variablesbi/",
       {
          tablename: event.target.value,
       },
@@ -231,7 +231,7 @@ class Chart extends Component {
 
    //retrieving chart data from flask and creating chart using plotly
    generateScatterplot(event) {
-      $.post(window.location.origin + "/scatterplotdata/",
+      $.post(window.location.origin + "/scatterplotdatabi/",
       {
          selectedtable: this.state.selectedtable,
          selectedtable2: this.state.selectedtable2,            
@@ -410,4 +410,4 @@ class Chart extends Component {
       );
    }
 }
-export default Chart;
+export default Chartbi;

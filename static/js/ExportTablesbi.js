@@ -4,7 +4,7 @@ import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from
 
 var $ = require('jquery');
 
-class ExportTables extends Component {  
+class ExportTablesbi extends Component {  
    constructor() {
       super();
       this.state = {
@@ -22,7 +22,7 @@ class ExportTables extends Component {
 
    //retrieving user's uploaded tables
    getMySQLTables() {
-      $.getJSON(window.location.origin + "/mysqltables/", (data) => {
+      $.getJSON(window.location.origin + "/mysqltablesbi/", (data) => {
          var mySQLTables = "";
          $.each(data, function(key, val) {
             mySQLTables = val;
@@ -56,7 +56,7 @@ class ExportTables extends Component {
 
    //retrieving csv export from flask
    save(event) {
-      $.post(window.location.origin + "/export/",
+      $.post(window.location.origin + "/exportbi/",
       {
          tablename: this.state.selected,
       },
@@ -94,4 +94,4 @@ class ExportTables extends Component {
       );
    }
 }
-export default ExportTables;
+export default ExportTablesbi;
