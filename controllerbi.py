@@ -1,6 +1,6 @@
 import os
 
-from model import *
+from modelbi import *
 from flask import Flask, render_template, request, jsonify
 from urllib.request import urlopen as uReq #for crawling
 from bs4 import BeautifulSoup as soup #for crawling
@@ -11,59 +11,59 @@ app = Flask(__name__, static_folder="./dist", template_folder="./static") #defin
 UPLOAD_FOLDER = os.getcwd() + '\\static\\uploads' #setting a path to our upload folder
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-class HomeClass():
+class HomeClassbi():
 
     @app.route("/")
-    @app.route("/home/")
+    @app.route("/homebi/")
     def home(): #rendering our home page
-        return render_template('home.html')
+        return render_template('homebi.html')
 
-class UploadClass():
+class UploadClassbi():
     
-    @app.route('/uploadpage/')
-    def uploadpage(): #rendering our upload page
-        return render_template('uploadpage.html')   
+    @app.route('/uploadpagebi/')
+    def uploadpagebi(): #rendering our upload page
+        return render_template('uploadpagebi.html')   
     
-    @app.route('/upload/', methods = ['POST'])    
-    def upload(): #processing our upload
+    @app.route('/uploadbi/', methods = ['POST'])    
+    def uploadbi(): #processing our upload
         file = request.files['inputFile']
         if file:
             filename = secure_filename(file.filename)
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(path)            
-            message =  uploadCSV(file.filename, path) 
+            message =  uploadCSVbi(file.filename, path) 
             os.remove(path)
-        return render_template('uploadsuccesspage.html', message = message)   
+        return render_template('uploadsuccesspagebi.html', message = message)   
 
-class ExportClass():
+class ExportClassbi():
     
-    @app.route('/exportpage/')
-    def exportpage(): #rendering our export page
-        return render_template('exportpage.html')  
+    @app.route('/exportpagebi/')
+    def exportpagebi(): #rendering our export page
+        return render_template('exportpagebi.html')  
     
-    @app.route('/export/', methods = ['POST'])    
-    def export(): #processing export for API call from react
+    @app.route('/exportbi/', methods = ['POST'])    
+    def exportbi(): #processing export for API call from react
         tablename = request.form.get("tablename")
-        datacontent = writeToCSV(tablename)
+        datacontent = writeToCSVbi(tablename)
         return datacontent  
 
-class TableClass():
+class TableClassbi():
     
-    @app.route('/tablepage/')
-    def tablepage(): #rendering our table view page
-        return render_template('tablepage.html') 
+    @app.route('/tablepagebi/')
+    def tablepagebi(): #rendering our table view page
+        return render_template('tablepagebi.html') 
     
-    @app.route("/mysqltables/")
-    def mysqltables(): #retrieving mysqltables for API call from react
-        tables = getMySQLTables() 
+    @app.route("/mysqltablesbi/")
+    def mysqltablesbi(): #retrieving mysqltables for API call from react
+        tables = getMySQLTablesbi() 
         return jsonify(
             tables = tables
         )
 
-    @app.route('/tableview/', methods = ['POST'])
-    def tableview(): #retrieving table display for API call from react       
+    @app.route('/tableviewbi/', methods = ['POST'])
+    def tableviewbi(): #retrieving table display for API call from react       
         tablename = request.form.get("tablename")        
-        tabledata = displayTable(tablename)
+        tabledata = displayTablebi(tablename)
 
         table = ""
 
@@ -78,22 +78,26 @@ class TableClass():
 
         return table
 
-class ChartClass():
+class ChartClassbi():
     
-    @app.route('/chartpage/')
-    def chartpage(): #rendering our chart page
-        return render_template('chartpage.html')
+    @app.route('/chartpagebi/')
+    def chartpagebi(): #rendering our chart page
+        return render_template('chartpagebi.html')
     
-    @app.route('/variables/', methods = ['POST'])
-    def variables(): #retrieving variables for API call from react
+    @app.route('/variablesbi/', methods = ['POST'])
+    def variablesbi(): #retrieving variables for API call from react
         tablename = request.form.get("tablename")           
-        variablelist = getVariables(tablename)       
+        variablelist = getVariablesbi(tablename)    
+        
+        datevariablelist = getDateVariablebi(tablename)  
+
         return jsonify(
-            variablelist = variablelist
+            variablelist = variablelist,            
+            datevariablelist = datevariablelist
         )
 
-    @app.route('/scatterplotdata/', methods = ['POST'])
-    def scatterplotdata(): #retrieving mysql data for API call from react
+    @app.route('/scatterplotdatabi/', methods = ['POST'])
+    def scatterplotdatabi(): #retrieving mysql data for API call from react
         tablename = request.form.get("selectedtable")  
         tablename2 = request.form.get("selectedtable2")   
 
@@ -101,19 +105,24 @@ class ChartClass():
         variablenameY = request.form.get("selectedvariable2") 
 
         joinvariable = request.form.get("joinvariable") 
-        joinvariable2 = request.form.get("joinvariable2")                  
+        joinvariable2 = request.form.get("joinvariable2")   
+
+        filterstartdate = request.form.get("filterstartdate")
+        filterenddate = request.form.get("filterenddate")               
         
-        combinedxyarray = tablesJoin(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2)
+        selecteddatevariable = request.form.get("selecteddatevariable")
+
+        combinedxyarray = tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2, filterstartdate, filterenddate, selecteddatevariable)
 
         return jsonify(
             xarray = combinedxyarray[0],
             yarray = combinedxyarray[1]
         )
     
-class WebCrawlingClass():
+class WebCrawlingClassbi():
 
-    @app.route("/webcrawlingpage/")
-    def webcrawlingpage(): #rendering our web crawling page
+    @app.route("/webcrawlingpagebi/")
+    def webcrawlingpagebi(): #rendering our web crawling page
         my_url = 'https://www.newegg.com/Product/ProductList.aspx?Submit=ENE&DEPA=0&Order=BESTMATCH&Description=graphic+card&N=-1&isNodeId=1'
         
         #opening up connection, grabbing the page
@@ -133,6 +142,6 @@ class WebCrawlingClass():
             product_name = container.a.img["title"]
             product_names += product_name + " "
             
-        return render_template('webcrawlingpage.html', product_names = product_names)
+        return render_template('webcrawlingpagebi.html', product_names = product_names)
 
         

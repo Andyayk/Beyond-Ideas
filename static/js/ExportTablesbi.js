@@ -4,7 +4,7 @@ import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from
 
 var $ = require('jquery');
 
-class ExportTables extends Component {  
+class ExportTablesbi extends Component {  
    constructor() {
       super();
       this.state = {
@@ -22,25 +22,25 @@ class ExportTables extends Component {
 
    //retrieving user's uploaded tables
    getMySQLTables() {
-      $.getJSON(window.location.origin + "/mysqltables/", (data) => {
+      $.getJSON(window.location.origin + "/mysqltablesbi/", (data) => {
          var mySQLTables = "";
          $.each(data, function(key, val) {
             mySQLTables = val;
          });
          
-         if (mySQLTables.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            this.createOptions(mySQLTables);                     
-         }                 
+         this.createOptions(mySQLTables);                                     
       });
    }    
 
    //creating select options for drop down list based on data from flask
    createOptions(data) {
       let options = [];
-      var mySQLTables = data.toString().split(",");
-      for (let i = 0; i < mySQLTables.length; i++) {
-         options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
-      };
+      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
+         var mySQLTables = data.toString().split(",");
+         for (let i = 0; i < mySQLTables.length; i++) {
+            options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+         };
+      }
 
       this.setState({
          options: options
@@ -56,7 +56,7 @@ class ExportTables extends Component {
 
    //retrieving csv export from flask
    save(event) {
-      $.post(window.location.origin + "/export/",
+      $.post(window.location.origin + "/exportbi/",
       {
          tablename: this.state.selected,
       },
@@ -94,4 +94,4 @@ class ExportTables extends Component {
       );
    }
 }
-export default ExportTables;
+export default ExportTablesbi;

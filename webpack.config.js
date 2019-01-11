@@ -47,13 +47,16 @@ const config = {
     ]
   },
   plugins: [
-    new ExtractTextPlugin('styles.css'),
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': 'production' 
+        // This has effect on the react lib size
+        'NODE_ENV': JSON.stringify('production'),
       }
-    }),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+    }),  
+    new ExtractTextPlugin('styles.css', {allChunks: false}),
+    new webpack.optimize.AggressiveMergingPlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(), 
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)  
   ]
 };
 module.exports = config

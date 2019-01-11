@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
-import TableView from './TableView';
-import ExportTables from './ExportTables';
-import Chart from './Chart';
+import TableViewbi from './TableViewbi';
+import ExportTablesbi from './ExportTablesbi';
+import Chartbi from './Chartbi';
 
 require('../main.css');
 
-const tableview = document.getElementById('tableview');
-if (tableview) {
-   ReactDOM.render(<TableView />, tableview);
+const tableviewbi = document.getElementById('tableviewbi');
+if (tableviewbi) {
+   ReactDOM.render(<TableViewbi />, tableviewbi);
 }
 
-const exporttables = document.getElementById('exporttables');
-if (exporttables) {
-   ReactDOM.render(<ExportTables />, exporttables);
+const exporttablesbi = document.getElementById('exporttablesbi');
+if (exporttablesbi) {
+   ReactDOM.render(<ExportTablesbi />, exporttablesbi);
 }
 
-const chart = document.getElementById('chart');
-if (chart) {
-   ReactDOM.render(<Chart />, chart);
+const chartbi = document.getElementById('chartbi');
+if (chartbi) {
+   ReactDOM.render(<Chartbi />, chartbi);
 }

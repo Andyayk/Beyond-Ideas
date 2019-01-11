@@ -4,7 +4,7 @@ import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from
 
 var $ = require('jquery');
 
-class TableView extends Component {  
+class TableViewbi extends Component {  
    constructor() {
       super();
       this.state = {
@@ -20,25 +20,25 @@ class TableView extends Component {
 
    //retrieving user's uploaded tables
    getMySQLTables() {
-      $.getJSON(window.location.origin + "/mysqltables/", (data) => {
+      $.getJSON(window.location.origin + "/mysqltablesbi/", (data) => {
          var mySQLTables = "";
          $.each(data, function(key, val) {
             mySQLTables = val;
          });
 
-         if (mySQLTables.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            this.createOptions(mySQLTables);                     
-         }                  
+         this.createOptions(mySQLTables);                                       
       });
    }    
 
    //creating select options for drop down list based on data from flask
    createOptions(data) {
       let options = [];
-      var mySQLTables = data.toString().split(",");
-      for (let i = 0; i < mySQLTables.length; i++) {
-         options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
-      };
+      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
+         var mySQLTables = data.toString().split(",");
+         for (let i = 0; i < mySQLTables.length; i++) {
+            options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+         };
+      }
 
       this.setState({
          options: options
@@ -47,7 +47,7 @@ class TableView extends Component {
 
    //retrieving table display from flask
    display(event) {
-      $.post(window.location.origin + "/tableview/",
+      $.post(window.location.origin + "/tableviewbi/",
       {
          tablename: event.target.value,
       },
@@ -73,4 +73,4 @@ class TableView extends Component {
       );
    }
 }
-export default TableView;
+export default TableViewbi;
