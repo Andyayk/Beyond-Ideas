@@ -61,15 +61,36 @@ class TableViewbi extends Component {
    //rendering the html for table view
    render() {
       return (
-         <div style={{"overflow":"auto", "max-height":"500px"}}>
-            <select onChange={this.display}>
-               <option value="" disabled selected>Select a Table to View</option>
-               {this.state.options}
-            </select>
-            <table border="1">
-               {ReactHtmlParser(this.state.table)}
-            </table>
-         </div>
+		<table>
+			<tr>
+				<td style="width:50%; left:0; position:relative;">
+					<h3>First Table</h3>
+				</td>
+				<td style="width:50%; right:0; position:relative;">
+					<h3>Second Table</h3>
+				</td>
+			</tr>
+			<tr>
+				<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative"}}>
+					<select onChange={this.display}>
+					   <option value="" disabled selected>Select a Table to View</option>
+					   {this.state.options}
+					</select>
+					<table border="1">
+					   {ReactHtmlParser(this.state.table)}
+					</table>
+				</td>
+				<td style={{"overflow":"auto", "max-height":"500px", "right":"0px", "position":"relative"}}>
+					<select onChange={this.display}>
+					   <option value="" disabled selected>Select a Table to View</option>
+					   {this.state.options}
+					</select>
+					<table border="1">
+					   {ReactHtmlParser(this.state.table)}
+					</table>
+				</td>
+			 </tr>
+		 </table>
       );
    }
 }
