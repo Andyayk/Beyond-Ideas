@@ -55,11 +55,11 @@ class TableViewbi extends Component {
       },
       (data) => {
          this.setState({
-            table: data
+            table: data,
          });         
       });        
    }
-
+	
    //retrieving table display from flask
    display2(event) {
       $.post(window.location.origin + "/tableviewbi/",
@@ -68,46 +68,71 @@ class TableViewbi extends Component {
       },
       (data) => {
          this.setState({
-            table2: data
+            table2: data,
          });         
       });        
    }   
-
+   
+   //retrieving csv export from flask
+   save(event) {
+      $.post(window.location.origin + "/tableviewbi/",
+      (data) => {  
+         if(data == "Something is wrong with writeToCSV method") {
+            this.setState({
+               error: "Please Select a Table",
+            });
+         } else {
+            var element = document.createElement('a');
+            var newContent = data.replace(/;/g, "\n")
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
+            element.setAttribute('download', this.state.tablename + ".csv");
+             
+            element.style.display = 'none';
+            document.body.appendChild(element);
+             
+            element.click();
+            document.body.removeChild(element); 
+         }              
+      });        
+   }
    //rendering the html for table view
    render() {
       return (
-   		<table>
-   			<tr>
-   				<td style={{"width":"50%", "left":"0px", "position":"relative"}}>
-   					<h3>First Table</h3>
-                  
-                  <select onChange={this.display}>
-                     <option value="" disabled selected>Select a Table to View</option>
-                     {this.state.options}
-                  </select>                     
-   				</td>
-   				<td style={{"width":"50%", "right":"0px", "position":"relative"}}>
-   					<h3>Second Table</h3>
+		<div>
+			<table>
+				<tr>
+					<td style={{"width":"50%", "left":"0px", "position":"relative"}}>
+						<h3>First Table</h3>
+					  
+					  <select onChange={this.display}>
+						 <option value="" disabled selected>Select a Table to View</option>
+						 {this.state.options}
+					  </select>                     
+					</td>
+					<td style={{"width":"50%", "right":"0px", "position":"relative"}}>
+						<h3>Second Table</h3>
 
-                  <select onChange={this.display2}>
-                     <option value="" disabled selected>Select a Table to View</option>
-                     {this.state.options}
-                  </select>                  
-   				</td>
-   			</tr>
-   			<tr>
-   				<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative"}}>
-   					<table border="1">
-   					   {ReactHtmlParser(this.state.table)}
-   					</table>
-   				</td>
-   				<td style={{"overflow":"auto", "max-height":"500px", "right":"0px", "position":"relative"}}>
-   					<table border="1">
-   					   {ReactHtmlParser(this.state.table2)}
-   					</table>
-   				</td>
-   			</tr>
-   		</table>
+					  <select onChange={this.display2}>
+						 <option value="" disabled selected>Select a Table to View</option>
+						 {this.state.options}
+					  </select>                  
+					</td>
+				</tr>
+				<button onClick={this.save}>Save Joined File</button>
+				<tr>
+					<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative"}}>
+						<table border="1">
+						   {ReactHtmlParser(this.state.table)}
+						</table>
+					</td>
+					<td style={{"overflow":"auto", "max-height":"500px", "right":"0px", "position":"relative"}}>
+						<table border="1">
+						   {ReactHtmlParser(this.state.table2)}
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
       );
    }
 }
