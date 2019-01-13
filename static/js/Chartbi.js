@@ -4,6 +4,7 @@ import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from
 import Plot from 'react-plotly.js';
 import regression from 'regression';
 import Correlation from 'node-correlation';
+import SpearmanRHO from 'spearman-rho';
 
 var $ = require('jquery');
 
@@ -272,7 +273,12 @@ class Chartbi extends Component {
          var maxY = Math.max(...yarray);
          var minY = Math.min(...yarray);
 
-         this.setState({
+         var spearmanrho = new SpearmanRHO(xarray, yarray);
+
+         spearmanrho.calc()
+           .then(rho =>
+
+            this.setState({
             scatterplot: <Plot data={[{
                            x: xarray,
                            y: yarray,
@@ -291,7 +297,7 @@ class Chartbi extends Component {
                            layout={{
                               width: 1000, 
                               height: 900, 
-                              title: '<b>Correlation between ' + this.state.selectedvariable + ' and ' + this.state.selectedvariable2 + '</b><br>R: ' + r + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
+                              title: '<b>Correlation between ' + this.state.selectedvariable + ' and ' + this.state.selectedvariable2 + '</b><br>R: ' + r + ', Rho: ' + rho.toFixed(2) + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
                               hovermode: 'closest',
                               xaxis: {
                                  title: this.state.selectedvariable,
@@ -306,8 +312,9 @@ class Chartbi extends Component {
                                  gridwidth: 2,
                               }                          
                            }}
-                        />   
-         });       
+                        />               
+            }))
+           .catch(err => console.error(err));       
       });    
    }         
 
@@ -321,7 +328,7 @@ class Chartbi extends Component {
                      <br />
                      <font size="6"><b>Datasources</b></font>
                      <br /><br />                      
-                     <label for="tablelist">Data Source 1:</label>
+                     <label for="tablelist">Data Source 1 (X):</label>
                      <br /> 
                      <select name="tablelist" onChange={this.getVariables}>
                         <option value="" disabled selected>Select a Table</option>
@@ -329,7 +336,7 @@ class Chartbi extends Component {
                      </select>
                      <br /><br /> 
                      
-                     <label for="tablelist2">Data Source 2:</label>        
+                     <label for="tablelist2">Data Source 2 (Y):</label>        
                      <br />
                      <select name="tablelist2" onChange={this.getVariables2}>
                         <option value="" disabled selected>Select a Table</option>
