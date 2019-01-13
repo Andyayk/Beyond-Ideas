@@ -10,10 +10,12 @@ class TableViewbi extends Component {
       this.state = {
          options: "",         
          table: "",
+         table2: "",
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
       this.display = this.display.bind(this);
+      this.display2 = this.display2.bind(this);      
 
       this.getMySQLTables(); //retrieving user's uploaded tables
    }
@@ -58,39 +60,54 @@ class TableViewbi extends Component {
       });        
    }
 
+   //retrieving table display from flask
+   display2(event) {
+      $.post(window.location.origin + "/tableviewbi/",
+      {
+         tablename: event.target.value,
+      },
+      (data) => {
+         this.setState({
+            table2: data
+         });         
+      });        
+   }   
+
    //rendering the html for table view
    render() {
       return (
-		<table>
-			<tr>
-				<td style="width:50%; left:0; position:relative;">
-					<h3>First Table</h3>
-				</td>
-				<td style="width:50%; right:0; position:relative;">
-					<h3>Second Table</h3>
-				</td>
-			</tr>
-			<tr>
-				<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative"}}>
-					<select onChange={this.display}>
-					   <option value="" disabled selected>Select a Table to View</option>
-					   {this.state.options}
-					</select>
-					<table border="1">
-					   {ReactHtmlParser(this.state.table)}
-					</table>
-				</td>
-				<td style={{"overflow":"auto", "max-height":"500px", "right":"0px", "position":"relative"}}>
-					<select onChange={this.display}>
-					   <option value="" disabled selected>Select a Table to View</option>
-					   {this.state.options}
-					</select>
-					<table border="1">
-					   {ReactHtmlParser(this.state.table)}
-					</table>
-				</td>
-			 </tr>
-		 </table>
+   		<table>
+   			<tr>
+   				<td style={{"width":"50%", "left":"0px", "position":"relative"}}>
+   					<h3>First Table</h3>
+                  
+                  <select onChange={this.display}>
+                     <option value="" disabled selected>Select a Table to View</option>
+                     {this.state.options}
+                  </select>                     
+   				</td>
+   				<td style={{"width":"50%", "right":"0px", "position":"relative"}}>
+   					<h3>Second Table</h3>
+
+                  <select onChange={this.display2}>
+                     <option value="" disabled selected>Select a Table to View</option>
+                     {this.state.options}
+                  </select>                  
+   				</td>
+   			</tr>
+   			<tr>
+   				<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative"}}>
+   					<table border="1">
+   					   {ReactHtmlParser(this.state.table)}
+   					</table>
+   				</td>
+   				<td style={{"overflow":"auto", "max-height":"500px", "right":"0px", "position":"relative"}}>
+   					<table border="1">
+   					   {ReactHtmlParser(this.state.table2)}
+   					</table>
+   				</td>
+   			</tr>
+   		</table>
       );
    }
 }
