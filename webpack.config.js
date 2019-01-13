@@ -1,6 +1,5 @@
 const webpack = require("webpack");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const config = {
   entry: __dirname + '/static/js/index.js',
@@ -10,16 +9,7 @@ const config = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.css']
-  },
-  optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-        test: /\.js(\?.*)?$/i,
-        cache: true,
-        parallel: true
-      })
-    ]
-  },   
+  },  
   module: {
     rules: [
       {
