@@ -34,7 +34,10 @@ class UploadClassbi():
             file.save(path)            
             message =  uploadCSVbi(file.filename, path) 
             os.remove(path)
-        return render_template('uploadsuccesspagebi.html', message = message)   
+        if "fail" not in message:
+            return render_template('uploadsuccesspagebi.html', message = message)
+        else:
+            return render_template('uploadfailpagebi.html', message = message)
 
 class ExportClassbi():
     
