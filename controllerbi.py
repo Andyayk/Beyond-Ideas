@@ -6,6 +6,7 @@ from urllib.request import urlopen as uReq #for crawling
 from bs4 import BeautifulSoup as soup #for crawling
 from werkzeug.utils import secure_filename #for uploading
 from array import array
+import datetime
 
 app = Flask(__name__, static_folder="./dist", template_folder="./static") #defining how flask find our html, css and javascript
 UPLOAD_FOLDER = os.getcwd() + '\\static\\uploads' #setting a path to our upload folder
@@ -66,13 +67,17 @@ class TableClassbi():
         tabledata = displayTablebi(tablename)
 
         table = ""
-
+		
         for col in tabledata.description:
             table += "<th style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col[0] + "</center></th>"
 
         for item in tabledata:
             table += "<tr>"
             for col in item:
+			
+                if isinstance(col, datetime.date):
+                    col = col.strftime('%d/%m/%Y')
+					
                 table += "<td style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col + "</center></td>"
             table += "</tr>"
 
