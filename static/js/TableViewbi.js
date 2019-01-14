@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
+import "../main";
+
 var $ = require('jquery');
 
 class TableViewbi extends Component {  
@@ -133,7 +135,7 @@ class TableViewbi extends Component {
 					  </select>                  
 					</td>
 				</tr>
-				<button onClick={this.save}>Save Joined File</button>
+				<button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save Joined Files</span></button>
 				<tr>
 					<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative"}}>
 						<table border="1">
