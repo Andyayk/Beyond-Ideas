@@ -1,3 +1,9 @@
+"""
+
+@author: Beyond Ideas 
+
+"""
+
 import os
 
 from modelbi import *
@@ -13,20 +19,33 @@ UPLOAD_FOLDER = os.getcwd() + '\\static\\uploads' #setting a path to our upload 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 class HomeClassbi():
-
+    """
+        This is the home page
+    """
     @app.route("/")
     @app.route("/homebi/")
     def home(): #rendering our home page
+        """
+            This method will render our home page
+        """
         return render_template('homebi.html')
 
 class UploadClassbi():
-    
+    """
+        This is the upload page
+    """    
     @app.route('/uploadpagebi/')
     def uploadpagebi(): #rendering our upload page
+        """
+            This method will render our upload page
+        """    
         return render_template('uploadpagebi.html')   
     
     @app.route('/uploadbi/', methods = ['POST'])    
     def uploadbi(): #processing our upload
+        """
+            This method will process our upload
+        """        
         file = request.files['inputFile']
         if file:
             filename = secure_filename(file.filename)
@@ -40,32 +59,51 @@ class UploadClassbi():
             return render_template('uploadfailpagebi.html', message = message)
 
 class ExportClassbi():
-    
+    """
+        This is the export page
+    """      
     @app.route('/exportpagebi/')
     def exportpagebi(): #rendering our export page
+        """
+            This method will render our export page
+        """      
         return render_template('exportpagebi.html')  
     
     @app.route('/exportbi/', methods = ['POST'])    
     def exportbi(): #processing export for API call from react
+        """
+            This method will process our export for API call from react
+        """      
         tablename = request.form.get("tablename")
         datacontent = writeToCSVbi(tablename)
         return datacontent  
 
 class TableClassbi():
-    
+    """
+        This is the table view page
+    """      
     @app.route('/tablepagebi/')
     def tablepagebi(): #rendering our table view page
+        """
+            This method will render our table view page
+        """      
         return render_template('tablepagebi.html') 
     
     @app.route("/mysqltablesbi/")
     def mysqltablesbi(): #retrieving mysqltables for API call from react
+        """
+            This method will retrieve mysqltables for API call from react
+        """       
         tables = getMySQLTablesbi() 
         return jsonify(
             tables = tables
         )
 
     @app.route('/tableviewbi/', methods = ['POST'])
-    def tableviewbi(): #retrieving table display for API call from react       
+    def tableviewbi(): #retrieving table display for API call from react      
+        """
+            This method will retrieve table display for API call from react 
+        """           
         tablename = request.form.get("tablename")        
         tabledata = displayTablebi(tablename)
 
@@ -88,18 +126,29 @@ class TableClassbi():
 		
     @app.route('/exporttableviewbi/', methods = ['POST'])
     def exporttableviewbi(): #processing export for API call from react
+        """
+            This method will process export for API call from react
+        """          
         tablename = request.form.get("tablename")
         datacontent = writeToCSVbi(tablename)
         return datacontent
 
 class ChartClassbi():
-    
+    """
+        This is the chart page
+    """      
     @app.route('/chartpagebi/')
     def chartpagebi(): #rendering our chart page
+        """
+            This method will render our chart page
+        """      
         return render_template('chartpagebi.html')
     
     @app.route('/variablesbi/', methods = ['POST'])
     def variablesbi(): #retrieving variables for API call from react
+        """
+            This method will retrieve variables for API call from react
+        """     
         tablename = request.form.get("tablename")           
         variablelist = getVariablesbi(tablename)    
         
@@ -112,6 +161,9 @@ class ChartClassbi():
 
     @app.route('/scatterplotdatabi/', methods = ['POST'])
     def scatterplotdatabi(): #retrieving mysql data for API call from react
+        """
+            This method will retrieve mysql data for API call from react
+        """     
         tablename = request.form.get("selectedtable")  
         tablename2 = request.form.get("selectedtable2")   
 
@@ -134,9 +186,14 @@ class ChartClassbi():
         )
     
 class WebCrawlingClassbi():
-
+    """
+        This is the web crawling page
+    """ 
     @app.route("/webcrawlingpagebi/")
     def webcrawlingpagebi(): #rendering our web crawling page
+        """
+            This method will render our web crawling page
+        """      
         my_url = 'https://www.newegg.com/Product/ProductList.aspx?Submit=ENE&DEPA=0&Order=BESTMATCH&Description=graphic+card&N=-1&isNodeId=1'
         
         #opening up connection, grabbing the page

@@ -1,3 +1,9 @@
+"""
+
+@author: Beyond Ideas 
+
+"""
+
 import mysql.connector, csv
 
 #MySQL Configurations
@@ -9,8 +15,10 @@ mydb = mysql.connector.connect(
 )
 cursor = mydb.cursor(buffered=True)    
 
-#upload files into MySQL tables  
 def uploadCSVbi(filename, filepath):
+    """
+        This method will upload files into MySQL tables  
+    """
     try:
         with open(filepath, "r") as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
@@ -45,8 +53,10 @@ def uploadCSVbi(filename, filepath):
     except Exception as e:
         return "Upload fail, please upload only csv files"
 
-#get all MySQL tables
 def getMySQLTablesbi():
+    """
+        This method will get all MySQL tables
+    """    
     cursor.execute("USE app")
     cursor.execute("SHOW TABLES")
     tables = []
@@ -54,8 +64,10 @@ def getMySQLTablesbi():
         tables.append(table_name)
     return tables
 
-#export MySQL tables into CSV format
 def writeToCSVbi(table_name):
+    """
+        This method will export MySQL tables into CSV format
+    """        
     try:
         cursor.execute("SELECT * FROM " + table_name + "")
         cols = []
@@ -74,17 +86,21 @@ def writeToCSVbi(table_name):
         return str(colsString)
     except Exception as e:
         return "Something is wrong with writeToCSV method"
-    
-#display table    
+ 
 def displayTablebi(table_name):
+    """
+        This method will display table 
+    """      
     try:
         cursor.execute("SELECT * FROM `" + table_name + "`")
         return cursor
     except Exception as e:
         return "Something is wrong with displayTable method"
     
-#get selected variables data
 def getVariablesbi(table_name):
+    """
+        This method will get selected variables data 
+    """       
     cols = []
     
     cursor.execute("SELECT * FROM " + table_name + "")
@@ -93,15 +109,19 @@ def getVariablesbi(table_name):
 
     return cols
 
-#checking something is empty or not
 def is_emptybi(any_structure):
+    """
+        This method will check something is empty or not
+    """     
     if any_structure:
         return False
     else:
         return True
 
-#joining tables together
 def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2, filterstartdate, filterenddate, selecteddatevariable):
+    """
+        This method will join tables together
+    """ 
     cursor.execute("SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2 WHERE t1." + joinvariable + " = t2." + joinvariable2 + " AND " + selecteddatevariable + " BETWEEN '" + filterstartdate + "' AND '" + filterenddate + "'")    
     
     cols = []
@@ -127,8 +147,10 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
 
     return combinedxyarray
 
-#get date variables only
 def getDateVariablebi(tablename):
+    """
+        This method will get date variables only
+    """ 
     cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND DATA_TYPE = 'date'")
 
     dates = []
