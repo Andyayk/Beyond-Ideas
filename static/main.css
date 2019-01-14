@@ -27,21 +27,6 @@ h1, h2, h3, h4, h5, h6 {
 .button {
   display: inline-block;
   border-radius: 4px;
-  background-color: red;
-  border: none;
-  color: white;
-  text-align: center;
-  font-size: 17px;
-  padding: 8px;
-  width: 200px;
-  transition: all 0.5s;
-  cursor: pointer;
-  margin: 5px;
-}
-
-.button {
-  display: inline-block;
-  border-radius: 4px;
   background-color: limegreen;
   border: none;
   color: white;
