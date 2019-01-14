@@ -11,6 +11,7 @@ class TableViewbi extends Component {
          options: "",         
          table: "",
          table2: "",
+		 tablename1: "",
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -18,6 +19,7 @@ class TableViewbi extends Component {
       this.display2 = this.display2.bind(this);      
 
       this.getMySQLTables(); //retrieving user's uploaded tables
+	  console.log("hihi"+this.state.tablename1);
    }
 
    //retrieving user's uploaded tables
@@ -49,6 +51,9 @@ class TableViewbi extends Component {
 
    //retrieving table display from flask
    display(event) {
+	  this.setState({
+          tablename1: "hihi",
+      });
       $.post(window.location.origin + "/tableviewbi/",
       {
          tablename: event.target.value,
@@ -57,7 +62,9 @@ class TableViewbi extends Component {
          this.setState({
             table: data,
          });         
-      });        
+      });  
+      
+	  console.log(this.state.tablename1);
    }
 	
    //retrieving table display from flask
@@ -75,7 +82,10 @@ class TableViewbi extends Component {
    
    //retrieving csv export from flask
    save(event) {
-      $.post(window.location.origin + "/tableviewbi/",
+      $.post(window.location.origin + "/exporttableviewbi/",
+      {
+         tablename: this.state.tablename1,
+      },
       (data) => {  
          if(data == "Something is wrong with writeToCSV method") {
             this.setState({
@@ -83,9 +93,9 @@ class TableViewbi extends Component {
             });
          } else {
             var element = document.createElement('a');
-            var newContent = data.replace(/;/g, "\n")
+            var newContent = data.replace(/;/g, "\n");
             element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
-            element.setAttribute('download', this.state.tablename + ".csv");
+            element.setAttribute('download', this.state.tablename1 + ".csv");
              
             element.style.display = 'none';
             document.body.appendChild(element);

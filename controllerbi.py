@@ -85,6 +85,12 @@ class TableClassbi():
             table += "</tr>"
 
         return table
+		
+    @app.route('/exporttableviewbi/', methods = ['POST'])
+    def exporttableviewbi(): #processing export for API call from react
+        tablename = request.form.get("tablename")
+        datacontent = writeToCSVbi(tablename)
+        return datacontent
 
 class ChartClassbi():
     
