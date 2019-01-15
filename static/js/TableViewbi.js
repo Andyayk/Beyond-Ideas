@@ -11,13 +11,14 @@ class TableViewbi extends Component {
          options: "",         
          table: "",
          table2: "",
-		 exporttable1: "",
-		 tablename: "",
+		   exporttable1: "",
+		   exporttable2: "",
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
       this.display = this.display.bind(this);
-      this.display2 = this.display2.bind(this);      
+      this.display2 = this.display2.bind(this);  
+      this.save = this.save.bind(this);    
 
       this.getMySQLTables(); //retrieving user's uploaded tables
 	  console.log("hihi"+this.state.exporttable1);
@@ -52,7 +53,9 @@ class TableViewbi extends Component {
 
    //retrieving table display from flask
    display(event) {
-	  let tablename = event.target.value;
+	  this.setState({
+	    exporttable1: event.target.value,
+	  });
       $.post(window.location.origin + "/tableviewbi/",
       {
          tablename: event.target.value,
@@ -61,19 +64,14 @@ class TableViewbi extends Component {
          this.setState({
             table: data,
          });         
-      });  
-      
-	  console.log("test"+this.state.exporttable1);
+      }); 
    }
-
-	handleChange(event) {
-		this.setState({
-			exporttable1: event.target.value,
-		});
-    }
 	
    //retrieving table display from flask
    display2(event) {
+      this.setState({
+         exporttable2: event.target.value,
+      });
       $.post(window.location.origin + "/tableviewbi/",
       {
          tablename: event.target.value,
@@ -87,9 +85,11 @@ class TableViewbi extends Component {
    
    //retrieving csv export from flask
    save(event) {
+		console.log(this.state.exporttable1);
       $.post(window.location.origin + "/exporttableviewbi/",
       {
-         tablename: this.state.exporttable1,
+         tablename1: this.state.exporttable1,
+         tablename2: this.state.exporttable2,
       },
       (data) => {  
          if(data == "Something is wrong with writeToCSV method") {
@@ -97,16 +97,7 @@ class TableViewbi extends Component {
                error: "Please Select a Table",
             });
          } else {
-            var element = document.createElement('a');
-            var newContent = data.replace(/;/g, "\n");
-            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
-            element.setAttribute('download', this.state.exporttable1 + ".csv");
-             
-            element.style.display = 'none';
-            document.body.appendChild(element);
-             
-            element.click();
-            document.body.removeChild(element); 
+            console.log(data);
          }              
       });        
    }
@@ -114,11 +105,28 @@ class TableViewbi extends Component {
    render() {
       return (
 		<div>
+      <br /> 
+
+         <font size="6"><b>Variables</b></font>
+         <br /><br />   
+         <label for="variablelist">Variable (X):</label>
+         <br />
+         <select name="variablelist" onChange={this.selectVariable}>
+            <option value="" disabled selected>Select a Variable</option>
+            {this.state.variablesoptions}
+         </select>
+         <br /><br />
+         
+         <label for="variablelist2">Variable (Y):</label>        
+         <br />
+         <select name="variablelist2" onChange={this.selectVariable2}>
+            <option value="" disabled selected>Select a Variable</option>
+            {this.state.variablesoptions2}
+         </select> 
 			<table>
 				<tr>
 					<td style={{"width":"50%", "left":"0px", "position":"relative"}}>
 						<h3>First Table</h3>
-					  
 					  <select onChange={this.display}>
 						 <option value="" disabled selected>Select a Table to View</option>
 						 {this.state.options}
@@ -135,12 +143,12 @@ class TableViewbi extends Component {
 				</tr>
 				<button onClick={this.save}>Save Joined File</button>
 				<tr>
-					<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative"}}>
+					<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
 						<table border="1">
 						   {ReactHtmlParser(this.state.table)}
 						</table>
 					</td>
-					<td style={{"overflow":"auto", "max-height":"500px", "right":"0px", "position":"relative"}}>
+					<td style={{"overflow":"auto", "max-height":"500px", "right":"0px", "position":"relative", "vertical-align":"top"}}>
 						<table border="1">
 						   {ReactHtmlParser(this.state.table2)}
 						</table>
