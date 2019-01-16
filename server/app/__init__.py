@@ -132,15 +132,15 @@ def create_app(config_name):
             
             return "success"
 
-    class ChartClassbi():
+        class ChartClassbi():
         """
             This is the chart page
-        """      
+        """
         @app.route('/chartpagebi/')
         def chartpagebi(): #rendering our chart page
             """
                 This method will render our chart page
-            """      
+            """
             return render_template('chartpagebi.html')
         
         @app.route('/variablesbi/', methods = ['POST'])
