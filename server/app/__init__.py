@@ -109,30 +109,28 @@ def create_app(config_name):
             tabledata = modelbi.displayTablebi(tablename)
 
             table = ""
-    		
+            
             for col in tabledata.description:
                 table += "<th style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col[0] + "</center></th>"
 
             for item in tabledata:
                 table += "<tr>"
                 for col in item:
-    			
+                
                     if isinstance(col, datetime.date):
                         col = col.strftime('%d/%m/%Y')
-    					
+                        
                     table += "<td style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col + "</center></td>"
                 table += "</tr>"
 
             return table
-    		
-        @app.route('/exporttableviewbi/', methods = ['POST'])
-        def exporttableviewbi(): #processing export for API call from react
-            """
-                This method will process export for API call from react
-            """          
-            tablename = request.form.get("tablename")
-            datacontent = modelbi.writeToCSVbi(tablename)
-            return datacontent
+            
+        @app.route('/savejoinedtablebi/', methods = ['POST'])
+        def savejoinedtablebi(): #retrieving two tables selected from react
+            tablename1 = request.form.get("tablename1")
+            tablename2 = request.form.get("tablename2")
+            
+            return "success"
 
     class ChartClassbi():
         """
