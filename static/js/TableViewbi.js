@@ -88,7 +88,7 @@ class TableViewbi extends Component {
    //retrieving csv export from flask
    save(event) {
 		console.log(this.state.exporttable1);
-      $.post(window.location.origin + "/exporttableviewbi/",
+      $.post(window.location.origin + "/savejoinedtablebi/",
       {
          tablename1: this.state.exporttable1,
          tablename2: this.state.exporttable2,
