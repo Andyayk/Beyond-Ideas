@@ -1,50 +1,53 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>DHL Visualisation</title>
     <link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="shortcut icon" href="# " />
-    <title>Beyond Ideas</title>
-  </head>
-  <body>
-    <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
-        <div class="container">
-          <a class="navbar-brand mr-4" href="/">Beyond Ideas</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarToggle">
-            <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="/">Home</a>
-              <a class="nav-item nav-link" href="/uploadpagebi/">Upload</a>
-              <a class="nav-item nav-link" href="/exportpagebi/">Export</a>
-              <a class="nav-item nav-link" href="/tablepagebi/">Table View</a>
-              <a class="nav-item nav-link" href="/chartpagebi/">Correlation</a>              
-              <a class="nav-item nav-link" href="/webcrawlingpagebi/">Web Crawling</a>
-            </div>
-            <!-- Navbar Right Side -->
-            <div class="navbar-nav">
-              <a class="nav-item nav-link" href="/login">Login</a>
-              <a class="nav-item nav-link" href="/register">Register</a>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </header>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    
-    {% block content %}{% endblock %}
-  
-  </body>
+  <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,700,800" rel="stylesheet" />
+</head>
+
+<body class="body-layout">
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+  <div class="layout">
+    <div class="header-layout">
+    </div>
+    <div class="logo-layout">
+      <img src="{{ url_for('static', filename='images/DHL_logo.png') }}" alt="Logo" />
+    </div>
+    <div class="sidebar-layout">
+      <a id="home" class="sidebar-item" href="/home/">
+        <img src="{{ url_for('static', filename='images/home.png') }}" alt="house" />
+        Home
+      </a>
+      <a id="visualisation" class="sidebar-item" href="/visualisation/">
+        <img src="{{ url_for('static', filename='images/chart.png') }}" alt="chart" />
+        Visualisation
+      </a>
+      <a id="upload" class="sidebar-item" href="/upload/">
+        <img src="{{ url_for('static', filename='images/upload.png') }}" alt="upload" />
+        Upload Data
+      </a>
+      <a id="viewtable" class="sidebar-item" href="/tablepagebi/">
+        <img src="{{ url_for('static', filename='images/DatasetIcon.png') }}" alt="viewtable" />        
+        View Datasets
+      </a>
+      <a id="correlation" class="sidebar-item" href="/chartpagebi/">
+        <img src="{{ url_for('static', filename='images/CorrelationIcon.png') }}" alt="correlation" />        
+        Correlation
+      </a>
+      <a id="webcrawling" class="sidebar-item" href="/webcrawlingpagebi/">
+        <img src="{{ url_for('static', filename='images/WebCrawlIcon.png') }}" alt="webcrawling" />        
+        Web Crawling
+      </a> 
+    </div>
+    <div class="content-layout">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</body>
+
 </html>

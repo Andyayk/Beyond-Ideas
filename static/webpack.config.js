@@ -1,5 +1,6 @@
 const webpack = require("webpack");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const config = {
   entry: __dirname + '/js/index.js',
@@ -46,7 +47,10 @@ const config = {
     new ExtractTextPlugin('styles.css', {allChunks: false}),
     new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(), 
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)  
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new CopyWebpackPlugin([
+            {from:'images',to:'images'} 
+        ])
   ]
 };
 module.exports = config
