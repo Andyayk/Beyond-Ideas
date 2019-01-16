@@ -14,22 +14,16 @@ class TableViewbi extends Component {
          table: "",
          table2: "",
 		   exporttable1: "",
-<<<<<<< HEAD
 		   tablename: "",
-=======
 		   exporttable2: "",
->>>>>>> 8f4201408f370adc472c5389bfad0bc1da5ce25f
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
       this.display = this.display.bind(this);
-<<<<<<< HEAD
       this.display2 = this.display2.bind(this);    
-      this.save = this.save.bind(this);     
-=======
+      this.save = this.save.bind(this);   
       this.display2 = this.display2.bind(this);  
       this.save = this.save.bind(this);    
->>>>>>> 8f4201408f370adc472c5389bfad0bc1da5ce25f
 
       this.getMySQLTables(); //retrieving user's uploaded tables
 	  
@@ -64,15 +58,12 @@ class TableViewbi extends Component {
 
    //retrieving table display from flask
    display(event) {
-<<<<<<< HEAD
      this.setState({
        exporttable1: event.target.value,
      });
-=======
 	  this.setState({
 	    exporttable1: event.target.value,
 	  });
->>>>>>> 8f4201408f370adc472c5389bfad0bc1da5ce25f
       $.post(window.location.origin + "/tableviewbi/",
       {
          tablename: event.target.value,
@@ -102,11 +93,7 @@ class TableViewbi extends Component {
    
    //retrieving csv export from flask
    save(event) {
-<<<<<<< HEAD
       console.log(this.state.exporttable1);
-=======
-		console.log(this.state.exporttable1);
->>>>>>> 8f4201408f370adc472c5389bfad0bc1da5ce25f
       $.post(window.location.origin + "/savejoinedtablebi/",
       {
          tablename1: this.state.exporttable1,
@@ -127,11 +114,7 @@ class TableViewbi extends Component {
    render() {
       return (
 		<div>
-<<<<<<< HEAD
-=======
       <br /> 
-
->>>>>>> 8f4201408f370adc472c5389bfad0bc1da5ce25f
          <font size="6"><b>Variables</b></font>
          <br /><br />   
          <label for="variablelist">Variable (X):</label>
@@ -148,10 +131,6 @@ class TableViewbi extends Component {
             <option value="" disabled selected>Select a Variable</option>
             {this.state.variablesoptions2}
          </select> 
-<<<<<<< HEAD
-
-=======
->>>>>>> 8f4201408f370adc472c5389bfad0bc1da5ce25f
 			<table>
 				<tr>
 					<td style={{"width":"50%", "left":"0px", "position":"relative"}}>

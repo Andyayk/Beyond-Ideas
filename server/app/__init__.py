@@ -98,7 +98,7 @@ def create_app(config_name):
             tables = modelbi.getMySQLTablesbi() 
             return jsonify(
                 tables = tables
-            ) 
+            )
 
         @app.route('/tableviewbi/', methods = ['POST'])
         def tableviewbi(): #retrieving table display for API call from react      
@@ -109,22 +109,22 @@ def create_app(config_name):
             tabledata = modelbi.displayTablebi(tablename)
 
             table = ""
-    		
+            
             for col in tabledata.description:
                 table += "<th style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col[0] + "</center></th>"
 
             for item in tabledata:
                 table += "<tr>"
                 for col in item:
-    			
+                
                     if isinstance(col, datetime.date):
                         col = col.strftime('%d/%m/%Y')
-    					
+                        
                     table += "<td style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col + "</center></td>"
                 table += "</tr>"
 
             return table
-    		
+            
         @app.route('/savejoinedtablebi/', methods = ['POST'])
         def savejoinedtablebi(): #retrieving two tables selected from react
             tablename1 = request.form.get("tablename1")
@@ -132,15 +132,15 @@ def create_app(config_name):
             
             return "success"
 
-        class ChartClassbi():
+    class ChartClassbi():
         """
             This is the chart page
-        """
+        """      
         @app.route('/chartpagebi/')
         def chartpagebi(): #rendering our chart page
             """
                 This method will render our chart page
-            """
+            """      
             return render_template('chartpagebi.html')
         
         @app.route('/variablesbi/', methods = ['POST'])
