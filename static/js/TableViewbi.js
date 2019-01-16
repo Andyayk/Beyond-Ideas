@@ -82,7 +82,7 @@ class TableViewbi extends Component {
          this.setState({
             table2: data,
          });         
-      });        
+      });         
    }     
    
    //retrieving csv export from flask

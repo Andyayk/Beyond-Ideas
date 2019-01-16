@@ -98,7 +98,7 @@ def create_app(config_name):
             tables = modelbi.getMySQLTablesbi() 
             return jsonify(
                 tables = tables
-            )
+            ) 
 
         @app.route('/tableviewbi/', methods = ['POST'])
         def tableviewbi(): #retrieving table display for API call from react      
