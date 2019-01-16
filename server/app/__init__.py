@@ -125,14 +125,12 @@ def create_app(config_name):
 
             return table
     		
-        @app.route('/exporttableviewbi/', methods = ['POST'])
-        def exporttableviewbi(): #processing export for API call from react
-            """
-                This method will process export for API call from react
-            """          
-            tablename = request.form.get("tablename")
-            datacontent = modelbi.writeToCSVbi(tablename)
-            return datacontent
+        @app.route('/savejoinedtablebi/', methods = ['POST'])
+        def savejoinedtablebi(): #retrieving two tables selected from react
+            tablename1 = request.form.get("tablename1")
+            tablename2 = request.form.get("tablename2")
+            
+            return "success"
 
     class ChartClassbi():
         """
