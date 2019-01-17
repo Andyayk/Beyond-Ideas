@@ -80,6 +80,7 @@ class TableViewbi extends Component {
       }); 
    }
 
+   //retrieving variables after first table is selected by user
    getVariables(tablename) {
       $.post(window.location.origin + "/variablesbi/",
       {
@@ -124,6 +125,7 @@ class TableViewbi extends Component {
       });         
    }   
 
+   //retrieving variables after second table is selected by user
    getVariables2(tablename) {
       $.post(window.location.origin + "/variablesbi/",
       {
@@ -192,7 +194,7 @@ class TableViewbi extends Component {
                  </select>                  
                </td>
             </tr>
-            <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save Joined Files</span></button>
+            
             <tr>
                <td>
                      <label for="variablelist"><h3>Joining First Table Variable:</h3></label>
@@ -215,6 +217,9 @@ class TableViewbi extends Component {
                   </select> 
               </td>
            </tr>
+
+            <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save Joined Files</span></button>
+
             <tr>
                <td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
                   <table border="1">
