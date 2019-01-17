@@ -13,9 +13,12 @@ class TableViewbi extends Component {
          options: "",         
          table: "",
          table2: "",
-		   exporttable1: "",
-		   tablename: "",
-		   exporttable2: "",
+         exporttable1: "",
+         exporttable2: "",
+         variablesoptions: "", 
+         variablesoptions2: "",
+         joinvariable: "",
+         joinvariable2: "",  
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -24,9 +27,13 @@ class TableViewbi extends Component {
       this.save = this.save.bind(this);   
       this.display2 = this.display2.bind(this);  
       this.save = this.save.bind(this);    
+      this.getVariables = this.getVariables.bind(this);
+      this.getVariables2 = this.getVariables2.bind(this);
+      this.createVariables = this.createVariables.bind(this);  
+      this.createVariables2 = this.createVariables2.bind(this);
 
       this.getMySQLTables(); //retrieving user's uploaded tables
-	  
+     
    }
 
    //retrieving user's uploaded tables
@@ -58,9 +65,9 @@ class TableViewbi extends Component {
 
    //retrieving table display from flask
    display(event) {
-      this.setState({
-         exporttable1: event.target.value,
-      });
+     this.setState({
+       exporttable1: event.target.value,
+     });
       $.post(window.location.origin + "/tableviewbi/",
       {
          tablename: event.target.value,
@@ -68,10 +75,39 @@ class TableViewbi extends Component {
       (data) => {
          this.setState({
             table: data,
-         });         
+         });     
+         this.getVariables(this.state.exporttable1);    
       }); 
    }
-	
+
+   //retrieving variables after first table is selected by user
+   getVariables(tablename) {
+      $.post(window.location.origin + "/variablesbi/",
+      {
+         tablename: tablename,
+      },
+      (data) => {
+         var variablelist = data['variablelist'];
+         
+         this.createVariables(variablelist);         
+      });
+   }
+
+   //creating select options for drop down list based on data from flask
+   createVariables(data) {
+      let variables = [];
+      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
+         var variablelist = data.toString().split(",");
+         for (let i = 0; i < variablelist.length; i++) {
+            variables.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
+         };
+      }
+
+      this.setState({
+         variablesoptions: variables
+      });
+   }    
+   
    //retrieving table display from flask
    display2(event) {
       this.setState({
@@ -84,9 +120,38 @@ class TableViewbi extends Component {
       (data) => {
          this.setState({
             table2: data,
-         });         
+         });       
+         this.getVariables2(this.state.exporttable2);      
       });         
-   }     
+   }   
+
+   //retrieving variables after second table is selected by user
+   getVariables2(tablename) {
+      $.post(window.location.origin + "/variablesbi/",
+      {
+         tablename: tablename,
+      },
+      (data) => {
+         var variablelist2 = data['variablelist'];
+         
+         this.createVariables2(variablelist2);     
+      });
+   }
+
+   //creating select options for drop down list based on data from flask
+   createVariables2(data) {
+      let variables = [];
+      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
+         var variablelist = data.toString().split(",");
+         for (let i = 0; i < variablelist.length; i++) {
+            variables.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
+         };
+      }
+
+      this.setState({
+         variablesoptions2: variables
+      });
+   }    
    
    //retrieving csv export from flask
    save(event) {
@@ -110,57 +175,74 @@ class TableViewbi extends Component {
    //rendering the html for table view
    render() {
       return (
-		<div>
-      <br /> 
-         <font size="6"><b>Variables</b></font>
-         <br /><br />   
-         <label for="variablelist">Variable (X):</label>
-         <br />
-         <select name="variablelist" onChange={this.selectVariable}>
-            <option value="" disabled selected>Select a Variable</option>
-            {this.state.variablesoptions}
-         </select>
-         <br /><br />
-         
-         <label for="variablelist2">Variable (Y):</label>        
-         <br />
-         <select name="variablelist2" onChange={this.selectVariable2}>
-            <option value="" disabled selected>Select a Variable</option>
-            {this.state.variablesoptions2}
-         </select> 
-			<table>
-				<tr>
-					<td style={{"width":"50%", "left":"0px", "position":"relative"}}>
-						<h3>First Table</h3>
-					  <select onChange={this.display}>
-						 <option value="" disabled selected>Select a Table to View</option>
-						 {this.state.options}
-					  </select>                     
-					</td>
-					<td style={{"width":"50%", "right":"0px", "position":"relative"}}>
-						<h3>Second Table</h3>
+      <div>
+         <table>
+            <tr>
+               <td style={{"width":"50%", "left":"0px", "position":"relative"}}>
+                  <h3>First Table</h3>
+                 <select onChange={this.display}>
+                   <option value="" disabled selected>Select a Table to View</option>
+                   {this.state.options}
+                 </select>                     
+               </td>
+               <td style={{"width":"50%", "right":"0px", "position":"relative"}}>
+                  <h3>Second Table</h3>
 
-					  <select onChange={this.display2}>
-						 <option value="" disabled selected>Select a Table to View</option>
-						 {this.state.options}
-					  </select>                  
-					</td>
-				</tr>
-				<button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save Joined Files</span></button>
-				<tr>
-					<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
-						<table border="1">
-						   {ReactHtmlParser(this.state.table)}
-						</table>
-					</td>
-					<td style={{"overflow":"auto", "max-height":"500px", "right":"0px", "position":"relative", "vertical-align":"top"}}>
-						<table border="1">
-						   {ReactHtmlParser(this.state.table2)}
-						</table>
-					</td>
-				</tr>
-			</table>
-		</div>
+                 <select onChange={this.display2}>
+                   <option value="" disabled selected>Select a Table to View</option>
+                   {this.state.options}
+                 </select>                  
+               </td>
+            </tr>
+            
+            <tr>
+               <td>
+                     <label for="variablelist"><h3>Joining First Table Variable:</h3></label>
+               </td>
+               <td>
+                     <label for="variablelist2"><h3>Joining Second Table Variable:</h3></label>   
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <select name="variablelist" onChange={this.joinVariable}>
+                     <option value="" disabled selected>Select First Variable</option>
+                     {this.state.variablesoptions}
+                  </select>
+               </td>
+               <td>   
+                  <select name="variablelist2" onChange={this.joinVariable2}>
+                     <option value="" disabled selected>Select Second Variable</option>
+                     {this.state.variablesoptions2}
+                  </select> 
+              </td>
+           </tr>
+
+            <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save Joined Files</span></button>
+
+            <tr>
+               <td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
+                  <table border="1">
+                     {ReactHtmlParser(this.state.table)}
+                  </table>
+               </td>
+               <td style={{"overflow":"auto", "max-height":"500px", "right":"0px", "position":"relative", "vertical-align":"top"}}>
+                  <table border="1">
+                     {ReactHtmlParser(this.state.table2)}
+                  </table>
+               </td>
+            </tr>
+         </table>
+         <tr>
+            <td>
+                 
+            </td>
+            <td>
+                  
+            </td>
+         </tr>
+         
+      </div>
       );
    }
 }
