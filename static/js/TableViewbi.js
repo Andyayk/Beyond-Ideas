@@ -58,12 +58,9 @@ class TableViewbi extends Component {
 
    //retrieving table display from flask
    display(event) {
-     this.setState({
-       exporttable1: event.target.value,
-     });
-	  this.setState({
-	    exporttable1: event.target.value,
-	  });
+      this.setState({
+         exporttable1: event.target.value,
+      });
       $.post(window.location.origin + "/tableviewbi/",
       {
          tablename: event.target.value,

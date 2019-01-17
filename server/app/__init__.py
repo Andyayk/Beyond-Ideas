@@ -10,79 +10,17 @@ from . import modelbi
 from flask import Flask, render_template, request, jsonify
 from urllib.request import urlopen as uReq #for crawling
 from bs4 import BeautifulSoup as soup #for crawling
-from werkzeug.utils import secure_filename #for uploading
-from array import array
-import datetime
 
 def create_app(config_name):
     app = Flask(__name__, static_folder="../../static/dist", template_folder="../../static") #defining how flask find our html, css and javascript
     UPLOAD_FOLDER = os.getcwd() + '\\static\\uploads' #setting a path to our upload folder
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-    class HomeClassbi():
-        """
-            This is the home page
-        """
-        @app.route("/")
-        @app.route("/homebi/")
-        def home(): #rendering our home page
-            """
-                This method will render our home page
-            """
-            return render_template('homebi.html')
-
-    class UploadClassbi():
-        """
-            This is the upload page
-        """    
-        @app.route('/uploadpagebi/')
-        def uploadpagebi(): #rendering our upload page
-            """
-                This method will render our upload page
-            """    
-            return render_template('uploadpagebi.html')   
-        
-        @app.route('/uploadbi/', methods = ['POST'])    
-        def uploadbi(): #processing our upload
-            """
-                This method will process our upload
-            """        
-            file = request.files['inputFile']
-            if file:
-                filename = secure_filename(file.filename)
-                path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(path)            
-                message =  modelbi.uploadCSVbi(file.filename, path) 
-                os.remove(path)
-            if "fail" not in message:
-                return render_template('uploadsuccesspagebi.html', message = message)
-            else:
-                return render_template('uploadfailpagebi.html', message = message)
-
-    class ExportClassbi():
-        """
-            This is the export page
-        """      
-        @app.route('/exportpagebi/')
-        def exportpagebi(): #rendering our export page
-            """
-                This method will render our export page
-            """      
-            return render_template('exportpagebi.html')  
-        
-        @app.route('/exportbi/', methods = ['POST'])    
-        def exportbi(): #processing export for API call from react
-            """
-                This method will process our export for API call from react
-            """      
-            tablename = request.form.get("tablename")
-            datacontent = modelbi.writeToCSVbi(tablename)
-            return datacontent  
-
     class TableClassbi():
         """
             This is the table view page
-        """      
+        """ 
+        @app.route('/')     
         @app.route('/tablepagebi/')
         def tablepagebi(): #rendering our table view page
             """
@@ -106,22 +44,7 @@ def create_app(config_name):
                 This method will retrieve table display for API call from react 
             """           
             tablename = request.form.get("tablename")        
-            tabledata = modelbi.displayTablebi(tablename)
-
-            table = ""
-            
-            for col in tabledata.description:
-                table += "<th style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col[0] + "</center></th>"
-
-            for item in tabledata:
-                table += "<tr>"
-                for col in item:
-                
-                    if isinstance(col, datetime.date):
-                        col = col.strftime('%d/%m/%Y')
-                        
-                    table += "<td style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col + "</center></td>"
-                table += "</tr>"
+            table = modelbi.displayTablebi(tablename)
 
             return table
             
