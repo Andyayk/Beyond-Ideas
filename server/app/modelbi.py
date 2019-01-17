@@ -4,7 +4,7 @@
 
 """
 
-import mysql.connector, csv
+import mysql.connector, datetime
 
 #MySQL Configurations
 mydb = mysql.connector.connect(
@@ -14,44 +14,6 @@ mydb = mysql.connector.connect(
   database = "app"
 )
 cursor = mydb.cursor(buffered=True)    
-
-def uploadCSVbi(filename, filepath):
-    """
-        This method will upload files into MySQL tables  
-    """
-    try:
-        with open(filepath, "r") as csvfile:
-            reader = csv.reader(csvfile, delimiter=',')
-            tableName = filename.split(".")[0]
-            cursor.execute("DROP TABLE IF EXISTS `" + tableName + "`")
-            
-            header = next(reader)
-            createStmt = "CREATE TABLE " + tableName + "("
-            
-            for col in header:
-                createStmt += col + " varchar(255) NOT NULL,"
-            
-            createStmt = createStmt + "CONSTRAINT " + tableName + "_pk PRIMARY KEY (" + header[0] + "));"              
-            cursor.execute(createStmt)
-            values = ""
-            
-            for row in reader:
-                for col in range(0,len(header)):
-                    try:
-                        values += '"' + row[col] + '",'
-                    except ValueError:
-                        pass
-                cursor.execute('INSERT INTO ' + tableName + '(' + str(header)[1:-1].replace("'","") + ')' \
-                'VALUES(' + values[:-1] + ')' \
-                )
-                values = ""
-                mydb.commit()
-
-            csvfile.close()  
-            
-            return "You have successfully uploaded " + filename + " to the database"
-    except Exception as e:
-        return "Upload fail, please upload only csv files"
 
 def getMySQLTablesbi():
     """
@@ -63,29 +25,6 @@ def getMySQLTablesbi():
     for (table_name,) in cursor:
         tables.append(table_name)
     return tables
-
-def writeToCSVbi(table_name):
-    """
-        This method will export MySQL tables into CSV format
-    """        
-    try:
-        cursor.execute("SELECT * FROM " + table_name + "")
-        cols = []
-        colsString = ""
-        for col in cursor.description: # add table cols
-            cols.append(col[0])
-            colsString += str(col[0]) + ","
-        colsString = colsString[:-1]
-
-        for col2 in cols: # for each table col
-            for row_data in cursor: #add table rows
-                row_data = str(row_data).replace("'", "")
-                row_data = str(row_data).replace(" ", "")
-                colsString += ";" + str(row_data)[1:-1]
-                
-        return str(colsString)
-    except Exception as e:
-        return "Something is wrong with writeToCSV method"
  
 def displayTablebi(table_name):
     """
@@ -93,7 +32,20 @@ def displayTablebi(table_name):
     """      
     try:
         cursor.execute("SELECT * FROM `" + table_name + "`")
-        return cursor
+        table = ""
+        
+        for col in cursor.description:
+            table += "<th style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col[0] + "</center></th>"
+
+        for item in cursor:
+            table += "<tr>"
+            for col in item:
+                if isinstance(col, datetime.date):
+                    col = col.strftime('%d/%m/%Y')
+                table += "<td style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col + "</center></td>"
+            table += "</tr>"        
+
+        return table
     except Exception as e:
         return "Something is wrong with displayTable method"
     
