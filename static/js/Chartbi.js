@@ -364,22 +364,20 @@ class Chartbi extends Component {
                      
                      <br /><br /><br /><br /> 
                      
-                     <font size="6"><b>Join</b></font>
+                     <font size="6"><b>Combine Data Sources</b></font>
                      <br /><br />   
-                     <label for="variablelist3">Joining Variable From Data Source 1:</label>
+                     <label for="joiningvariable">Combine the Two Data Sources Based On:</label>
                      <br />
-                     <select name="variablelist3" onChange={this.joinVariable}>
-                        <option value="" disabled selected>Select a Variable</option>
-                        {this.state.variablesoptions}
-                     </select>
-                     <br /><br />
 
-                     <label for="variablelist4">Joining Variable From Data Source 2:</label>        
+                     <form onSubmit={this.joinVariable} >
+                     <input type="radio" name="joiningvariable" value="activitydate" />Activity Date
                      <br />
-                     <select name="variablelist4" onChange={this.joinVariable2}>
-                        <option value="" disabled selected>Select a Variable</option>
-                        {this.state.variablesoptions2}
-                     </select>     
+                     <input type="radio" name="joiningvariable" value="company" />Company
+                     <br />                  
+                     <input type="radio" name="joiningvariable" value="depot" />Depot
+                     <br />
+                     <input type="radio" name="joiningvariable" value="geographicallocation" />Geographical Location
+                     </form>
 
                      <br /><br /><br /><br /> 
 
@@ -396,12 +394,12 @@ class Chartbi extends Component {
 
                      <label for="filterstartdate">Start Date:</label>
                      <br />                     
-                        <input type="date" name="filterstartdate" onChange={this.filterStartDate} />
+                     <input type="date" name="filterstartdate" onChange={this.filterStartDate} />
                      <br /><br />     
 
                      <label for="filterenddate">End Date:</label>
                      <br />                        
-                        <input type="date" name="filterenddate" onChange={this.filterEndDate} />                        
+                     <input type="date" name="filterenddate" onChange={this.filterEndDate} />                        
                      <br /><br />
 
                      <button onClick={this.generateScatterplot}>Generate Scatterplot</button>
