@@ -51,13 +51,13 @@ def displayTablebi(table_name):
     
 def getVariablesbi(table_name):
     """
-        This method will get selected variables data 
+        This method will get selected variables data (numerical variables only)
     """       
     cols = []
     
-    cursor.execute("SELECT * FROM " + table_name + "")
-    for col in cursor.description: # add table cols
-        cols.append(col[0])   
+    cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "' AND DATA_TYPE IN ('TINYINT', 'SMALLINT', 'MEDIUMINT', 'INT', 'BIGINT', 'DECIMAL', 'FLOAT', 'DOUBLE', 'REAL', 'BIT', 'BOOLEAN', 'SERIAL')")
+    for col in cursor: # add table cols
+        cols.append(col[0])
 
     return cols
 
@@ -107,7 +107,7 @@ def getDateVariablebi(tablename):
 
     dates = []
 
-    for row_data in cursor: #add table rows
-        dates.append(row_data[0])
+    for col in cursor: #add table cols
+        dates.append(col[0])
 
     return dates
