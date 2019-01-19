@@ -13,12 +13,10 @@ class TableViewbi extends Component {
          options: "",         
          table: "",
          table2: "",
+		 combinedtable: "",
          exporttable1: "",
          exporttable2: "",
-         variablesoptions: "", 
-         variablesoptions2: "",
-         joinvariable: "",
-         joinvariable2: "",  
+		 selectedjoinvariable: "activitydate", 
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -27,10 +25,7 @@ class TableViewbi extends Component {
       this.save = this.save.bind(this);   
       this.display2 = this.display2.bind(this);  
       this.save = this.save.bind(this);    
-      this.getVariables = this.getVariables.bind(this);
-      this.getVariables2 = this.getVariables2.bind(this);
-      this.createVariables = this.createVariables.bind(this);  
-      this.createVariables2 = this.createVariables2.bind(this);
+	  this.selectJoinVariable = this.selectJoinVariable.bind(this); 
 
       this.getMySQLTables(); //retrieving user's uploaded tables
      
@@ -76,37 +71,8 @@ class TableViewbi extends Component {
          this.setState({
             table: data,
          });     
-         this.getVariables(this.state.exporttable1);    
       }); 
    }
-
-   //retrieving variables after first table is selected by user
-   getVariables(tablename) {
-      $.post(window.location.origin + "/variablesbi/",
-      {
-         tablename: tablename,
-      },
-      (data) => {
-         var variablelist = data['variablelist'];
-         
-         this.createVariables(variablelist);         
-      });
-   }
-
-   //creating select options for drop down list based on data from flask
-   createVariables(data) {
-      let variables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var variablelist = data.toString().split(",");
-         for (let i = 0; i < variablelist.length; i++) {
-            variables.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
-         };
-      }
-
-      this.setState({
-         variablesoptions: variables
-      });
-   }    
    
    //retrieving table display from flask
    display2(event) {
@@ -120,38 +86,16 @@ class TableViewbi extends Component {
       (data) => {
          this.setState({
             table2: data,
-         });       
-         this.getVariables2(this.state.exporttable2);      
+         });            
       });         
    }   
-
-   //retrieving variables after second table is selected by user
-   getVariables2(tablename) {
-      $.post(window.location.origin + "/variablesbi/",
-      {
-         tablename: tablename,
-      },
-      (data) => {
-         var variablelist2 = data['variablelist'];
-         
-         this.createVariables2(variablelist2);     
-      });
-   }
-
-   //creating select options for drop down list based on data from flask
-   createVariables2(data) {
-      let variables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var variablelist = data.toString().split(",");
-         for (let i = 0; i < variablelist.length; i++) {
-            variables.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
-         };
-      }
-
+   
+   //store the variable that the user has selected
+   selectJoinVariable(event) {
       this.setState({
-         variablesoptions2: variables
-      });
-   }    
+         selectedjoinvariable: event.target.value
+      });      
+   }  
    
    //retrieving csv export from flask
    save(event) {
@@ -160,6 +104,7 @@ class TableViewbi extends Component {
       {
          tablename1: this.state.exporttable1,
          tablename2: this.state.exporttable2,
+		 selectedjoinvariable: this.state.selectedjoinvariable,
       },
       (data) => {  
          if(data == "Something is wrong with writeToCSV method") {
@@ -168,6 +113,9 @@ class TableViewbi extends Component {
             });
          } else {
             console.log(data);
+			this.setState({
+			    combinedtable: data,
+			})
          }              
       });        
    }
@@ -194,32 +142,30 @@ class TableViewbi extends Component {
                  </select>                  
                </td>
             </tr>
+            </table>
             
-            <tr>
-               <td>
-                     <label for="variablelist"><h3>Joining First Table Variable:</h3></label>
-               </td>
-               <td>
-                     <label for="variablelist2"><h3>Joining Second Table Variable:</h3></label>   
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <select name="variablelist" onChange={this.joinVariable}>
-                     <option value="" disabled selected>Select First Variable</option>
-                     {this.state.variablesoptions}
-                  </select>
-               </td>
-               <td>   
-                  <select name="variablelist2" onChange={this.joinVariable2}>
-                     <option value="" disabled selected>Select Second Variable</option>
-                     {this.state.variablesoptions2}
-                  </select> 
-              </td>
-           </tr>
+				<h3>Combine Datasets</h3> 
+				 <label for="joinvariable">Combine Based On:</label>
+				 <form>
+				 <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
+				 <br />
+				 <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
+				 <br />                  
+				 <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
+				 <br />
+				 <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
+				 </form>
+            
 
             <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save Joined Files</span></button>
-
+			<table>
+			<tr>
+				<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
+					<table border="1">
+						{ReactHtmlParser(this.state.combinedtable)}
+					</table>
+				</td>
+			</tr>
             <tr>
                <td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
                   <table border="1">

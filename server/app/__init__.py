@@ -49,12 +49,18 @@ def create_app(config_name):
             return table
             
         @app.route('/savejoinedtablebi/', methods = ['POST'])
-        def savejoinedtablebi(): #retrieving two tables selected from react
-            tablename1 = request.form.get("tablename1")
+        def savejoinedtablebi(): #retrieving combined table for API call from react
+            """
+                This method will retrieve table display for API call from react 
+            """   
+            tablename = request.form.get("tablename1")
             tablename2 = request.form.get("tablename2")
+			
+            joinvariable = request.form.get("selectedjoinvariable")
+			
+            combinedxyarray = modelbi.tablesViewJoinbi(tablename, tablename2, joinvariable)
             
-            return "success"
-
+            return combinedxyarray
     class ChartClassbi():
         """
             This is the chart page
