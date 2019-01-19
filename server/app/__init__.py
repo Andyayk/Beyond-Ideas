@@ -75,10 +75,16 @@ def create_app(config_name):
             variablelist = modelbi.getVariablesbi(tablename)    
             
             datevariablelist = modelbi.getDateVariablebi(tablename)  
+            companyvariablelist = modelbi.getCompanyVariablebi(tablename)  
+            depotvariablelist = modelbi.getDepotVariablebi(tablename)  
+            geographicallocationvariablelist = modelbi.getGeographicalLocationVariablebi(tablename)                                      
 
             return jsonify(
                 variablelist = variablelist,            
-                datevariablelist = datevariablelist
+                datevariablelist = datevariablelist,
+                companyvariablelist = companyvariablelist,
+                depotvariablelist = depotvariablelist,
+                geographicallocationvariablelist = geographicallocationvariablelist
             )
 
         @app.route('/scatterplotdatabi/', methods = ['POST'])
@@ -92,15 +98,14 @@ def create_app(config_name):
             variablenameX = request.form.get("selectedvariable")  
             variablenameY = request.form.get("selectedvariable2") 
 
-            joinvariable = request.form.get("joinvariable") 
-            joinvariable2 = request.form.get("joinvariable2")   
+            joinvariable = request.form.get("selectedjoinvariable") 
 
             filterstartdate = request.form.get("filterstartdate")
             filterenddate = request.form.get("filterenddate")               
             
-            selecteddatevariable = request.form.get("selecteddatevariable")
+            filtervariable = request.form.get("selectedfiltervariable")
 
-            combinedxyarray = modelbi.tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, joinvariable2, filterstartdate, filterenddate, selecteddatevariable)
+            combinedxyarray = modelbi.tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, filterstartdate, filterenddate, filtervariable)
 
             return jsonify(
                 xarray = combinedxyarray[0],
