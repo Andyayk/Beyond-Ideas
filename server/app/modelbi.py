@@ -61,7 +61,7 @@ def displayTablebi(table_name):
     except Exception as e:
         return "Something is wrong with displayTable method"
 
-def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, filterstartdate, filterenddate, filtervariable):
+def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, filtervalue, filtervalue2, filtervariable):
     """
         This method will join tables together using date or company or depot or geographical location
     """
@@ -78,9 +78,9 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
             sqlstmt = sqlstmt + " WHERE t1." + "geographicallocation" + " = t2." + "geographicallocation"   
 
         if "date" in filtervariable.lower(): #filter by date
-            sqlstmt = sqlstmt + " AND " + filtervariable + " BETWEEN '" + filterstartdate + "' AND '" + filterenddate + "'"
+            sqlstmt = sqlstmt + " AND " + filtervariable + " BETWEEN '" + filtervalue + "' AND '" + filtervalue2 + "'"
         elif "company" in filtervariable.lower(): #filter by company
-            sqlstmt = sqlstmt + " AND " + filtervariable + " LIKE 'DHL'"
+            sqlstmt = sqlstmt + " AND " + filtervariable + " LIKE '" + filtervalue[3:] + "'"
         elif "depot" in filtervariable.lower(): #filter by depot
             sqlstmt = sqlstmt + " AND " + filtervariable + " = 34"
         elif "geographicallocation" in filtervariable.lower(): #filter by geographical location
@@ -148,9 +148,9 @@ def tablesViewJoinbi(tablename, tablename2, joinvariable):
     except Exception as e:
         return "Something is wrong with tablesJoinbi method"
 
-def getVariablesbi(table_name):
+def getNumbericalColumnNamebi(table_name):
     """
-        This method will get selected variables data (numerical variables only)
+        This method will get selected variables data (numerical variables column names only)
     """    
     try:   
         cols = []
@@ -161,11 +161,11 @@ def getVariablesbi(table_name):
 
         return cols
     except Exception as e:
-        return "Something is wrong with getVariablesbi method"    
+        return "Something is wrong with getNumbericalColumnNamebi method"    
 
-def getDateVariablebi(tablename):
+def getDateColumnNamebi(tablename):
     """
-        This method will get date variables only
+        This method will get date variables column names only
     """ 
     try:
         cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND DATA_TYPE = 'date'")
@@ -177,11 +177,11 @@ def getDateVariablebi(tablename):
 
         return dates
     except Exception as e:
-        return "Something is wrong with getDateVariablebi method"    
+        return "Something is wrong with getDateColumnNamebi method"    
 
-def getCompanyVariablebi(tablename):
+def getCompanyColumnNamebi(tablename):
     """
-        This method will get company variables only
+        This method will get company variables column names only
     """ 
     try:
         cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%company%'")
@@ -193,11 +193,11 @@ def getCompanyVariablebi(tablename):
 
         return dates
     except Exception as e:
-        return "Something is wrong with getCompanyVariablebi method"   
+        return "Something is wrong with getCompanyColumnNamebi method"   
 
-def getDepotVariablebi(tablename):
+def getDepotColumnNamebi(tablename):
     """
-        This method will get depot variables only
+        This method will get depot variables column names only
     """ 
     try:
         cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%depot%'")
@@ -209,11 +209,11 @@ def getDepotVariablebi(tablename):
 
         return dates
     except Exception as e:
-        return "Something is wrong with getDepotVariablebi method"   
+        return "Something is wrong with getDepotColumnNamebi method"   
 
-def getGeographicalLocationVariablebi(tablename):
+def getGeographicalLocationColumnNamebi(tablename):
     """
-        This method will get geographical location variables only
+        This method will get geographical location variables column names only
     """ 
     try:
         cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%geographicallocation%'")
@@ -225,4 +225,20 @@ def getGeographicalLocationVariablebi(tablename):
 
         return dates
     except Exception as e:
-        return "Something is wrong with getGeographicalLocationVariablebi method"   
+        return "Something is wrong with getGeographicalLocationColumnNamebi method"   
+
+def getCompanyVariablesbi(tablename):
+    """
+        This method will get company variables only
+    """ 
+    try:
+        cursor.execute("SELECT DISTINCT Company FROM " + tablename)
+
+        dates = []
+
+        for col in cursor: #add table cols
+            dates.append(col[0])
+
+        return dates
+    except Exception as e:
+        return ""   

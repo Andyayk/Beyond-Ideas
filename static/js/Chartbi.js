@@ -21,17 +21,19 @@ class Chartbi extends Component {
          selectedvariable2: "",    
          selectedjoinvariable: "activitydate", 
          scatterplot: "",
-         filterstartdate: "",
-         filterenddate: "",    
-         datevariables: "", 
-         datevariables2: "", 
+         selectedfiltervalue: "",
+         selectedfiltervalue2: "",    
+         datevariablesoptions: "", 
+         datevariablesoptions2: "", 
          selectedfiltervariable: "",       
-         companyvariables: "",
-         companyvariables2: "",
-         depotvariables: "",
-         depotvariables2: "",
-         geographicallocationvariables: "",
-         geographicallocationvariables2: "",
+         companyvariablesoptions: "",
+         companyvariablesoptions2: "",
+         depotvariablesoptions: "",
+         depotvariablesoptions2: "",
+         geographicallocationvariablesoptions: "",
+         geographicallocationvariablesoptions2: "",
+         companyvaluelistoptions: "",
+         companyvaluelistoptions2: "",         
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -46,9 +48,8 @@ class Chartbi extends Component {
       this.selectVariable2 = this.selectVariable2.bind(this);  
       this.selectJoinVariable = this.selectJoinVariable.bind(this);     
       this.selectFilterVariable = this.selectFilterVariable.bind(this); 
-
-      this.filterStartDate = this.filterStartDate.bind(this);  
-      this.filterEndDate = this.filterEndDate.bind(this);  
+      this.selectFilterValue = this.selectFilterValue.bind(this);  
+      this.selectFilterValue2 = this.selectFilterValue2.bind(this);  
 
       this.generateScatterplot = this.generateScatterplot.bind(this); 
 
@@ -61,26 +62,22 @@ class Chartbi extends Component {
          var mySQLTables = "";
          $.each(data, function(key, val) {
             mySQLTables = val;
-         });
+         });  
 
-         this.createOptions(mySQLTables);                     
+         //creating select options for drop down list based on data from flask
+         let options = [];
+         if (mySQLTables.toString().replace(/\s/g, '').length) { //checking data is not empty       
+            var mySQLTables = mySQLTables.toString().split(",");
+            for (let i = 0; i < mySQLTables.length; i++) {
+               options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+            };
+         }
+
+         this.setState({
+            options: options
+         });                        
       });
-   }    
-
-   //creating select options for drop down list based on data from flask
-   createOptions(data) {
-      let options = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
-         var mySQLTables = data.toString().split(",");
-         for (let i = 0; i < mySQLTables.length; i++) {
-            options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
-         };
-      }
-
-      this.setState({
-         options: options
-      });
-   }   
+   } 
 
    //retrieving variables from flask
    getVariables(event) {
@@ -98,9 +95,11 @@ class Chartbi extends Component {
          var datevariablelistdata = data['datevariablelist'];
          var companyvariablelistdata = data['companyvariablelist'];
          var depotvariablelistdata = data['depotvariablelist'];
-         var geographicallocationvariablelistdata = data['geographicallocationvariablelist'];         
+         var geographicallocationvariablelistdata = data['geographicallocationvariablelist']; 
+
+         var companyvaluelistdata = data['companyvaluelist'];        
          
-         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata);                     
+         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata);                     
       });          
    }
 
@@ -121,8 +120,10 @@ class Chartbi extends Component {
          var companyvariablelistdata = data['companyvariablelist'];
          var depotvariablelistdata = data['depotvariablelist'];
          var geographicallocationvariablelistdata = data['geographicallocationvariablelist'];         
+
+         var companyvaluelistdata = data['companyvaluelist'];    
          
-         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata);                                        
+         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata);                                        
       });   
    }       
 
@@ -139,7 +140,7 @@ class Chartbi extends Component {
    }
 
    //creating select options for drop down list based on data from flask
-   createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata) {
+   createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata) {
       let variables = [];
       if (variablelistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
          var variablelist = variablelistdata.toString().split(",");
@@ -153,28 +154,33 @@ class Chartbi extends Component {
 
       //creating select options for drop down list based on company data from flask
       let companyvariables = this.createVariablesOptions(methodNo, companyvariablelistdata);
-      
+
       //creating select options for drop down list based on depot data from flask
       let depotvariables = this.createVariablesOptions(methodNo, depotvariablelistdata);
 
       //creating select options for drop down list based on geographical location data from flask
       let geographicallocationvariables = this.createVariablesOptions(methodNo, geographicallocationvariablelistdata);
 
+      //creating select options for drop down list based on company data values from flask
+      let companyvalues = this.createVariablesOptions(methodNo, companyvaluelistdata);
+
       if (methodNo == 1) {
          this.setState({
             variablesoptions: variables,
-            datevariables: datevariables,
-            companyvariables: companyvariables,
-            depotvariables: depotvariables,
-            geographicallocationvariables: geographicallocationvariables
+            datevariablesoptions: datevariables,
+            companyvariablesoptions: companyvariables,
+            depotvariablesoptions: depotvariables,
+            geographicallocationvariablesoptions: geographicallocationvariables,
+            companyvaluelistoptions: companyvalues
          });        
       } else if (methodNo == 2) {
          this.setState({
             variablesoptions2: variables,
-            datevariables2: datevariables,
-            companyvariables2: companyvariables,
-            depotvariables2: depotvariables,
-            geographicallocationvariables2: geographicallocationvariables
+            datevariablesoptions2: datevariables,
+            companyvariablesoptions2: companyvariables,
+            depotvariablesoptions2: depotvariables,
+            geographicallocationvariablesoptions2: geographicallocationvariables,
+            companyvaluelistoptions2: companyvalues
          });           
       }   
    }    
@@ -200,26 +206,26 @@ class Chartbi extends Component {
       });      
    }
 
-   //store the start date that the user has selected
-   filterStartDate(event) {
-      this.setState({
-         filterstartdate: event.target.value
-      });      
-   } 
-
-   //store the end date that the user has selected
-   filterEndDate(event) {
-      this.setState({
-         filterenddate: event.target.value
-      });      
-   } 
-
    //store the filter variable that the user has selected
    selectFilterVariable(event) {
       this.setState({
          selectedfiltervariable: event.target.value
       });      
    }    
+
+   //store the filter values that the user has selected
+   selectFilterValue(event) {
+      this.setState({
+         selectedfiltervalue: event.target.value
+      });      
+   } 
+
+   //store the  filter values 2 (if any) that the user has selected
+   selectFilterValue2(event) {
+      this.setState({
+         selectedfiltervalue2: event.target.value
+      });      
+   } 
 
    //retrieving chart data from flask and creating chart using plotly
    generateScatterplot(event) {
@@ -230,8 +236,8 @@ class Chartbi extends Component {
          selectedvariable: this.state.selectedvariable,
          selectedvariable2: this.state.selectedvariable2,    
          selectedjoinvariable: this.state.selectedjoinvariable,
-         filterstartdate: this.state.filterstartdate,
-         filterenddate: this.state.filterenddate,
+         selectedfiltervalue: this.state.selectedfiltervalue,
+         selectedfiltervalue2: this.state.selectedfiltervalue2,
          selectedfiltervariable: this.state.selectedfiltervariable
       },
       (data) => {
@@ -256,7 +262,7 @@ class Chartbi extends Component {
          var yIntercept = result.equation[1];
          var r2 = result.r2;
          var equation = result.string;
-
+     
          var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; }); //calculating the predicted y values, y = mx+c
          var r = Correlation.calc(xarray, yarray).toFixed(2); //rounding r to 2 decimal place
 
@@ -376,15 +382,15 @@ class Chartbi extends Component {
                      <br />    
                      <select name="filterlist" onChange={this.selectFilterVariable}>
                         <option value="" disabled selected>Select a Variable</option>
-                        {this.state.datevariables}
-                        {this.state.companyvariables}               
-                        {this.state.depotvariables}                 
-                        {this.state.geographicallocationvariables}
+                        {this.state.datevariablesoptions}
+                        {this.state.companyvariablesoptions}               
+                        {this.state.depotvariablesoptions}                 
+                        {this.state.geographicallocationvariablesoptions}
                         <option value="" disabled>---------------------------------</option>                                                                
-                        {this.state.datevariables2}
-                        {this.state.companyvariables2}              
-                        {this.state.depotvariables2}                
-                        {this.state.geographicallocationvariables2}                                              
+                        {this.state.datevariablesoptions2}
+                        {this.state.companyvariablesoptions2}              
+                        {this.state.depotvariablesoptions2}                
+                        {this.state.geographicallocationvariablesoptions2}                                              
                      </select>
                      <br /><br />
 
@@ -392,12 +398,12 @@ class Chartbi extends Component {
                         <div>
                            <label for="filterstartdate">Start Date:</label>
                            <br />                     
-                           <input type="date" name="filterstartdate" onChange={this.filterStartDate} />
+                           <input type="date" name="filterstartdate" onChange={this.selectFilterValue} />
                            <br /><br />
 
                            <label for="filterenddate">End Date:</label>
                            <br />
-                           <input type="date" name="filterenddate" onChange={this.filterEndDate} />
+                           <input type="date" name="filterenddate" onChange={this.selectFilterValue2} />
                            <br /><br />
                         </div>
                      }
@@ -405,8 +411,11 @@ class Chartbi extends Component {
                         <div>
                            <label for="filtercompany">Company:</label>
                            <br />
-                           <select name="filtercompany" onChange={this.selectFilterVariable}>
+                           <select name="filtercompany" onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
+                              {this.state.companyvaluelistoptions}
+                              <option value="" disabled>---------------------------------</option>   
+                              {this.state.companyvaluelistoptions2}                                                            
                            </select>
                            <br /><br />
                         </div>
@@ -415,7 +424,7 @@ class Chartbi extends Component {
                         <div>
                            <label for="filterdepot">Depot:</label>
                            <br />
-                           <select name="filterdepot" onChange={this.selectFilterVariable}>
+                           <select name="filterdepot" onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
                            </select>
                            <br /><br />
@@ -425,7 +434,7 @@ class Chartbi extends Component {
                         <div>
                            <label for="filtergeographicallocation">Geographical Location:</label>
                            <br />
-                           <select name="filtergeographicallocation" onChange={this.selectFilterVariable}>
+                           <select name="filtergeographicallocation" onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
                            </select>
                            <br /><br />
