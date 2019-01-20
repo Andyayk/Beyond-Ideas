@@ -175,7 +175,7 @@ class TableViewbi extends Component {
                                        <label for="joinvariable">
                                           <div class="cardsubtitle">
                                              <div class="tooltip">
-                                                Select 1 variable to combine the datasets:<span class="tooltiptext">Tip for user (?)</span>
+                                                Select 1 Variable to Combine the Datasets:<span class="tooltiptext">Tip for user (?)</span>
                                              </div>
                                           </div>
                                        </label>
