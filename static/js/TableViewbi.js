@@ -125,41 +125,70 @@ class TableViewbi extends Component {
    render() {
       return (
       <div>
-         <table>
-            <tr>
-               <td style={{"width":"50%", "left":"0px", "position":"relative"}}>
-                  <h3>First Table</h3>
-                 <select onChange={this.display}>
-                   <option value="" disabled selected>Select a Table to View</option>
-                   {this.state.options}
-                 </select>                     
-               </td>
-               <td style={{"width":"50%", "right":"0px", "position":"relative"}}>
-                  <h3>Second Table</h3>
+         <table style={{"width":"100%"}}> 
+            <tr>              
+               <td>
+                  <table style={{"width":"100%"}}>
+                     <div class="card">
+                        <div class="container">
+                           <th colspan="2">View Datasets</th>
+                           <tr>
+                              <td style={{"width":"50%", "left":"0px", "position":"relative"}}>
+                                <select onChange={this.display}>
+                                  <option value="" disabled selected>Select a dataset to view</option>
+                                  {this.state.options}
+                                </select>                     
+                              </td>
+                              <td style={{"width":"50%", "right":"0px", "position":"relative"}}>
+                                <select onChange={this.display2}>
+                                  <option value="" disabled selected>Select another dataset to view</option>
+                                  {this.state.options}
+                                </select>                  
+                              </td>    
+                           </tr><tr>
 
-                 <select onChange={this.display2}>
-                   <option value="" disabled selected>Select a Table to View</option>
-                   {this.state.options}
-                 </select>                  
+                           </tr>
+                        </div>
+                     </div>
+                  </table>
+               </td><td>
+                  <div class="card">
+                     <div class="container">
+                           <form>
+                              <table style={{"width":"100%"}}>
+                                 <tr>
+                                    <td colspan="2" align="center">
+                                       <b>Join Datasets</b>
+                                    </td>
+                                 </tr><tr>
+                                    <label for="joinvariable"><i>Select variable to combine both datasets:</i></label>
+                                 </tr><tr>
+                                    <td>
+                                       <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
+                                    </td><td>
+                                       <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
+                                    </td>
+                                 </tr><tr>
+                                    <td>
+                                       <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
+                                    </td><td>                                    
+                                       <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
+                                    </td>
+                                 </tr><tr></tr><tr></tr><tr>
+                                    <td colspan="2" align="center">
+                                       <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save to Database</span></button>
+                                    </td>
+                                 </tr>
+                              </table>
+                           </form>   
+                     </div>                     
+                  </div>
                </td>
             </tr>
          </table>
-            
-			<h3>Combine Datasets</h3> 
-         <label for="joinvariable">Combine Based On:</label>
-         <form>
-         <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
-         <br />
-         <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
-         <br />                  
-         <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
-         <br />
-         <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
-         </form>
-         
 
-         <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save Joined Files</span></button>
-			<table>
+			
+         <table>
 			<tr>
 				<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
 					<table border="1">
