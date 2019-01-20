@@ -106,7 +106,7 @@
 
 .content-layout {
   grid-area: content;
-  padding: 0.6rem 2rem;
+  padding: 1.5rem 2rem;
 }
 
 .horizontal {
@@ -143,12 +143,12 @@ li a:active {
 .button {
   display: inline-block;
   border-radius: 4px;
-  background-color: limegreen;
+  background-color: #4CAF50;
   border: none;
   color: white;
   text-align: center;
-  font-size: 17px;
-  padding: 8px;
+  font-size: 16px;
+  padding: 6px;
   width: 200px;
   transition: all 0.5s;
   cursor: pointer;
@@ -179,16 +179,100 @@ li a:active {
   right: 0;
 }
 
-.card {
+.cardview {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   background-color: white;
   transition: 0.3s;
   width: 100%;
-  height: 180px;      
+  height: 190px;      
 }
 
-.container {
+.containerview {
   padding: 10px 16px;
   margin: auto;   
   text-align: left;  
 }
+
+.cardcombine {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  background-color: white;
+  transition: 0.3s;
+  width: 100%;
+  height: 190px;      
+}
+
+.containercombine {
+  padding: 10px 16px;
+  margin: auto;   
+  text-align: left;  
+}
+
+.cardtable {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  background-color: white;
+  transition: 0.3s;
+  width: 1170px;
+  height: 190px;      
+  max-width: 100%;
+  height: 100%;
+}
+
+.containertable {
+  padding: 10px 16px;
+  margin: auto;   
+  text-align: center;
+  align-content: center;  
+  max-width: 100%;  
+}
+
+div.cardtitle {
+  font-size: 26px;
+  font-weight: bold;
+  color: #4d5762;
+}
+
+div.cardsubtitle{
+  font-size: 15px;
+  font-style: italic;
+}
+
+table.outputtable{
+  border-collapse: collapse;
+}
+
+table.outputtable th{
+  background-color: #4CAF50;
+  color: white;  
+  padding: 5px;
+}
+
+table.outputtable tr:nth-child(even){background-color: white}
+table.outputtable tr:nth-child(odd){background-color: #fdfcfb}
+table.outputtable tr:hover {background-color:#f5f5f5;}
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #4d5762;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+
