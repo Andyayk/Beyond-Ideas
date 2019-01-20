@@ -6,6 +6,8 @@ import regression from 'regression';
 import Correlation from 'node-correlation';
 import SpearmanRHO from 'spearman-rho';
 
+import "../main";
+
 var $ = require('jquery');
 
 class Chartbi extends Component {  
@@ -432,7 +434,7 @@ class Chartbi extends Component {
                         </div>
                      }                                                               
 
-                     <button onClick={this.generateScatterplot}>Generate Scatterplot</button>
+                     <button class="button" style={{"vertical-align":"middle"}} onClick={this.generateScatterplot}><span>Generate Scatterplot</span></button>
                      <br /><br />              
                   </td>
                   <td></td>
