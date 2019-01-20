@@ -60,21 +60,6 @@ def displayTablebi(table_name):
         return table
     except Exception as e:
         return "Something is wrong with displayTable method"
-    
-def getVariablesbi(table_name):
-    """
-        This method will get selected variables data (numerical variables only)
-    """    
-    try:   
-        cols = []
-        
-        cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "' AND DATA_TYPE IN ('TINYINT', 'SMALLINT', 'MEDIUMINT', 'INT', 'BIGINT', 'DECIMAL', 'FLOAT', 'DOUBLE', 'REAL', 'BIT', 'BOOLEAN', 'SERIAL')")
-        for col in cursor: # add table cols
-            cols.append(col[0])
-
-        return cols
-    except Exception as e:
-        return "Something is wrong with getVariablesbi method"    
 
 def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, filterstartdate, filterenddate, filtervariable):
     """
@@ -162,6 +147,21 @@ def tablesViewJoinbi(tablename, tablename2, joinvariable):
         return "test"
     except Exception as e:
         return "Something is wrong with tablesJoinbi method"
+
+def getVariablesbi(table_name):
+    """
+        This method will get selected variables data (numerical variables only)
+    """    
+    try:   
+        cols = []
+        
+        cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "' AND DATA_TYPE IN ('TINYINT', 'SMALLINT', 'MEDIUMINT', 'INT', 'BIGINT', 'DECIMAL', 'FLOAT', 'DOUBLE', 'REAL', 'BIT', 'BOOLEAN', 'SERIAL')")
+        for col in cursor: # add table cols
+            cols.append(col[0])
+
+        return cols
+    except Exception as e:
+        return "Something is wrong with getVariablesbi method"    
 
 def getDateVariablebi(tablename):
     """
