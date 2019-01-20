@@ -5,6 +5,7 @@
 """
 
 import os
+import requests
 
 from . import modelbi
 from flask import Flask, render_template, request, jsonify
@@ -127,6 +128,15 @@ def create_app(config_name):
             """
                 This method will render our web crawling page
             """      
+            url = "https://www.wunderground.com/history/daily/sg/river-valley/WSAP/date/2019-1-19?cm_ven=localwx_history"
+            weather_r = requests.get(url)
+            weather_soup = soup(weather_r.text, 'html.parser')
+            #toReturn = weather_soup.prettify()
+            toReturn = weather_soup.findAll('a')
+            #for link in toReturn:
+            #   print(link)
+
+            """
             my_url = 'https://www.newegg.com/Product/ProductList.aspx?Submit=ENE&DEPA=0&Order=BESTMATCH&Description=graphic+card&N=-1&isNodeId=1'
             
             #opening up connection, grabbing the page
@@ -145,7 +155,7 @@ def create_app(config_name):
             for container in containers:
                 product_name = container.a.img["title"]
                 product_names += product_name + " "
-                
-            return render_template('webcrawlingpagebi.html', product_names = product_names)
+            """    
+            return render_template('webcrawlingpagebi.html', toReturn = toReturn)
 
     return app
