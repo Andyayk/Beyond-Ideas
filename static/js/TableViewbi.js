@@ -128,55 +128,79 @@ class TableViewbi extends Component {
          <table style={{"width":"100%"}}> 
             <tr>              
                <td>
-                  <table style={{"width":"100%"}}>
-                     <div class="card">
-                        <div class="container">
-                           <th colspan="2">View Datasets</th>
+                  <div class="cardview">
+                     <div class="containerview">
+                        <table style={{"width":"100%"}}>
                            <tr>
-                              <td style={{"width":"50%", "left":"0px", "position":"relative"}}>
-                                <select onChange={this.display}>
-                                  <option value="" disabled selected>Select a dataset to view</option>
-                                  {this.state.options}
-                                </select>                     
+                              <th colspan="2" align="center">
+                                 <div class="cardtitle">Select Dataset(s) to View</div>
+                              </th>
+                           </tr><tr></tr><tr></tr><tr></tr><tr></tr><tr>
+                              <td align="center">
+                                 <div class="cardsubtitle">Dataset One:</div>
                               </td>
-                              <td style={{"width":"50%", "right":"0px", "position":"relative"}}>
-                                <select onChange={this.display2}>
-                                  <option value="" disabled selected>Select another dataset to view</option>
-                                  {this.state.options}
-                                </select>                  
-                              </td>    
+                              <td align="center">
+                                 <div class="cardsubtitle">Dataset Two:</div>
+                              </td>                              
                            </tr><tr>
-
+                              <td align="center">
+                                <select onChange={this.display}>
+                                  <option value="" disabled selected>--------------- select your dataset ---------------</option>
+                                  {this.state.options}
+                                </select>                    
+                              </td>
+                              <td align="center">
+                                <select onChange={this.display2}>
+                                  <option value="" disabled selected>--------------- select your dataset ---------------</option>
+                                  {this.state.options}
+                                </select>     
+                              </td>    
                            </tr>
-                        </div>
+                        </table>
                      </div>
-                  </table>
+                  </div>
                </td><td>
-                  <div class="card">
-                     <div class="container">
+                  <div class="cardcombine">
+                     <div class="containercombine">
                            <form>
                               <table style={{"width":"100%"}}>
                                  <tr>
                                     <td colspan="2" align="center">
-                                       <b>Join Datasets</b>
+                                       <div class="cardtitle">
+                                             Combine Selected Datasets  
+                                       </div>
                                     </td>
-                                 </tr><tr>
-                                    <label for="joinvariable"><i>Select variable to combine both datasets:</i></label>
-                                 </tr><tr>
-                                    <td>
-                                       <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
-                                    </td><td>
-                                       <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
-                                    </td>
-                                 </tr><tr>
-                                    <td>
-                                       <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
-                                    </td><td>                                    
-                                       <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
-                                    </td>
-                                 </tr><tr></tr><tr></tr><tr>
+                                 </tr><tr></tr><tr></tr><tr></tr><tr>
                                     <td colspan="2" align="center">
-                                       <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save to Database</span></button>
+                                       <label for="joinvariable">
+                                          <div class="cardsubtitle">
+                                             <div class="tooltip">
+                                                Select 1 variable to combine the datasets:<span class="tooltiptext">Tip for user (?)</span>
+                                             </div>
+                                          </div>
+                                       </label>
+                                    </td>
+                                 </tr><tr>
+                                    <td colspan="2" align="center">                                 
+                                       <table>
+                                          <tr>
+                                             <td>
+                                                <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
+                                             </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>
+                                                <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
+                                             </td>
+                                          </tr><tr>
+                                             <td>
+                                                <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
+                                             </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>
+                                                <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
+                                             </td>
+                                          </tr><tr></tr><tr></tr><tr>
+                                             <td colspan="11" align="center">
+                                                <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save Joined Datasets</span></button>
+                                             </td>
+                                          </tr>
+                                       </table>
                                     </td>
                                  </tr>
                               </table>
@@ -187,37 +211,38 @@ class TableViewbi extends Component {
             </tr>
          </table>
 
-			
-         <table>
-			<tr>
-				<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
-					<table border="1">
-						{ReactHtmlParser(this.state.combinedtable)}
-					</table>
-				</td>
-			</tr>
-            <tr>
-               <td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
-                  <table border="1">
-                     {ReactHtmlParser(this.state.table)}
-                  </table>
-               </td>
-               <td style={{"overflow":"auto", "max-height":"500px", "right":"0px", "position":"relative", "vertical-align":"top"}}>
-                  <table border="1">
-                     {ReactHtmlParser(this.state.table2)}
-                  </table>
-               </td>
-            </tr>
+         <table style={{"padding":"3px"}}>
+            <div class="cardtable">
+               <div class="containertable">     
+            		<tr>
+               		<td style={{"overflow":"auto", "max-height":"500px", "max-width":"1160px", "position":"relative", "vertical-align":"top"}}>
+                        <div style={{"overflow-x":"auto"}}>
+                           <table class="outputtable">
+            						{ReactHtmlParser(this.state.combinedtable)}
+            					</table>
+                        </div>
+         				</td>
+               	</tr><tr>
+                     <td style={{"overflow":"auto", "max-height":"500px","max-width":"580px", "position":"relative", "vertical-align":"top", "align":"left"}}>
+                        <div style={{"overflow-x":"auto"}}>
+                           <table class="outputtable">
+                              {ReactHtmlParser(this.state.table)}
+                           </table>
+                        </div>
+                     </td>
+                     <td style={{"overflow":"auto", "max-height":"500px","max-width":"580px", "position":"relative", "vertical-align":"top", "align":"right"}}>
+                        <div style={{"overflow-x":"auto"}}>
+                           <table class="outputtable">
+                              {ReactHtmlParser(this.state.table2)}
+                           </table>
+                        </div>
+                    </td>
+                  </tr>
+               </div>
+            </div>
          </table>
-         <tr>
-            <td>
-                 
-            </td>
-            <td>
-                  
-            </td>
-         </tr>
       </div>
+         
       );
    }
 }
