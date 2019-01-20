@@ -40,31 +40,17 @@ class Chartbi extends Component {
       this.getVariables2 = this.getVariables2.bind(this);
 
       this.createVariables = this.createVariables.bind(this);   
-      this.createVariables2 = this.createVariables2.bind(this);  
+      this.createVariablesOptions = this.createVariablesOptions.bind(this);
 
       this.selectVariable = this.selectVariable.bind(this);   
       this.selectVariable2 = this.selectVariable2.bind(this);  
-
       this.selectJoinVariable = this.selectJoinVariable.bind(this);     
-
-      this.generateScatterplot = this.generateScatterplot.bind(this); 
+      this.selectFilterVariable = this.selectFilterVariable.bind(this); 
 
       this.filterStartDate = this.filterStartDate.bind(this);  
-      this.filterEndDate = this.filterEndDate.bind(this); 
+      this.filterEndDate = this.filterEndDate.bind(this);  
 
-      this.createDateVariables = this.createDateVariables.bind(this); 
-      this.createDateVariables2 = this.createDateVariables2.bind(this);
-
-      this.selectFilterVariable = this.selectFilterVariable.bind(this);  
-
-      this.createCompanyVariables = this.createCompanyVariables.bind(this);
-      this.createCompanyVariables2 = this.createCompanyVariables2.bind(this);      
-
-      this.createDepotVariables = this.createDepotVariables.bind(this);
-      this.createDepotVariables2 = this.createDepotVariables2.bind(this);      
-      
-      this.createGeographicalLocationVariables = this.createGeographicalLocationVariables.bind(this);  
-      this.createGeographicalLocationVariables2 = this.createGeographicalLocationVariables2.bind(this);                                   
+      this.generateScatterplot = this.generateScatterplot.bind(this); 
 
       this.getMySQLTables(); //retrieving user's uploaded tables
    }
@@ -107,17 +93,14 @@ class Chartbi extends Component {
          tablename: event.target.value,
       },
       (data) => {
-         var variablelist = data['variablelist'];
-         var datevariablelist = data['datevariablelist'];
-         var companyvariablelist = data['companyvariablelist'];
-         var depotvariablelist = data['depotvariablelist'];
-         var geographicallocationvariablelist = data['geographicallocationvariablelist'];         
+         var methodNo = 1;
+         var variablelistdata = data['variablelist'];
+         var datevariablelistdata = data['datevariablelist'];
+         var companyvariablelistdata = data['companyvariablelist'];
+         var depotvariablelistdata = data['depotvariablelist'];
+         var geographicallocationvariablelistdata = data['geographicallocationvariablelist'];         
          
-         this.createVariables(variablelist);       
-         this.createDateVariables(datevariablelist);   
-         this.createCompanyVariables(companyvariablelist); 
-         this.createDepotVariables(depotvariablelist); 
-         this.createGeographicalLocationVariables(geographicallocationvariablelist);                            
+         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata);                     
       });          
    }
 
@@ -132,169 +115,69 @@ class Chartbi extends Component {
          tablename: event.target.value,
       },
       (data) => {
-         var variablelist = data['variablelist'];
-         var datevariablelist = data['datevariablelist'];
-         var companyvariablelist = data['companyvariablelist'];
-         var depotvariablelist = data['depotvariablelist'];
-         var geographicallocationvariablelist = data['geographicallocationvariablelist'];           
-   
-         this.createVariables2(variablelist);         
-         this.createDateVariables2(datevariablelist);  
-         this.createCompanyVariables2(companyvariablelist); 
-         this.createDepotVariables2(depotvariablelist); 
-         this.createGeographicalLocationVariables2(geographicallocationvariablelist);                                     
+         var methodNo = 2;         
+         var variablelistdata = data['variablelist'];
+         var datevariablelistdata = data['datevariablelist'];
+         var companyvariablelistdata = data['companyvariablelist'];
+         var depotvariablelistdata = data['depotvariablelist'];
+         var geographicallocationvariablelistdata = data['geographicallocationvariablelist'];         
+         
+         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata);                                        
       });   
    }       
 
-   //creating select options for drop down list based on data from flask
-   createVariables(data) {
+   //general method for creating select options for drop down list based on data from flask
+   createVariablesOptions(methodNo, variablelistdata) {
       let variables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var variablelist = data.toString().split(",");
+      if (variablelistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
+         var variablelist = variablelistdata.toString().split(",");
+         for (let i = 0; i < variablelist.length; i++) {
+            variables.push(<option value={"t"+methodNo+"."+variablelist[i]}>{methodNo+": "+variablelist[i]}</option>);
+         };
+      }      
+      return variables;
+   }
+
+   //creating select options for drop down list based on data from flask
+   createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata) {
+      let variables = [];
+      if (variablelistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
+         var variablelist = variablelistdata.toString().split(",");
          for (let i = 0; i < variablelist.length; i++) {
             variables.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
          };
       }
 
-      this.setState({
-         variablesoptions: variables
-      });
+      //creating select options for drop down list based on date data from flask
+      let datevariables = this.createVariablesOptions(methodNo, datevariablelistdata);
+
+      //creating select options for drop down list based on company data from flask
+      let companyvariables = this.createVariablesOptions(methodNo, companyvariablelistdata);
+      
+      //creating select options for drop down list based on depot data from flask
+      let depotvariables = this.createVariablesOptions(methodNo, depotvariablelistdata);
+
+      //creating select options for drop down list based on geographical location data from flask
+      let geographicallocationvariables = this.createVariablesOptions(methodNo, geographicallocationvariablelistdata);
+
+      if (methodNo == 1) {
+         this.setState({
+            variablesoptions: variables,
+            datevariables: datevariables,
+            companyvariables: companyvariables,
+            depotvariables: depotvariables,
+            geographicallocationvariables: geographicallocationvariables
+         });        
+      } else if (methodNo == 2) {
+         this.setState({
+            variablesoptions2: variables,
+            datevariables2: datevariables,
+            companyvariables2: companyvariables,
+            depotvariables2: depotvariables,
+            geographicallocationvariables2: geographicallocationvariables
+         });           
+      }   
    }    
-
-   //creating select options for drop down list based on data from flask
-   createVariables2(data) {
-      let variables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var variablelist = data.toString().split(",");
-         for (let i = 0; i < variablelist.length; i++) {
-            variables.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
-         };
-      }
-
-      this.setState({
-         variablesoptions2: variables
-      });
-   }    
-
-   //creating select options for drop down list based on date data from flask
-   createDateVariables(data) {
-      let datevariables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var datevariablelist = data.toString().split(",");
-         for (let i = 0; i < datevariablelist.length; i++) {
-            datevariables.push(<option value={"t1."+datevariablelist[i]}>1: {datevariablelist[i]}</option>);
-         };
-      }
-
-      this.setState({
-         datevariables: datevariables
-      });
-   }     
-
-   //creating select options for drop down list based on date data from flask
-   createDateVariables2(data) {
-      let datevariables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var datevariablelist = data.toString().split(",");
-         for (let i = 0; i < datevariablelist.length; i++) {
-            datevariables.push(<option value={"t2."+datevariablelist[i]}>2: {datevariablelist[i]}</option>);
-         };
-      }
-
-      this.setState({
-         datevariables2: datevariables
-      });
-   }     
-
-   //creating select options for drop down list based on company data from flask
-   createCompanyVariables(data) {
-      let companyvariables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var companyvariablelist = data.toString().split(",");
-         for (let i = 0; i < companyvariablelist.length; i++) {
-            companyvariables.push(<option value={"t1."+companyvariablelist[i]}>1: {companyvariablelist[i]}</option>);
-         };
-      }
-
-      this.setState({
-         companyvariables: companyvariables
-      });
-   }     
-
-   //creating select options for drop down list based on company data from flask
-   createCompanyVariables2(data) {
-      let companyvariables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var companyvariablelist = data.toString().split(",");
-         for (let i = 0; i < companyvariablelist.length; i++) {
-            companyvariables.push(<option value={"t2."+companyvariablelist[i]}>2: {companyvariablelist[i]}</option>);
-         };
-      }
-
-      this.setState({
-         companyvariables2: companyvariables
-      });
-   }      
-
-   //creating select options for drop down list based on company data from flask
-   createDepotVariables(data) {
-      let depotvariables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var depotvariablelist = data.toString().split(",");
-         for (let i = 0; i < depotvariablelist.length; i++) {
-            depotvariables.push(<option value={"t1."+depotvariablelist[i]}>1: {depotvariablelist[i]}</option>);
-         };
-      }
-
-      this.setState({
-         depotvariables: depotvariables
-      });
-   }     
-
-   //creating select options for drop down list based on company data from flask
-   createDepotVariables2(data) {
-      let depotvariables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var depotvariablelist = data.toString().split(",");
-         for (let i = 0; i < depotvariablelist.length; i++) {
-            depotvariables.push(<option value={"t2."+depotvariablelist[i]}>2: {depotvariablelist[i]}</option>);
-         };
-      }
-
-      this.setState({
-         depotvariables2: depotvariables
-      });
-   }     
-
-   //creating select options for drop down list based on company data from flask
-   createGeographicalLocationVariables(data) {
-      let geographicallocationvariables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var geographicallocationvariablelist = data.toString().split(",");
-         for (let i = 0; i < geographicallocationvariablelist.length; i++) {
-            geographicallocationvariables.push(<option value={"t1."+geographicallocationvariablelist[i]}>1: {geographicallocationvariablelist[i]}</option>);
-         };
-      }
-
-      this.setState({
-         geographicallocationvariables: geographicallocationvariables
-      });
-   }     
-
-   //creating select options for drop down list based on company data from flask
-   createGeographicalLocationVariables2(data) {
-      let geographicallocationvariables = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty 
-         var geographicallocationvariablelist = data.toString().split(",");
-         for (let i = 0; i < geographicallocationvariablelist.length; i++) {
-            geographicallocationvariables.push(<option value={"t2."+geographicallocationvariablelist[i]}>2: {geographicallocationvariablelist[i]}</option>);
-         };
-      }
-
-      this.setState({
-         geographicallocationvariables2: geographicallocationvariables
-      });
-   }        
 
    //store the variable that the user has selected
    selectVariable(event) {
@@ -518,6 +401,36 @@ class Chartbi extends Component {
                            <br /><br />
                         </div>
                      }
+                     {this.state.selectedfiltervariable.toLowerCase().includes("company") &&
+                        <div>
+                           <label for="filtercompany">Company:</label>
+                           <br />
+                           <select name="filtercompany" onChange={this.selectFilterVariable}>
+                              <option value="" disabled selected>Select a Variable</option>
+                           </select>
+                           <br /><br />
+                        </div>
+                     }
+                     {this.state.selectedfiltervariable.toLowerCase().includes("depot") &&
+                        <div>
+                           <label for="filterdepot">Depot:</label>
+                           <br />
+                           <select name="filterdepot" onChange={this.selectFilterVariable}>
+                              <option value="" disabled selected>Select a Variable</option>
+                           </select>
+                           <br /><br />
+                        </div>
+                     }
+                     {this.state.selectedfiltervariable.toLowerCase().includes("geographicallocation") &&
+                        <div>
+                           <label for="filtergeographicallocation">Geographical Location:</label>
+                           <br />
+                           <select name="filtergeographicallocation" onChange={this.selectFilterVariable}>
+                              <option value="" disabled selected>Select a Variable</option>
+                           </select>
+                           <br /><br />
+                        </div>
+                     }                                                               
 
                      <button onClick={this.generateScatterplot}>Generate Scatterplot</button>
                      <br /><br />              

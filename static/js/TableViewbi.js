@@ -13,19 +13,20 @@ class TableViewbi extends Component {
          options: "",         
          table: "",
          table2: "",
-		 combinedtable: "",
+		   combinedtable: "",
          exporttable1: "",
          exporttable2: "",
-		 selectedjoinvariable: "activitydate", 
+         selectedjoinvariable: "activitydate", 
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
+
       this.display = this.display.bind(this);
-      this.display2 = this.display2.bind(this);    
-      this.save = this.save.bind(this);   
       this.display2 = this.display2.bind(this);  
-      this.save = this.save.bind(this);    
-	  this.selectJoinVariable = this.selectJoinVariable.bind(this); 
+
+      this.save = this.save.bind(this);   
+   
+	   this.selectJoinVariable = this.selectJoinVariable.bind(this); 
 
       this.getMySQLTables(); //retrieving user's uploaded tables
      
@@ -60,9 +61,9 @@ class TableViewbi extends Component {
 
    //retrieving table display from flask
    display(event) {
-     this.setState({
-       exporttable1: event.target.value,
-     });
+      this.setState({
+         exporttable1: event.target.value,
+      });
       $.post(window.location.origin + "/tableviewbi/",
       {
          tablename: event.target.value,
@@ -104,7 +105,7 @@ class TableViewbi extends Component {
       {
          tablename1: this.state.exporttable1,
          tablename2: this.state.exporttable2,
-		 selectedjoinvariable: this.state.selectedjoinvariable,
+         selectedjoinvariable: this.state.selectedjoinvariable,
       },
       (data) => {  
          if(data == "Something is wrong with writeToCSV method") {
@@ -113,9 +114,9 @@ class TableViewbi extends Component {
             });
          } else {
             console.log(data);
-			this.setState({
-			    combinedtable: data,
-			})
+   			this.setState({
+   			    combinedtable: data,
+   			})
          }              
       });        
    }
@@ -142,22 +143,22 @@ class TableViewbi extends Component {
                  </select>                  
                </td>
             </tr>
-            </table>
+         </table>
             
-				<h3>Combine Datasets</h3> 
-				 <label for="joinvariable">Combine Based On:</label>
-				 <form>
-				 <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
-				 <br />
-				 <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
-				 <br />                  
-				 <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
-				 <br />
-				 <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
-				 </form>
-            
+			<h3>Combine Datasets</h3> 
+         <label for="joinvariable">Combine Based On:</label>
+         <form>
+         <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
+         <br />
+         <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
+         <br />                  
+         <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
+         <br />
+         <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
+         </form>
+         
 
-            <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save Joined Files</span></button>
+         <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save Joined Files</span></button>
 			<table>
 			<tr>
 				<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
@@ -187,7 +188,6 @@ class TableViewbi extends Component {
                   
             </td>
          </tr>
-         
       </div>
       );
    }
