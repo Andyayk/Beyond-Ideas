@@ -79,19 +79,22 @@ def create_app(config_name):
                 This method will retrieve variables for API call from react
             """     
             tablename = request.form.get("tablename")           
-            variablelist = modelbi.getVariablesbi(tablename)    
+            variablelist = modelbi.getNumbericalColumnNamebi(tablename)    
             
-            datevariablelist = modelbi.getDateVariablebi(tablename)  
-            companyvariablelist = modelbi.getCompanyVariablebi(tablename)  
-            depotvariablelist = modelbi.getDepotVariablebi(tablename)  
-            geographicallocationvariablelist = modelbi.getGeographicalLocationVariablebi(tablename)                                      
+            datevariablelist = modelbi.getDateColumnNamebi(tablename)  
+            companyvariablelist = modelbi.getCompanyColumnNamebi(tablename)  
+            depotvariablelist = modelbi.getDepotColumnNamebi(tablename)  
+            geographicallocationvariablelist = modelbi.getGeographicalLocationColumnNamebi(tablename) 
+
+            companyvaluelist = modelbi.getCompanyVariablesbi(tablename)                   
 
             return jsonify(
                 variablelist = variablelist,            
                 datevariablelist = datevariablelist,
                 companyvariablelist = companyvariablelist,
                 depotvariablelist = depotvariablelist,
-                geographicallocationvariablelist = geographicallocationvariablelist
+                geographicallocationvariablelist = geographicallocationvariablelist,
+                companyvaluelist = companyvaluelist
             )
 
         @app.route('/scatterplotdatabi/', methods = ['POST'])
@@ -107,12 +110,12 @@ def create_app(config_name):
 
             joinvariable = request.form.get("selectedjoinvariable") 
 
-            filterstartdate = request.form.get("filterstartdate")
-            filterenddate = request.form.get("filterenddate")               
+            filtervalue = request.form.get("selectedfiltervalue")
+            filtervalue2 = request.form.get("selectedfiltervalue2")               
             
             filtervariable = request.form.get("selectedfiltervariable")
 
-            combinedxyarray = modelbi.tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, filterstartdate, filterenddate, filtervariable)
+            combinedxyarray = modelbi.tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, filtervalue, filtervalue2, filtervariable)
 
             return jsonify(
                 xarray = combinedxyarray[0],
