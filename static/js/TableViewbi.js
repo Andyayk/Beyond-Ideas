@@ -197,7 +197,7 @@ class TableViewbi extends Component {
                                              </td>
                                           </tr><tr></tr><tr></tr><tr>
                                              <td colspan="11" align="center">
-                                                <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save Joined Datasets</span></button>
+                                                <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Combine & Save as New Dataset</span></button>
                                              </td>
                                           </tr>
                                        </table>
