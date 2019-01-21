@@ -35,7 +35,11 @@ class Chartbi extends Component {
          geographicallocationvariablesoptions: "",
          geographicallocationvariablesoptions2: "",
          companyvaluelistoptions: "",
-         companyvaluelistoptions2: "",         
+         companyvaluelistoptions2: "",
+         depotvaluelistoptions: "",
+         depotvaluelistoptions2: "", 
+         geographicallocationvaluelistoptions: "",
+         geographicallocationvaluelistoptions2: "",                            
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -99,9 +103,11 @@ class Chartbi extends Component {
          var depotvariablelistdata = data['depotvariablelist'];
          var geographicallocationvariablelistdata = data['geographicallocationvariablelist']; 
 
-         var companyvaluelistdata = data['companyvaluelist'];        
+         var companyvaluelistdata = data['companyvaluelist']; 
+         var depotvaluelistdata = data['depotvaluelist'];
+         var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];                
          
-         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata);                     
+         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata);                     
       });          
    }
 
@@ -123,10 +129,12 @@ class Chartbi extends Component {
          var depotvariablelistdata = data['depotvariablelist'];
          var geographicallocationvariablelistdata = data['geographicallocationvariablelist'];         
 
-         var companyvaluelistdata = data['companyvaluelist'];    
+         var companyvaluelistdata = data['companyvaluelist']; 
+         var depotvaluelistdata = data['depotvaluelist'];
+         var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];  
          
-         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata);                                        
-      });   
+         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata);                     
+      });  
    }       
 
    //general method for creating select options for drop down list based on data from flask
@@ -142,7 +150,7 @@ class Chartbi extends Component {
    }
 
    //creating select options for drop down list based on data from flask
-   createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata) {
+   createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata) {
       let variables = [];
       if (variablelistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
          var variablelist = variablelistdata.toString().split(",");
@@ -151,20 +159,26 @@ class Chartbi extends Component {
          };
       }
 
-      //creating select options for drop down list based on date data from flask
+      //creating select options for drop down list based on date data variables from flask
       let datevariables = this.createVariablesOptions(methodNo, datevariablelistdata);
 
-      //creating select options for drop down list based on company data from flask
+      //creating select options for drop down list based on company data variables from flask
       let companyvariables = this.createVariablesOptions(methodNo, companyvariablelistdata);
 
-      //creating select options for drop down list based on depot data from flask
+      //creating select options for drop down list based on depot data variables from flask
       let depotvariables = this.createVariablesOptions(methodNo, depotvariablelistdata);
 
-      //creating select options for drop down list based on geographical location data from flask
+      //creating select options for drop down list based on geographical location data variables from flask
       let geographicallocationvariables = this.createVariablesOptions(methodNo, geographicallocationvariablelistdata);
 
       //creating select options for drop down list based on company data values from flask
       let companyvalues = this.createVariablesOptions(methodNo, companyvaluelistdata);
+
+      //creating select options for drop down list based on depot data values from flask
+      let depotvalues = this.createVariablesOptions(methodNo, depotvaluelistdata);
+
+      //creating select options for drop down list based on geographical location data values from flask
+      let geographicallocationvalues = this.createVariablesOptions(methodNo, geographicallocationvaluelistdata);      
 
       if (methodNo == 1) {
          this.setState({
@@ -173,7 +187,9 @@ class Chartbi extends Component {
             companyvariablesoptions: companyvariables,
             depotvariablesoptions: depotvariables,
             geographicallocationvariablesoptions: geographicallocationvariables,
-            companyvaluelistoptions: companyvalues
+            companyvaluelistoptions: companyvalues,
+            depotvaluelistoptions: depotvalues,
+            geographicallocationvaluelistoptions: geographicallocationvalues             
          });        
       } else if (methodNo == 2) {
          this.setState({
@@ -182,7 +198,9 @@ class Chartbi extends Component {
             companyvariablesoptions2: companyvariables,
             depotvariablesoptions2: depotvariables,
             geographicallocationvariablesoptions2: geographicallocationvariables,
-            companyvaluelistoptions2: companyvalues
+            companyvaluelistoptions2: companyvalues,
+            depotvaluelistoptions2: depotvalues,  
+            geographicallocationvaluelistoptions2: geographicallocationvalues                        
          });           
       }   
    }    
@@ -415,9 +433,9 @@ class Chartbi extends Component {
                            <br />
                            <select name="filtercompany" onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
-                              {this.state.companyvaluelistoptions}
+                              {this.state.companyvaluelistoptions}                         
                               <option value="" disabled>---------------------------------</option>   
-                              {this.state.companyvaluelistoptions2}                                                            
+                              {this.state.companyvaluelistoptions2}
                            </select>
                            <br /><br />
                         </div>
@@ -428,6 +446,9 @@ class Chartbi extends Component {
                            <br />
                            <select name="filterdepot" onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
+                              {this.state.depotvaluelistoptions}                            
+                              <option value="" disabled>---------------------------------</option>   
+                              {this.state.depotvaluelistoptions2}                           
                            </select>
                            <br /><br />
                         </div>
@@ -438,6 +459,9 @@ class Chartbi extends Component {
                            <br />
                            <select name="filtergeographicallocation" onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
+                              {this.state.geographicallocationvaluelistoptions}                           
+                              <option value="" disabled>---------------------------------</option>   
+                              {this.state.geographicallocationvaluelistoptions2}                              
                            </select>
                            <br /><br />
                         </div>

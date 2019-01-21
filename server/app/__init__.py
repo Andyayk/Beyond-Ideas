@@ -99,7 +99,9 @@ def create_app(config_name):
             depotvariablelist = modelbi.getDepotColumnNamebi(tablename)  
             geographicallocationvariablelist = modelbi.getGeographicalLocationColumnNamebi(tablename) 
 
-            companyvaluelist = modelbi.getCompanyVariablesbi(tablename)                   
+            companyvaluelist = modelbi.getCompanyValuesbi(tablename) 
+            depotvaluelist = modelbi.getDepotValuesbi(tablename)
+            geographicallocationvaluelist = modelbi.getGeographicalLocationValuesbi(tablename)                  
 
             return jsonify(
                 variablelist = variablelist,            
@@ -107,7 +109,9 @@ def create_app(config_name):
                 companyvariablelist = companyvariablelist,
                 depotvariablelist = depotvariablelist,
                 geographicallocationvariablelist = geographicallocationvariablelist,
-                companyvaluelist = companyvaluelist
+                companyvaluelist = companyvaluelist,
+                depotvaluelist = depotvaluelist,
+                geographicallocationvaluelist = geographicallocationvaluelist
             )
 
         @app.route('/scatterplotdatabi/', methods = ['POST'])
