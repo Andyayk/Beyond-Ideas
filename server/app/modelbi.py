@@ -1,7 +1,5 @@
 """
-
 @author: Beyond Ideas 
-
 """
 
 import mysql.connector, datetime
@@ -148,7 +146,7 @@ def tablesViewJoinbi(tablename, tablename2, joinvariable):
     except Exception as e:
         return "Something is wrong with tablesJoinbi method"
 
-def getNumbericalColumnNamebi(table_name):
+def getNumericalColumnNamebi(table_name):
     """
         This method will get selected variables data (numerical variables column names only)
     """    
@@ -161,8 +159,8 @@ def getNumbericalColumnNamebi(table_name):
 
         return cols
     except Exception as e:
-        return "Something is wrong with getNumbericalColumnNamebi method"    
-		
+        return "Something is wrong with getNumericalColumnNamebi method"    
+        
 def getVarcharColumnNamebi(table_name):
     """
         This method will get selected variables data (numerical variables column names only)
