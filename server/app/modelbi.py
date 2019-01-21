@@ -162,6 +162,21 @@ def getNumbericalColumnNamebi(table_name):
         return cols
     except Exception as e:
         return "Something is wrong with getNumbericalColumnNamebi method"    
+		
+def getVarcharColumnNamebi(table_name):
+    """
+        This method will get selected variables data (numerical variables column names only)
+    """    
+    try:   
+        cols = []
+        
+        cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "' AND DATA_TYPE IN ('VARCHAR', 'date')")
+        for col in cursor: # add table cols
+            cols.append(col[0])
+
+        return cols
+    except Exception as e:
+        return "Something is wrong with getNumbericalColumnNamebi method" 
 
 def getDateColumnNamebi(tablename):
     """
