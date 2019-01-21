@@ -11,8 +11,10 @@ import "../main";
 var $ = require('jquery');
 
 class Chartbi extends Component {  
+   
    constructor() {
       super();
+      
       this.state = {
          options: "",
          selectedtable: "",
@@ -35,7 +37,10 @@ class Chartbi extends Component {
          geographicallocationvariablesoptions: "",
          geographicallocationvariablesoptions2: "",
          companyvaluelistoptions: "",
-         companyvaluelistoptions2: "",         
+         companyvaluelistoptions2: "",
+         allvariablelist1: "",
+         allvariablelist2: "",
+         joinvariableoptions: "",
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -93,6 +98,7 @@ class Chartbi extends Component {
       },
       (data) => {
          var methodNo = 1;
+         var allvariablelistdata = data['allvariablelist'];
          var variablelistdata = data['variablelist'];
          var datevariablelistdata = data['datevariablelist'];
          var companyvariablelistdata = data['companyvariablelist'];
@@ -101,7 +107,24 @@ class Chartbi extends Component {
 
          var companyvaluelistdata = data['companyvaluelist'];        
          
-         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata);                     
+         this.createVariables(methodNo, allvariablelistdata, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata);
+         
+         let joinvariables = [];
+         
+         if (allvariablelistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
+            var allvariablels1 = allvariablelistdata.toString().split(",");
+            
+            for (let i = 0; i < allvariablels1.length; i++) {
+                if (this.state.allvariablelist2.includes(allvariablels1[i])){
+                    joinvariables.push(<option value={allvariablels1[i]}>{allvariablels1[i]}</option>);
+                }
+            };
+            
+         }
+         this.setState({
+            joinvariableoptions: joinvariables
+         });      
+             
       });          
    }
 
@@ -117,6 +140,7 @@ class Chartbi extends Component {
       },
       (data) => {
          var methodNo = 2;         
+         var allvariablelistdata = data['allvariablelist'];
          var variablelistdata = data['variablelist'];
          var datevariablelistdata = data['datevariablelist'];
          var companyvariablelistdata = data['companyvariablelist'];
@@ -125,9 +149,24 @@ class Chartbi extends Component {
 
          var companyvaluelistdata = data['companyvaluelist'];    
          
-         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata);                                        
+         this.createVariables(methodNo, allvariablelistdata, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata);
+
+         let joinvariables = [];
+         if (allvariablelistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
+            var allvariablels2 = allvariablelistdata.toString().split(",");
+            for (let i = 0; i < allvariablels2.length; i++) {
+                if(this.state.allvariablelist1.includes(allvariablels2[i])){
+                    joinvariables.push(<option value={allvariablels2[i]}>{allvariablels2[i]}</option>);
+                }
+            };
+         }
+         this.setState({
+            joinvariableoptions: joinvariables
+         });     
+         
       });   
-   }       
+   }
+
 
    //general method for creating select options for drop down list based on data from flask
    createVariablesOptions(methodNo, variablelistdata) {
@@ -142,7 +181,7 @@ class Chartbi extends Component {
    }
 
    //creating select options for drop down list based on data from flask
-   createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata) {
+   createVariables(methodNo, allvariablelistdata, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata) {
       let variables = [];
       if (variablelistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
          var variablelist = variablelistdata.toString().split(",");
@@ -150,6 +189,15 @@ class Chartbi extends Component {
             variables.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
          };
       }
+      
+      let allvariables = [];
+      if (allvariablelistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
+         var allvariablelist = allvariablelistdata.toString().split(",");
+         for (let i = 0; i < allvariablelist.length; i++) {
+            allvariables.push(allvariablelist[i]);
+        };
+      }
+      
 
       //creating select options for drop down list based on date data from flask
       let datevariables = this.createVariablesOptions(methodNo, datevariablelistdata);
@@ -169,6 +217,7 @@ class Chartbi extends Component {
       if (methodNo == 1) {
          this.setState({
             variablesoptions: variables,
+            allvariablelist1: allvariables,
             datevariablesoptions: datevariables,
             companyvariablesoptions: companyvariables,
             depotvariablesoptions: depotvariables,
@@ -178,6 +227,7 @@ class Chartbi extends Component {
       } else if (methodNo == 2) {
          this.setState({
             variablesoptions2: variables,
+            allvariablelist2: allvariables,
             datevariablesoptions2: datevariables,
             companyvariablesoptions2: companyvariables,
             depotvariablesoptions2: depotvariables,
@@ -363,18 +413,15 @@ class Chartbi extends Component {
                      <br /><br /><br /><br /> 
                      
                      <font size="6"><b>Combine Datasets</b></font>
-                     <br /><br />   
+                     <br /><br />
+                     
                      <label for="joinvariable">Combine Based On:</label>
                      <br />
-                     <form>
-                     <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
-                     <br />
-                     <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
-                     <br />                  
-                     <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
-                     <br />
-                     <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
-                     </form>
+                     <select name="joinvariable" onChange={this.selectJoinVariable}>
+                        <option value="" disabled selected>Select a Variable</option>
+                        {this.state.joinvariableoptions}
+                     </select>
+        
 
                      <br /><br /><br /><br /> 
 
