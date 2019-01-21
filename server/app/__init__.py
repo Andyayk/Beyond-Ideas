@@ -59,9 +59,25 @@ def create_app(config_name):
 			
             joinvariable = request.form.get("selectedjoinvariable")
 			
-            combinedxyarray = modelbi.tablesViewJoinbi(tablename, tablename2, joinvariable)
+            variablelist = modelbi.getVarcharColumnNamebi(tablename);
+            variablelist2 = modelbi.getVarcharColumnNamebi(tablename2);
+			
             
-            return combinedxyarray
+			
+            for variable in variablelist:
+                # for variable2 in variableset2:
+                    # if variable == variable2:
+                        # variable = "t1."+variable;
+                        # variable2 = "t2."+variable2;
+                variable = "test";
+                
+            variableset = set(variablelist);
+            variableset2 = set(variablelist2);				
+			
+			
+            # combinedxyarray = modelbi.tablesViewJoinbi(tablename, tablename2, joinvariable)
+            
+            return jsonify(test=list(variableset),test2=list(variableset2))
     class ChartClassbi():
         """
             This is the chart page

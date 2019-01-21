@@ -115,7 +115,7 @@ class TableViewbi extends Component {
          } else {
             console.log(data);
    			this.setState({
-   			    combinedtable: data,
+   			    combinedtable: JSON.stringify(data),
    			})
          }              
       });        
