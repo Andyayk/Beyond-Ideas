@@ -4,7 +4,7 @@
 
 """
 
-import mysql.connector, datetime
+import mysql.connector, datetime, re
 
 #MySQL Configurations
 mydb = mysql.connector.connect(
@@ -68,14 +68,17 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
     try:
         sqlstmt = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2"
         
-        if "activitydate" in joinvariable.lower(): #join by date
-            sqlstmt = sqlstmt + " WHERE t1." + "date" + " = t2." + "ActivityDate"
-        elif "company" in joinvariable.lower(): #join by company
-            sqlstmt = sqlstmt + " WHERE t1." + "company" + " = t2." + "company"   
-        elif "depot" in joinvariable.lower(): #join by depot
-            sqlstmt = sqlstmt + " WHERE t1." + "depot" + " = t2." + "depot"  
-        elif "geographicallocation" in joinvariable.lower(): #join by geographical location
-            sqlstmt = sqlstmt + " WHERE t1." + "geographicallocation" + " = t2." + "geographicallocation"   
+        if not joinvariable == "":
+            sqlstmt = sqlstmt + " WHERE t1." + joinvariable + " = t2." + joinvariable
+        
+        # if "activitydate" in joinvariable.lower(): #join by date
+            # sqlstmt = sqlstmt + " WHERE t1." + "date" + " = t2." + "ActivityDate"
+        # elif "company" in joinvariable.lower(): #join by company
+            # sqlstmt = sqlstmt + " WHERE t1." + "company" + " = t2." + "company"   
+        # elif "depot" in joinvariable.lower(): #join by depot
+            # sqlstmt = sqlstmt + " WHERE t1." + "depot" + " = t2." + "depot"  
+        # elif "geographicallocation" in joinvariable.lower(): #join by geographical location
+            # sqlstmt = sqlstmt + " WHERE t1." + "geographicallocation" + " = t2." + "geographicallocation"   
 
         if "date" in filtervariable.lower(): #filter by date
             sqlstmt = sqlstmt + " AND " + filtervariable + " BETWEEN '" + filtervalue + "' AND '" + filtervalue2 + "'"
@@ -120,7 +123,7 @@ def tablesViewJoinbi(tablename, tablename2, joinvariable):
     try:
         sqlstmt = "CREATE TABLE test AS (SELECT * FROM " + tablename + " as t1 INNER JOIN " + tablename2 + " as t2"
         
-        if "activitydate" in joinvariable.lower(): #join by date
+        if "date" in joinvariable.lower(): #join by date
             sqlstmt = sqlstmt + " WHERE t1." + "date" + " = t2." + "ActivityDate"
         elif "company" in joinvariable.lower(): #join by company
             sqlstmt = sqlstmt + " WHERE t1." + "company" + " = t2." + "company"   
@@ -148,6 +151,21 @@ def tablesViewJoinbi(tablename, tablename2, joinvariable):
     except Exception as e:
         return "Something is wrong with tablesJoinbi method"
 
+def getColumnNamebi(table_name):
+    """
+        This method will get selected variables data (numerical variables column names only)
+    """    
+    try:   
+        cols = []
+        
+        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "'")
+        for col in cursor: # add table cols
+            cols.append(col[0])
+        print(cols)
+        return cols
+    except Exception as e:
+        return "Something is wrong with getColumnNamebi method"    
+        
 def getNumbericalColumnNamebi(table_name):
     """
         This method will get selected variables data (numerical variables column names only)

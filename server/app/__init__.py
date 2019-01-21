@@ -78,9 +78,9 @@ def create_app(config_name):
             """
                 This method will retrieve variables for API call from react
             """     
-            tablename = request.form.get("tablename")           
+            tablename = request.form.get("tablename")
+            allvariablelist = modelbi.getColumnNamebi(tablename)
             variablelist = modelbi.getNumbericalColumnNamebi(tablename)    
-            
             datevariablelist = modelbi.getDateColumnNamebi(tablename)  
             companyvariablelist = modelbi.getCompanyColumnNamebi(tablename)  
             depotvariablelist = modelbi.getDepotColumnNamebi(tablename)  
@@ -89,6 +89,7 @@ def create_app(config_name):
             companyvaluelist = modelbi.getCompanyVariablesbi(tablename)                   
 
             return jsonify(
+                allvariablelist = allvariablelist,
                 variablelist = variablelist,            
                 datevariablelist = datevariablelist,
                 companyvariablelist = companyvariablelist,
