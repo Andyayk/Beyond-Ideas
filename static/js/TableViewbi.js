@@ -176,11 +176,12 @@ class TableViewbi extends Component {
                                     </td>
                                  </tr><tr></tr><tr></tr><tr>
                                     <td colspan="2" align="center">
-                                       <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save to Database</span></button>
+                                       
                                     </td>
                                  </tr>
                               </table>
                            </form>   
+						   <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save to Database</span></button>
                      </div>                     
                   </div>
                </td>
