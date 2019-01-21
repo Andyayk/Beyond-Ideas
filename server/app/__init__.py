@@ -1,7 +1,5 @@
 """
-
 @author: Beyond Ideas 
-
 """
 
 import os
@@ -56,12 +54,12 @@ def create_app(config_name):
             """   
             tablename = request.form.get("tablename1")
             tablename2 = request.form.get("tablename2")
-			
+            
             joinvariable = request.form.get("selectedjoinvariable")
-			
+            
             variablelist = modelbi.getVarcharColumnNamebi(tablename);
             variablelist2 = modelbi.getVarcharColumnNamebi(tablename2);
-			
+            
             for n, variable in enumerate(variablelist):
                 for n2, variable2 in enumerate(variablelist2):
                     variable2 = variable2;
@@ -70,13 +68,13 @@ def create_app(config_name):
                         variablelist2[n] = "t2."+variable2;
                 
             variableset = set(variablelist);
-            variableset2 = set(variablelist2);				
-			
+            variableset2 = set(variablelist2);              
+            
             # combinedxyarray = modelbi.tablesViewJoinbi(tablename, tablename2, joinvariable)
             
             return jsonify(test=list(variableset),test2=list(variableset2))
             # return tablename
-			
+            
     class ChartClassbi():
         """
             This is the chart page
@@ -94,7 +92,7 @@ def create_app(config_name):
                 This method will retrieve variables for API call from react
             """     
             tablename = request.form.get("tablename")           
-            variablelist = modelbi.getNumbericalColumnNamebi(tablename)    
+            variablelist = modelbi.getNumericalColumnNamebi(tablename)    
             
             datevariablelist = modelbi.getDateColumnNamebi(tablename)  
             companyvariablelist = modelbi.getCompanyColumnNamebi(tablename)  
