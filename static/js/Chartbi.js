@@ -59,6 +59,8 @@ class Chartbi extends Component {
 
       this.generateScatterplot = this.generateScatterplot.bind(this); 
 
+      this.formSubmitted = this.formSubmitted.bind(this);
+
       this.getMySQLTables(); //retrieving user's uploaded tables
    }
 
@@ -332,76 +334,82 @@ class Chartbi extends Component {
             }))
            .catch(err => console.error(err));       
       });    
-   }         
+   } 
+
+   //handle form submission
+   formSubmitted(event){
+      event.preventDefault();
+      this.generateScatterplot();
+   }        
 
    //rendering the html for chart
    render() {
       return (
          <div>
             <table style={{"width":"100%"}}>
-               <tr>
-                  <td style={{"width":"25%"}} valign="top" align="center" bgcolor="white">      
+               <tr>             
+                  <td style={{"width":"25%"}} valign="top" align="center" bgcolor="white">   
+                  <form method="POST" onSubmit={this.formSubmitted}>                       
                      <br />
                      <font size="6"><b>Datasets</b></font>
                      <br /><br />                      
-                     <label for="tablelist">Dataset 1 (X):</label>
+                     <label>Dataset 1 (X):</label>
                      <br /> 
-                     <select name="tablelist" onChange={this.getVariables}>
+                     <select required onChange={this.getVariables}>
                         <option value="" disabled selected>Select a Table</option>
                         {this.state.options}
                      </select>
                      <br /><br /> 
                      
-                     <label for="tablelist2">Dataset 2 (Y):</label>        
+                     <label>Dataset 2 (Y):</label>        
                      <br />
-                     <select name="tablelist2" onChange={this.getVariables2}>
+                     <select required onChange={this.getVariables2}>
                         <option value="" disabled selected>Select a Table</option>
                         {this.state.options}
                      </select>  
                      
                      <br /><br /><br /><br /> 
 
+                     <font size="6"><b>Combine Datasets</b></font>
+                     <br /><br />   
+                     <label>Combine Based On:</label>
+                     <br />
+
+                     <input type="radio" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
+                     <br />
+                     <input type="radio" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
+                     <br />                  
+                     <input type="radio" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
+                     <br />
+                     <input type="radio" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
+
+                     <br /><br /><br /><br /> 
+
                      <font size="6"><b>Variables</b></font>
                      <br /><br />   
-                     <label for="variablelist">Variable (X):</label>
+                     <label>Variable (X):</label>
                      <br />
-                     <select name="variablelist" onChange={this.selectVariable}>
+                     <select required onChange={this.selectVariable}>
                         <option value="" disabled selected>Select a Variable</option>
                         {this.state.variablesoptions}
                      </select>
                      <br /><br />
                      
-                     <label for="variablelist2">Variable (Y):</label>        
+                     <label>Variable (Y):</label>        
                      <br />
-                     <select name="variablelist2" onChange={this.selectVariable2}>
+                     <select required onChange={this.selectVariable2}>
                         <option value="" disabled selected>Select a Variable</option>
                         {this.state.variablesoptions2}
                      </select>     
                      
                      <br /><br /><br /><br /> 
-                     
-                     <font size="6"><b>Combine Datasets</b></font>
-                     <br /><br />   
-                     <label for="joinvariable">Combine Based On:</label>
-                     <br />
-                     <form>
-                     <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
-                     <br />
-                     <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
-                     <br />                  
-                     <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
-                     <br />
-                     <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
-                     </form>
-
-                     <br /><br /><br /><br /> 
 
                      <font size="6"><b>Filter</b></font>
                      <br /><br />   
-                     <label for="filterlist">Filtering By:</label> 
+                     <label>Filtering By:</label> 
                      <br />    
-                     <select name="filterlist" onChange={this.selectFilterVariable}>
-                        <option value="" disabled selected>Select a Variable</option>
+                     <select onChange={this.selectFilterVariable}>
+                        <option value="" selected>Select a Variable</option>
                         {this.state.datevariablesoptions}
                         {this.state.companyvariablesoptions}               
                         {this.state.depotvariablesoptions}                 
@@ -416,22 +424,22 @@ class Chartbi extends Component {
 
                      {this.state.selectedfiltervariable.toLowerCase().includes("date") &&
                         <div>
-                           <label for="filterstartdate">Start Date:</label>
+                           <label>Start Date:</label>
                            <br />                     
-                           <input type="date" name="filterstartdate" onChange={this.selectFilterValue} />
+                           <input type="date" required onChange={this.selectFilterValue} />
                            <br /><br />
 
-                           <label for="filterenddate">End Date:</label>
+                           <label>End Date:</label>
                            <br />
-                           <input type="date" name="filterenddate" onChange={this.selectFilterValue2} />
+                           <input type="date" required onChange={this.selectFilterValue2} />
                            <br /><br />
                         </div>
                      }
                      {this.state.selectedfiltervariable.toLowerCase().includes("company") &&
                         <div>
-                           <label for="filtercompany">Company:</label>
+                           <label>Company:</label>
                            <br />
-                           <select name="filtercompany" onChange={this.selectFilterValue}>
+                           <select required onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
                               {this.state.companyvaluelistoptions}                         
                               <option value="" disabled>---------------------------------</option>   
@@ -442,9 +450,9 @@ class Chartbi extends Component {
                      }
                      {this.state.selectedfiltervariable.toLowerCase().includes("depot") &&
                         <div>
-                           <label for="filterdepot">Depot:</label>
+                           <label>Depot:</label>
                            <br />
-                           <select name="filterdepot" onChange={this.selectFilterValue}>
+                           <select required onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
                               {this.state.depotvaluelistoptions}                            
                               <option value="" disabled>---------------------------------</option>   
@@ -455,9 +463,9 @@ class Chartbi extends Component {
                      }
                      {this.state.selectedfiltervariable.toLowerCase().includes("geographicallocation") &&
                         <div>
-                           <label for="filtergeographicallocation">Geographical Location:</label>
+                           <label>Geographical Location:</label>
                            <br />
-                           <select name="filtergeographicallocation" onChange={this.selectFilterValue}>
+                           <select required onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
                               {this.state.geographicallocationvaluelistoptions}                           
                               <option value="" disabled>---------------------------------</option>   
@@ -467,15 +475,16 @@ class Chartbi extends Component {
                         </div>
                      }                                                               
 
-                     <button class="button" style={{"vertical-align":"middle"}} onClick={this.generateScatterplot}><span>Generate Scatterplot</span></button>
-                     <br /><br />              
+                     <button class="button" type="submit" style={{"vertical-align":"middle"}}><span>Generate Scatterplot</span></button>
+                     <br /><br />            
+                  </form>                   
                   </td>
                   <td></td>
                   <td align="center" style={{"width":"74%"}} bgcolor="white">
                   {this.state.scatterplot}   
                   </td>
                </tr>
-            </table>                      
+            </table>                                   
          </div>
       );
    }
