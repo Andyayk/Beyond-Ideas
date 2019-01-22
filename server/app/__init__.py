@@ -66,16 +66,22 @@ def create_app(config_name):
                 for n2, variable2 in enumerate(variablelist2):
                     variable2 = variable2;
                     if variablelist[n] == variablelist2[n2]:
-                        variablelist[n] = "t1."+variable;
-                        variablelist2[n] = "t2."+variable2;
+                        variablelist[n] = "t1."+variable+" as "+variable+"1";
+                        variablelist2[n2] = "t2."+variable2+" as "+variable2+"2";
                 
             variableset = set(variablelist);
-            variableset2 = set(variablelist2);				
+            variableset2 = set(variablelist2);	
+
+            variables1 = ",".join(list(variableset));
+            variables2 = ",".join(list(variableset2)); 	
+
+            variables = variables1 + "," + variables2;		
 			
-            # combinedxyarray = modelbi.tablesViewJoinbi(tablename, tablename2, joinvariable)
+            combinetable = modelbi.tablesViewJoinbi(variables, tablename, tablename2, joinvariable);
+			
+            combinedtable = modelbi.displayTablebi("test");
             
-            return jsonify(test=list(variableset),test2=list(variableset2))
-            # return tablename
+            return combinedtable
 			
     class ChartClassbi():
         """
