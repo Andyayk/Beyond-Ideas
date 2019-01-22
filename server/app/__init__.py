@@ -79,7 +79,7 @@ def create_app(config_name):
 			
             combinetable = modelbi.tablesViewJoinbi(variables, tablename, tablename2, joinvariable);
 			
-            combinedtable = modelbi.displayTablebi("test");
+            combinedtable = modelbi.displayTablebi("combinedtable");
             
             return combinedtable
 			
