@@ -1,19 +1,26 @@
 {
-  "name": "Beyond-Ideas",
+  "name": "Beyond-Ideas-Panda-Conda",
   "version": "1.0.0",
-  "description": "",
+  "description": "Final Year Project, working with DHL. It is a platform to allow DHL and their partner companies to visualize and gain insight on Supply Chain-specific Data.",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run build -- --watch",
-    "start": "webpack-dev-server --open --mode development",
-    "build": "webpack -p",
+    "build": "webpack -p --progress --config webpack.config.js",
+    "dev-build": "webpack --progress -d --config webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --progress -d --config webpack.config.js --watch"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Astarcorp/Beyond-Ideas.git"
+    "url": "git+https://github.com/dhlsmu/IS480-201819-T1.git"
   },
-  "keywords": [],
+  "keywords": [
+    "fullstack",
+    "template",
+    "python",
+    "react",
+    "npm",
+    "webpack"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -24,15 +31,22 @@
     "@babel/core": "^7.2.0",
     "@babel/preset-env": "^7.2.0",
     "@babel/preset-react": "^7.0.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-plugin-transform-regenerator": "^6.26.0",
     "babel-loader": "^8.0.4",
+    "compression-webpack-plugin": "^2.0.0",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^2.0.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^0.11.2",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "jquery": "^3.2.1",
+    "json-loader": "^0.5.7",
     "live-server": "^1.2.1",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
+    "react-bootstrap": "^0.31.0",
     "react-dom": "^16.6.3",
     "style-loader": "^0.23.1",
     "typescript": "^3.2.2",
@@ -47,7 +61,9 @@
     "plotly.js": "^1.42.5",
     "react-html-parser": "^2.0.2",
     "react-plotly.js": "^2.2.0",
+    "recharts": "^1.4.2",
     "regression": "^2.0.1",
+    "sass": "^1.16.1",
     "spearman-rho": "^1.0.6"
   }
 }

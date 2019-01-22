@@ -5,9 +5,20 @@
   <!-- Required meta tags -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('site.static', filename='css/Layout.css') }}"
+  />
+
+  <link 
+    href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,700,800" rel="stylesheet" 
+  />
+
+  <link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='styles.css') }}"
+  />
+
   <title>DHL Visualisation</title>
-    <link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='styles.css') }}">
-  <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,700,800" rel="stylesheet" />
 </head>
 
 <body class="body-layout">
@@ -19,7 +30,7 @@
       <img src="{{ url_for('static', filename='images/DHL_logo.png') }}" alt="Logo" />
     </div>
     <div class="sidebar-layout">
-      <a id="home" class="sidebar-item" href="/home/">
+      <a id="home" class="sidebar-item" href="/">
         <img src="{{ url_for('static', filename='images/home.png') }}" alt="house" />
         Home
       </a>

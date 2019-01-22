@@ -1,0 +1,100 @@
+{% extends "layout.html" %} {% block content %}
+<script type="text/javascript" src="../dist/bundle.js"></script>
+
+<head>
+  <script
+    type="text/javascript"
+    src="{{ url_for('site.static', filename='js/Layout.js') }}"
+  ></script>
+  <link
+    rel="stylesheet"
+    href="{{ url_for('site.static', filename='css/Upload.css') }}"
+  />
+</head>
+
+<body>
+  <!-- <form enctype="multipart/form-data">
+    Select file to upload:
+    <input type="file" name="file" id="fileToUpload" />
+    <button type="button" onclick="upload()">UPkoad</button>
+  </form> -->
+
+  
+  <div class="uploadtext" ><strong id="uploadedFile"></strong></div>
+  <br />
+  <div class="dropzone" id="dropzone">
+    Drag and drop files here
+  </div>
+
+  <br/>
+  
+  <div class = "align-right">
+    <button class = "upload-btn" onclick="upload()">Upload</button>
+  </div>
+
+
+</body>
+
+
+<script>
+  var files;
+
+  function upload() {
+    var formData = new FormData();
+    formData.append('file',files[0])
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+        var data = JSON.parse(this.responseText);
+        // console.log(data);
+        if(data["status"] == 200){ 
+            alert("Data has been successfully uploaded!")
+            window.location = '/visualisation'
+        }else {
+            window.location = '/upload/edit_table'
+        }
+        
+    };
+
+    xhr.open("post", "/upload_api");
+    console.log("Sent")
+    xhr.send(formData);
+    
+  }
+
+  (function() {
+    var dropzone = document.getElementById("dropzone");
+
+    //create a upload function, checks accept only one file and sends it to the backend "/upload/"
+    var loadFile = function(file) {
+      if (file.length == 0) {
+        alert("Please select a file")
+      } else if (file.length > 1) {
+        alert("Upload only one file");
+      } else {
+        document.getElementById("uploadedFile").innerHTML = file[0].name;
+      }
+    };
+
+    // This is for the animation of the drag n drop
+
+    dropzone.ondrop = function(event) {
+      event.preventDefault();
+      this.className = "dropzone";
+      loadFile(event.dataTransfer.files);
+      files = event.dataTransfer.files;
+    };
+
+    dropzone.ondragover = function() {
+      this.className = "dropzone dragover";
+      return false;
+    };
+
+    dropzone.ondragleave = function() {
+      this.className = "dropzone";
+      return false;
+    };
+  })();
+
+  
+</script>
+{% endblock content %}
