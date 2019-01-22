@@ -28,6 +28,8 @@ class TableViewbi extends Component {
    
 	   this.selectJoinVariable = this.selectJoinVariable.bind(this); 
 
+      this.formSubmitted = this.formSubmitted.bind(this);
+
       this.getMySQLTables(); //retrieving user's uploaded tables
      
    }
@@ -121,6 +123,11 @@ class TableViewbi extends Component {
       });        
    }
 
+   formSubmitted(event){
+      event.preventDefault();
+      this.save();
+   }
+
    //rendering the html for table view
    render() {
       return (
@@ -128,60 +135,83 @@ class TableViewbi extends Component {
          <table style={{"width":"100%"}}> 
             <tr>              
                <td>
-                  <table style={{"width":"100%"}}>
-                     <div class="card">
-                        <div class="container">
-                           <th colspan="2">View Datasets</th>
+                  <div class="cardview">
+                     <div class="containerview">
+                        <table style={{"width":"100%"}}>
                            <tr>
-                              <td style={{"width":"50%", "left":"0px", "position":"relative"}}>
+                              <th colspan="2" align="center">
+                                 <div class="cardtitle">Select Dataset(s) to View</div>
+                              </th>
+                           </tr><tr></tr><tr></tr><tr></tr><tr></tr><tr>
+                              <td align="center">
+                                 <div class="cardsubtitle">Dataset One:</div>
+                              </td>
+                              <td align="center">
+                                 <div class="cardsubtitle">Dataset Two:</div>
+                              </td>                              
+                           </tr><tr>
+                              <td align="center" style={{"width":"50%", "position":"relative"}}>
                                 <select onChange={this.display}>
-                                  <option value="" disabled selected>Select a dataset to view</option>
+                                  <option value="" disabled selected>--------------- select your dataset ---------------</option>
                                   {this.state.options} 
                                 </select>                     
                               </td>
-                              <td style={{"width":"50%", "right":"0px", "position":"relative"}}>
+                              <td align="center" style={{"width":"50%", "position":"relative"}}>
                                 <select onChange={this.display2}>
-                                  <option value="" disabled selected>Select another dataset to view</option>
+                                  <option value="" disabled selected>--------------- select your dataset ---------------</option>
                                   {this.state.options}
                                 </select>                  
                               </td>    
-                           </tr><tr>
-
                            </tr>
-                        </div>
+                        </table>
                      </div>
-                  </table>
+                  </div>   
                </td><td>
-                  <div class="card">
-                     <div class="container">
-                           <form>
+                  <div class="cardcombine">
+                     <div class="containercombine">
+                           <form method="POST" onSubmit={this.formSubmitted}>
                               <table style={{"width":"100%"}}>
                                  <tr>
                                     <td colspan="2" align="center">
-                                       <b>Combine Datasets</b>
+                                       <div class="cardtitle">
+                                          Combine Selected datasets
+                                       </div>
                                     </td>
-                                 </tr><tr>
-                                    <label for="joinvariable"><i>Select variable to combine both datasets:</i></label>
-                                 </tr><tr>
-                                    <td>
-                                       <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
-                                    </td><td>
-                                       <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
-                                    </td>
-                                 </tr><tr>
-                                    <td>
-                                       <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
-                                    </td><td>                                    
-                                       <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
-                                    </td>
-                                 </tr><tr></tr><tr></tr><tr>
+                                 </tr><tr></tr><tr></tr><tr></tr><tr>
                                     <td colspan="2" align="center">
                                        
+                                          <div class="cardsubtitle">
+                                             <div class="tooltip">
+                                                Select variable to combine both datasets:<span class="tooltiptext">Tip for user (?)</span>
+                                             </div>
+                                          </div>
+                                     
+                                    </td>
+                                 </tr><tr>
+                                    <td colspan="2" align="center">
+                                       <table>
+                                          <tr>
+                                             <td>
+                                                <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
+                                             </td><td>
+                                                <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
+                                             </td>
+                                          </tr><tr>
+                                             <td>
+                                                <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
+                                             </td><td>                                    
+                                                <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
+                                             </td>
+                                          </tr>
+                                       </table>
+                                    </td>
+                                 </tr><tr>
+                                    <td colspan="2" align="center">
+                                       <button class="button" type="submit" style={{"vertical-align":"middle"}}><span>Save to Database</span></button>
                                     </td>
                                  </tr>
                               </table>
-                           </form>   
-						   <button class="button" style={{"vertical-align":"middle"}} onClick={this.save}><span>Save to Database</span></button>
+                           </form>
                      </div>                     
                   </div>
                </td>
