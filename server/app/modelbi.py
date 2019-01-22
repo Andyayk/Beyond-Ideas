@@ -1,7 +1,5 @@
 """
-
 @author: Beyond Ideas 
-
 """
 
 import mysql.connector, datetime
@@ -82,9 +80,9 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         elif "company" in filtervariable.lower(): #filter by company
             sqlstmt = sqlstmt + " AND " + filtervariable + " LIKE '" + filtervalue[3:] + "'"
         elif "depot" in filtervariable.lower(): #filter by depot
-            sqlstmt = sqlstmt + " AND " + filtervariable + " = 34"
+            sqlstmt = sqlstmt + " AND " + filtervariable + " = " + filtervalue[3:]
         elif "geographicallocation" in filtervariable.lower(): #filter by geographical location
-            sqlstmt = sqlstmt + " AND " + filtervariable + " LIKE 'Singapore'"                        
+            sqlstmt = sqlstmt + " AND " + filtervariable + " LIKE '" + filtervalue[3:] + "'"                        
 
         cursor.execute(sqlstmt)
 
@@ -136,7 +134,7 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
     except Exception as e:
         return "Something is wrong with tablesViewJoinbi method"
 
-def getNumbericalColumnNamebi(table_name):
+def getNumericalColumnNamebi(table_name):
     """
         This method will get selected variables data (numerical variables column names only)
     """    
@@ -149,11 +147,11 @@ def getNumbericalColumnNamebi(table_name):
 
         return cols
     except Exception as e:
-        return "Something is wrong with getNumbericalColumnNamebi method"    
-		
+        return "Something is wrong with getNumericalColumnNamebi method"    
+        
 def getVarcharColumnNamebi(table_name):
     """
-        This method will get selected variables data (numerical variables column names only)
+        This method will get selected variables data (varchar variables column names only)
     """    
     try:   
         cols = []
@@ -164,7 +162,7 @@ def getVarcharColumnNamebi(table_name):
 
         return cols
     except Exception as e:
-        return "Something is wrong with getNumbericalColumnNamebi method" 
+        return "Something is wrong with getVarcharColumnNamebi method" 
 
 def getDateColumnNamebi(tablename):
     """
@@ -173,12 +171,12 @@ def getDateColumnNamebi(tablename):
     try:
         cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND DATA_TYPE = 'date'")
 
-        dates = []
+        cols = []
 
         for col in cursor: #add table cols
-            dates.append(col[0])
+            cols.append(col[0])
 
-        return dates
+        return cols
     except Exception as e:
         return "Something is wrong with getDateColumnNamebi method"    
 
@@ -189,12 +187,12 @@ def getCompanyColumnNamebi(tablename):
     try:
         cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%company%'")
 
-        dates = []
+        cols = []
 
         for col in cursor: #add table cols
-            dates.append(col[0])
+            cols.append(col[0])
 
-        return dates
+        return cols
     except Exception as e:
         return "Something is wrong with getCompanyColumnNamebi method"   
 
@@ -205,12 +203,12 @@ def getDepotColumnNamebi(tablename):
     try:
         cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%depot%'")
 
-        dates = []
+        cols = []
 
         for col in cursor: #add table cols
-            dates.append(col[0])
+            cols.append(col[0])
 
-        return dates
+        return cols
     except Exception as e:
         return "Something is wrong with getDepotColumnNamebi method"   
 
@@ -221,27 +219,59 @@ def getGeographicalLocationColumnNamebi(tablename):
     try:
         cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%geographicallocation%'")
 
-        dates = []
+        cols = []
 
         for col in cursor: #add table cols
-            dates.append(col[0])
+            cols.append(col[0])
 
-        return dates
+        return cols
     except Exception as e:
         return "Something is wrong with getGeographicalLocationColumnNamebi method"   
 
-def getCompanyVariablesbi(tablename):
+def getCompanyValuesbi(tablename):
     """
-        This method will get company variables only
+        This method will get company values only
     """ 
     try:
         cursor.execute("SELECT DISTINCT Company FROM " + tablename)
 
-        dates = []
+        cols = []
 
         for col in cursor: #add table cols
-            dates.append(col[0])
+            cols.append(col[0])
 
-        return dates
+        return cols
     except Exception as e:
         return ""   
+
+def getDepotValuesbi(tablename):
+    """
+        This method will get depot values only
+    """ 
+    try:
+        cursor.execute("SELECT DISTINCT Depot FROM " + tablename)
+
+        cols = []
+
+        for col in cursor: #add table cols
+            cols.append(col[0])
+
+        return cols
+    except Exception as e:
+        return ""      
+
+def getGeographicalLocationValuesbi(tablename):
+    """
+        This method will get geographical location values only
+    """ 
+    try:
+        cursor.execute("SELECT DISTINCT GeographicalLocation FROM " + tablename)
+
+        cols = []
+
+        for col in cursor: #add table cols
+            cols.append(col[0])
+
+        return cols
+    except Exception as e:
+        return ""                 
