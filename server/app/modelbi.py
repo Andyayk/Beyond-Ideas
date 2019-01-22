@@ -134,7 +134,7 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
     except Exception as e:
         return "Something is wrong with tablesViewJoinbi method"
 
-def getNumericalColumnNamebi(table_name):
+def getNumericalColumnNamebi(table_name): 
     """
         This method will get selected variables data (numerical variables column names only)
     """    

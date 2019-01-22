@@ -136,7 +136,7 @@ class TableViewbi extends Component {
                               <td style={{"width":"50%", "left":"0px", "position":"relative"}}>
                                 <select onChange={this.display}>
                                   <option value="" disabled selected>Select a dataset to view</option>
-                                  {this.state.options}
+                                  {this.state.options} 
                                 </select>                     
                               </td>
                               <td style={{"width":"50%", "right":"0px", "position":"relative"}}>

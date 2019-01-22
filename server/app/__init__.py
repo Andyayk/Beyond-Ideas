@@ -337,7 +337,7 @@ def create_app(config_name):
             table = modelbi.displayTablebi(tablename)
 
             return table
-            
+             
         @app.route('/savejoinedtablebi/', methods = ['POST'])
         def savejoinedtablebi(): #retrieving combined table for API call from react
             """
