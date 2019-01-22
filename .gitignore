@@ -11,3 +11,16 @@ venv
 *.sublime*
 node_modules
 dist
+
+server/venv
+static/node_modules
+.vscode
+__pycache__
+server/__pycache__
+server/migrations
+server/instance
+server/app/__pycache__
+static/dist/bundle.js
+static/dist/styles.css
+static/dist
+server/app/uploads/

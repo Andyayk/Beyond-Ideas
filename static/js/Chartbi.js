@@ -6,7 +6,7 @@ import regression from 'regression';
 import Correlation from 'node-correlation';
 import SpearmanRHO from 'spearman-rho';
 
-import "../main";
+import "../css/main";
 
 var $ = require('jquery');
 
