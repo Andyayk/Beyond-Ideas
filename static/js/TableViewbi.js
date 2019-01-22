@@ -115,7 +115,7 @@ class TableViewbi extends Component {
          } else {
             console.log(data);
    			this.setState({
-   			    combinedtable: JSON.stringify(data),
+   			    combinedtable: data,
    			})
          }              
       });        
@@ -158,7 +158,7 @@ class TableViewbi extends Component {
                               <table style={{"width":"100%"}}>
                                  <tr>
                                     <td colspan="2" align="center">
-                                       <b>Join Datasets</b>
+                                       <b>Combine Datasets</b>
                                     </td>
                                  </tr><tr>
                                     <label for="joinvariable"><i>Select variable to combine both datasets:</i></label>
