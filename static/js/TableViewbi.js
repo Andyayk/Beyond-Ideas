@@ -138,7 +138,7 @@ class TableViewbi extends Component {
                <td style={{"width":"50%"}}>
                   <div class="cardview">
                      <div class="containerview">
-                        <table>
+                        <table align="center">
                            <tr>
                               <th colspan="2" align="center">
                                  <div class="cardtitle">Select Dataset(s) to View</div>
@@ -153,13 +153,13 @@ class TableViewbi extends Component {
                            </tr><tr>
                               <td align="center">
                                 <select onChange={this.display}>
-                                  <option value="" disabled selected>--------------- select your dataset ---------------</option>
+                                  <option value="" disabled selected>--------------- select a dataset ---------------</option>
                                   {this.state.options} 
                                 </select>                     
                               </td>
                               <td align="center">
                                 <select onChange={this.display2}>
-                                  <option value="" disabled selected>--------------- select your dataset ---------------</option>
+                                  <option value="" disabled selected>--------------- select a dataset ---------------</option>
                                   {this.state.options}
                                 </select>                  
                               </td>    
@@ -193,13 +193,13 @@ class TableViewbi extends Component {
                                              <td>
                                                 <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
                                              </td><td>
-                                                <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
+                                                <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
                                              </td>
                                           </tr><tr>
                                              <td>
-                                                <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
-                                             </td><td>                                    
-                                                <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
+                                                <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location                                           
+                                             </td><td>  
+                                                <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
                                              </td>
                                           </tr>
                                        </table>
