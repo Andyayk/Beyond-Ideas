@@ -69,9 +69,7 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         if "date" in joinvariable.lower(): #join by date
             date1 = getDateColumnNamebi(tablename)
             date2 = getDateColumnNamebi(tablename2)
-            print(date1)
-            print(date2)
-            
+           
             sqlstmt = sqlstmt + " WHERE t1." + date1[0] + " = t2." + date2[0]
         else:
             sqlstmt = sqlstmt + " WHERE t1." + joinvariable + " = t2." + joinvariable   
@@ -79,13 +77,9 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         
         if "date" in filtervariable.lower(): #filter by date
             sqlstmt = sqlstmt + " AND " + filtervariable + " BETWEEN '" + filtervalue + "' AND '" + filtervalue2 + "'"
-        elif "company" in filtervariable.lower(): #filter by company
-            sqlstmt = sqlstmt + " AND " + filtervariable + " LIKE '" + filtervalue[3:] + "'"
-        elif "depot" in filtervariable.lower(): #filter by depot
-            sqlstmt = sqlstmt + " AND " + filtervariable + " = " + filtervalue[3:]
-        elif "geographicallocation" in filtervariable.lower(): #filter by geographical location
-            sqlstmt = sqlstmt + " AND " + filtervariable + " LIKE '" + filtervalue[3:] + "'"                        
-
+        else:
+            sqlstmt = sqlstmt + " AND " + filtervariable + " = '" + filtervalue + "'"
+        
         cursor.execute(sqlstmt)
 
         cols = []
@@ -277,3 +271,19 @@ def getGeographicalLocationValuesbi(tablename):
         return cols
     except Exception as e:
         return ""                 
+        
+def getFilterValuesbi(tablename, tablename2, filtervariable):
+    """
+        This method will get the values based on the filter variable
+    """ 
+    try:
+        cursor.execute("SELECT DISTINCT " + filtervariable[3:] + " FROM " + tablename + "," + tablename2)
+
+        cols = []
+
+        for col in cursor: #add table cols
+            cols.append(col[0])
+
+        return cols
+    except Exception as e:
+        return ""        
