@@ -39,7 +39,9 @@ class Chartbi extends Component {
          depotvaluelistoptions: "",
          depotvaluelistoptions2: "", 
          geographicallocationvaluelistoptions: "",
-         geographicallocationvaluelistoptions2: "",                            
+         geographicallocationvaluelistoptions2: "",
+         filtervaluelistoptions: "",
+         filtervaluelistoptions2: "",
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -435,45 +437,19 @@ class Chartbi extends Component {
                            <br /><br />
                         </div>
                      }
-                     {this.state.selectedfiltervariable.toLowerCase().includes("company") &&
+                     {this.state.selectedfiltervariable && !this.state.selectedfiltervariable.toLowerCase().includes("date") &&
                         <div>
-                           <label>Company:</label>
+                           <label>this.state.selectedfiltervariable:</label>
                            <br />
                            <select required onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
-                              {this.state.companyvaluelistoptions}                         
+                              {this.state.filtervaluelistoptions}                         
                               <option value="" disabled>---------------------------------</option>   
-                              {this.state.companyvaluelistoptions2}
+                              {this.state.filtervaluelistoptions2}
                            </select>
                            <br /><br />
                         </div>
-                     }
-                     {this.state.selectedfiltervariable.toLowerCase().includes("depot") &&
-                        <div>
-                           <label>Depot:</label>
-                           <br />
-                           <select required onChange={this.selectFilterValue}>
-                              <option value="" disabled selected>Select a Variable</option>
-                              {this.state.depotvaluelistoptions}                            
-                              <option value="" disabled>---------------------------------</option>   
-                              {this.state.depotvaluelistoptions2}                           
-                           </select>
-                           <br /><br />
-                        </div>
-                     }
-                     {this.state.selectedfiltervariable.toLowerCase().includes("geographicallocation") &&
-                        <div>
-                           <label>Geographical Location:</label>
-                           <br />
-                           <select required onChange={this.selectFilterValue}>
-                              <option value="" disabled selected>Select a Variable</option>
-                              {this.state.geographicallocationvaluelistoptions}                           
-                              <option value="" disabled>---------------------------------</option>   
-                              {this.state.geographicallocationvaluelistoptions2}                              
-                           </select>
-                           <br /><br />
-                        </div>
-                     }                                                               
+                     }                                                              
 
                      <button class="button" type="submit" style={{"vertical-align":"middle"}}><span>Generate Scatterplot</span></button>
                      <br /><br />            
