@@ -66,24 +66,20 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
     try:
         sqlstmt = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2"
         
-        if "activitydate" in joinvariable.lower(): #join by date
-            sqlstmt = sqlstmt + " WHERE t1." + "date" + " = t2." + "ActivityDate"
-        elif "company" in joinvariable.lower(): #join by company
-            sqlstmt = sqlstmt + " WHERE t1." + "company" + " = t2." + "company"   
-        elif "depot" in joinvariable.lower(): #join by depot
-            sqlstmt = sqlstmt + " WHERE t1." + "depot" + " = t2." + "depot"  
-        elif "geographicallocation" in joinvariable.lower(): #join by geographical location
-            sqlstmt = sqlstmt + " WHERE t1." + "geographicallocation" + " = t2." + "geographicallocation"   
-
+        if "date" in joinvariable.lower(): #join by date
+            date1 = getDateColumnNamebi(tablename)
+            date2 = getDateColumnNamebi(tablename2)
+           
+            sqlstmt = sqlstmt + " WHERE t1." + date1[0] + " = t2." + date2[0]
+        else:
+            sqlstmt = sqlstmt + " WHERE t1." + joinvariable + " = t2." + joinvariable   
+        
+        
         if "date" in filtervariable.lower(): #filter by date
             sqlstmt = sqlstmt + " AND " + filtervariable + " BETWEEN '" + filtervalue + "' AND '" + filtervalue2 + "'"
-        elif "company" in filtervariable.lower(): #filter by company
-            sqlstmt = sqlstmt + " AND " + filtervariable + " LIKE '" + filtervalue[3:] + "'"
-        elif "depot" in filtervariable.lower(): #filter by depot
-            sqlstmt = sqlstmt + " AND " + filtervariable + " = " + filtervalue[3:]
-        elif "geographicallocation" in filtervariable.lower(): #filter by geographical location
-            sqlstmt = sqlstmt + " AND " + filtervariable + " LIKE '" + filtervalue[3:] + "'"                        
-
+        else:
+            sqlstmt = sqlstmt + " AND " + filtervariable + " = '" + filtervalue + "'"
+        
         cursor.execute(sqlstmt)
 
         cols = []
@@ -141,7 +137,7 @@ def getNumericalColumnNamebi(table_name):
     try:   
         cols = []
         
-        cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "' AND DATA_TYPE IN ('TINYINT', 'SMALLINT', 'MEDIUMINT', 'INT', 'BIGINT', 'DECIMAL', 'FLOAT', 'DOUBLE', 'REAL', 'BIT', 'BOOLEAN', 'SERIAL')")
+        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "' AND DATA_TYPE IN ('TINYINT', 'SMALLINT', 'MEDIUMINT', 'INT', 'BIGINT', 'DECIMAL', 'FLOAT', 'DOUBLE', 'REAL', 'BIT', 'BOOLEAN', 'SERIAL')")
         for col in cursor: # add table cols
             cols.append(col[0])
 
@@ -169,7 +165,7 @@ def getDateColumnNamebi(tablename):
         This method will get date variables column names only
     """ 
     try:
-        cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND DATA_TYPE = 'date'")
+        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND DATA_TYPE = 'date'")
 
         cols = []
 
@@ -185,7 +181,7 @@ def getCompanyColumnNamebi(tablename):
         This method will get company variables column names only
     """ 
     try:
-        cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%company%'")
+        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%company%'")
 
         cols = []
 
@@ -201,7 +197,7 @@ def getDepotColumnNamebi(tablename):
         This method will get depot variables column names only
     """ 
     try:
-        cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%depot%'")
+        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%depot%'")
 
         cols = []
 
@@ -217,7 +213,7 @@ def getGeographicalLocationColumnNamebi(tablename):
         This method will get geographical location variables column names only
     """ 
     try:
-        cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%geographicallocation%'")
+        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%geographicallocation%'")
 
         cols = []
 
@@ -275,3 +271,19 @@ def getGeographicalLocationValuesbi(tablename):
         return cols
     except Exception as e:
         return ""                 
+        
+def getFilterValuesbi(tablename, tablename2, filtervariable):
+    """
+        This method will get the values based on the filter variable
+    """ 
+    try:
+        cursor.execute("SELECT DISTINCT " + filtervariable[3:] + " FROM " + tablename + "," + tablename2)
+
+        cols = []
+
+        for col in cursor: #add table cols
+            cols.append(col[0])
+
+        return cols
+    except Exception as e:
+        return ""        

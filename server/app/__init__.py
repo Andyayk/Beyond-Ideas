@@ -388,7 +388,7 @@ def create_app(config_name):
             """
                 This method will retrieve variables for API call from react
             """     
-            tablename = request.form.get("tablename")           
+            tablename = request.form.get("tablename")
             variablelist = modelbi.getNumericalColumnNamebi(tablename)    
             
             datevariablelist = modelbi.getDateColumnNamebi(tablename)  
@@ -399,7 +399,8 @@ def create_app(config_name):
             companyvaluelist = modelbi.getCompanyValuesbi(tablename) 
             depotvaluelist = modelbi.getDepotValuesbi(tablename)
             geographicallocationvaluelist = modelbi.getGeographicalLocationValuesbi(tablename)                  
-
+            
+            
             return jsonify(
                 variablelist = variablelist,            
                 datevariablelist = datevariablelist,
@@ -408,9 +409,22 @@ def create_app(config_name):
                 geographicallocationvariablelist = geographicallocationvariablelist,
                 companyvaluelist = companyvaluelist,
                 depotvaluelist = depotvaluelist,
-                geographicallocationvaluelist = geographicallocationvaluelist
+                geographicallocationvaluelist = geographicallocationvaluelist,
+               
             )
-
+        
+        @app.route('/filtervariablebi/', methods = ['POST'])
+        def filtervariablebi():
+            tablename = request.form.get("tablename")
+            tablename2 = request.form.get("tablename2")
+            filtervariable = request.form.get("selectedfiltervariable")
+            
+            filtervalueslist = modelbi.getFilterValuesbi(tablename, tablename2, filtervariable)
+            
+            return jsonify(
+                filtervalueslist = filtervalueslist
+            )
+            
         @app.route('/scatterplotdatabi/', methods = ['POST'])
         def scatterplotdatabi(): #retrieving mysql data for API call from react
             """
