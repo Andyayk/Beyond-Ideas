@@ -123,6 +123,7 @@ class TableViewbi extends Component {
       });        
    }
 
+   //submit form button
    formSubmitted(event){
       event.preventDefault();
       this.save();
@@ -132,12 +133,12 @@ class TableViewbi extends Component {
    render() {
       return (
       <div>
-         <table style={{"width":"100%"}}> 
+         <table align="center" style={{"width":"100%"}}> 
             <tr>              
-               <td>
+               <td style={{"width":"50%"}}>
                   <div class="cardview">
                      <div class="containerview">
-                        <table style={{"width":"100%"}}>
+                        <table>
                            <tr>
                               <th colspan="2" align="center">
                                  <div class="cardtitle">Select Dataset(s) to View</div>
@@ -150,13 +151,13 @@ class TableViewbi extends Component {
                                  <div class="cardsubtitle">Dataset Two:</div>
                               </td>                              
                            </tr><tr>
-                              <td align="center" style={{"width":"50%", "position":"relative"}}>
+                              <td align="center">
                                 <select onChange={this.display}>
                                   <option value="" disabled selected>--------------- select your dataset ---------------</option>
                                   {this.state.options} 
                                 </select>                     
                               </td>
-                              <td align="center" style={{"width":"50%", "position":"relative"}}>
+                              <td align="center">
                                 <select onChange={this.display2}>
                                   <option value="" disabled selected>--------------- select your dataset ---------------</option>
                                   {this.state.options}
@@ -166,26 +167,24 @@ class TableViewbi extends Component {
                         </table>
                      </div>
                   </div>   
-               </td><td>
+               </td><td style={{"width":"50%"}}>
                   <div class="cardcombine">
                      <div class="containercombine">
                            <form method="POST" onSubmit={this.formSubmitted}>
-                              <table style={{"width":"100%"}}>
+                              <table align="center">
                                  <tr>
                                     <td colspan="2" align="center">
                                        <div class="cardtitle">
-                                          Combine Selected datasets
+                                          Combine Selected Datasets
                                        </div>
                                     </td>
                                  </tr><tr></tr><tr></tr><tr></tr><tr>
                                     <td colspan="2" align="center">
-                                       
-                                          <div class="cardsubtitle">
-                                             <div class="tooltip">
-                                                Select variable to combine both datasets:<span class="tooltiptext">Tip for user (?)</span>
-                                             </div>
+                                       <div class="cardsubtitle">
+                                          <div class="tooltip">
+                                             Select variable to combine both datasets:<span class="tooltiptext">Tip for user (?)</span>
                                           </div>
-                                     
+                                       </div>
                                     </td>
                                  </tr><tr>
                                     <td colspan="2" align="center">
@@ -207,47 +206,46 @@ class TableViewbi extends Component {
                                     </td>
                                  </tr><tr>
                                     <td colspan="2" align="center">
-                                       <button class="button" type="submit" style={{"vertical-align":"middle"}}><span>Save to Database</span></button>
+                                       <button class="button" type="submit" style={{"vertical-align":"middle"}}><span>Combine Datasets & Save</span></button>
                                     </td>
                                  </tr>
                               </table>
-                           </form>
+                        </form>
                      </div>                     
                   </div>
                </td>
+            </tr><tr>
+            <td colspan="2" align="center">
+               <table>
+         			<tr>
+         				<td colspan="2" style={{"overflow":"auto", "max-width":"1180px", "position":"relative", "vertical-align":"top"}}>
+                        <div style={{"overflow-x":"auto"}}>
+                           <table class="outputtable">
+                              {ReactHtmlParser(this.state.combinedtable)}
+         					   </table>
+                        </div>
+         				</td>
+         			</tr>
+                  <tr>
+                     <td style={{"overflow":"auto", "max-width":"580px", "position":"relative", "vertical-align":"top"}}>
+                        <div style={{"overflow-x":"auto"}}>
+                           <table class="outputtable">       
+                             {ReactHtmlParser(this.state.table)}
+                           </table>
+                        </div>
+                     </td>
+                     <td style={{"overflow":"auto", "max-width":"580px", "position":"relative", "vertical-align":"top"}}>
+                        <div style={{"overflow-x":"auto"}}>
+                           <table class="outputtable">   
+                              {ReactHtmlParser(this.state.table2)}
+                           </table>
+                        </div>
+                     </td>
+                  </tr>
+               </table>
+            </td>
             </tr>
          </table>
-
-			
-         <table>
-			<tr>
-				<td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
-					<table border="1">
-						{ReactHtmlParser(this.state.combinedtable)}
-					</table>
-				</td>
-			</tr>
-            <tr>
-               <td style={{"overflow":"auto", "max-height":"500px", "left":"0px", "position":"relative", "vertical-align":"top"}}>
-                  <table border="1">
-                     {ReactHtmlParser(this.state.table)}
-                  </table>
-               </td>
-               <td style={{"overflow":"auto", "max-height":"500px", "right":"0px", "position":"relative", "vertical-align":"top"}}>
-                  <table border="1">
-                     {ReactHtmlParser(this.state.table2)}
-                  </table>
-               </td>
-            </tr>
-         </table>
-         <tr>
-            <td>
-                 
-            </td>
-            <td>
-                  
-            </td>
-         </tr>
       </div>
       );
    }
