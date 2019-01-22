@@ -111,38 +111,26 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
     except Exception as e:
         return "Something is wrong with tablesJoinbi method"   
 
-def tablesViewJoinbi(tablename, tablename2, joinvariable):
+def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
     """
         This method will join two tables together and save to MySQL database
     """
     try:
-        sqlstmt = "CREATE TABLE test AS (SELECT * FROM " + tablename + " as t1 INNER JOIN " + tablename2 + " as t2"
+        cursor.execute("DROP TABLE IF EXISTS combinedtable")
+        sqlstmt = "CREATE TABLE combinedtable AS SELECT "+ variables + " FROM " + tablename + " as t1 INNER JOIN " + tablename2 + " as t2"
         
         if "activitydate" in joinvariable.lower(): #join by date
             sqlstmt = sqlstmt + " WHERE t1." + "date" + " = t2." + "ActivityDate"
         elif "company" in joinvariable.lower(): #join by company
             sqlstmt = sqlstmt + " WHERE t1." + "company" + " = t2." + "company"   
         elif "depot" in joinvariable.lower(): #join by depot
-            sqlstmt = sqlstmt + " ON t1." + "depot" + " = t2." + "SKUKey)"  
+            sqlstmt = sqlstmt + " ON t1." + "depot" + " = t2." + "SKUKey"  
         elif "geographicallocation" in joinvariable.lower(): #join by geographical location
             sqlstmt = sqlstmt + " WHERE t1." + "geographicallocation" + " = t2." + "geographicallocation"                       
         # sqlstmt = "CREATE TABLE potlala (id INT NOT NULL PRIMARY KEY, name  VARCHAR(40), email VARCHAR(40))"
         cursor.execute(sqlstmt)
 
-        # table = ""
-        
-        # for col in cursor.description:
-            # table += "<th style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col[0] + "</center></th>"
-
-        # for item in cursor:
-            # table += "<tr>"
-            # for col in item:
-                # if isinstance(col, datetime.date):
-                    # col = col.strftime('%d/%m/%Y')
-                # table += "<td style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col + "</center></td>"
-            # table += "</tr>"
-
-        return "test"
+        return "success"
     except Exception as e:
         return "Something is wrong with tablesViewJoinbi method"
 
@@ -168,7 +156,7 @@ def getVarcharColumnNamebi(table_name):
     try:   
         cols = []
         
-        cursor.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "' AND DATA_TYPE IN ('VARCHAR', 'date')")
+        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "' AND DATA_TYPE IN ('VARCHAR', 'date')")
         for col in cursor: # add table cols
             cols.append(col[0])
 
