@@ -77,9 +77,11 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         
         if "date" in filtervariable.lower(): #filter by date
             sqlstmt = sqlstmt + " AND " + filtervariable + " BETWEEN '" + filtervalue + "' AND '" + filtervalue2 + "'"
-        else:
+        elif not filtervariable == "":
             sqlstmt = sqlstmt + " AND " + filtervariable + " = '" + filtervalue + "'"
-        
+        else:
+            sqlstmt = sqlstmt
+            
         cursor.execute(sqlstmt)
 
         cols = []
@@ -213,7 +215,7 @@ def getGeographicalLocationColumnNamebi(tablename):
         This method will get geographical location variables column names only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%geographicallocation%'")
+        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%location%'")
 
         cols = []
 
