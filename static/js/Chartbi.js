@@ -21,7 +21,7 @@ class Chartbi extends Component {
          variablesoptions2: "",
          selectedvariable: "",
          selectedvariable2: "",    
-         selectedjoinvariable: "activitydate", 
+         selectedjoinvariable: "", 
          scatterplot: "",
          selectedfiltervalue: "",
          selectedfiltervalue2: "",    
@@ -40,7 +40,7 @@ class Chartbi extends Component {
          depotvaluelistoptions2: "", 
          geographicallocationvaluelistoptions: "",
          geographicallocationvaluelistoptions2: "",
-         filtervaluelistoptions: "",
+         errorstatement: "",
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -57,7 +57,8 @@ class Chartbi extends Component {
       this.selectFilterVariable = this.selectFilterVariable.bind(this); 
       this.selectFilterValue = this.selectFilterValue.bind(this);  
       this.selectFilterValue2 = this.selectFilterValue2.bind(this);  
-
+      
+      
       this.generateScatterplot = this.generateScatterplot.bind(this); 
 
       this.formSubmitted = this.formSubmitted.bind(this);
@@ -101,14 +102,50 @@ class Chartbi extends Component {
       (data) => {
          var methodNo = 1;
          var variablelistdata = data['variablelist'];
+         var allvariablelistdata = data['allvariablelist'];
          var datevariablelistdata = data['datevariablelist'];
          var companyvariablelistdata = data['companyvariablelist'];
          var depotvariablelistdata = data['depotvariablelist'];
          var geographicallocationvariablelistdata = data['geographicallocationvariablelist']; 
-
          var companyvaluelistdata = data['companyvaluelist']; 
          var depotvaluelistdata = data['depotvaluelist'];
          var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];                
+         
+         if (datevariablelistdata.toString().replace(/\s/g, '').length && this.state.datevariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
+                document.getElementById("dateradio").disabled = false;
+         } else {
+                document.getElementById("dateradio").disabled = true;
+         }
+         
+         if (companyvariablelistdata.toString().replace(/\s/g, '').length && this.state.companyvariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
+                document.getElementById("companyradio").disabled = false;
+         } else {
+            document.getElementById("companyradio").disabled = true;
+         }
+         
+         if (depotvariablelistdata.toString().replace(/\s/g, '').length && this.state.depotvariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
+                document.getElementById("depotradio").disabled = false;
+         } else {
+                document.getElementById("depotradio").disabled = true;
+         }
+         
+         if (geographicallocationvaluelistdata.toString().replace(/\s/g, '').length && this.state.geographicallocationvariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
+                document.getElementById("locationradio").disabled = false;
+         } else {
+                document.getElementById("locationradio").disabled = true;
+         } 
+         
+          if (document.getElementById("dateradio").disabled && document.getElementById("companyradio").disabled && document.getElementById("depotradio").disabled && document.getElementById("locationradio").disabled){
+                document.getElementById("submitbutton").disabled = true;
+                this.setState({
+                    errorstatement: "Please select data source that match any of the above"
+                });
+         } else{
+            document.getElementById("submitbutton").disabled = false;
+            this.setState({
+                    errorstatement: ""
+            });
+         }
          
          this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata);                     
       });          
@@ -127,6 +164,7 @@ class Chartbi extends Component {
       (data) => {
          var methodNo = 2;         
          var variablelistdata = data['variablelist'];
+         var allvariablelistdata = data['allvariablelist'];
          var datevariablelistdata = data['datevariablelist'];
          var companyvariablelistdata = data['companyvariablelist'];
          var depotvariablelistdata = data['depotvariablelist'];
@@ -136,6 +174,41 @@ class Chartbi extends Component {
          var depotvaluelistdata = data['depotvaluelist'];
          var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];  
          
+         if (datevariablelistdata.toString().replace(/\s/g, '').length && this.state.datevariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
+                document.getElementById("dateradio").disabled = false;
+         } else {
+                document.getElementById("dateradio").disabled = true;
+         }
+         
+         if (companyvariablelistdata.toString().replace(/\s/g, '').length && this.state.companyvariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
+                document.getElementById("companyradio").disabled = false;
+         } else {
+                document.getElementById("companyradio").disabled = true;
+         }
+         
+         if (depotvariablelistdata.toString().replace(/\s/g, '').length && this.state.depotvariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
+                document.getElementById("depotradio").disabled = false;
+         } else {
+                document.getElementById("depotradio").disabled = true;
+         }
+         
+         if (geographicallocationvaluelistdata.toString().replace(/\s/g, '').length && this.state.geographicallocationvariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
+                document.getElementById("locationradio").disabled = false;
+         } else {
+                document.getElementById("locationradio").disabled = true;
+         }
+
+         if (document.getElementById("dateradio").disabled && document.getElementById("companyradio").disabled && document.getElementById("depotradio").disabled && document.getElementById("locationradio").disabled){
+                document.getElementById("submitbutton").disabled = true;
+                this.setState({
+                    errorstatement: "Please select data source that match any of the above"
+                });
+         } else{
+            document.getElementById("submitbutton").disabled = false;
+            this.setState({
+                    errorstatement: ""
+            });
+         }
          
          this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata);                     
       });  
@@ -154,7 +227,7 @@ class Chartbi extends Component {
    }
 
    //creating select options for drop down list based on data from flask
-   createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata) {
+   createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata, allvariablelistdata) {
       let variables = [];
       if (variablelistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
          var variablelist = variablelistdata.toString().split(",");
@@ -196,7 +269,6 @@ class Chartbi extends Component {
             companyvaluelistoptions: companyvalues,
             depotvaluelistoptions: depotvalues,
             geographicallocationvaluelistoptions: geographicallocationvalues,
-            
          });        
       } else if (methodNo == 2) {
          this.setState({
@@ -207,11 +279,16 @@ class Chartbi extends Component {
             geographicallocationvariablesoptions2: geographicallocationvariables,
             companyvaluelistoptions2: companyvalues,
             depotvaluelistoptions2: depotvalues,  
-            geographicallocationvaluelistoptions2: geographicallocationvalues,       
-            
+            geographicallocationvaluelistoptions2: geographicallocationvalues,            
          });           
-      }   
-   }    
+      }
+      
+      
+      
+
+   }
+
+  
 
    //store the variable that the user has selected
    selectVariable(event) {
@@ -406,14 +483,15 @@ class Chartbi extends Component {
                      </div>
                      <table>
                         <tr>                        
-                           <input type="radio" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
+                           <input id="dateradio" type="radio" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled/>Activity Date
                         </tr><tr>
-                           <input type="radio" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
+                            <input id="companyradio" type="radio" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled/>Company
                         </tr><tr>                  
-                           <input type="radio" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
+                           <input id="depotradio" type="radio" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled/>Depot
                         </tr><tr>
-                           <input type="radio" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location
+                           <input id="locationradio" type="radio" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"} disabled/>Geographical Location
                         </tr>
+                        <label>{this.state.errorstatement}</label>
                      </table>
                      <br /><br />
                      <div class="cardtitle">
@@ -482,7 +560,7 @@ class Chartbi extends Component {
                         </div>
                      }                                                              
 
-                     <button class="button" type="submit" style={{"vertical-align":"middle", "width":"220px"}}><span>Generate Scatterplot</span></button>
+                     <button id="submitbutton" class="button" type="submit" style={{"vertical-align":"middle", "width":"220px"}}><span>Generate Scatterplot</span></button>
                      <br /><br />            
                   </form>                   
                   </td>
