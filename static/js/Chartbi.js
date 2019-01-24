@@ -112,38 +112,38 @@ class Chartbi extends Component {
          var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];                
          
          if (datevariablelistdata.toString().replace(/\s/g, '').length && this.state.datevariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
-                document.getElementById("dateradio").disabled = false;
+            document.getElementById("dateradio").disabled = false;
          } else {
-                document.getElementById("dateradio").disabled = true;
+            document.getElementById("dateradio").disabled = true;
          }
          
          if (companyvariablelistdata.toString().replace(/\s/g, '').length && this.state.companyvariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
-                document.getElementById("companyradio").disabled = false;
+            document.getElementById("companyradio").disabled = false;
          } else {
             document.getElementById("companyradio").disabled = true;
          }
          
          if (depotvariablelistdata.toString().replace(/\s/g, '').length && this.state.depotvariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
-                document.getElementById("depotradio").disabled = false;
+            document.getElementById("depotradio").disabled = false;
          } else {
-                document.getElementById("depotradio").disabled = true;
+            document.getElementById("depotradio").disabled = true;
          }
          
          if (geographicallocationvaluelistdata.toString().replace(/\s/g, '').length && this.state.geographicallocationvariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
-                document.getElementById("locationradio").disabled = false;
+            document.getElementById("locationradio").disabled = false;
          } else {
-                document.getElementById("locationradio").disabled = true;
+            document.getElementById("locationradio").disabled = true;
          } 
          
           if (document.getElementById("dateradio").disabled && document.getElementById("companyradio").disabled && document.getElementById("depotradio").disabled && document.getElementById("locationradio").disabled){
-                document.getElementById("submitbutton").disabled = true;
-                this.setState({
-                    errorstatement: "Please select data source that match any of the above"
-                });
+            document.getElementById("submitbutton").disabled = true;
+            this.setState({
+               errorstatement: "Datasets doesn't contain matching columns describing the following options"
+            });
          } else{
             document.getElementById("submitbutton").disabled = false;
             this.setState({
-                    errorstatement: ""
+               errorstatement: ""
             });
          }
          
@@ -175,38 +175,38 @@ class Chartbi extends Component {
          var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];  
          
          if (datevariablelistdata.toString().replace(/\s/g, '').length && this.state.datevariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
-                document.getElementById("dateradio").disabled = false;
+            document.getElementById("dateradio").disabled = false;
          } else {
-                document.getElementById("dateradio").disabled = true;
+            document.getElementById("dateradio").disabled = true;
          }
          
          if (companyvariablelistdata.toString().replace(/\s/g, '').length && this.state.companyvariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
-                document.getElementById("companyradio").disabled = false;
+            document.getElementById("companyradio").disabled = false;
          } else {
-                document.getElementById("companyradio").disabled = true;
+            document.getElementById("companyradio").disabled = true;
          }
          
          if (depotvariablelistdata.toString().replace(/\s/g, '').length && this.state.depotvariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
-                document.getElementById("depotradio").disabled = false;
+            document.getElementById("depotradio").disabled = false;
          } else {
-                document.getElementById("depotradio").disabled = true;
+            document.getElementById("depotradio").disabled = true;
          }
          
          if (geographicallocationvaluelistdata.toString().replace(/\s/g, '').length && this.state.geographicallocationvariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
-                document.getElementById("locationradio").disabled = false;
+            document.getElementById("locationradio").disabled = false;
          } else {
-                document.getElementById("locationradio").disabled = true;
+            document.getElementById("locationradio").disabled = true;
          }
 
          if (document.getElementById("dateradio").disabled && document.getElementById("companyradio").disabled && document.getElementById("depotradio").disabled && document.getElementById("locationradio").disabled){
-                document.getElementById("submitbutton").disabled = true;
-                this.setState({
-                    errorstatement: "Please select data source that match any of the above"
-                });
+            document.getElementById("submitbutton").disabled = true;
+            this.setState({
+               errorstatement: "Datasets doesn't contain matching columns describing the following options"
+            });
          } else{
             document.getElementById("submitbutton").disabled = false;
             this.setState({
-                    errorstatement: ""
+               errorstatement: ""
             });
          }
          
@@ -452,8 +452,7 @@ class Chartbi extends Component {
    render() {
       return (
          <div>
-                     <div class="content">
-
+            <div class="content">
             <table style={{"width":"100%"}}>
                <tr>             
                   <td style={{"width":"22%", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px"}} valign="top" align="center" bgcolor="white">   
@@ -478,6 +477,7 @@ class Chartbi extends Component {
                         {this.state.options}
                      </select>  
                      <br/><br/>
+                     <font color="red">{this.state.errorstatement}</font>                        
                      <div class="cardsubtitle">
                         Combine both datasets based on:
                      </div>
@@ -491,8 +491,7 @@ class Chartbi extends Component {
                         </tr><tr>
                            <input id="locationradio" type="radio" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"} disabled/>Geographical Location
                         </tr>
-                        <label>{this.state.errorstatement}</label>
-                     </table>
+                     </table>                  
                      <br /><br />
                      <div class="cardtitle">
                         Select Variables
@@ -554,7 +553,6 @@ class Chartbi extends Component {
                            <select required onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
                               {this.state.filtervaluelistoptions}                         
-                              
                            </select>
                            <br /><br />
                         </div>

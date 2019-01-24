@@ -133,11 +133,12 @@ class TableViewbi extends Component {
    render() {
       return (
       <div>
-         <table align="center" style={{"width":"100%"}}> 
-            <tr>              
-               <td style={{"width":"50%"}}>
+         <form method="POST" onSubmit={this.formSubmitted}>        
+         <table align="center" style={{"width":"100%"}}>          
+            <tr>                        
+               <td style={{"width":"50%"}}>                             
                   <div class="cardview">
-                     <div class="containerview">
+                     <div class="containerview">                      
                         <table align="center">
                            <tr>
                               <th colspan="2" align="center">
@@ -152,69 +153,69 @@ class TableViewbi extends Component {
                               </td>                              
                            </tr><tr>
                               <td align="center">
-                                <select onChange={this.display}>
+                                <select required onChange={this.display}>
                                   <option value="" disabled selected>--------------- select a dataset ---------------</option>
                                   {this.state.options} 
                                 </select>                     
                               </td>
                               <td align="center">
-                                <select onChange={this.display2}>
+                                <select required onChange={this.display2}>
                                   <option value="" disabled selected>--------------- select a dataset ---------------</option>
                                   {this.state.options}
                                 </select>                  
                               </td>    
                            </tr>
-                        </table>
+                        </table>                        
                      </div>
                   </div>   
-               </td><td style={{"width":"50%"}}>
-                  <div class="cardcombine">
-                     <div class="containercombine">
-                           <form method="POST" onSubmit={this.formSubmitted}>
-                              <table align="center">
-                                 <tr>
-                                    <td colspan="2" align="center">
-                                       <div class="cardtitle">
-                                          Combine Selected Datasets
-                                       </div>
-                                    </td>
-                                 </tr><tr></tr><tr></tr><tr></tr><tr>
-                                    <td colspan="2" align="center">
-                                       <div class="cardsubtitle">
-                                          <div class="tooltip">
-                                             Select variable to combine both datasets:<span class="tooltiptext">Tip for user (?)</span>
-                                          </div>
-                                       </div>
-                                    </td>
-                                 </tr><tr>
-                                    <td colspan="2" align="center">
-                                       <table>
-                                          <tr>
-                                             <td>
-                                                <input type="radio" name="joinvariable" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
-                                             </td><td>
-                                                <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
-                                             </td>
-                                          </tr><tr>
-                                             <td>
-                                                <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location                                           
-                                             </td><td>  
-                                                <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
-                                             </td>
-                                          </tr>
-                                       </table>
-                                    </td>
-                                 </tr><tr>
-                                    <td colspan="2" align="center">
-                                       <button class="button" type="submit" style={{"vertical-align":"middle"}}><span>Combine Datasets & Save</span></button>
-                                    </td>
-                                 </tr>
-                              </table>
-                        </form>
-                     </div>                     
-                  </div>
                </td>
-            </tr><tr>
+               <td style={{"width":"50%"}}>
+                  <div class="cardcombine">
+                     <div class="containercombine">                 
+                        <table align="center">
+                           <tr>
+                              <td colspan="2" align="center">
+                                 <div class="cardtitle">
+                                    Combine Selected Datasets
+                                 </div>
+                              </td>
+                           </tr><tr></tr><tr></tr><tr></tr><tr>
+                              <td colspan="2" align="center">
+                                 <div class="cardsubtitle">
+                                    <div class="tooltip">
+                                       Select variable to combine both datasets:<span class="tooltiptext">Tip for user (?)</span>
+                                    </div>
+                                 </div>
+                              </td>
+                           </tr><tr>
+                              <td colspan="2" align="center">
+                                 <table>
+                                    <tr>
+                                       <td>
+                                          <input type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
+                                       </td><td>
+                                          <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
+                                       </td>
+                                    </tr><tr>
+                                       <td>
+                                          <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Geographical Location                                           
+                                       </td><td>  
+                                          <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
+                                       </td>
+                                    </tr>
+                                 </table>
+                              </td>
+                           </tr><tr>
+                              <td colspan="2" align="center">
+                                 <button class="button" type="submit" style={{"vertical-align":"middle"}}><span>Combine Datasets & Save</span></button>
+                              </td>
+                           </tr>
+                        </table> 
+                     </div>                     
+                  </div>                 
+               </td>              
+            </tr>           
+            <tr>
             <td colspan="2" align="center">
                <table>
          			<tr>
@@ -246,6 +247,7 @@ class TableViewbi extends Component {
             </td>
             </tr>
          </table>
+         </form>           
       </div>
       );
    }
