@@ -58,7 +58,8 @@ class Chartbi extends Component {
       this.selectFilterValue = this.selectFilterValue.bind(this);  
       this.selectFilterValue2 = this.selectFilterValue2.bind(this);  
       
-      
+      this.checkradiobutton = this.checkradiobutton.bind(this);
+      this.checksubmitbutton = this.checksubmitbutton.bind(this);
       this.generateScatterplot = this.generateScatterplot.bind(this); 
 
       this.formSubmitted = this.formSubmitted.bind(this);
@@ -87,7 +88,28 @@ class Chartbi extends Component {
             options: options
          });                        
       });
-   } 
+   }
+
+   checkradiobutton(datavariable1, datavariable2, radiobutton){
+       if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length){
+            document.getElementById(radiobutton).disabled = false;
+       } else {
+            document.getElementById(radiobutton).disabled = true;
+       }
+   }
+   checksubmitbutton(radiobutton1, radiobutton2, radiobutton3, radiobutton4, table){
+       if (document.getElementById(radiobutton1).disabled && document.getElementById(radiobutton2).disabled && document.getElementById(radiobutton3).disabled && document.getElementById(radiobutton4).disabled && table != ""){
+            document.getElementById("submitbutton").disabled = true;
+            this.setState({
+               errorstatement: "Datasets doesn't contain matching columns describing the following options"
+            });
+         } else{
+            document.getElementById("submitbutton").disabled = false;
+            this.setState({
+               errorstatement: ""
+            });
+         }
+   }
 
    //retrieving variables from flask
    getVariables(event) {
@@ -111,41 +133,12 @@ class Chartbi extends Component {
          var depotvaluelistdata = data['depotvaluelist'];
          var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];                
          
-         if (datevariablelistdata.toString().replace(/\s/g, '').length && this.state.datevariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            document.getElementById("dateradio").disabled = false;
-         } else {
-            document.getElementById("dateradio").disabled = true;
-         }
-         
-         if (companyvariablelistdata.toString().replace(/\s/g, '').length && this.state.companyvariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            document.getElementById("companyradio").disabled = false;
-         } else {
-            document.getElementById("companyradio").disabled = true;
-         }
-         
-         if (depotvariablelistdata.toString().replace(/\s/g, '').length && this.state.depotvariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            document.getElementById("depotradio").disabled = false;
-         } else {
-            document.getElementById("depotradio").disabled = true;
-         }
-         
-         if (geographicallocationvaluelistdata.toString().replace(/\s/g, '').length && this.state.geographicallocationvariablesoptions2.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            document.getElementById("locationradio").disabled = false;
-         } else {
-            document.getElementById("locationradio").disabled = true;
-         } 
-         
-          if (document.getElementById("dateradio").disabled && document.getElementById("companyradio").disabled && document.getElementById("depotradio").disabled && document.getElementById("locationradio").disabled && this.state.selectedtable2 != ""){
-            document.getElementById("submitbutton").disabled = true;
-            this.setState({
-               errorstatement: "Datasets doesn't contain matching columns describing the following options"
-            });
-         } else{
-            document.getElementById("submitbutton").disabled = false;
-            this.setState({
-               errorstatement: ""
-            });
-         }
+         this.checkradiobutton(datevariablelistdata, this.state.datevariablesoptions2, "dateradio")
+         this.checkradiobutton(companyvariablelistdata, this.state.companyvariablesoptions2, "companyradio");
+         this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions2, "depotradio");
+         this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions2, "locationradio");
+
+         this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable2);         
          
          this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata);                     
       });          
@@ -174,41 +167,14 @@ class Chartbi extends Component {
          var depotvaluelistdata = data['depotvaluelist'];
          var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];  
          
-         if (datevariablelistdata.toString().replace(/\s/g, '').length && this.state.datevariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            document.getElementById("dateradio").disabled = false;
-         } else {
-            document.getElementById("dateradio").disabled = true;
-         }
          
-         if (companyvariablelistdata.toString().replace(/\s/g, '').length && this.state.companyvariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            document.getElementById("companyradio").disabled = false;
-         } else {
-            document.getElementById("companyradio").disabled = true;
-         }
-         
-         if (depotvariablelistdata.toString().replace(/\s/g, '').length && this.state.depotvariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            document.getElementById("depotradio").disabled = false;
-         } else {
-            document.getElementById("depotradio").disabled = true;
-         }
-         
-         if (geographicallocationvaluelistdata.toString().replace(/\s/g, '').length && this.state.geographicallocationvariablesoptions.toString().replace(/\s/g, '').length) { //checking data is not empty 
-            document.getElementById("locationradio").disabled = false;
-         } else {
-            document.getElementById("locationradio").disabled = true;
-         }
+         this.checkradiobutton(datevariablelistdata, this.state.datevariablesoptions, "dateradio");
+         this.checkradiobutton(companyvariablelistdata, this.state.companyvariablesoptions, "companyradio");
+         this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions, "depotradio");
+         this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions, "locationradio");
 
-         if (document.getElementById("dateradio").disabled && document.getElementById("companyradio").disabled && document.getElementById("depotradio").disabled && document.getElementById("locationradio").disabled && this.state.selectedtable != ""){
-            document.getElementById("submitbutton").disabled = true;
-            this.setState({
-               errorstatement: "Datasets doesn't contain matching columns describing the following options"
-            });
-         } else{
-            document.getElementById("submitbutton").disabled = false;
-            this.setState({
-               errorstatement: ""
-            });
-         }
+         this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable);         
+
          
          this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata);                     
       });  
@@ -483,13 +449,13 @@ class Chartbi extends Component {
                      </div>
                      <table>
                         <tr>                        
-                           <input id="dateradio" type="radio" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled/>Activity Date
+                           <input id="dateradio" type="radio" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/>Activity Date
                         </tr><tr>
-                            <input id="companyradio" type="radio" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled/>Company
+                            <input id="companyradio" type="radio" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/>Company
                         </tr><tr>                  
-                           <input id="depotradio" type="radio" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled/>Depot
+                           <input id="depotradio" type="radio" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/>Depot
                         </tr><tr>
-                           <input id="locationradio" type="radio" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"} disabled/>Geographical Location
+                           <input id="locationradio" type="radio" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"} disabled required/>Geographical Location
                         </tr>
                      </table>                  
                      <br /><br />
