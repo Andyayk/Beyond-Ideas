@@ -135,7 +135,7 @@ class Chartbi extends Component {
             document.getElementById("locationradio").disabled = true;
          } 
          
-          if (document.getElementById("dateradio").disabled && document.getElementById("companyradio").disabled && document.getElementById("depotradio").disabled && document.getElementById("locationradio").disabled){
+          if (document.getElementById("dateradio").disabled && document.getElementById("companyradio").disabled && document.getElementById("depotradio").disabled && document.getElementById("locationradio").disabled && this.state.selectedtable2 != ""){
             document.getElementById("submitbutton").disabled = true;
             this.setState({
                errorstatement: "Datasets doesn't contain matching columns describing the following options"
@@ -198,7 +198,7 @@ class Chartbi extends Component {
             document.getElementById("locationradio").disabled = true;
          }
 
-         if (document.getElementById("dateradio").disabled && document.getElementById("companyradio").disabled && document.getElementById("depotradio").disabled && document.getElementById("locationradio").disabled){
+         if (document.getElementById("dateradio").disabled && document.getElementById("companyradio").disabled && document.getElementById("depotradio").disabled && document.getElementById("locationradio").disabled && this.state.selectedtable != ""){
             document.getElementById("submitbutton").disabled = true;
             this.setState({
                errorstatement: "Datasets doesn't contain matching columns describing the following options"
