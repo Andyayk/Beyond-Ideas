@@ -2,7 +2,7 @@
 @author: Beyond Ideas 
 """
 
-import os, datetime, requests, json, csv
+import os, datetime, requests
 
 from . import modelbi
 from . import check_headers
@@ -466,56 +466,7 @@ def create_app(config_name):
             """
                 This method will crawl weather
             """                 
-            url = "https://api.darksky.net/forecast/c377c0ded9458c7c433e266e153a484c/1.351616,103.808053,2019-01-21T12:00:00"
-            weather_r = requests.get(url)
-            weather_text = weather_r.text
-            #change the data from json format to python dictionary, like java's hashmap.
-            weather_dic = json.loads(weather_text)
-            headerArray = []
-            bodyArray = []
-            #add header data to array 
-            for i in weather_dic["currently"]:
-                headerArray.append(i)
-            #add body data to array
-            for i in weather_dic["currently"]:
-                bodyArray.append(weather_dic["currently"][i])
-            #creates data.csv file and write the data into the csv file    
-            with open("data.csv", "w+") as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(headerArray)
-                writer.writerow(bodyArray)
-
-            toReturn = "Successfully crawled weather data."
-            """
-            print(weather_dic["currently"]["temperature"])
-            
-            for i in weather_dic["currently"]:
-                print(weather_dic["currently"][i])
-            #weather_soup = soup(weather_r.text, 'html.parser')
-            #toReturn = weather_soup.findAll('a')
-            #for link in toReturn:
-            #   print(link)
-
-
-            my_url = 'https://www.newegg.com/Product/ProductList.aspx?Submit=ENE&DEPA=0&Order=BESTMATCH&Description=graphic+card&N=-1&isNodeId=1'
-            
-            #opening up connection, grabbing the page
-            uClient = uReq(my_url)
-            page_html = uClient.read()
-            uClient.close()
-            
-            #format the html page
-            page_soup = soup(page_html, "html.parser")
-            
-            #grabs each product
-            containers = page_soup.findAll("div", {"class":"item-container"})
-            
-            product_names = ""
-            
-            for container in containers:
-                product_name = container.a.img["title"]
-                product_names += product_name + " "
-            """    
+            toReturn = modelbi.weatherCrawlerbi()
             return jsonify(
                 toReturn = toReturn
             )

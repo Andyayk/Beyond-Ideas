@@ -2,7 +2,7 @@
 @author: Beyond Ideas 
 """
 
-import mysql.connector, datetime
+import mysql.connector, datetime, requests, json, csv
 
 #MySQL Configurations
 mydb = mysql.connector.connect(
@@ -288,4 +288,73 @@ def getFilterValuesbi(tablename, tablename2, filtervariable):
 
         return cols
     except Exception as e:
-        return ""        
+        return "" 
+
+def weatherCrawlerbi():
+    """
+        This method crawl weather data from worldweatheronline
+    """ 
+    try:
+        #Key to call the API, expire 26 March
+        api_key = "7aaa215e79fc453780042854192501"
+        #Start & end date indicated by user
+        start_date = "2018-11-01"
+        end_date = "2018-11-30"
+        #Country indicated by user
+        country_name = "Singapore"
+        #Basic URL for crawling
+        base_url = "http://api.worldweatheronline.com/premium/v1/weather.ashx"
+        #Setting the header and body array to be placed into csv file.
+        headerArray = "date,meanTemperatureC,meanTemperatureF"
+        bodyArray = []
+        #Cleaning the start and end date by removing the "0" infront of the DD.
+        start_dateDD = start_date[8:10]
+        end_dateDD = end_date[8:10]
+        if start_dateDD[0] == "0":
+            start_dateDD = start_dateDD[1]
+
+        if end_dateDD[0] == "0":
+            end_dateDD = end_dateDD[1]
+
+        cleaned_start_date = start_date[0:8] + start_dateDD   
+        #Changing the start and end date into integer so that at the end of every iteration, the DD is increase by 1.
+        start_dateDD = int(start_dateDD)
+        end_dateDD = int(end_dateDD)
+        #Count the number of days from the start and end so that the iteration will loop through each day.
+        counter = end_dateDD - start_dateDD + 1
+        #Start crawling
+        while counter > 0:
+            #setting up the url
+            url = base_url + "?key=" + api_key + "&q=" + country_name + "&date=" + cleaned_start_date + "&tp=24&format=json"
+            weather_r = requests.get(url)
+            weather_text = weather_r.text
+            #parsing the text into json format to retrieval
+            weather_dic = json.loads(weather_text)
+            #retrieve date
+            date = str(weather_dic["data"]["weather"][0]["date"])
+            #retrieve mean temperature in celcius
+            meanTemperatureC = str(weather_dic["data"]["weather"][0]["hourly"][0]["tempC"])
+            #retrieve mean temperature in fahrenheit
+            meanTemperatureF = str(weather_dic["data"]["weather"][0]["hourly"][0]["tempF"])
+            rows = date + "," + meanTemperatureC + "," + meanTemperatureF
+            #add the rows in to an array to be placed in csv file later on
+            bodyArray.append(rows)
+            #increase the start date by 1 for the next iteration to crawl
+            start_dateDD+=1
+            cleaned_start_date = start_date[0:8] + str(start_dateDD)
+            #decrease counter by 1 and when it reach 0, the iteration stops
+            counter-=1
+
+        #write the data into a csv file
+        filename = country_name + " weather data.csv"
+        print("came here")
+        with open(filename, "w+") as csvfile:
+            csvfile.write(headerArray)
+            csvfile.write("\n")
+            for i in bodyArray:
+                csvfile.write(i)
+                csvfile.write("\n")
+        return "Successfully crawled weather data."
+
+    except Exception as e:
+        return "Crawling of weather data unsuccessful."           
