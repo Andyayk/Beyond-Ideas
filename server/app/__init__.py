@@ -324,6 +324,7 @@ def create_app(config_name):
                 This method will retrieve mysqltables for API call from react
             """       
             tables = modelbi.getMySQLTablesbi() 
+
             return jsonify(
                 tables = tables
             )
@@ -400,7 +401,6 @@ def create_app(config_name):
             depotvaluelist = modelbi.getDepotValuesbi(tablename)
             geographicallocationvaluelist = modelbi.getGeographicalLocationValuesbi(tablename)                  
             
-            
             return jsonify(
                 variablelist = variablelist,            
                 datevariablelist = datevariablelist,
@@ -459,6 +459,13 @@ def create_app(config_name):
             """
                 This method will render our web crawling page
             """      
+            return render_template('webcrawlingpagebi.html')
+        
+        @app.route("/weathercrawlingbi/")
+        def weathercrawlingbi(): 
+            """
+                This method will crawl weather
+            """                 
             url = "https://api.darksky.net/forecast/c377c0ded9458c7c433e266e153a484c/1.351616,103.808053,2019-01-21T12:00:00"
             weather_r = requests.get(url)
             weather_text = weather_r.text
@@ -509,6 +516,8 @@ def create_app(config_name):
                 product_name = container.a.img["title"]
                 product_names += product_name + " "
             """    
-            return render_template('webcrawlingpagebi.html', toReturn = toReturn)
+            return jsonify(
+                toReturn = toReturn
+            )
 
     return app

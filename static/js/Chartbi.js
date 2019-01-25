@@ -91,24 +91,24 @@ class Chartbi extends Component {
    }
 
    checkradiobutton(datavariable1, datavariable2, radiobutton){
-       if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length){
-            document.getElementById(radiobutton).disabled = false;
-       } else {
-            document.getElementById(radiobutton).disabled = true;
-       }
+      if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length){
+         document.getElementById(radiobutton).disabled = false;
+      } else {
+         document.getElementById(radiobutton).disabled = true;
+      }
    }
    checksubmitbutton(radiobutton1, radiobutton2, radiobutton3, radiobutton4, table){
-       if (document.getElementById(radiobutton1).disabled && document.getElementById(radiobutton2).disabled && document.getElementById(radiobutton3).disabled && document.getElementById(radiobutton4).disabled && table != ""){
-            document.getElementById("submitbutton").disabled = true;
-            this.setState({
-               errorstatement: "Datasets doesn't contain matching columns describing the following options"
-            });
-         } else{
-            document.getElementById("submitbutton").disabled = false;
-            this.setState({
-               errorstatement: ""
-            });
-         }
+      if (document.getElementById(radiobutton1).disabled && document.getElementById(radiobutton2).disabled && document.getElementById(radiobutton3).disabled && document.getElementById(radiobutton4).disabled && table != ""){
+         document.getElementById("submitbutton").disabled = true;
+         this.setState({
+            errorstatement: "Datasets doesn't contain matching columns describing the following options"
+         });
+      } else{
+         document.getElementById("submitbutton").disabled = false;
+         this.setState({
+            errorstatement: ""
+         });
+      }
    }
 
    //retrieving variables from flask
@@ -223,8 +223,6 @@ class Chartbi extends Component {
       //creating select options for drop down list based on geographical location data values from flask
       let geographicallocationvalues = this.createVariablesOptions(methodNo, geographicallocationvaluelistdata);      
 
-      
-      
       if (methodNo == 1) {
          this.setState({
             variablesoptions: variables,
@@ -248,13 +246,7 @@ class Chartbi extends Component {
             geographicallocationvaluelistoptions2: geographicallocationvalues,            
          });           
       }
-      
-      
-      
-
    }
-
-  
 
    //store the variable that the user has selected
    selectVariable(event) {
@@ -335,6 +327,14 @@ class Chartbi extends Component {
          selectedfiltervariable: this.state.selectedfiltervariable
       },
       (data) => {
+         var plotpointname = "";
+
+         if (this.state.selectedfiltervariable.toLowerCase().includes("date")) {
+            plotpointname = "Filter: " + this.state.selectedfiltervalue + " to " + this.state.selectedfiltervalue2;
+         } else if (this.state.selectedfiltervariable != "") {
+            plotpointname = "Filter: " + this.state.selectedfiltervalue;
+         }
+            
          var xarray = [];
          var yarray = [];
          $.each(data, function(key, val) {
@@ -375,14 +375,16 @@ class Chartbi extends Component {
                            type: 'scatter',
                            mode: 'markers',
                            marker: {color: 'blue'},
-                           showlegend: false
+                           name: plotpointname,
+                           hoverlabel: {namelength: -1}
                            },{
                            x: xarray,
                            y: predictedyarray,
                            type: 'lines',
                            mode: 'lines',
                            marker: {color: 'red'},
-                           name: "Equation: " + equation
+                           name: "Equation: " + equation,
+                           hoverlabel: {namelength: -1}                          
                            }]}
                            layout={{
                               width: 1000, 
@@ -449,13 +451,13 @@ class Chartbi extends Component {
                      </div>
                      <table>
                         <tr>                        
-                           <input id="dateradio" type="radio" value="activitydate" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/>Activity Date
+                           <input id="dateradio" type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/>Activity Date
                         </tr><tr>
-                            <input id="companyradio" type="radio" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/>Company
+                            <input id="companyradio" type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/>Company
+                        </tr><tr>
+                           <input id="locationradio" type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"} disabled required/>Country Name
                         </tr><tr>                  
-                           <input id="depotradio" type="radio" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/>Depot
-                        </tr><tr>
-                           <input id="locationradio" type="radio" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"} disabled required/>Geographical Location
+                           <input id="depotradio" type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/>Depot                        
                         </tr>
                      </table>                  
                      <br /><br />
@@ -463,7 +465,7 @@ class Chartbi extends Component {
                         Select Variables
                      </div>
                      <div class="cardsubtitle">
-                        Variable (X):
+                        Independent Variable (X):
                      </div>
                      <select required onChange={this.selectVariable}>
                         <option value="" disabled selected>---------- select a variable ----------</option>
@@ -471,7 +473,7 @@ class Chartbi extends Component {
                      </select>
                      <br />
                      <div class="cardsubtitle">
-                        Variable (Y):
+                        Dependent Variable (Y):
                      </div>
                      <select required onChange={this.selectVariable2}>
                         <option value="" disabled selected>---------- select a variable ----------</option>
@@ -501,21 +503,24 @@ class Chartbi extends Component {
 
                      {this.state.selectedfiltervariable.toLowerCase().includes("date") &&
                         <div>
-                           <label>Start Date:</label>
-                           <br />                     
-                           <input type="date" required onChange={this.selectFilterValue} />
+                           <div class="cardsubtitle">
+                              Start Date:
+                           </div>                   
+                           <input type="date" min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue} />
                            <br /><br />
 
-                           <label>End Date:</label>
-                           <br />
-                           <input type="date" required onChange={this.selectFilterValue2} />
+                           <div class="cardsubtitle">
+                              End Date:
+                           </div>
+                           <input type="date" min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
                            <br /><br />
                         </div>
                      }
                      {this.state.selectedfiltervariable && !this.state.selectedfiltervariable.toLowerCase().includes("date") &&
                         <div>
-                           <label>{this.state.selectedfiltervariable.substring(3,)}:</label>
-                           <br />
+                           <div class="cardsubtitle">
+                              {this.state.selectedfiltervariable.substring(3,)}:
+                           </div>
                            <select required onChange={this.selectFilterValue}>
                               <option value="" disabled selected>Select a Variable</option>
                               {this.state.filtervaluelistoptions}                         
