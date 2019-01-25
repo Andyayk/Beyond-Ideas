@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import TableViewbi from './TableViewbi';
 import Chartbi from './Chartbi';
+import WebCrawlingbi from './WebCrawlingbi';
 import App from "./App";
 import HomeContent from "./HomeContent";
 import UploadContent from "./UploadContent";
@@ -56,3 +57,9 @@ const chartbi = document.getElementById('chartbi');
 if (chartbi) {
    ReactDOM.render(<Chartbi />, chartbi);
 }
+
+const webcrawlingbi = document.getElementById('webcrawlingbi');
+if (webcrawlingbi) {
+   ReactDOM.render(<WebCrawlingbi />, webcrawlingbi);
+}
+
