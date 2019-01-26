@@ -296,58 +296,105 @@ def weatherCrawlerbi():
     """ 
     try:
         #Key to call the API, expire 26 March
-        api_key = "7aaa215e79fc453780042854192501"
+        api_key = "ab387d44d42d49238a3164423192501"
         #Start & end date indicated by user
-        start_date = "2018-11-01"
-        end_date = "2018-11-30"
+        input_start_date = "2018-10-25"
+        input_end_date = "2018-12-21"
         #Country indicated by user
         country_name = "Singapore"
         #Basic URL for crawling
-        base_url = "http://api.worldweatheronline.com/premium/v1/weather.ashx"
+        base_url = "http://api.worldweatheronline.com/premium/v1/past-weather.ashx"
         #Setting the header and body array to be placed into csv file.
         headerArray = "date,meanTemperatureC,meanTemperatureF"
         bodyArray = []
-        #Cleaning the start and end date by removing the "0" infront of the DD.
-        start_dateDD = start_date[8:10]
-        end_dateDD = end_date[8:10]
-        if start_dateDD[0] == "0":
-            start_dateDD = start_dateDD[1]
-
-        if end_dateDD[0] == "0":
-            end_dateDD = end_dateDD[1]
-
-        cleaned_start_date = start_date[0:8] + start_dateDD   
-        #Changing the start and end date into integer so that at the end of every iteration, the DD is increase by 1.
-        start_dateDD = int(start_dateDD)
-        end_dateDD = int(end_dateDD)
-        #Count the number of days from the start and end so that the iteration will loop through each day.
-        counter = end_dateDD - start_dateDD + 1
-        #Start crawling
-        while counter > 0:
+        #extracting the months in integer
+        startMonth = int(input_start_date[5:7])
+        endMonth = int(input_end_date[5:7])
+        #Start crawling, if it is same month, send only 1 API request
+        if startMonth == endMonth:
             #setting up the url
-            url = base_url + "?key=" + api_key + "&q=" + country_name + "&date=" + cleaned_start_date + "&tp=24&format=json"
+            url = base_url + "?key=" + api_key + "&q=" + country_name + "&date=" + input_start_date + "&enddate=" + input_end_date +"&tp=24&format=json"
             weather_r = requests.get(url)
             weather_text = weather_r.text
             #parsing the text into json format to retrieval
             weather_dic = json.loads(weather_text)
-            #retrieve date
-            date = str(weather_dic["data"]["weather"][0]["date"])
-            #retrieve mean temperature in celcius
-            meanTemperatureC = str(weather_dic["data"]["weather"][0]["hourly"][0]["tempC"])
-            #retrieve mean temperature in fahrenheit
-            meanTemperatureF = str(weather_dic["data"]["weather"][0]["hourly"][0]["tempF"])
-            rows = date + "," + meanTemperatureC + "," + meanTemperatureF
-            #add the rows in to an array to be placed in csv file later on
-            bodyArray.append(rows)
-            #increase the start date by 1 for the next iteration to crawl
-            start_dateDD+=1
-            cleaned_start_date = start_date[0:8] + str(start_dateDD)
-            #decrease counter by 1 and when it reach 0, the iteration stops
-            counter-=1
+            for i in weather_dic["data"]["weather"]:
+                #retrieve date
+                date = str(i["date"])
+                #retrieve mean temperature in celcius
+                meanTemperatureC = str(i["hourly"][0]["tempC"])
+                #retrieve mean temperature in fahrenheit
+                meanTemperatureF = str(i["hourly"][0]["tempF"])
+                #combine the rows
+                rows = date + "," + meanTemperatureC + "," + meanTemperatureF
+                #add the rows in to an array to be placed in csv file later on
+                bodyArray.append(rows)
+        #if not, deduct the number of months needed to crawl and send 1 api for each month.
+        else:
+            #calculating the number of months needed to loop which is the number of api calls
+            num_of_months = int(endMonth) - int(startMonth)
+            #separating the year, month, and date for easier modification.
+            start_crawl_year = int(input_start_date[0:4])
+            start_crawl_month = int(input_start_date[5:7])
+            start_crawl_day = int(input_start_date[8:10])
+            end_crawl_year = int(input_end_date[0:4])
+            end_crawl_month = int(input_end_date[5:7])
+            end_crawl_day = int(input_end_date[8:10])  
+            #loop based on the number of months input by the user  
+            while num_of_months >= 0:
+                start_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-" + str(start_crawl_day)
+                end_crawl_date = str(end_crawl_year) + "-" + str(end_crawl_month) + "-" + str(end_crawl_day)
+                #for last input month, the last date to crawl would be the input date
+                if num_of_months == 0:
+                    end_crawl_date = input_end_date
+                    #setting up the url
+                    url = base_url + "?key=" + api_key + "&q=" + country_name + "&date=" + start_crawl_date + "&enddate=" + end_crawl_date+"&tp=24&format=json"
+                    weather_r = requests.get(url)
+                    weather_text = weather_r.text
+                    #parsing the text into json format to retrieval
+                    weather_dic = json.loads(weather_text)
+                    for i in weather_dic["data"]["weather"]:
+                        #retrieve date
+                        date = str(i["date"])
+                        #retrieve mean temperature in celcius
+                        meanTemperatureC = str(i["hourly"][0]["tempC"])
+                        #retrieve mean temperature in fahrenheit
+                        meanTemperatureF = str(i["hourly"][0]["tempF"])
+                        #combine the rows
+                        rows = date + "," + meanTemperatureC + "," + meanTemperatureF
+                        #add the rows in to an array to be placed in csv file later on
+                        bodyArray.append(rows)        
+                else:
+                    #for first till penultimate input month, set the last date for each month based on the calendar.
+                    #setting the start and end date
+                    if start_crawl_month == 4 or start_crawl_month == 6 or start_crawl_month == 9 or start_crawl_month == 11:
+                        end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-30" 
+                    elif start_crawl_month == 2:
+                        end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-28" 
+                    else:
+                        end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-31" 
+                    url = base_url + "?key=" + api_key + "&q=" + country_name + "&date=" + start_crawl_date + "&enddate=" + end_crawl_date + "&tp=24&format=json"
+                    weather_r = requests.get(url)
+                    weather_text = weather_r.text
+                    #parsing the text into json format to retrieval
+                    weather_dic = json.loads(weather_text)
+                    for i in weather_dic["data"]["weather"]:
+                        #retrieve date
+                        date = str(i["date"])
+                        #retrieve mean temperature in celcius
+                        meanTemperatureC = str(i["hourly"][0]["tempC"])
+                        #retrieve mean temperature in fahrenheit
+                        meanTemperatureF = str(i["hourly"][0]["tempF"])
+                        #combine the rows
+                        rows = date + "," + meanTemperatureC + "," + meanTemperatureF
+                        #add the rows in to an array to be placed in csv file later on
+                        bodyArray.append(rows) 
+                    start_crawl_month += 1
+                    start_crawl_day = 1
+                num_of_months-=1
 
         #write the data into a csv file
         filename = country_name + " weather data.csv"
-        print("came here")
         with open(filename, "w+") as csvfile:
             csvfile.write(headerArray)
             csvfile.write("\n")
@@ -355,6 +402,5 @@ def weatherCrawlerbi():
                 csvfile.write(i)
                 csvfile.write("\n")
         return "Successfully crawled weather data."
-
     except Exception as e:
         return "Crawling of weather data unsuccessful."           
