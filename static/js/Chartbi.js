@@ -41,6 +41,7 @@ class Chartbi extends Component {
          geographicallocationvaluelistoptions: "",
          geographicallocationvaluelistoptions2: "",
          errorstatement: "",
+         errordatestatement: "test",
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -300,14 +301,41 @@ class Chartbi extends Component {
    }    
 
    //store the filter values that the user has selected
-   selectFilterValue(event) {
+   selectFilterValue(event) { 
+    if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
+        if(this.state.selectedfiltervalue2 && this.state.selectedfiltervalue2 < event.target.value){
+            this.setState({
+                errordatestatement: "Please select a valid date range"
+            });
+            document.getElementById("submitbutton").disabled = true;
+        }else {
+            this.setState({errordatestatement: ""});
+            document.getElementById("submitbutton").disabled = false;
+
+        }
+      }
+      
       this.setState({
          selectedfiltervalue: event.target.value
       });      
    } 
 
    //store the  filter values 2 (if any) that the user has selected
-   selectFilterValue2(event) {
+   selectFilterValue2(event) {    
+     if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
+        if(this.state.selectedfiltervalue && this.state.selectedfiltervalue > event.target.value){
+            this.setState({
+                errordatestatement: "Please select a valid date range"
+            });
+            document.getElementById("submitbutton").disabled = true;
+
+        }else {
+            this.setState({errordatestatement: ""});
+            document.getElementById("submitbutton").disabled = false;
+
+        }
+      }
+      
       this.setState({
          selectedfiltervalue2: event.target.value
       });      
@@ -500,7 +528,7 @@ class Chartbi extends Component {
                         {this.state.geographicallocationvariablesoptions2}                                              
                      </select>
                      <br /><br />
-
+                    <label>{this.state.errordatestatement}</label>
                      {this.state.selectedfiltervariable.toLowerCase().includes("date") &&
                         <div>
                            <div class="cardsubtitle">
