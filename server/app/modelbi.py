@@ -41,7 +41,7 @@ def displayTablebi(table_name):
         This method will display table 
     """      
     try:
-        cursor.execute("SELECT * FROM `" + table_name + "`")
+        cursor.execute("SELECT * FROM `" + table_name + "` LIMIT 20")
         table = ""
         
         for col in cursor.description:
