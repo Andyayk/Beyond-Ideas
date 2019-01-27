@@ -41,6 +41,7 @@ class Chartbi extends Component {
          geographicallocationvaluelistoptions: "",
          geographicallocationvaluelistoptions2: "",
          errorstatement: "",
+         errordatestatement: "",
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -60,6 +61,7 @@ class Chartbi extends Component {
       
       this.checkradiobutton = this.checkradiobutton.bind(this);
       this.checksubmitbutton = this.checksubmitbutton.bind(this);
+      this.enablesubmitbutton = this.enablesubmitbutton.bind(this);
       this.generateScatterplot = this.generateScatterplot.bind(this); 
 
       this.formSubmitted = this.formSubmitted.bind(this);
@@ -92,35 +94,49 @@ class Chartbi extends Component {
 
    checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames){
       if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length){
+         this.setState({
+            selectedjoinvariable: ""
+         });  
          document.getElementById(radiobutton).disabled = false; 
          document.getElementById(labelnames).style = "color:black";
       } else {
+         this.setState({
+            selectedjoinvariable: ""
+         });  
          document.getElementById(radiobutton).disabled = true;
          document.getElementById(labelnames).style = "color:#a3a3a3";         
       }
    }
    checksubmitbutton(radiobutton1, radiobutton2, radiobutton3, radiobutton4, table){
       if (document.getElementById(radiobutton1).disabled && document.getElementById(radiobutton2).disabled && document.getElementById(radiobutton3).disabled && document.getElementById(radiobutton4).disabled && table != ""){
-         document.getElementById("submitbutton").disabled = true;
-         var element = document.getElementById('submitbutton');
-            element.style.background = "red";
-            element.style.opacity = "0.6";
-            element.style.cursor = "not-allowed";
+         this.enablesubmitbutton(false);
 
          this.setState({
             errorstatement: "Datasets doesn't contain matching columns describing the following options"
          });
       } else{
-         document.getElementById("submitbutton").disabled = false;
-         var element = document.getElementById('submitbutton');
-            element.style.background = "#4CAF50";
-            element.style.opacity = "1";            
-            element.style.cursor = "pointer";
+         this.enablesubmitbutton(true);
 
          this.setState({
             errorstatement: ""
          });
       }
+   }
+   
+   enablesubmitbutton(enable){
+       if(enable){
+            var element = document.getElementById('submitbutton');
+            element.disabled = false;
+            element.style.background = "#4CAF50";
+            element.style.opacity = "1";            
+            element.style.cursor = "pointer";
+       } else {
+            var element = document.getElementById('submitbutton');
+            element.disabled = true;
+            element.style.background = "red";
+            element.style.opacity = "0.6";
+            element.style.cursor = "not-allowed";
+       }
    }
 
    //retrieving variables from flask
@@ -312,14 +328,38 @@ class Chartbi extends Component {
    }    
 
    //store the filter values that the user has selected
-   selectFilterValue(event) {
+   selectFilterValue(event) { 
+    if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
+        if(this.state.selectedfiltervalue2 && this.state.selectedfiltervalue2 < event.target.value){
+            this.setState({
+                errordatestatement: "Please select a valid date range"
+            });
+            this.enablesubmitbutton(false);
+        }else {
+            this.setState({errordatestatement: ""});
+            this.enablesubmitbutton(true);
+        }
+      }
+      
       this.setState({
          selectedfiltervalue: event.target.value
       });      
    } 
 
    //store the  filter values 2 (if any) that the user has selected
-   selectFilterValue2(event) {
+   selectFilterValue2(event) {    
+     if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
+        if(this.state.selectedfiltervalue && this.state.selectedfiltervalue > event.target.value){
+            this.setState({
+                errordatestatement: "Please select a valid date range"
+            });
+            this.enablesubmitbutton(false);
+        }else {
+            this.setState({errordatestatement: ""});
+            this.enablesubmitbutton(true);
+        }
+      }
+      
       this.setState({
          selectedfiltervalue2: event.target.value
       });      
