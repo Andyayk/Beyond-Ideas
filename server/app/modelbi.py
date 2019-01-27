@@ -42,20 +42,23 @@ def displayTablebi(table_name):
     """      
     try:
         cursor.execute("SELECT * FROM `" + table_name + "` LIMIT 20")
-        table = ""
         
+        cols = []
         for col in cursor.description:
-            table += "<th style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col[0] + "</center></th>"
+            cols.append(col[0])
 
+        tabledata = []
         for item in cursor:
-            table += "<tr>"
+            row = []
             for col in item:
-                if isinstance(col, datetime.date):
-                    col = col.strftime('%d/%m/%Y')
-                table += "<td style=\"width:130px; max-width:130px; word-wrap: break-word;\"><center>" + col + "</center></td>"
-            table += "</tr>"        
+                row.append(col)   
+            tabledata.append(row) 
 
-        return table
+        tablearray = []
+        tablearray.append(cols)
+        tablearray.append(tabledata)
+
+        return tablearray
     except Exception as e:
         return "Something is wrong with displayTable method"
 
