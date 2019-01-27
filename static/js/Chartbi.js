@@ -41,7 +41,7 @@ class Chartbi extends Component {
          geographicallocationvaluelistoptions: "",
          geographicallocationvaluelistoptions2: "",
          errorstatement: "",
-         errordatestatement: "test",
+         errordatestatement: "",
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -61,6 +61,7 @@ class Chartbi extends Component {
       
       this.checkradiobutton = this.checkradiobutton.bind(this);
       this.checksubmitbutton = this.checksubmitbutton.bind(this);
+      this.enablesubmitbutton = this.enablesubmitbutton.bind(this);
       this.generateScatterplot = this.generateScatterplot.bind(this); 
 
       this.formSubmitted = this.formSubmitted.bind(this);
@@ -93,35 +94,49 @@ class Chartbi extends Component {
 
    checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames){
       if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length){
+         this.setState({
+            selectedjoinvariable: ""
+         });  
          document.getElementById(radiobutton).disabled = false; 
          document.getElementById(labelnames).style = "color:black";
       } else {
+         this.setState({
+            selectedjoinvariable: ""
+         });  
          document.getElementById(radiobutton).disabled = true;
          document.getElementById(labelnames).style = "color:#D3D3D3";         
       }
    }
    checksubmitbutton(radiobutton1, radiobutton2, radiobutton3, radiobutton4, table){
       if (document.getElementById(radiobutton1).disabled && document.getElementById(radiobutton2).disabled && document.getElementById(radiobutton3).disabled && document.getElementById(radiobutton4).disabled && table != ""){
-         document.getElementById("submitbutton").disabled = true;
-         var element = document.getElementById('submitbutton');
-            element.style.background = "red";
-            element.style.opacity = "0.6";
-            element.style.cursor = "not-allowed";
+         this.enablesubmitbutton(false);
 
          this.setState({
             errorstatement: "Datasets doesn't contain matching columns describing the following options"
          });
       } else{
-         document.getElementById("submitbutton").disabled = false;
-         var element = document.getElementById('submitbutton');
-            element.style.background = "#4CAF50";
-            element.style.opacity = "1";            
-            element.style.cursor = "pointer";
+         this.enablesubmitbutton(true);
 
          this.setState({
             errorstatement: ""
          });
       }
+   }
+   
+   enablesubmitbutton(enable){
+       if(enable){
+            var element = document.getElementById('submitbutton');
+            element.disabled = false;
+            element.style.background = "#4CAF50";
+            element.style.opacity = "1";            
+            element.style.cursor = "pointer";
+       } else {
+            var element = document.getElementById('submitbutton');
+            element.disabled = true;
+            element.style.background = "red";
+            element.style.opacity = "0.6";
+            element.style.cursor = "not-allowed";
+       }
    }
 
    //retrieving variables from flask
@@ -319,11 +334,10 @@ class Chartbi extends Component {
             this.setState({
                 errordatestatement: "Please select a valid date range"
             });
-            document.getElementById("submitbutton").disabled = true;
+            this.enablesubmitbutton(false);
         }else {
             this.setState({errordatestatement: ""});
-            document.getElementById("submitbutton").disabled = false;
-
+            this.enablesubmitbutton(true);
         }
       }
       
@@ -339,12 +353,10 @@ class Chartbi extends Component {
             this.setState({
                 errordatestatement: "Please select a valid date range"
             });
-            document.getElementById("submitbutton").disabled = true;
-
+            this.enablesubmitbutton(false);
         }else {
             this.setState({errordatestatement: ""});
-            document.getElementById("submitbutton").disabled = false;
-
+            this.enablesubmitbutton(true);
         }
       }
       
