@@ -45,7 +45,8 @@ class TableViewbi extends Component {
             mySQLTables = val;
          });
 
-         this.createOptions(mySQLTables);                                       
+         this.createOptions(mySQLTables);   
+
       });
    }    
 
@@ -65,7 +66,10 @@ class TableViewbi extends Component {
    }   
 
    //retrieving table display from flask
-   display(event) {
+   display(event) {  
+      var x = document.getElementById("message");
+         x.style.display = "none";
+
       this.setState({
          exporttable1: event.target.value,
       });
@@ -73,6 +77,7 @@ class TableViewbi extends Component {
       {
          tablename: event.target.value,
       },
+
       (data) => {
          this.setState({
             colnames: (data['colnames']),
@@ -83,6 +88,9 @@ class TableViewbi extends Component {
    
    //retrieving table display from flask
    display2(event) {
+      var x = document.getElementById("message");
+         x.style.display = "none";
+         
       this.setState({
          exporttable2: event.target.value,
       });
@@ -222,15 +230,22 @@ class TableViewbi extends Component {
                </td>              
             </tr>           
             <tr>
-            <td colspan="2" align="center">
+            </tr>
+            <tr>
+            <td id="testing" colspan="2" align="center" style={{"height":"400px", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
+               <table id="message" vertical-align="center" style={{"padding":"150px"}}>
+                  <tr>
+                     <label>Dataset Display Area</label>
+                  </tr>
+               </table>
                <table>
          			<tr>
-         				<td colspan="2" style={{"overflow":"auto", "max-width":"1180px", "position":"relative", "vertical-align":"top"}}>
+         				<td colspan="2" align="center" style={{"overflow":"auto", "max-width":"1180px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
                            <table class="outputtable">
                               {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
-							  {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
-         				   </table>
+							        {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
+         				      </table>
                         </div>
          				</td>
          			</tr>
@@ -242,7 +257,7 @@ class TableViewbi extends Component {
 							  {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
                            </table>
                         </div>
-                     </td>
+                     </td><td></td><td></td><td></td><td></td><td></td>
                      <td style={{"overflow":"auto", "max-width":"580px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
                            <table class="outputtable">   
