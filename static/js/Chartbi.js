@@ -62,6 +62,7 @@ class Chartbi extends Component {
       this.checkradiobutton = this.checkradiobutton.bind(this);
       this.checksubmitbutton = this.checksubmitbutton.bind(this);
       this.enablesubmitbutton = this.enablesubmitbutton.bind(this);
+      this.resetfilterdropdown = this.resetfilterdropdown.bind(this);  
       this.generateScatterplot = this.generateScatterplot.bind(this); 
 
       this.formSubmitted = this.formSubmitted.bind(this);
@@ -138,6 +139,13 @@ class Chartbi extends Component {
             element.style.cursor = "not-allowed";
        }
    }
+   
+   resetfilterdropdown(){
+       this.setState({
+            selectedfiltervariable: "",
+            filtervaluelistoptions: ""
+       });
+   }
 
    //retrieving variables from flask
    getVariables(event) {
@@ -165,7 +173,8 @@ class Chartbi extends Component {
          this.checkradiobutton(companyvariablelistdata, this.state.companyvariablesoptions2, "companyradio", "labelcompany");
          this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions2, "depotradio", "labeldepot");
          this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions2, "locationradio","labelcountry");
-
+         
+         this.resetfilterdropdown();
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable2);         
          
          this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata);                     
@@ -200,7 +209,8 @@ class Chartbi extends Component {
          this.checkradiobutton(companyvariablelistdata, this.state.companyvariablesoptions, "companyradio", "labelcompany");
          this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions, "depotradio", "labeldepot");
          this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions, "locationradio", "labelcountry");
-
+         
+         this.resetfilterdropdown();
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable);         
 
          
@@ -601,7 +611,9 @@ class Chartbi extends Component {
                                  {this.state.geographicallocationvariablesoptions2}                                              
                               </select>
                            </td>
-                        </tr><tr>
+                        </tr>
+                        <div class="carderrormsg">{this.state.errordatestatement}</div>
+                        <tr>
                            <td align="center">  
                               {this.state.selectedfiltervariable.toLowerCase().includes("date") &&
                                  <div>
