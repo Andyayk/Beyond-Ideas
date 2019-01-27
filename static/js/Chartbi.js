@@ -90,21 +90,33 @@ class Chartbi extends Component {
       });
    }
 
-   checkradiobutton(datavariable1, datavariable2, radiobutton){
+   checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames){
       if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length){
-         document.getElementById(radiobutton).disabled = false;
+         document.getElementById(radiobutton).disabled = false; 
+         document.getElementById(labelnames).style = "color:black";
       } else {
          document.getElementById(radiobutton).disabled = true;
+         document.getElementById(labelnames).style = "color:#D3D3D3";         
       }
    }
    checksubmitbutton(radiobutton1, radiobutton2, radiobutton3, radiobutton4, table){
       if (document.getElementById(radiobutton1).disabled && document.getElementById(radiobutton2).disabled && document.getElementById(radiobutton3).disabled && document.getElementById(radiobutton4).disabled && table != ""){
          document.getElementById("submitbutton").disabled = true;
+         var element = document.getElementById('submitbutton');
+            element.style.background = "red";
+            element.style.opacity = "0.6";
+            element.style.cursor = "not-allowed";
+
          this.setState({
             errorstatement: "Datasets doesn't contain matching columns describing the following options"
          });
       } else{
          document.getElementById("submitbutton").disabled = false;
+         var element = document.getElementById('submitbutton');
+            element.style.background = "#4CAF50";
+            element.style.opacity = "1";            
+            element.style.cursor = "pointer";
+
          this.setState({
             errorstatement: ""
          });
@@ -133,10 +145,10 @@ class Chartbi extends Component {
          var depotvaluelistdata = data['depotvaluelist'];
          var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];                
          
-         this.checkradiobutton(datevariablelistdata, this.state.datevariablesoptions2, "dateradio")
-         this.checkradiobutton(companyvariablelistdata, this.state.companyvariablesoptions2, "companyradio");
-         this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions2, "depotradio");
-         this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions2, "locationradio");
+         this.checkradiobutton(datevariablelistdata, this.state.datevariablesoptions2, "dateradio", "labeldate")
+         this.checkradiobutton(companyvariablelistdata, this.state.companyvariablesoptions2, "companyradio", "labelcompany");
+         this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions2, "depotradio", "labeldepot");
+         this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions2, "locationradio","labelcountry");
 
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable2);         
          
@@ -168,10 +180,10 @@ class Chartbi extends Component {
          var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];  
          
          
-         this.checkradiobutton(datevariablelistdata, this.state.datevariablesoptions, "dateradio");
-         this.checkradiobutton(companyvariablelistdata, this.state.companyvariablesoptions, "companyradio");
-         this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions, "depotradio");
-         this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions, "locationradio");
+         this.checkradiobutton(datevariablelistdata, this.state.datevariablesoptions, "dateradio", "labeldate");
+         this.checkradiobutton(companyvariablelistdata, this.state.companyvariablesoptions, "companyradio", "labelcompany");
+         this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions, "depotradio", "labeldepot");
+         this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions, "locationradio", "labelcountry");
 
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable);         
 
@@ -445,19 +457,21 @@ class Chartbi extends Component {
                         {this.state.options}
                      </select>  
                      <br/><br/>
-                     <font color="red">{this.state.errorstatement}</font>                        
+                     <div class="carderrormsg">
+                        {this.state.errorstatement}
+                     </div>  
                      <div class="cardsubtitle">
                         Combine both datasets based on:
                      </div>
-                     <table>
+                     <table align="center">
                         <tr>                        
-                           <input id="dateradio" type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/>Activity Date
+                           <td><input id="dateradio" type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/></td><td><label id="labeldate">Activity Date</label></td>
                         </tr><tr>
-                            <input id="companyradio" type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/>Company
+                            <td><input id="companyradio" type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/></td><td><label id ="labelcompany">Company</label></td>
                         </tr><tr>
-                           <input id="locationradio" type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"} disabled required/>Country Name
+                           <td><input id="locationradio" type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"} disabled required/></td><td><label id="labelcountry">Country Name</label></td>
                         </tr><tr>                  
-                           <input id="depotradio" type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/>Depot                        
+                           <td><input id="depotradio" type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/></td><td><label id="labeldepot">Depot</label></td>                  
                         </tr>
                      </table>                  
                      <br /><br />
@@ -522,14 +536,14 @@ class Chartbi extends Component {
                               {this.state.selectedfiltervariable.substring(3,)}:
                            </div>
                            <select required onChange={this.selectFilterValue}>
-                              <option value="" disabled selected>Select a Variable</option>
+                              <option value="" disabled selected>---------- select a variable ----------</option>
                               {this.state.filtervaluelistoptions}                         
                            </select>
                            <br /><br />
                         </div>
                      }                                                              
 
-                     <button id="submitbutton" class="button" type="submit" style={{"vertical-align":"middle", "width":"220px"}}><span>Generate Scatterplot</span></button>
+                     <button id="submitbutton" class="button" type="submit" style={{"vertical-align":"middle"}}>Generate Scatterplot</button>
                      <br /><br />            
                   </form>                   
                   </td>
