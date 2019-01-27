@@ -76,40 +76,97 @@ class WebCrawlingbi extends Component {
    //rendering the html for web crawling
    render() {
       return (
-      <div>
-         <font color="red">Note: Please be patient, web crawling takes some time</font>
-         <br />
-         <form method="POST" onSubmit={this.formSubmitted}>       
-            <div>
-               <div class="cardsubtitle">
-                  Start Date: use 2018-10-25
-               </div>                   
-               <input type="date" min="1900-01-01" max="2100-12-31" required onChange={this.selectStartDate} />
-               <br /><br />
-
-               <div class="cardsubtitle">
-                  End Date: use 2018-12-21
-               </div>
-               <input type="date" min="1900-01-01" max="2100-12-31" required onChange={this.selectEndDate} />
-               <br /><br />
+         <div>
+            <div class="content">
+               <table style={{"width":"100%", "padding":"10px"}}>
+                  <tr>             
+                     <td style={{"width":"49.8%", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"15px"}} valign="top" align="center" bgcolor="white">       
+                        <form method="POST" onSubmit={this.formSubmitted}>       
+                           <br/>
+                           <table align="center">
+                              <tr>
+                                 <td align="center">
+                                    <font size="6" style={{"color":"#4D4DFF","weight":"bold"}}>Historical Weather</font>           
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <font size="3" style={{"color":"grey","weight":"bold"}}> -- to input weather icon -- </font>
+                                 </td>
+                              </tr>
+                              <br/>
+                              <tr>
+                                 <td align="center">
+                                    <div class="cardtitle">
+                                       Select Date Range
+                                    </div>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <div class="cardsubtitle">
+                                       Start Date: e.g 25/10/2018
+                                    </div>          
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">                                
+                                    <input type="date" style={{"width":"200px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectStartDate} />
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">                                                                 
+                                    <div class="cardsubtitle">
+                                       End Date: e.g 30/12/2018
+                                    </div>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">                                
+                                    <input type="date" style={{"width":"200px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectEndDate} />
+                                 </td>
+                              </tr>
+                              <br/>
+                              <tr>
+                                 <td align="center">
+                                    <div class="cardtitle">
+                                       Select Country
+                                    </div>
+                                 </td> 
+                              </tr><tr>                             
+                                 <td align="center">
+                                    <div class="cardsubtitle">
+                                       Country: e.g. Victoria Island
+                                    </div>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <select required onChange={this.selectCountryName} style={{"width":"200px"}}>
+                                       <option value="" selected>-------- select a country --------</option>
+                                       <option value="Singapore">Singapore</option>                                          
+                                    </select>
+                                 </td>
+                              </tr>
+                              <br/>
+                              <tr>
+                                 <td align="center">
+                                    <button id="submitbutton" class="button" type="submit" style={{"vertical-align":"middle", "width":"220px"}}>Begin Crawling</button>    
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <font size="2" color="red"><i>Note: Process will be longer when date range is larger</i></font>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <font color="green"><b>{this.state.message}</b></font>  
+                                 </td>
+                              </tr>
+                              <br/>
+                           </table>
+                        </form> 
+                     </td><td></td>
+                     <td align="center" style={{"width":"49.8%", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"12px"}} bgcolor="white">
+                        <font size="5" style={{"color":"#fecb2f","weight":"bold"}}>Under Construction</font>           
+                     </td>
+                  </tr>
+               </table>                   
             </div>
-
-            <div>
-               <div class="cardsubtitle">
-                  Country:
-               </div>
-               <select required onChange={this.selectCountryName}>
-                  <option value="" selected>---------- select a variable ----------</option>
-                  <option value="Singapore">Singapore</option>                                          
-               </select>
-               <br /><br />               
-            </div>
-
-            <button id="submitbutton" class="button" type="submit" style={{"vertical-align":"middle", "width":"220px"}}><span>Web Crawl!</span></button>    
-         </form>           
-         <br />
-         <font color="green">{this.state.message}</font>  
-      </div>
+         </div>
       );
    }
 }
