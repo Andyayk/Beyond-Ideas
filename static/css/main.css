@@ -145,9 +145,9 @@ li a:active {
 }
 
 .label{
-  color:#D3D3D3;
+  color:#a3a3a3;
+  font-size:18px;
 }
-
 
 .button {
   display: inline-block;
@@ -207,13 +207,14 @@ div.cardsubtitle{
 }
 
 div.carderrormsg{
-  font-size: 15px;
+  font-size: 14px;
   font-weight: bold;
   color: red;  
 }
 
 table.outputtable{
   border-collapse: collapse;
+  border-radius: 12px;          
 }
 
 table.outputtable th{
