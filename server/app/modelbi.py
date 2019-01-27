@@ -290,7 +290,7 @@ def getFilterValuesbi(tablename, tablename2, filtervariable):
     except Exception as e:
         return "" 
 
-def weatherCrawlerbi():
+def weatherCrawlerbi(startdate, enddate, countryname):
     """
         This method crawl weather data from worldweatheronline
     """ 
@@ -298,10 +298,10 @@ def weatherCrawlerbi():
         #Key to call the API, expire 26 March
         api_key = "ab387d44d42d49238a3164423192501"
         #Start & end date indicated by user
-        input_start_date = "2018-10-25"
-        input_end_date = "2018-12-21"
+        input_start_date = startdate
+        input_end_date = enddate
         #Country indicated by user
-        country_name = "Singapore"
+        country_name = countryname
         #Basic URL for crawling
         base_url = "http://api.worldweatheronline.com/premium/v1/past-weather.ashx"
         #Setting the header and body array to be placed into csv file.
