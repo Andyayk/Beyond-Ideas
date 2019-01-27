@@ -144,6 +144,11 @@ li a:active {
   line-height: 1.3;
 }
 
+.label{
+  color:#D3D3D3;
+}
+
+
 .button {
   display: inline-block;
   border-radius: 4px;
@@ -153,35 +158,10 @@ li a:active {
   text-align: center;
   font-size: 15px;
   padding: 6px;
-  width: 260px;
+  width: 220px;
   transition: all 0.5s;
   cursor: pointer;
   margin: 5px;
-}
-
-.button span {
-  cursor: pointer;
-  display: inline-block;
-  position: relative;
-  transition: 0.5s;
-}
-
-.button span:after {
-  content: '\00bb';
-  position: absolute;
-  opacity: 0;
-  top: 0;
-  right: -15px;
-  transition: 0.5s;
-}
-
-.button:hover span {
-  padding-right: 15px;
-}
-
-.button:hover span:after {
-  opacity: 1;
-  right: 0;
 }
 
 .cardview {
@@ -215,7 +195,7 @@ li a:active {
 }
 
 div.cardtitle {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: bold;
   color: #4d5762;
 }
@@ -224,6 +204,12 @@ div.cardsubtitle{
   font-size: 15px;
   font-style: italic;
   color: #696969;  
+}
+
+div.carderrormsg{
+  font-size: 15px;
+  font-weight: bold;
+  color: red;  
 }
 
 table.outputtable{
