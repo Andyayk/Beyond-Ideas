@@ -337,7 +337,10 @@ def create_app(config_name):
             tablename = request.form.get("tablename")        
             table = modelbi.displayTablebi(tablename)
 
-            return table
+            return jsonify(
+                colnames = table[0],
+                coldata = table[1]
+            )
              
         @app.route('/savejoinedtablebi/', methods = ['POST'])
         def savejoinedtablebi(): #retrieving combined table for API call from react
@@ -371,7 +374,10 @@ def create_app(config_name):
 			
             combinedtable = modelbi.displayTablebi("combinedtable");
             
-            return combinedtable
+            return jsonify(
+                colnames = combinedtable[0],
+                coldata = combinedtable[1]
+            )
             
     class ChartClassbi():
         """

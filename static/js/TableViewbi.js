@@ -11,9 +11,12 @@ class TableViewbi extends Component {
       super();
       this.state = {
          options: "",         
-         table: "",
-         table2: "",
-		   combinedtable: "",
+         colnames: [],
+         colvalues: [],
+		 colnames2: [],
+         colvalues2: [],   
+		 combinedcolnames: [],
+         combinedcolvalues: [],
          exporttable1: "",
          exporttable2: "",
          selectedjoinvariable: "activitydate", 
@@ -72,7 +75,8 @@ class TableViewbi extends Component {
       },
       (data) => {
          this.setState({
-            table: data,
+            colnames: (data['colnames']),
+            colvalues: (data['coldata']),
          });     
       }); 
    }
@@ -88,7 +92,8 @@ class TableViewbi extends Component {
       },
       (data) => {
          this.setState({
-            table2: data,
+            colnames2: (data['colnames']),
+            colvalues2: (data['coldata']),
          });            
       });         
    }   
@@ -117,7 +122,8 @@ class TableViewbi extends Component {
          } else {
             console.log(data);
    			this.setState({
-   			    combinedtable: data,
+   			    combinedcolnames: (data['colnames']),
+                combinedcolvalues: (data['coldata']),
    			})
          }              
       });        
@@ -222,8 +228,9 @@ class TableViewbi extends Component {
          				<td colspan="2" style={{"overflow":"auto", "max-width":"1180px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
                            <table class="outputtable">
-                              {ReactHtmlParser(this.state.combinedtable)}
-         					   </table>
+                              {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
+							  {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
+         				   </table>
                         </div>
          				</td>
          			</tr>
@@ -231,14 +238,16 @@ class TableViewbi extends Component {
                      <td style={{"overflow":"auto", "max-width":"580px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
                            <table class="outputtable">       
-                             {ReactHtmlParser(this.state.table)}
+                              {this.state.colnames.map((colname) => <th>{colname}</th>)}
+							  {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
                            </table>
                         </div>
                      </td>
                      <td style={{"overflow":"auto", "max-width":"580px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
                            <table class="outputtable">   
-                              {ReactHtmlParser(this.state.table2)}
+                              {this.state.colnames2.map((colname2) => <th>{colname2}</th>)}
+							  {this.state.colvalues2.map((rows2)=> <tr> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
                            </table>
                         </div>
                      </td>
