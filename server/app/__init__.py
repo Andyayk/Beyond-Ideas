@@ -22,7 +22,7 @@ db = SQLAlchemy()
 
 def create_app(config_name):
     app = Flask(__name__, static_folder='../../static/dist',
-                template_folder='../../static') #defining how flask find our html, css and javascript
+                template_folder='../../static', instance_relative_config=True) #defining how flask find our html, css and javascript
 
     # App Configurations
     app.config.from_pyfile('../instance/config.cfg', silent=True)
@@ -337,7 +337,10 @@ def create_app(config_name):
             tablename = request.form.get("tablename")        
             table = modelbi.displayTablebi(tablename)
 
-            return table
+            return jsonify(
+                colnames = table[0],
+                coldata = table[1]
+            )
              
         @app.route('/savejoinedtablebi/', methods = ['POST'])
         def savejoinedtablebi(): #retrieving combined table for API call from react
@@ -371,7 +374,10 @@ def create_app(config_name):
 			
             combinedtable = modelbi.displayTablebi("combinedtable");
             
-            return combinedtable
+            return jsonify(
+                colnames = combinedtable[0],
+                coldata = combinedtable[1]
+            )
             
     class ChartClassbi():
         """
@@ -461,14 +467,20 @@ def create_app(config_name):
             """      
             return render_template('webcrawlingpagebi.html')
         
-        @app.route("/weathercrawlingbi/")
+        @app.route("/weathercrawlingbi/", methods = ['POST'])
         def weathercrawlingbi(): 
             """
                 This method will crawl weather
-            """                 
-            toReturn = modelbi.weatherCrawlerbi()
+            """           
+            startdate = request.form.get("startdate")  
+            enddate = request.form.get("enddate")   
+
+            countryname = request.form.get("countryname") 
+
+            message = modelbi.weatherCrawlerbi(startdate, enddate, countryname)
+            
             return jsonify(
-                toReturn = toReturn
+                message = message
             )
 
     return app
