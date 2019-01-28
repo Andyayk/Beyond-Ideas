@@ -240,7 +240,7 @@ class TableViewbi extends Component {
                </table>
                <table>
          			<tr>
-         				<td colspan="2" align="center" style={{"overflow":"auto", "max-width":"1180px", "position":"relative", "vertical-align":"top"}}>
+         				<td align="center" style={{"overflow":"auto", "max-width":"1180px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
                            <table class="outputtable">
                               {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
@@ -249,6 +249,8 @@ class TableViewbi extends Component {
                         </div>
          				</td>
          			</tr>
+               </table>
+               <table>
                   <tr>
                      <td style={{"overflow":"auto", "max-width":"580px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
