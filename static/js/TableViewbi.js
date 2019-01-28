@@ -240,9 +240,9 @@ class TableViewbi extends Component {
                </table>
                <table>
          			<tr>
-         				<td align="center" style={{"overflow":"auto", "max-width":"1180px", "position":"relative", "vertical-align":"top"}}>
+         				<td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
-                           <table class="outputtable">
+                           <table class="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
                               {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
 							        {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
          				      </table>
@@ -252,17 +252,17 @@ class TableViewbi extends Component {
                </table>
                <table>
                   <tr>
-                     <td style={{"overflow":"auto", "max-width":"580px", "position":"relative", "vertical-align":"top"}}>
+                     <td style={{"overflow":"auto", "max-width":"555px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
-                           <table class="outputtable">       
+                           <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>       
                               {this.state.colnames.map((colname) => <th>{colname}</th>)}
 							  {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
                            </table>
                         </div>
                      </td><td></td><td></td><td></td><td></td><td></td>
-                     <td style={{"overflow":"auto", "max-width":"580px", "position":"relative", "vertical-align":"top"}}>
+                     <td style={{"overflow":"auto", "max-width":"555px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
-                           <table class="outputtable">   
+                           <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>   
                               {this.state.colnames2.map((colname2) => <th>{colname2}</th>)}
 							  {this.state.colvalues2.map((rows2)=> <tr> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
                            </table>
