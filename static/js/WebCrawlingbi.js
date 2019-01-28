@@ -88,10 +88,6 @@ class WebCrawlingbi extends Component {
                                  <td align="center">
                                     <font size="6" style={{"color":"#4D4DFF","weight":"bold"}}>Historical Weather</font>           
                                  </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <font size="3" style={{"color":"grey","weight":"bold"}}> -- to input weather icon -- </font>
-                                 </td>
                               </tr>
                               <br/>
                               <tr>
