@@ -22,7 +22,7 @@ db = SQLAlchemy()
 
 def create_app(config_name):
     app = Flask(__name__, static_folder='../../static/dist',
-                template_folder='../../static', instance_relative_config=True) #defining how flask find our html, css and javascript
+                template_folder='../../static') #defining how flask find our html, css and javascript
 
     # App Configurations
     app.config.from_pyfile('../instance/config.cfg', silent=True)
