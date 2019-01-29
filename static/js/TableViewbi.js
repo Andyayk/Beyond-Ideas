@@ -13,16 +13,18 @@ class TableViewbi extends Component {
          options: "",         
          colnames: [],
          colvalues: [],
-		 colnames2: [],
+         colnames2: [],
          colvalues2: [],   
-		 combinedcolnames: [],
+         combinedcolnames: [],
          combinedcolvalues: [],
          exporttable1: "",
          exporttable2: "",
          selectedjoinvariable: "activitydate", 
+         tables2: ""
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
+      this.getMySQLTables2 = this.getMySQLTables2.bind(this);      
 
       this.display = this.display.bind(this);
       this.display2 = this.display2.bind(this);  
@@ -34,6 +36,7 @@ class TableViewbi extends Component {
       this.formSubmitted = this.formSubmitted.bind(this);
 
       this.getMySQLTables(); //retrieving user's uploaded tables
+      this.getMySQLTables2();
      
    }
 
@@ -41,6 +44,7 @@ class TableViewbi extends Component {
    getMySQLTables() {
       $.getJSON(window.location.origin + "/mysqltablesbi/", (data) => {
          var mySQLTables = "";
+
          $.each(data, function(key, val) {
             mySQLTables = val;
          });
@@ -48,7 +52,17 @@ class TableViewbi extends Component {
          this.createOptions(mySQLTables);   
 
       });
-   }    
+   }  
+
+   getMySQLTables2() {
+      $.getJSON(window.location.origin + "/get_all_dataset_api", (data) => {
+         var mySQLTables = data['datasetNames'][0]['name'];
+
+         this.setState({
+            tables2: mySQLTables
+         });
+      });
+   }      
 
    //creating select options for drop down list based on data from flask
    createOptions(data) {
@@ -147,6 +161,7 @@ class TableViewbi extends Component {
    render() {
       return (
       <div>
+      Test: {this.state.tables2}
          <form method="POST" onSubmit={this.formSubmitted}>        
          <table align="center" style={{"width":"100%"}}>          
             <tr>                        

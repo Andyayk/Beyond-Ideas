@@ -9,7 +9,7 @@ mydb = mysql.connector.connect(
   host = "localhost",
   user = "root",
   passwd = "",
-  database = "app"
+  database = "is480-term1-2018-19"
 )
 cursor = mydb.cursor(buffered=True)    
 
@@ -27,7 +27,7 @@ def getMySQLTablesbi():
         This method will get all MySQL tables
     """    
     try:
-        cursor.execute("USE app")
+        cursor.execute("USE `is480-term1-2018-19`")
         cursor.execute("SHOW TABLES")
         tables = []
         for (table_name,) in cursor:
