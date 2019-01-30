@@ -397,13 +397,12 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                 num_of_months-=1
 
         #write the data into a csv file
-        filename = country_name + " weather data.csv"
-        with open(filename, "w+") as csvfile:
-            csvfile.write(headerArray)
-            csvfile.write("\n")
-            for i in bodyArray:
-                csvfile.write(i)
-                csvfile.write("\n")
-        return "Successfully crawled weather data."
+        returnStr = headerArray
+        returnStr += "\n"
+        for i in bodyArray:
+            returnStr += i
+            returnStr += "\n"
+        print(returnStr)
+        return returnStr
     except Exception as e:
         return "Crawling of weather data unsuccessful."           

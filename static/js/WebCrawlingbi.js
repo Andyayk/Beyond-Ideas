@@ -12,9 +12,12 @@ class WebCrawlingbi extends Component {
          message: "",
          startdate: "",
          enddate: "",
-         countryname: "",         
+         countryname: "",
+         errordatestatement: "",
       };
 
+      this.validateDateRange = this.validateDateRange.bind(this);      
+      this.enablesubmitbutton = this.enablesubmitbutton.bind(this);
       this.selectStartDate = this.selectStartDate.bind(this); 
       this.selectEndDate = this.selectEndDate.bind(this);
 
@@ -24,9 +27,39 @@ class WebCrawlingbi extends Component {
 
       this.formSubmitted = this.formSubmitted.bind(this);      
    }
+   
+   validateDateRange(fromDate, toDate){
+        if(fromDate && toDate && fromDate > toDate){
+            this.setState({
+                errordatestatement: "Please select a valid date range"
+            });
+            this.enablesubmitbutton(false);
+        }else {
+            this.setState({errordatestatement: ""});
+            this.enablesubmitbutton(true);
+        }
+   }
+   
+   enablesubmitbutton(enable){
+       if(enable){
+            var element = document.getElementById('submitbutton');
+            element.disabled = false;
+            element.style.background = "#4CAF50";
+            element.style.opacity = "1";            
+            element.style.cursor = "pointer";
+       } else {
+            var element = document.getElementById('submitbutton');
+            element.disabled = true;
+            element.style.background = "red";
+            element.style.opacity = "0.6";
+            element.style.cursor = "not-allowed";
+       }
+   }
+   
 
    //store the start date values that the user has selected
    selectStartDate(event) {
+      this.validateDateRange(event.target.value,this.state.enddate);
       this.setState({
          startdate: event.target.value
       });      
@@ -34,6 +67,7 @@ class WebCrawlingbi extends Component {
 
    //store the end date values that the user has selected
    selectEndDate(event) {
+      this.validateDateRange(this.state.startdate,event.target.value);
       this.setState({
          enddate: event.target.value
       });      
@@ -48,17 +82,29 @@ class WebCrawlingbi extends Component {
 
    //retrieve web crawl results
    weatherCrawler(event){
+      var country = this.state.countryname
+      var begindate = this.state.startdate
+      var finishdate = this.state.enddate
       $.post(window.location.origin + "/weathercrawlingbi/",
       {
-         startdate: this.state.startdate,
-         enddate: this.state.enddate,
-         countryname: this.state.countryname
+         startdate: begindate,
+         enddate: finishdate,
+         countryname: country
       },
       (data) => {
+        
 
          var message = "";
          $.each(data, function(key, val) {
-            message = val;
+            var element = document.createElement('a');
+            var newContent = val.replace(/;/g, "\n")
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
+            element.setAttribute('download', 'weather_' + country + '_' + begindate + '_' + finishdate + '.csv');
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+            message = "Crawling of weather data successful.";
          });  
 
          this.setState({
@@ -66,6 +112,7 @@ class WebCrawlingbi extends Component {
          });                        
       });
    }
+
 
    //handle form submission
    formSubmitted(event){
@@ -121,6 +168,7 @@ class WebCrawlingbi extends Component {
                                     <input type="date" style={{"width":"200px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectEndDate} />
                                  </td>
                               </tr>
+                              <div class="carderrormsg">{this.state.errordatestatement}</div>
                               <br/>
                               <tr>
                                  <td align="center">
