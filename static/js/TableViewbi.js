@@ -13,16 +13,18 @@ class TableViewbi extends Component {
          options: "",         
          colnames: [],
          colvalues: [],
-		 colnames2: [],
+         colnames2: [],
          colvalues2: [],   
-		 combinedcolnames: [],
+         combinedcolnames: [],
          combinedcolvalues: [],
          exporttable1: "",
          exporttable2: "",
          selectedjoinvariable: "activitydate", 
+         tables2: ""
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
+      this.getMySQLTables2 = this.getMySQLTables2.bind(this);      
 
       this.display = this.display.bind(this);
       this.display2 = this.display2.bind(this);  
@@ -34,6 +36,7 @@ class TableViewbi extends Component {
       this.formSubmitted = this.formSubmitted.bind(this);
 
       this.getMySQLTables(); //retrieving user's uploaded tables
+      this.getMySQLTables2();
      
    }
 
@@ -41,6 +44,7 @@ class TableViewbi extends Component {
    getMySQLTables() {
       $.getJSON(window.location.origin + "/mysqltablesbi/", (data) => {
          var mySQLTables = "";
+
          $.each(data, function(key, val) {
             mySQLTables = val;
          });
@@ -48,7 +52,17 @@ class TableViewbi extends Component {
          this.createOptions(mySQLTables);   
 
       });
-   }    
+   }  
+
+   getMySQLTables2() {
+      $.getJSON(window.location.origin + "/get_all_dataset_api", (data) => {
+         var mySQLTables = data['datasetNames'][0]['name'];
+
+         this.setState({
+            tables2: mySQLTables
+         });
+      });
+   }      
 
    //creating select options for drop down list based on data from flask
    createOptions(data) {
@@ -147,6 +161,7 @@ class TableViewbi extends Component {
    render() {
       return (
       <div>
+      Test: {this.state.tables2}
          <form method="POST" onSubmit={this.formSubmitted}>        
          <table align="center" style={{"width":"100%"}}>          
             <tr>                        
@@ -240,9 +255,9 @@ class TableViewbi extends Component {
                </table>
                <table>
          			<tr>
-         				<td align="center" style={{"overflow":"auto", "max-width":"1180px", "position":"relative", "vertical-align":"top"}}>
+         				<td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
-                           <table class="outputtable">
+                           <table class="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
                               {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
 							        {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
          				      </table>
@@ -252,17 +267,17 @@ class TableViewbi extends Component {
                </table>
                <table>
                   <tr>
-                     <td style={{"overflow":"auto", "max-width":"580px", "position":"relative", "vertical-align":"top"}}>
+                     <td style={{"overflow":"auto", "max-width":"555px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
-                           <table class="outputtable">       
+                           <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>       
                               {this.state.colnames.map((colname) => <th>{colname}</th>)}
 							  {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
                            </table>
                         </div>
                      </td><td></td><td></td><td></td><td></td><td></td>
-                     <td style={{"overflow":"auto", "max-width":"580px", "position":"relative", "vertical-align":"top"}}>
+                     <td style={{"overflow":"auto", "max-width":"555px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
-                           <table class="outputtable">   
+                           <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>   
                               {this.state.colnames2.map((colname2) => <th>{colname2}</th>)}
 							  {this.state.colvalues2.map((rows2)=> <tr> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
                            </table>

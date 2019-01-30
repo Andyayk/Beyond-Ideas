@@ -515,8 +515,9 @@ class Chartbi extends Component {
                            </td>
                         </tr><tr>
                            <td align="center">
-                              <select required onChange={this.getVariables}>
-                                 <option value="" selected>---------- select a dataset ----------</option>
+
+                              <select required onChange={this.getVariables} style={{"width":"210px"}}>
+                                 <option value="" disabled selected>---------- select a dataset ----------</option>
                                  {this.state.options}
                               </select>
                            </td>
@@ -528,8 +529,8 @@ class Chartbi extends Component {
                            </td>
                         </tr><tr>
                            <td align="center">                                                
-                              <select required onChange={this.getVariables2}>
-                                 <option value="" selected>---------- select a dataset ----------</option>
+                              <select required onChange={this.getVariables2} style={{"width":"210px"}}>
+                                 <option value="" disabled selected>---------- select a dataset ----------</option>
                                  {this.state.options}
                               </select>
                            </td>
@@ -573,7 +574,7 @@ class Chartbi extends Component {
                            </td>
                         </tr><tr>
                            <td align="center">
-                              <select required onChange={this.selectVariable}>
+                              <select required onChange={this.selectVariable} style={{"width":"210px"}}>
                                  <option value="" disabled selected>---------- select a variable ----------</option>
                                  {this.state.variablesoptions}
                               </select>
@@ -586,7 +587,7 @@ class Chartbi extends Component {
                            </td>
                         </tr><tr>
                            <td align="center">
-                              <select required onChange={this.selectVariable2}>
+                              <select required onChange={this.selectVariable2} style={{"width":"210px"}}>
                                  <option value="" disabled selected>---------- select a variable ----------</option>
                                  {this.state.variablesoptions2}
                               </select>
@@ -607,7 +608,7 @@ class Chartbi extends Component {
                            </td>
                         </tr><tr>
                            <td align="center">       
-                              <select id="filtervariabledropdownid" onChange={this.selectFilterVariable}>
+                              <select id="filtervariabledropdownid" onChange={this.selectFilterVariable} style={{"width":"210px"}}>
                                  <option value="" selected>---------- select a variable ----------</option>
                                  {this.state.datevariablesoptions}
                                  {this.state.companyvariablesoptions}               
@@ -621,7 +622,11 @@ class Chartbi extends Component {
                               </select>
                            </td>
                         </tr>
-                        <div class="carderrormsg">{this.state.errordatestatement}</div>
+                        <tr>
+                           <td align="center">
+                              <div class="carderrormsg">{this.state.errordatestatement}</div>
+                           </td>
+                        </tr>
                         <tr>
                            <td align="center">  
                               {this.state.selectedfiltervariable.toLowerCase().includes("date") &&
@@ -629,14 +634,13 @@ class Chartbi extends Component {
                                     <div class="cardsubtitle">
                                        Start Date:
                                     </div>                   
-                                    <input type="date" min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue} />
-                                    <br /><br />
-
+                                    <input type="date" style={{"width":"210px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue} />
+                                    <td></td>
                                     <div class="cardsubtitle">
                                        End Date:
                                     </div>
-                                    <input type="date" min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
-                                    <br /><br />
+                                    <input type="date" style={{"width":"210px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
+                                    <br/>
                                  </div>
                               }
                               {this.state.selectedfiltervariable && !this.state.selectedfiltervariable.toLowerCase().includes("date") &&
@@ -648,12 +652,13 @@ class Chartbi extends Component {
                                        <option id="firstoption" value="" selected>---------- select a variable ----------</option>
                                        {this.state.filtervaluelistoptions}                         
                                     </select>
-                                    <br /><br />
+                                    <br/>
                                  </div>
                               }  
                            </td>
-                           <br/>
-                        </tr><tr>
+                        </tr>
+                        <br/>
+                        <tr>
                            <td align="center">                                                            
                               <button id="submitbutton" class="button" type="submit" style={{"vertical-align":"middle"}}>Generate Scatterplot</button>
                            </td>
