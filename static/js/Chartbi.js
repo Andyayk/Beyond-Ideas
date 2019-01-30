@@ -62,7 +62,9 @@ class Chartbi extends Component {
       this.checkradiobutton = this.checkradiobutton.bind(this);
       this.checksubmitbutton = this.checksubmitbutton.bind(this);
       this.enablesubmitbutton = this.enablesubmitbutton.bind(this);
-      this.resetfilterdropdown = this.resetfilterdropdown.bind(this);  
+      this.validateDateRange = this.validateDateRange(this);
+      this.resetfiltervariabledropdown = this.resetfiltervariabledropdown.bind(this);  
+      this.resetfiltervaluedropdown = this.resetfiltervaluedropdown.bind(this);  
       this.generateScatterplot = this.generateScatterplot.bind(this); 
 
       this.formSubmitted = this.formSubmitted.bind(this);
@@ -139,12 +141,35 @@ class Chartbi extends Component {
             element.style.cursor = "not-allowed";
        }
    }
+
+    validateDateRange(fromDate, toDate){
+        if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
+            if(fromDate && toDate && fromDate > toDate){
+                this.setState({
+                    errordatestatement: "Please select a valid date range"
+                });
+                this.enablesubmitbutton(false);
+            } else {
+                this.setState({errordatestatement: ""});
+                this.enablesubmitbutton(true);
+            }
+        }
+    }
+
+   resetfiltervariabledropdown(){
+        this.setState({
+            selectedfiltervariable: ""
+        });
+        document.getElementById("filtervariabledropdownid").default = true;
+   }
+
    
-   resetfilterdropdown(){
-       this.setState({
-            selectedfiltervariable: "",
-            filtervaluelistoptions: ""
-       });
+   resetfiltervaluedropdown(){
+       if(this.state.selectedfiltervariable != ""){
+            var thisElement = document.getElementById("filtervaluedropdownid");
+            thisElement.default = true;
+            thisElement.selectedIndex = "0";
+       }
    }
 
    //retrieving variables from flask
@@ -174,7 +199,7 @@ class Chartbi extends Component {
          this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions2, "depotradio", "labeldepot");
          this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions2, "locationradio","labelcountry");
          
-         this.resetfilterdropdown();
+         this.resetfiltervariabledropdown();
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable2);         
          
          this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata);                     
@@ -210,7 +235,7 @@ class Chartbi extends Component {
          this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions, "depotradio", "labeldepot");
          this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions, "locationradio", "labelcountry");
          
-         this.resetfilterdropdown();
+         this.resetfiltervariabledropdown();
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable);         
 
          
@@ -309,6 +334,8 @@ class Chartbi extends Component {
 
    //store the filter variable that the user has selected
    selectFilterVariable(event) {
+      this.resetfiltervaluedropdown();
+      
       this.setState({
          selectedfiltervariable: event.target.value
       });
@@ -338,19 +365,10 @@ class Chartbi extends Component {
    }    
 
    //store the filter values that the user has selected
-   selectFilterValue(event) { 
-    if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
-        if(this.state.selectedfiltervalue2 && this.state.selectedfiltervalue2 < event.target.value){
-            this.setState({
-                errordatestatement: "Please select a valid date range"
-            });
-            this.enablesubmitbutton(false);
-        }else {
-            this.setState({errordatestatement: ""});
-            this.enablesubmitbutton(true);
-        }
+   selectFilterValue(event) {
+      if(this.state.selectedfiltervariable.toLowerCase().includes("date")){
+            this.validateDateRange(event.target.value, this.state.selectedfiltervalue2);
       }
-      
       this.setState({
          selectedfiltervalue: event.target.value
       });      
@@ -358,18 +376,9 @@ class Chartbi extends Component {
 
    //store the  filter values 2 (if any) that the user has selected
    selectFilterValue2(event) {    
-     if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
-        if(this.state.selectedfiltervalue && this.state.selectedfiltervalue > event.target.value){
-            this.setState({
-                errordatestatement: "Please select a valid date range"
-            });
-            this.enablesubmitbutton(false);
-        }else {
-            this.setState({errordatestatement: ""});
-            this.enablesubmitbutton(true);
-        }
+      if(this.state.selectedfiltervariable.toLowerCase().includes("date")){
+            this.validateDateRange(this.state.selectedfiltervalue, event.target.value);
       }
-      
       this.setState({
          selectedfiltervalue2: event.target.value
       });      
@@ -506,6 +515,7 @@ class Chartbi extends Component {
                            </td>
                         </tr><tr>
                            <td align="center">
+
                               <select required onChange={this.getVariables} style={{"width":"210px"}}>
                                  <option value="" disabled selected>---------- select a dataset ----------</option>
                                  {this.state.options}
@@ -598,7 +608,7 @@ class Chartbi extends Component {
                            </td>
                         </tr><tr>
                            <td align="center">       
-                              <select onChange={this.selectFilterVariable} style={{"width":"210px"}}>
+                              <select id="filtervariabledropdownid" onChange={this.selectFilterVariable} style={{"width":"210px"}}>
                                  <option value="" selected>---------- select a variable ----------</option>
                                  {this.state.datevariablesoptions}
                                  {this.state.companyvariablesoptions}               
@@ -638,8 +648,8 @@ class Chartbi extends Component {
                                     <div class="cardsubtitle">
                                        {this.state.selectedfiltervariable.substring(3,)}:
                                     </div>
-                                    <select required onChange={this.selectFilterValue}>
-                                       <option value="" disabled selected>---------- select a variable ----------</option>
+                                    <select id="filtervaluedropdownid" required onChange={this.selectFilterValue}>
+                                       <option id="firstoption" value="" selected>---------- select a variable ----------</option>
                                        {this.state.filtervaluelistoptions}                         
                                     </select>
                                     <br/>
