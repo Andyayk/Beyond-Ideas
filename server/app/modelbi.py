@@ -313,8 +313,10 @@ def weatherCrawlerbi(startdate, enddate, countryname):
         #extracting the months in integer
         startMonth = int(input_start_date[5:7])
         endMonth = int(input_end_date[5:7])
+        startYear = int(input_start_date[0:4])
+        endYear = int(input_end_date[0:4])
         #Start crawling, if it is same month, send only 1 API request
-        if startMonth == endMonth:
+        if startMonth == endMonth and startYear == endYear:
             #setting up the url
             url = base_url + "?key=" + api_key + "&q=" + country_name + "&date=" + input_start_date + "&enddate=" + input_end_date +"&tp=24&format=json"
             weather_r = requests.get(url)
@@ -335,7 +337,9 @@ def weatherCrawlerbi(startdate, enddate, countryname):
         #if not, deduct the number of months needed to crawl and send 1 api for each month.
         else:
             #calculating the number of months needed to loop which is the number of api calls
-            num_of_months = int(endMonth) - int(startMonth)
+            num_of_months = (endYear - startYear) * 12 - startMonth + endMonth
+            if startYear == endYear:
+                num_of_months = endMonth - startMonth
             #separating the year, month, and date for easier modification.
             start_crawl_year = int(input_start_date[0:4])
             start_crawl_month = int(input_start_date[5:7])
@@ -345,6 +349,13 @@ def weatherCrawlerbi(startdate, enddate, countryname):
             end_crawl_day = int(input_end_date[8:10])  
             #loop based on the number of months input by the user  
             while num_of_months >= 0:
+                """
+                print("this is number of months " + str(num_of_months))
+                print("this is start month " + str(start_crawl_month))
+                print("this is start year " + str(start_crawl_year))
+                print("this is end month " + str(end_crawl_month))
+                print("this is end year " + str(end_crawl_year))
+                """
                 start_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-" + str(start_crawl_day)
                 end_crawl_date = str(end_crawl_year) + "-" + str(end_crawl_month) + "-" + str(end_crawl_day)
                 #for last input month, the last date to crawl would be the input date
@@ -391,8 +402,12 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                         #combine the rows
                         rows = date + "," + meanTemperatureC + "," + meanTemperatureF
                         #add the rows in to an array to be placed in csv file later on
-                        bodyArray.append(rows) 
-                    start_crawl_month += 1
+                        bodyArray.append(rows)
+                    if start_crawl_month == 12:
+                        start_crawl_month = 1
+                        start_crawl_year += 1
+                    else:
+                        start_crawl_month += 1
                     start_crawl_day = 1
                 num_of_months-=1
 
