@@ -150,7 +150,7 @@ class TableViewbi extends Component {
 
    //retrieving table display from flask
    display(event) {  
-      var x = document.getElementById("message");
+      var x = document.getElementById("data1area");
          x.style.display = "none";
 
       this.setState({
@@ -178,7 +178,7 @@ class TableViewbi extends Component {
    
    //retrieving table display from flask
    display2(event) {
-      var x = document.getElementById("message");
+      var x = document.getElementById("data2area");
          x.style.display = "none";
          
       this.setState({
@@ -331,45 +331,55 @@ class TableViewbi extends Component {
             <tr>
             </tr>
             <tr>
-            <td id="testing" colspan="2" align="center" style={{"height":"400px", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
-               <table id="message" vertical-align="center" style={{"padding":"150px"}}>
-                  <tr>
-                     <label>Dataset Display Area</label>
-                  </tr>
-               </table>
-               <table>
-         			<tr>
-         				<td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
-                        <div style={{"overflow-x":"auto"}}>
-                           <table class="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
-                              {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
-							        {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
-         				      </table>
-                        </div>
-         				</td>
-         			</tr>
-               </table>
-               <table>
-                  <tr>
-                     <td style={{"overflow":"auto", "max-width":"555px", "position":"relative", "vertical-align":"top"}}>
-                        <div style={{"overflow-x":"auto"}}>
-                           <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>       
-                              {this.state.colnames.map((colname) => <th>{colname}</th>)}
-							  {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
-                           </table>
-                        </div>
-                     </td><td></td><td></td><td></td><td></td><td></td>
-                     <td style={{"overflow":"auto", "max-width":"555px", "position":"relative", "vertical-align":"top"}}>
-                        <div style={{"overflow-x":"auto"}}>
-                           <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>   
-                              {this.state.colnames2.map((colname2) => <th>{colname2}</th>)}
-							  {this.state.colvalues2.map((rows2)=> <tr> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
-                           </table>
-                        </div>
-                     </td>
-                  </tr>
-               </table>
-            </td>
+               <td id="testing" colspan="2" align="center" style={{"height":"400px", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
+                  <table>
+            			<tr>
+            				<td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
+                           <div style={{"overflow-x":"auto"}}>
+                          
+                              <table class="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
+                                 {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
+   							        {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
+            				      </table>
+                           </div>
+            				</td>
+            			</tr>
+                  </table>
+                  <table>
+                     <tr>
+                        <td align="center" style={{"overflow":"auto", "max-width":"555px", "vertical-align":"top", "align":"center"}}>
+                           <div style={{"overflow-x":"auto"}}>
+                              <table id="data1area">
+                                 <tr>
+                                    <td align="center" style={{"width":"550px", "height":"500px", "border-radius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                                          <label style={{"vertical-align":"center"}}>Dataset One Display Area</label>                  
+                                    </td>                           
+                                 </tr>
+                              </table>                            
+                              <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>       
+                                 {this.state.colnames.map((colname) => <th>{colname}</th>)}
+   							         {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
+                              </table>
+                           </div>
+                        </td><td></td><td></td><td></td><td></td><td></td>
+                        <td align="center" style={{"overflow":"auto", "max-width":"555px", "vertical-align":"top"}}>
+                           <div style={{"overflow-x":"auto"}}>
+                              <table id="data2area">
+                                 <tr>
+                                    <td align="center" style={{"width":"550px", "height":"500px", "border-radius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                                          <label style={{"vertical-align":"center"}}>Dataset Two Display Area</label>                  
+                                    </td>                           
+                                 </tr>
+                              </table>                              
+                              <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>   
+                                 {this.state.colnames2.map((colname2) => <th>{colname2}</th>)}
+   							         {this.state.colvalues2.map((rows2)=> <tr> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
+                              </table>
+                           </div>
+                        </td>
+                     </tr>
+                  </table>
+               </td>
             </tr>
          </table>
          </form>           
