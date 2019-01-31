@@ -669,7 +669,14 @@ class Chartbi extends Component {
                   </td>
                   <td></td>
                   <td align="center" style={{"width":"80%", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"10px"}} bgcolor="white">
-                     <label id="message" style={{"vertical-align":"center"}}>Plot Display Area</label>                  
+                     <table id="message">
+                        <tr>
+                           <td align="center" style={{"width":"850px", "height":"580px", "border-radius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                              <label style={{"vertical-align":"center"}}>Plot Display Area</label>                  
+                           </td>                           
+                        </tr>
+                     </table>       
+
                      {this.state.scatterplot}   
                   </td>
                </tr>
