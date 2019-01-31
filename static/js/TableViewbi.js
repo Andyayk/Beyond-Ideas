@@ -19,13 +19,15 @@ class TableViewbi extends Component {
          combinedcolvalues: [],
          exporttable1: "",
          exporttable2: "",
-         selectedjoinvariable: "activitydate", 
+         selectedjoinvariable: "", 
          tables2: ""
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
       this.getMySQLTables2 = this.getMySQLTables2.bind(this);      
-
+      this.checkradiobutton = this.checkradiobutton.bind(this);
+      this.checksubmitbutton = this.checksubmitbutton.bind(this);
+      this.enablesubmitbutton = this.enablesubmitbutton.bind(this);
       this.display = this.display.bind(this);
       this.display2 = this.display2.bind(this);  
 
@@ -78,6 +80,73 @@ class TableViewbi extends Component {
          options: options
       });
    }   
+    checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames, keyword){
+      var match1 = false;
+      var match2 = false;
+      var i;
+      // console.log(keyword);
+      for (i=0; i < datavariable1.length; i++){
+          
+          if(datavariable1[i].toLowerCase().includes(keyword)){
+            console.log(datavariable1[i].toLowerCase())
+              match1 = true;
+              break;
+          }
+      }
+      for (i=0; i < datavariable2.length; i++){
+          if(datavariable2[i].toLowerCase().includes(keyword)){
+            console.log(datavariable2[i].toLowerCase())
+              match2 = true;
+              break;
+          }
+      }
+      
+      if (match1 && match2){
+         this.setState({
+            selectedjoinvariable: ""
+         });  
+         document.getElementById(radiobutton).disabled = false; 
+         document.getElementById(labelnames).style = "color:black";
+      } else {
+         this.setState({
+            selectedjoinvariable: ""
+         });  
+         document.getElementById(radiobutton).disabled = true;
+         document.getElementById(labelnames).style = "color:#a3a3a3";         
+      }
+   }
+   
+   checksubmitbutton(radiobutton1, radiobutton2, radiobutton3, radiobutton4, table){
+      if (document.getElementById(radiobutton1).disabled && document.getElementById(radiobutton2).disabled && document.getElementById(radiobutton3).disabled && document.getElementById(radiobutton4).disabled && table != []){
+         this.enablesubmitbutton(false);
+
+         this.setState({
+            errorstatement: "Datasets doesn't contain matching columns describing the following options"
+         });
+      } else{
+         this.enablesubmitbutton(true);
+
+         this.setState({
+            errorstatement: ""
+         });
+      }
+   }
+   
+   enablesubmitbutton(enable){
+       if(enable){
+            var element = document.getElementById('submitbutton');
+            element.disabled = false;
+            element.style.background = "#4CAF50";
+            element.style.opacity = "1";            
+            element.style.cursor = "pointer";
+       } else {
+            var element = document.getElementById('submitbutton');
+            element.disabled = true;
+            element.style.background = "red";
+            element.style.opacity = "0.6";
+            element.style.cursor = "not-allowed";
+       }
+   }
 
    //retrieving table display from flask
    display(event) {  
@@ -93,10 +162,17 @@ class TableViewbi extends Component {
       },
 
       (data) => {
+         this.checkradiobutton(data['colnames'], this.state.colnames2, "dateradio", "labeldate", "date")
+         this.checkradiobutton(data['colnames'], this.state.colnames2, "companyradio", "labelcompany", "company");
+         this.checkradiobutton(data['colnames'], this.state.colnames2, "depotradio", "labeldepot", "depot");
+         this.checkradiobutton(data['colnames'], this.state.colnames2, "locationradio","labelcountry", "location");
+         this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.colnames2);   
+         
          this.setState({
             colnames: (data['colnames']),
             colvalues: (data['coldata']),
-         });     
+         });
+         
       }); 
    }
    
@@ -113,10 +189,18 @@ class TableViewbi extends Component {
          tablename: event.target.value,
       },
       (data) => {
+          
+         this.checkradiobutton(data['colnames'], this.state.colnames, "dateradio", "labeldate", "date")
+         this.checkradiobutton(data['colnames'], this.state.colnames, "companyradio", "labelcompany", "company");
+         this.checkradiobutton(data['colnames'], this.state.colnames, "depotradio", "labeldepot", "depot");
+         this.checkradiobutton(data['colnames'], this.state.colnames, "locationradio","labelcountry", "location");
+         this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.colnames);   
+          
          this.setState({
             colnames2: (data['colnames']),
             colvalues2: (data['coldata']),
-         });            
+         });       
+               
       });         
    }   
    
@@ -221,22 +305,22 @@ class TableViewbi extends Component {
                                  <table>
                                     <tr>
                                        <td>
-                                          <input type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/>Activity Date
+                                          <input id="dateradio" type="radio" name="joinvariable" value="activitydate" disabled required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/><label id="labeldate">Activity Date</label>
                                        </td><td>
-                                          <input type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/>Company
+                                          <input id="companyradio" type="radio" name="joinvariable" value="company" disabled required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"}/><label id="labelcompany">Company</label>
                                        </td>
                                     </tr><tr>
                                        <td>
-                                          <input type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/>Country Name                                           
+                                          <input id="locationradio" type="radio" name="joinvariable" value="geographicallocation" disabled required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/><label id="labelcountry">Country Name</label>                                           
                                        </td><td>  
-                                          <input type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/>Depot
+                                          <input id="depotradio" type="radio" name="joinvariable" value="depot" disabled required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/><label id="labeldepot">Depot</label>
                                        </td>
                                     </tr>
                                  </table>
                               </td>
                            </tr><tr>
                               <td colspan="2" align="center">
-                                 <button class="button" type="submit" style={{"vertical-align":"middle"}}><span>Combine Datasets & Save</span></button>
+                                 <button id="submitbutton" class="button" type="submit" style={{"vertical-align":"middle"}}><span>Combine Datasets & Save</span></button>
                               </td>
                            </tr>
                         </table> 
