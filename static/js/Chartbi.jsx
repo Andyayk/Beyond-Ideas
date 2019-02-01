@@ -61,7 +61,7 @@ class Chartbi extends Component {
       this.checkradiobutton = this.checkradiobutton.bind(this);
       this.checksubmitbutton = this.checksubmitbutton.bind(this);
       this.enablesubmitbutton = this.enablesubmitbutton.bind(this);
-      this.validateDateRange = this.validateDateRange(this);
+      this.validateDateRange = this.validateDateRange.bind(this);
       this.resetfiltervariabledropdown = this.resetfiltervariabledropdown.bind(this);  
       this.resetfiltervaluedropdown = this.resetfiltervaluedropdown.bind(this);  
       this.generateScatterplot = this.generateScatterplot.bind(this); 
@@ -126,49 +126,51 @@ class Chartbi extends Component {
    }
    
    enablesubmitbutton(enable){
-       if(enable){
-            var element = document.getElementById('submitbutton');
-            element.disabled = false;
-            element.style.background = "#4CAF50";
-            element.style.opacity = "1";            
-            element.style.cursor = "pointer";
-       } else {
-            var element = document.getElementById('submitbutton');
-            element.disabled = true;
-            element.style.background = "red";
-            element.style.opacity = "0.6";
-            element.style.cursor = "not-allowed";
-       }
+      if(enable){
+         var element = document.getElementById('submitbutton');
+         element.disabled = false;
+         element.style.background = "#4CAF50";
+         element.style.opacity = "1";            
+         element.style.cursor = "pointer";
+      } else {
+         var element = document.getElementById('submitbutton');
+         element.disabled = true;
+         element.style.background = "red";
+         element.style.opacity = "0.6";
+         element.style.cursor = "not-allowed";
+      }
    }
 
     validateDateRange(fromDate, toDate){
-        if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
-            if(fromDate && toDate && fromDate > toDate){
-                this.setState({
-                    errordatestatement: "Please select a valid date range"
-                });
-                this.enablesubmitbutton(false);
-            } else {
-                this.setState({errordatestatement: ""});
-                this.enablesubmitbutton(true);
-            }
-        }
+      if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
+         if(fromDate && toDate && fromDate > toDate){
+            this.setState({
+               errordatestatement: "Please select a valid date range"
+            });
+            this.enablesubmitbutton(false);
+         } else {
+            this.setState({errordatestatement: ""});
+            this.enablesubmitbutton(true);
+         }
+      }
     }
 
    resetfiltervariabledropdown(){
-        this.setState({
-            selectedfiltervariable: ""
-        });
-        document.getElementById("filtervariabledropdownid").default = true;
+      this.setState({
+         selectedfiltervariable: ""
+      });
+      document.getElementById("filtervariabledropdownid").default = true;
    }
 
    
    resetfiltervaluedropdown(){
-       if(this.state.selectedfiltervariable != ""){
-            var thisElement = document.getElementById("filtervaluedropdownid");
-            thisElement.default = true;
-            thisElement.selectedIndex = "0";
-       }
+      /*
+      if(this.state.selectedfiltervariable != ""){
+         var thisElement = document.getElementById("filtervaluedropdownid");
+         thisElement.default = true;
+         thisElement.selectedIndex = "0";
+      }
+      */
    }
 
    //retrieving variables from flask
@@ -612,12 +614,12 @@ class Chartbi extends Component {
                         </tr><tr>
                            <td align="center">       
                               <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"210px"}}>
-                                 <option value="">---------- optional ----------</option>
+                                 <option value="">--------------- optional ---------------</option>
                                  {this.state.datevariablesoptions}
                                  {this.state.companyvariablesoptions}               
                                  {this.state.depotvariablesoptions}                 
                                  {this.state.countrynamevariablesoptions}
-                                 <option value="" disabled>---------------------------------</option>                                                                
+                                 <option disabled>----------------------------------------</option>                                                                
                                  {this.state.datevariablesoptions2}
                                  {this.state.companyvariablesoptions2}              
                                  {this.state.depotvariablesoptions2}                
