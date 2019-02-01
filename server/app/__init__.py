@@ -486,21 +486,21 @@ def create_app(config_name):
             datevariablelist = modelbi.getDateColumnNamebi(tablename)  
             companyvariablelist = modelbi.getCompanyColumnNamebi(tablename)  
             depotvariablelist = modelbi.getDepotColumnNamebi(tablename)  
-            geographicallocationvariablelist = modelbi.getGeographicalLocationColumnNamebi(tablename) 
+            countrynamevariablelist = modelbi.getCountryNameColumnNamebi(tablename) 
 
             companyvaluelist = modelbi.getCompanyValuesbi(tablename) 
             depotvaluelist = modelbi.getDepotValuesbi(tablename)
-            geographicallocationvaluelist = modelbi.getGeographicalLocationValuesbi(tablename)                  
+            countrynamevaluelist = modelbi.getCountryNameValuesbi(tablename)                  
             
             return jsonify(
                 variablelist = variablelist,            
                 datevariablelist = datevariablelist,
                 companyvariablelist = companyvariablelist,
                 depotvariablelist = depotvariablelist,
-                geographicallocationvariablelist = geographicallocationvariablelist,
+                countrynamevariablelist = countrynamevariablelist,
                 companyvaluelist = companyvaluelist,
                 depotvaluelist = depotvaluelist,
-                geographicallocationvaluelist = geographicallocationvaluelist,
+                countrynamevaluelist = countrynamevaluelist,
                
             )
         

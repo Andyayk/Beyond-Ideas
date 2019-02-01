@@ -64,10 +64,10 @@ def displayTablebi(table_name):
 
 def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, filtervalue, filtervalue2, filtervariable):
     """
-        This method will join tables together using date or company or depot or geographical location
+        This method will join tables together using date or company or depot or country name
     """
     try:
-        sqlstmt = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2"
+        sqlstmt = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
         
         if "date" in joinvariable.lower(): #join by date
             date1 = getDateColumnNamebi(tablename)
@@ -118,7 +118,7 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
     """
     try:
         cursor.execute("DROP TABLE IF EXISTS combinedtable")
-        sqlstmt = "CREATE TABLE combinedtable AS SELECT "+ variables + " FROM " + tablename + " as t1 INNER JOIN " + tablename2 + " as t2"
+        sqlstmt = "CREATE TABLE combinedtable AS SELECT "+ variables + " FROM `" + tablename + "` as t1 INNER JOIN `" + tablename2 + "` as t2"
         
         if "activitydate" in joinvariable.lower(): #join by date
             sqlstmt = sqlstmt + " WHERE t1." + "date" + " = t2." + "ActivityDate"
@@ -126,8 +126,8 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
             sqlstmt = sqlstmt + " WHERE t1." + "company" + " = t2." + "company"   
         elif "depot" in joinvariable.lower(): #join by depot
             sqlstmt = sqlstmt + " ON t1." + "depot" + " = t2." + "SKUKey"  
-        elif "geographicallocation" in joinvariable.lower(): #join by geographical location
-            sqlstmt = sqlstmt + " WHERE t1." + "geographicallocation" + " = t2." + "geographicallocation"                       
+        elif "country" in joinvariable.lower(): #join by country name
+            sqlstmt = sqlstmt + " WHERE t1." + "countryname" + " = t2." + "countryname"                       
         # sqlstmt = "CREATE TABLE potlala (id INT NOT NULL PRIMARY KEY, name  VARCHAR(40), email VARCHAR(40))"
         cursor.execute(sqlstmt)
 
@@ -213,12 +213,12 @@ def getDepotColumnNamebi(tablename):
     except Exception as e:
         return "Something is wrong with getDepotColumnNamebi method"   
 
-def getGeographicalLocationColumnNamebi(tablename):
+def getCountryNameColumnNamebi(tablename):
     """
-        This method will get geographical location variables column names only
+        This method will get country name variables column names only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%location%'")
+        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%country%'")
 
         cols = []
 
@@ -227,14 +227,14 @@ def getGeographicalLocationColumnNamebi(tablename):
 
         return cols
     except Exception as e:
-        return "Something is wrong with getGeographicalLocationColumnNamebi method"   
+        return "Something is wrong with getCountryNameColumnNamebi method"   
 
 def getCompanyValuesbi(tablename):
     """
         This method will get company values only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT Company FROM " + tablename)
+        cursor.execute("SELECT DISTINCT Company FROM `" + tablename + "`")
 
         cols = []
 
@@ -250,7 +250,7 @@ def getDepotValuesbi(tablename):
         This method will get depot values only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT Depot FROM " + tablename)
+        cursor.execute("SELECT DISTINCT Depot FROM `" + tablename + "`")
 
         cols = []
 
@@ -261,12 +261,12 @@ def getDepotValuesbi(tablename):
     except Exception as e:
         return ""      
 
-def getGeographicalLocationValuesbi(tablename):
+def getCountryNameValuesbi(tablename):
     """
-        This method will get geographical location values only
+        This method will get country name values only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT GeographicalLocation FROM " + tablename)
+        cursor.execute("SELECT DISTINCT CountryName FROM `" + tablename + "`")
 
         cols = []
 
@@ -282,7 +282,7 @@ def getFilterValuesbi(tablename, tablename2, filtervariable):
         This method will get the values based on the filter variable
     """ 
     try:
-        cursor.execute("SELECT DISTINCT " + filtervariable[3:] + " FROM " + tablename + "," + tablename2)
+        cursor.execute("SELECT DISTINCT " + filtervariable[3:] + " FROM `" + tablename + "` , `" + tablename2 + "`")
 
         cols = []
 

@@ -246,62 +246,67 @@ class TableViewbi extends Component {
       <div>
       Test: {this.state.tables2}
          <form method="POST" onSubmit={this.formSubmitted}>        
-         <table align="center" style={{"width":"100%"}}>          
+         <table align="center" style={{"width":"100%"}}>
+         <tbody>                   
             <tr>                        
                <td style={{"width":"50%"}}>                             
-                  <div class="cardview">
-                     <div class="containerview">                      
+                  <div className="cardview">
+                     <div className="containerview">                      
                         <table align="center">
+                        <tbody>                        
                            <tr>
                               <th colspan="2" align="center">
-                                 <div class="cardtitle">Select Dataset(s) to View</div>
+                                 <div className="cardtitle">Select Dataset(s) to View</div>
                               </th>
                            </tr><tr></tr><tr></tr><tr></tr><tr></tr><tr>
                               <td align="center">
-                                 <div class="cardsubtitle">Dataset One:</div>
+                                 <div className="cardsubtitle">Dataset One:</div>
                               </td>
                               <td align="center">
-                                 <div class="cardsubtitle">Dataset Two:</div>
+                                 <div className="cardsubtitle">Dataset Two:</div>
                               </td>                              
                            </tr><tr>
                               <td align="center">
-                                <select required onChange={this.display}>
-                                  <option value="" disabled selected>--------------- select a dataset ---------------</option>
+                                <select required defaultValue="" onChange={this.display}>
+                                  <option value="">--------------- select a dataset ---------------</option>
                                   {this.state.options} 
                                 </select>                     
                               </td>
                               <td align="center">
-                                <select required onChange={this.display2}>
-                                  <option value="" disabled selected>--------------- select a dataset ---------------</option>
+                                <select required defaultValue="" onChange={this.display2}>
+                                  <option value="">--------------- select a dataset ---------------</option>
                                   {this.state.options}
                                 </select>                  
                               </td>    
                            </tr>
+                        </tbody> 
                         </table>                        
                      </div>
                   </div>   
                </td>
                <td style={{"width":"50%"}}>
-                  <div class="cardcombine">
-                     <div class="containercombine">                 
+                  <div className="cardcombine">
+                     <div className="containercombine">                 
                         <table align="center">
+                        <tbody>
                            <tr>
                               <td colspan="2" align="center">
-                                 <div class="cardtitle">
+                                 <div className="cardtitle">
                                     Combine Selected Datasets
                                  </div>
                               </td>
                            </tr><tr></tr><tr></tr><tr></tr><tr>
                               <td colspan="2" align="center">
-                                 <div class="cardsubtitle">
-                                    <div class="tooltip">
-                                       Select variable to combine both datasets:<span class="tooltiptext">Tip for user (?)</span>
+                                 <div className="cardsubtitle">
+                                    <div className="tooltip">
+                                       Select variable to combine both datasets:<span className="tooltiptext">Tip for user (?)</span>
                                     </div>
                                  </div>
                               </td>
                            </tr><tr>
                               <td colspan="2" align="center">
                                  <table>
+                                 <tbody>
                                     <tr>
                                        <td>
                                           <input id="dateradio" type="radio" name="joinvariable" value="activitydate" disabled required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"}/><label id="labeldate">Activity Date</label>
@@ -315,13 +320,15 @@ class TableViewbi extends Component {
                                           <input id="depotradio" type="radio" name="joinvariable" value="depot" disabled required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/><label id="labeldepot">Depot</label>
                                        </td>
                                     </tr>
+                                 </tbody>
                                  </table>
                               </td>
                            </tr><tr>
                               <td colspan="2" align="center">
-                                 <button id="submitbutton" class="button" type="submit" style={{"vertical-align":"middle"}}><span>Combine Datasets & Save</span></button>
+                                 <button id="submitbutton" className="button" type="submit" style={{"vertical-align":"middle"}}><span>Combine Datasets & Save</span></button>
                               </td>
                            </tr>
+                        </tbody>
                         </table> 
                      </div>                     
                   </div>                 
@@ -332,54 +339,67 @@ class TableViewbi extends Component {
             <tr>
                <td id="testing" colspan="2" align="center" style={{"height":"400px", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
                   <table>
+                  <tbody>
             			<tr>
             				<td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
                            <div style={{"overflow-x":"auto"}}>
                           
-                              <table class="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
+                              <table className="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
                                  {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
    							        {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
             				      </table>
                            </div>
             				</td>
             			</tr>
+                  </tbody>
                   </table>
                   <table>
+                  <tbody>
                      <tr>
                         <td align="center" style={{"overflow":"auto", "max-width":"555px", "vertical-align":"top", "align":"center"}}>
                            <div style={{"overflow-x":"auto"}}>
                               <table id="data1area">
+                              <tbody>
                                  <tr>
                                     <td align="center" style={{"width":"550px", "height":"500px", "border-radius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
                                           <label style={{"vertical-align":"center"}}>Dataset One Display Area</label>                  
                                     </td>                           
                                  </tr>
+                              </tbody>
                               </table>                            
-                              <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>       
+                              <table className="outputtable" style={{"width":"550px","max-width":"550px"}}>       
+                              <tbody>
                                  {this.state.colnames.map((colname) => <th>{colname}</th>)}
    							         {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
+                              </tbody>
                               </table>
                            </div>
                         </td><td></td><td></td><td></td><td></td><td></td>
                         <td align="center" style={{"overflow":"auto", "max-width":"555px", "vertical-align":"top"}}>
                            <div style={{"overflow-x":"auto"}}>
                               <table id="data2area">
+                              <tbody>
                                  <tr>
                                     <td align="center" style={{"width":"550px", "height":"500px", "border-radius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
                                           <label style={{"vertical-align":"center"}}>Dataset Two Display Area</label>                  
                                     </td>                           
                                  </tr>
+                              </tbody>
                               </table>                              
-                              <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>   
+                              <table className="outputtable" style={{"width":"550px","max-width":"550px"}}>  
+                              <tbody> 
                                  {this.state.colnames2.map((colname2) => <th>{colname2}</th>)}
    							         {this.state.colvalues2.map((rows2)=> <tr> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
+                              </tbody>
                               </table>
                            </div>
                         </td>
                      </tr>
+                  </tbody>
                   </table>
                </td>
             </tr>
+         </tbody>
          </table>
          </form>           
       </div>

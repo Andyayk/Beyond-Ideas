@@ -124,13 +124,15 @@ class WebCrawlingbi extends Component {
    render() {
       return (
          <div>
-            <div class="content">
+            <div className="content">
                <table style={{"width":"100%", "padding":"10px"}}>
+               <tbody>
                   <tr>             
                      <td style={{"width":"49.8%", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"15px"}} valign="top" align="center" bgcolor="white">       
                         <form method="POST" onSubmit={this.formSubmitted}>       
                            <br/>
                            <table align="center">
+                           <tbody>
                               <tr>
                                  <td align="center">
                                     <font size="6" style={{"color":"#4D4DFF","weight":"bold"}}>Historical Weather</font>           
@@ -139,13 +141,13 @@ class WebCrawlingbi extends Component {
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <div class="cardtitle">
+                                    <div className="cardtitle">
                                        Select Date Range
                                     </div>
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <div class="cardsubtitle">
+                                    <div className="cardsubtitle">
                                        Start Date: e.g 25/10/2018
                                     </div>          
                                  </td>
@@ -155,7 +157,7 @@ class WebCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">                                                                 
-                                    <div class="cardsubtitle">
+                                    <div className="cardsubtitle">
                                        End Date: e.g 30/12/2018
                                     </div>
                                  </td>
@@ -164,24 +166,24 @@ class WebCrawlingbi extends Component {
                                     <input type="date" style={{"width":"200px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectEndDate} />
                                  </td>
                               </tr>
-                              <div class="carderrormsg">{this.state.errordatestatement}</div>
+                              <div className="carderrormsg">{this.state.errordatestatement}</div>
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <div class="cardtitle">
+                                    <div className="cardtitle">
                                        Select Country
                                     </div>
                                  </td> 
                               </tr><tr>                             
                                  <td align="center">
-                                    <div class="cardsubtitle">
+                                    <div className="cardsubtitle">
                                        Country: e.g. Singapore
                                     </div>
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <select required onChange={this.selectCountryName} style={{"width":"200px"}}>
-                                       <option value="" selected>-------- select a country --------</option>
+                                    <select required defaultValue="" onChange={this.selectCountryName} style={{"width":"200px"}}>
+                                       <option value="">-------- select a country --------</option>
                                        <option value="Australia">Australia</option>
                                        <option value="Bangladesh">Bangladesh</option>
                                        <option value="Bhutan">Bhutan</option> 
@@ -224,7 +226,7 @@ class WebCrawlingbi extends Component {
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <button id="submitbutton" class="button" type="submit" style={{"vertical-align":"middle", "width":"220px"}}>Begin Crawling</button>    
+                                    <button id="submitbutton" className="button" type="submit" style={{"vertical-align":"middle", "width":"220px"}}>Begin Crawling</button>    
                                  </td>
                               </tr><tr>
                                  <td align="center">
@@ -236,6 +238,7 @@ class WebCrawlingbi extends Component {
                                  </td>
                               </tr>
                               <br/>
+                           </tbody>   
                            </table>
                         </form> 
                      </td><td></td>
@@ -243,6 +246,7 @@ class WebCrawlingbi extends Component {
                         <font size="5" style={{"color":"#fecb2f","weight":"bold"}}>Under Construction</font>           
                      </td>
                   </tr>
+               </tbody>   
                </table>                   
             </div>
          </div>
