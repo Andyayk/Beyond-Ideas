@@ -34,14 +34,14 @@ class TableViewbi extends Component {
 
       this.save = this.save.bind(this);   
    
-	   this.selectJoinVariable = this.selectJoinVariable.bind(this); 
+      this.selectJoinVariable = this.selectJoinVariable.bind(this); 
 
       this.formSubmitted = this.formSubmitted.bind(this);
 
       this.getMySQLTables(); //retrieving user's uploaded tables
       this.getMySQLTables2();
 
-	  this.checkradiobutton = this.checkradiobutton.bind(this);
+     this.checkradiobutton = this.checkradiobutton.bind(this);
      
    }
 
@@ -69,7 +69,8 @@ class TableViewbi extends Component {
       });
    }      
 
-	checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames){
+   //changing the radio button status depends on the tables user selects
+   checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames){
       if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length){
          this.setState({
             selectedjoinvariable: ""
@@ -119,10 +120,30 @@ class TableViewbi extends Component {
             colvalues: (data['coldata']),
          });   
          this.getVariables(this.state.exporttable1);
-		 
       }); 
    }
+   
+   //retrieving table display from flask
+   display2(event) {
+      var x = document.getElementById("message");
+         x.style.display = "none";
+         
+      this.setState({
+         exporttable2: event.target.value,
+      });
+      $.post(window.location.origin + "/tableviewbi/",
+      {
+         tablename: event.target.value,
+      },
+      (data) => {
+         this.setState({
+            colnames2: (data['colnames']),
+            colvalues2: (data['coldata']),
+         });            
+      });         
+   }  
 
+   //getting the variables in the table selected by the user
    getVariables(table){
       $.post(window.location.origin + "/variablesbi/",
       {
@@ -147,7 +168,7 @@ class TableViewbi extends Component {
          this.checkradiobutton(depotvariablelistdata, depotvariablesoptions2, "depotradio", "labeldepot");
          this.checkradiobutton(geographicallocationvaluelistdata, geographicallocationvariablesoptions2, "locationradio","labelcountry"); 
       });
-   }
+   } 
 
    //general method for creating select options for drop down list based on data from flask
    createVariablesOptions(methodNo, variablelistdata) {
@@ -160,26 +181,6 @@ class TableViewbi extends Component {
       }      
       return variables;
    }
-   
-   //retrieving table display from flask
-   display2(event) {
-      var x = document.getElementById("message");
-         x.style.display = "none";
-         
-      this.setState({
-         exporttable2: event.target.value,
-      });
-      $.post(window.location.origin + "/tableviewbi/",
-      {
-         tablename: event.target.value,
-      },
-      (data) => {
-         this.setState({
-            colnames2: (data['colnames']),
-            colvalues2: (data['coldata']),
-         });            
-      });         
-   }   
    
    //store the variable that the user has selected
    selectJoinVariable(event) {
@@ -204,10 +205,10 @@ class TableViewbi extends Component {
             });
          } else {
             console.log(data);
-   			this.setState({
-   			    combinedcolnames: (data['colnames']),
+            this.setState({
+                combinedcolnames: (data['colnames']),
                 combinedcolvalues: (data['coldata']),
-   			})
+            })
          }              
       });        
    }
@@ -315,16 +316,16 @@ class TableViewbi extends Component {
                   </tr>
                </table>
                <table>
-         			<tr>
-         				<td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
+                  <tr>
+                     <td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
                         <div style={{"overflow-x":"auto"}}>
                            <table class="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
                               {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
-							        {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
-         				      </table>
+                             {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
+                           </table>
                         </div>
-         				</td>
-         			</tr>
+                     </td>
+                  </tr>
                </table>
                <table>
                   <tr>
@@ -332,7 +333,7 @@ class TableViewbi extends Component {
                         <div style={{"overflow-x":"auto"}}>
                            <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>       
                               {this.state.colnames.map((colname) => <th>{colname}</th>)}
-							  {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
+                       {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
                            </table>
                         </div>
                      </td><td></td><td></td><td></td><td></td><td></td>
@@ -340,7 +341,7 @@ class TableViewbi extends Component {
                         <div style={{"overflow-x":"auto"}}>
                            <table class="outputtable" style={{"width":"550px","max-width":"550px"}}>   
                               {this.state.colnames2.map((colname2) => <th>{colname2}</th>)}
-							  {this.state.colvalues2.map((rows2)=> <tr> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
+                       {this.state.colvalues2.map((rows2)=> <tr> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
                            </table>
                         </div>
                      </td>
