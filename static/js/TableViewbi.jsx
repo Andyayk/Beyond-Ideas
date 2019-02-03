@@ -55,6 +55,7 @@ class TableViewbi extends Component {
       });
    }  
 
+   //retrieving user's uploaded tables
    getMySQLTables2() {
       $.getJSON(window.location.origin + "/get_all_dataset_api", (data) => {
          var mySQLTables = data['datasetNames'][0]['name'];
@@ -79,7 +80,9 @@ class TableViewbi extends Component {
          options: options
       });
    }   
-    checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames, keyword){
+   
+   //changing the radio button status if there's matching combined variables
+   checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames, keyword){
       var match1 = false;
       var match2 = false;
       var i;
@@ -115,6 +118,7 @@ class TableViewbi extends Component {
       }
    }
    
+   //changing the submit button status if there's any matching combined variables selected by the user
    checksubmitbutton(radiobutton1, radiobutton2, radiobutton3, radiobutton4, table){
       if (document.getElementById(radiobutton1).disabled && document.getElementById(radiobutton2).disabled && document.getElementById(radiobutton3).disabled && document.getElementById(radiobutton4).disabled && table != []){
          this.enablesubmitbutton(false);
@@ -131,6 +135,7 @@ class TableViewbi extends Component {
       }
    }
    
+   //activating the submit button
    enablesubmitbutton(enable){
        if(enable){
             var element = document.getElementById('submitbutton');
@@ -150,7 +155,7 @@ class TableViewbi extends Component {
    //retrieving table display from flask
    display(event) {  
       var x = document.getElementById("data1area");
-         x.style.display = "none";
+      x.style.display = "none";
 
       this.setState({
          exporttable1: event.target.value,
