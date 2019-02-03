@@ -53,7 +53,7 @@ class TableViewbi extends Component {
          this.createOptions(mySQLTables);   
 
       }); 
-   }  
+   }   
 
    //retrieving user's uploaded tables
    getMySQLTables2() {
