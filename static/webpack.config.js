@@ -3,7 +3,7 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const config = {
-  entry: ["babel-polyfill",__dirname + '/js/index.jsx'],
+  entry: ["babel-polyfill",__dirname + '/js/index.js'],
   output: {
     path: __dirname + '/dist',
     filename: 'bundle.js'
@@ -14,15 +14,19 @@ const config = {
   module: {
     rules: [
       {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
+        }
+      },
+      {
         test: /\.jsx?/,
         exclude: /node_modules/,
         use: {
-            loader: "babel-loader",
-            options: {
-                babelrc:true
-            }
+          loader: "babel-loader"
         }
-      },     
+      },      
       {
         test: /\.html$/,
         use: [
@@ -36,28 +40,24 @@ const config = {
         use: ExtractTextPlugin.extract({
           fallback: "style-loader",
           use: "css-loader"
-        })
-      },
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: [
-            {
-                loader: "file-loader",
-                options: {
-                    publicPath: "/dist/"
-                }
-            },
-        ],
-      },
-      {
-        test: /\.json$/,
-        loader: "json-loader"
-      },
+        })      
+      }
     ],
   },
   plugins: [
-    new ExtractTextPlugin('styles.css'),
-    new CopyWebpackPlugin([{from:'images',to:'images'}])
+    new webpack.DefinePlugin({
+      'process.env': {
+        // This has effect on the react lib size
+        'NODE_ENV': JSON.stringify('production'),
+      }
+    }),  
+    new ExtractTextPlugin('styles.css', {allChunks: false}),
+    new webpack.optimize.AggressiveMergingPlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(), 
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new CopyWebpackPlugin([
+            {from:'images',to:'images'} 
+        ])
   ]
 };
-module.exports = config;
+module.exports = config

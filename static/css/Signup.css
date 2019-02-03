@@ -8,7 +8,6 @@
 
 .dhl-half {
   grid-area: dhl-half;
-  background: url("../images/DHL_logo.png");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   height: 100vh;
