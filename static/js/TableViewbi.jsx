@@ -32,7 +32,7 @@ class TableViewbi extends Component {
 
       this.save = this.save.bind(this);   
    
-	   this.selectJoinVariable = this.selectJoinVariable.bind(this); 
+      this.selectJoinVariable = this.selectJoinVariable.bind(this); 
 
       this.formSubmitted = this.formSubmitted.bind(this);
 
@@ -231,10 +231,10 @@ class TableViewbi extends Component {
             });
          } else {
             console.log(data);
-   			this.setState({
-   			    combinedcolnames: (data['colnames']),
+            this.setState({
+                combinedcolnames: (data['colnames']),
                 combinedcolvalues: (data['coldata']),
-   			})
+            })
          }              
       });        
    }
@@ -345,17 +345,17 @@ class TableViewbi extends Component {
                <td id="testing" colspan="2" align="center" style={{"height":"400px", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
                   <table>
                   <tbody>
-            			<tr>
-            				<td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
+                     <tr>
+                        <td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
                            <div style={{"overflow-x":"auto"}}>
                           
                               <table className="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
                                  {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
-   							        {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
-            				      </table>
+                                {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
+                              </table>
                            </div>
-            				</td>
-            			</tr>
+                        </td>
+                     </tr>
                   </tbody>
                   </table>
                   <table>
@@ -375,7 +375,7 @@ class TableViewbi extends Component {
                               <table className="outputtable" style={{"width":"550px","max-width":"550px"}}>       
                               <tbody>
                                  {this.state.colnames.map((colname) => <th>{colname}</th>)}
-   							         {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
+                                 {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
                               </tbody>
                               </table>
                            </div>
@@ -394,7 +394,7 @@ class TableViewbi extends Component {
                               <table className="outputtable" style={{"width":"550px","max-width":"550px"}}>  
                               <tbody> 
                                  {this.state.colnames2.map((colname2) => <th>{colname2}</th>)}
-   							         {this.state.colvalues2.map((rows2)=> <tr> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
+                                 {this.state.colvalues2.map((rows2)=> <tr> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
                               </tbody>
                               </table>
                            </div>
