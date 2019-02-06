@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import Plot from 'react-plotly.js';
 import regression from 'regression';
 import Correlation from 'node-correlation';
@@ -31,14 +32,14 @@ class Chartbi extends Component {
          companyvariablesoptions2: "",
          depotvariablesoptions: "",
          depotvariablesoptions2: "",
-         countrynamevariablesoptions: "",
-         countrynamevariablesoptions2: "",
+         geographicallocationvariablesoptions: "",
+         geographicallocationvariablesoptions2: "",
          companyvaluelistoptions: "",
          companyvaluelistoptions2: "",
          depotvaluelistoptions: "",
          depotvaluelistoptions2: "", 
-         countrynamevaluelistoptions: "",
-         countrynamevaluelistoptions2: "",
+         geographicallocationvaluelistoptions: "",
+         geographicallocationvaluelistoptions2: "",
          errorstatement: "",
          errordatestatement: "",
       };
@@ -61,9 +62,7 @@ class Chartbi extends Component {
       this.checkradiobutton = this.checkradiobutton.bind(this);
       this.checksubmitbutton = this.checksubmitbutton.bind(this);
       this.enablesubmitbutton = this.enablesubmitbutton.bind(this);
-      this.validateDateRange = this.validateDateRange.bind(this);
-      this.resetfiltervariabledropdown = this.resetfiltervariabledropdown.bind(this);  
-      this.resetfiltervaluedropdown = this.resetfiltervaluedropdown.bind(this);  
+      this.resetfilterdropdown = this.resetfilterdropdown.bind(this);  
       this.generateScatterplot = this.generateScatterplot.bind(this); 
 
       this.formSubmitted = this.formSubmitted.bind(this);
@@ -126,51 +125,26 @@ class Chartbi extends Component {
    }
    
    enablesubmitbutton(enable){
-      if(enable){
-         var element = document.getElementById('submitbutton');
-         element.disabled = false;
-         element.style.background = "#4CAF50";
-         element.style.opacity = "1";            
-         element.style.cursor = "pointer";
-      } else {
-         var element = document.getElementById('submitbutton');
-         element.disabled = true;
-         element.style.background = "red";
-         element.style.opacity = "0.6";
-         element.style.cursor = "not-allowed";
-      }
+       if(enable){
+            var element = document.getElementById('submitbutton');
+            element.disabled = false;
+            element.style.background = "#4CAF50";
+            element.style.opacity = "1";            
+            element.style.cursor = "pointer";
+       } else {
+            var element = document.getElementById('submitbutton');
+            element.disabled = true;
+            element.style.background = "red";
+            element.style.opacity = "0.6";
+            element.style.cursor = "not-allowed";
+       }
    }
-
-    validateDateRange(fromDate, toDate){
-      if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
-         if(fromDate && toDate && fromDate > toDate){
-            this.setState({
-               errordatestatement: "Please select a valid date range"
-            });
-            this.enablesubmitbutton(false);
-         } else {
-            this.setState({errordatestatement: ""});
-            this.enablesubmitbutton(true);
-         }
-      }
-    }
-
-   resetfiltervariabledropdown(){
-      this.setState({
-         selectedfiltervariable: ""
-      });
-      document.getElementById("filtervariabledropdownid").default = true;
-   }
-
    
-   resetfiltervaluedropdown(){
-      /*
-      if(this.state.selectedfiltervariable != ""){
-         var thisElement = document.getElementById("filtervaluedropdownid");
-         thisElement.default = true;
-         thisElement.selectedIndex = "0";
-      }
-      */
+   resetfilterdropdown(){
+       this.setState({
+            selectedfiltervariable: "",
+            filtervaluelistoptions: ""
+       });
    }
 
    //retrieving variables from flask
@@ -190,20 +164,20 @@ class Chartbi extends Component {
          var datevariablelistdata = data['datevariablelist'];
          var companyvariablelistdata = data['companyvariablelist'];
          var depotvariablelistdata = data['depotvariablelist'];
-         var countrynamevariablelistdata = data['countrynamevariablelist']; 
+         var geographicallocationvariablelistdata = data['geographicallocationvariablelist']; 
          var companyvaluelistdata = data['companyvaluelist']; 
          var depotvaluelistdata = data['depotvaluelist'];
-         var countrynamevaluelistdata = data['countrynamevaluelist'];                
+         var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];                
          
          this.checkradiobutton(datevariablelistdata, this.state.datevariablesoptions2, "dateradio", "labeldate")
          this.checkradiobutton(companyvariablelistdata, this.state.companyvariablesoptions2, "companyradio", "labelcompany");
          this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions2, "depotradio", "labeldepot");
-         this.checkradiobutton(countrynamevaluelistdata, this.state.countrynamevariablesoptions2, "locationradio","labelcountry");
+         this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions2, "locationradio","labelcountry");
          
-         this.resetfiltervariabledropdown();
+         this.resetfilterdropdown();
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable2);         
          
-         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, countrynamevariablelistdata, companyvaluelistdata, depotvaluelistdata, countrynamevaluelistdata);                     
+         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata);                     
       });          
    }
 
@@ -224,23 +198,23 @@ class Chartbi extends Component {
          var datevariablelistdata = data['datevariablelist'];
          var companyvariablelistdata = data['companyvariablelist'];
          var depotvariablelistdata = data['depotvariablelist'];
-         var countrynamevariablelistdata = data['countrynamevariablelist'];         
+         var geographicallocationvariablelistdata = data['geographicallocationvariablelist'];         
 
          var companyvaluelistdata = data['companyvaluelist']; 
          var depotvaluelistdata = data['depotvaluelist'];
-         var countrynamevaluelistdata = data['countrynamevaluelist'];  
+         var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];  
          
          
          this.checkradiobutton(datevariablelistdata, this.state.datevariablesoptions, "dateradio", "labeldate");
          this.checkradiobutton(companyvariablelistdata, this.state.companyvariablesoptions, "companyradio", "labelcompany");
          this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions, "depotradio", "labeldepot");
-         this.checkradiobutton(countrynamevaluelistdata, this.state.countrynamevariablesoptions, "locationradio", "labelcountry");
+         this.checkradiobutton(geographicallocationvaluelistdata, this.state.geographicallocationvariablesoptions, "locationradio", "labelcountry");
          
-         this.resetfiltervariabledropdown();
+         this.resetfilterdropdown();
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable);         
 
          
-         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, countrynamevariablelistdata, companyvaluelistdata, depotvaluelistdata, countrynamevaluelistdata);                     
+         this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata);                     
       });  
    }       
 
@@ -257,7 +231,7 @@ class Chartbi extends Component {
    }
 
    //creating select options for drop down list based on data from flask
-   createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, countrynamevariablelistdata, companyvaluelistdata, depotvaluelistdata, countrynamevaluelistdata, allvariablelistdata) {
+   createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, geographicallocationvariablelistdata, companyvaluelistdata, depotvaluelistdata, geographicallocationvaluelistdata, allvariablelistdata) {
       let variables = [];
       if (variablelistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
          var variablelist = variablelistdata.toString().split(",");
@@ -275,8 +249,8 @@ class Chartbi extends Component {
       //creating select options for drop down list based on depot data variables from flask
       let depotvariables = this.createVariablesOptions(methodNo, depotvariablelistdata);
 
-      //creating select options for drop down list based on country name data variables from flask
-      let countrynamevariables = this.createVariablesOptions(methodNo, countrynamevariablelistdata);
+      //creating select options for drop down list based on geographical location data variables from flask
+      let geographicallocationvariables = this.createVariablesOptions(methodNo, geographicallocationvariablelistdata);
 
       //creating select options for drop down list based on company data values from flask
       let companyvalues = this.createVariablesOptions(methodNo, companyvaluelistdata);
@@ -284,8 +258,8 @@ class Chartbi extends Component {
       //creating select options for drop down list based on depot data values from flask
       let depotvalues = this.createVariablesOptions(methodNo, depotvaluelistdata);
 
-      //creating select options for drop down list based on country name data values from flask
-      let countrynamevalues = this.createVariablesOptions(methodNo, countrynamevaluelistdata);      
+      //creating select options for drop down list based on geographical location data values from flask
+      let geographicallocationvalues = this.createVariablesOptions(methodNo, geographicallocationvaluelistdata);      
 
       if (methodNo == 1) {
          this.setState({
@@ -293,10 +267,10 @@ class Chartbi extends Component {
             datevariablesoptions: datevariables,
             companyvariablesoptions: companyvariables,
             depotvariablesoptions: depotvariables,
-            countrynamevariablesoptions: countrynamevariables,
+            geographicallocationvariablesoptions: geographicallocationvariables,
             companyvaluelistoptions: companyvalues,
             depotvaluelistoptions: depotvalues,
-            countrynamevaluelistoptions: countrynamevalues,
+            geographicallocationvaluelistoptions: geographicallocationvalues,
          });        
       } else if (methodNo == 2) {
          this.setState({
@@ -304,10 +278,10 @@ class Chartbi extends Component {
             datevariablesoptions2: datevariables,
             companyvariablesoptions2: companyvariables,
             depotvariablesoptions2: depotvariables,
-            countrynamevariablesoptions2: countrynamevariables,
+            geographicallocationvariablesoptions2: geographicallocationvariables,
             companyvaluelistoptions2: companyvalues,
             depotvaluelistoptions2: depotvalues,  
-            countrynamevaluelistoptions2: countrynamevalues,            
+            geographicallocationvaluelistoptions2: geographicallocationvalues,            
          });           
       }
    }
@@ -335,8 +309,6 @@ class Chartbi extends Component {
 
    //store the filter variable that the user has selected
    selectFilterVariable(event) {
-      this.resetfiltervaluedropdown();
-      
       this.setState({
          selectedfiltervariable: event.target.value
       });
@@ -366,10 +338,19 @@ class Chartbi extends Component {
    }    
 
    //store the filter values that the user has selected
-   selectFilterValue(event) {
-      if(this.state.selectedfiltervariable.toLowerCase().includes("date")){
-            this.validateDateRange(event.target.value, this.state.selectedfiltervalue2);
+   selectFilterValue(event) { 
+    if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
+        if(this.state.selectedfiltervalue2 && this.state.selectedfiltervalue2 < event.target.value){
+            this.setState({
+                errordatestatement: "Please select a valid date range"
+            });
+            this.enablesubmitbutton(false);
+        }else {
+            this.setState({errordatestatement: ""});
+            this.enablesubmitbutton(true);
+        }
       }
+      
       this.setState({
          selectedfiltervalue: event.target.value
       });      
@@ -377,9 +358,18 @@ class Chartbi extends Component {
 
    //store the  filter values 2 (if any) that the user has selected
    selectFilterValue2(event) {    
-      if(this.state.selectedfiltervariable.toLowerCase().includes("date")){
-            this.validateDateRange(this.state.selectedfiltervalue, event.target.value);
+     if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
+        if(this.state.selectedfiltervalue && this.state.selectedfiltervalue > event.target.value){
+            this.setState({
+                errordatestatement: "Please select a valid date range"
+            });
+            this.enablesubmitbutton(false);
+        }else {
+            this.setState({errordatestatement: ""});
+            this.enablesubmitbutton(true);
+        }
       }
+      
       this.setState({
          selectedfiltervalue2: event.target.value
       });      
@@ -495,105 +485,100 @@ class Chartbi extends Component {
    render() {
       return (
          <div>
-            <div className="content">
+            <div class="content">
             <table style={{"width":"100%"}}>
-            <tbody>
                <tr>             
                   <td style={{"width":"22%", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px"}} valign="top" align="center" bgcolor="white">   
                   <form method="POST" onSubmit={this.formSubmitted}>                       
                      <br />
                      <table align="center">
-                     <tbody>
                         <tr>
                            <td align="center">
-                              <div className="cardtitle">
+                              <div class="cardtitle">
                                  Select Datasets
                               </div>
                            </td>
                         </tr><tr>
                            <td align="center">
-                              <div className="cardsubtitle">
+                              <div class="cardsubtitle">
                                  Dataset One:
                               </div>
                            </td>
                         </tr><tr>
                            <td align="center">
-
-                              <select required defaultValue="" onChange={this.getVariables} style={{"width":"210px"}}>
-                                 <option value="">---------- select a dataset ----------</option>
+                              <select required onChange={this.getVariables} style={{"width":"210px"}}>
+                                 <option value="" disabled selected>---------- select a dataset ----------</option>
                                  {this.state.options}
                               </select>
                            </td>
                         </tr><tr>
                            <td align="center">                        
-                              <div className="cardsubtitle">
+                              <div class="cardsubtitle">
                                  Dataset Two:
                               </div>
                            </td>
                         </tr><tr>
                            <td align="center">                                                
-                              <select required defaultValue="" onChange={this.getVariables2} style={{"width":"210px"}}>
-                                 <option value="">---------- select a dataset ----------</option>
+                              <select required onChange={this.getVariables2} style={{"width":"210px"}}>
+                                 <option value="" disabled selected>---------- select a dataset ----------</option>
                                  {this.state.options}
                               </select>
                            </td>
                         </tr><tr>
                            <td align="center">                  
-                              <div className="carderrormsg">
+                              <div class="carderrormsg">
                                  {this.state.errorstatement}
                               </div>
                            </td>
                         </tr><tr>
                            <td align="center">
-                              <div className="cardsubtitle">
+                              <div class="cardsubtitle">
                                  Combine both datasets based on:
                               </div>
                            </td>
                         </tr><tr>
                            <table align="center">
-                           <tbody>
                               <tr>                        
                                  <td><input id="dateradio" type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/></td><td><label id="labeldate">Activity Date</label></td>
                               </tr><tr>
                                   <td><input id="companyradio" type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/></td><td><label id ="labelcompany">Company</label></td>
                               </tr><tr>
-                                 <td><input id="locationradio" type="radio" name="joinvariable" value="countryname" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "countryname"} disabled required/></td><td><label id="labelcountry">Country Name</label></td>
+                                 <td><input id="locationradio" type="radio" name="joinvariable" value="geographicallocation" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"} disabled required/></td><td><label id="labelcountry">Country Name</label></td>
                               </tr><tr>                  
                                  <td><input id="depotradio" type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/></td><td><label id="labeldepot">Depot</label></td>                  
                               </tr>
-                           </tbody>
                            </table>
                         </tr>
                         <br/>
                         <tr>
                            <td align="center">                           
-                              <div className="cardtitle">
+                              <div class="cardtitle">
                                  Select Variables
                               </div>
                            </td>
                         </tr><tr>
                            <td align="center">
-                              <div className="cardsubtitle">
+                              <div class="cardsubtitle">
                                  Independent Variable (X):
                               </div>
                            </td>
                         </tr><tr>
                            <td align="center">
-                              <select required defaultValue="" onChange={this.selectVariable} style={{"width":"210px"}}>
-                                 <option value="">---------- select a variable ----------</option>
+                              <select required onChange={this.selectVariable} style={{"width":"210px"}}>
+                                 <option value="" disabled selected>---------- select a variable ----------</option>
                                  {this.state.variablesoptions}
                               </select>
                            </td>
                         </tr><tr>
                            <td align="center">                        
-                              <div className="cardsubtitle">
+                              <div class="cardsubtitle">
                                  Dependent Variable (Y):
                               </div>
                            </td>
                         </tr><tr>
                            <td align="center">
-                              <select required defaultValue="" onChange={this.selectVariable2} style={{"width":"210px"}}>
-                                 <option value="">---------- select a variable ----------</option>
+                              <select required onChange={this.selectVariable2} style={{"width":"210px"}}>
+                                 <option value="" disabled selected>---------- select a variable ----------</option>
                                  {this.state.variablesoptions2}
                               </select>
                            </td>
@@ -601,47 +586,47 @@ class Chartbi extends Component {
                         <br/>
                         <tr>
                            <td align="center">
-                              <div className="cardtitle">
+                              <div class="cardtitle">
                                  Filtering
                               </div>
                            </td>
                         </tr><tr>
                            <td align="center">
-                              <div className="cardsubtitle">
+                              <div class="cardsubtitle">
                                  Filter By:
                               </div>
                            </td>
                         </tr><tr>
                            <td align="center">       
-                              <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"210px"}}>
-                                 <option value="">--------------- optional ---------------</option>
+                              <select onChange={this.selectFilterVariable} style={{"width":"210px"}}>
+                                 <option value="" selected>---------- select a variable ----------</option>
                                  {this.state.datevariablesoptions}
                                  {this.state.companyvariablesoptions}               
                                  {this.state.depotvariablesoptions}                 
-                                 {this.state.countrynamevariablesoptions}
-                                 <option disabled>----------------------------------------</option>                                                                
+                                 {this.state.geographicallocationvariablesoptions}
+                                 <option value="" disabled>---------------------------------</option>                                                                
                                  {this.state.datevariablesoptions2}
                                  {this.state.companyvariablesoptions2}              
                                  {this.state.depotvariablesoptions2}                
-                                 {this.state.countrynamevariablesoptions2}                                              
+                                 {this.state.geographicallocationvariablesoptions2}                                              
                               </select>
                            </td>
                         </tr>
                         <tr>
                            <td align="center">
-                              <div className="carderrormsg">{this.state.errordatestatement}</div>
+                              <div class="carderrormsg">{this.state.errordatestatement}</div>
                            </td>
                         </tr>
                         <tr>
                            <td align="center">  
                               {this.state.selectedfiltervariable.toLowerCase().includes("date") &&
                                  <div>
-                                    <div className="cardsubtitle">
+                                    <div class="cardsubtitle">
                                        Start Date:
                                     </div>                   
                                     <input type="date" style={{"width":"210px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue} />
                                     <td></td>
-                                    <div className="cardsubtitle">
+                                    <div class="cardsubtitle">
                                        End Date:
                                     </div>
                                     <input type="date" style={{"width":"210px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
@@ -650,11 +635,11 @@ class Chartbi extends Component {
                               }
                               {this.state.selectedfiltervariable && !this.state.selectedfiltervariable.toLowerCase().includes("date") &&
                                  <div>
-                                    <div className="cardsubtitle">
+                                    <div class="cardsubtitle">
                                        {this.state.selectedfiltervariable.substring(3,)}:
                                     </div>
-                                    <select id="filtervaluedropdownid" required defaultValue="" onChange={this.selectFilterValue}>
-                                       <option id="firstoption" value="">---------- select a variable ----------</option>
+                                    <select required onChange={this.selectFilterValue}>
+                                       <option value="" disabled selected>---------- select a variable ----------</option>
                                        {this.state.filtervaluelistoptions}                         
                                     </select>
                                     <br/>
@@ -665,30 +650,19 @@ class Chartbi extends Component {
                         <br/>
                         <tr>
                            <td align="center">                                                            
-                              <button id="submitbutton" className="button" type="submit" style={{"vertical-align":"middle"}}>Generate Scatterplot</button>
+                              <button id="submitbutton" class="button" type="submit" style={{"vertical-align":"middle"}}>Generate Scatterplot</button>
                            </td>
                         </tr>
-                     </tbody>   
                      </table>
                      <br/>          
                   </form>                   
                   </td>
                   <td></td>
                   <td align="center" style={{"width":"80%", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"10px"}} bgcolor="white">
-                     <table id="message">
-                     <tbody>
-                        <tr>
-                           <td align="center" style={{"width":"850px", "height":"580px", "border-radius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
-                              <label style={{"vertical-align":"center"}}>Plot Display Area</label>                  
-                           </td>                           
-                        </tr>
-                     </tbody>   
-                     </table>       
-
+                     <label id="message" style={{"vertical-align":"center"}}>Plot Display Area</label>                  
                      {this.state.scatterplot}   
                   </td>
                </tr>
-            </tbody>   
             </table>  
             </div>                                 
          </div>

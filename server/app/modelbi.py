@@ -64,10 +64,10 @@ def displayTablebi(table_name):
 
 def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, filtervalue, filtervalue2, filtervariable):
     """
-        This method will join tables together using date or company or depot or country name
+        This method will join tables together using date or company or depot or geographical location
     """
     try:
-        sqlstmt = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+        sqlstmt = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM " + tablename + " as t1 , " + tablename2 + " as t2"
         
         if "date" in joinvariable.lower(): #join by date
             date1 = getDateColumnNamebi(tablename)
@@ -118,17 +118,16 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
     """
     try:
         cursor.execute("DROP TABLE IF EXISTS combinedtable")
-        sqlstmt = "CREATE TABLE combinedtable AS SELECT "+ variables + " FROM `" + tablename + "` as t1 INNER JOIN `" + tablename2 + "` as t2"
+        sqlstmt = "CREATE TABLE combinedtable AS SELECT "+ variables + " FROM " + tablename + " as t1 INNER JOIN " + tablename2 + " as t2"
         
-        if "activitydate" in joinvariable.lower(): #join by date
-            sqlstmt = sqlstmt + " WHERE t1." + "date" + " = t2." + "ActivityDate"
-        elif "company" in joinvariable.lower(): #join by company
-            sqlstmt = sqlstmt + " WHERE t1." + "company" + " = t2." + "company"   
-        elif "depot" in joinvariable.lower(): #join by depot
-            sqlstmt = sqlstmt + " ON t1." + "depot" + " = t2." + "SKUKey"  
-        elif "country" in joinvariable.lower(): #join by country name
-            sqlstmt = sqlstmt + " WHERE t1." + "countryname" + " = t2." + "countryname"                       
-        # sqlstmt = "CREATE TABLE potlala (id INT NOT NULL PRIMARY KEY, name  VARCHAR(40), email VARCHAR(40))"
+        if "date" in joinvariable.lower(): #join by date
+            date1 = getDateColumnNamebi(tablename)
+            date2 = getDateColumnNamebi(tablename2)
+           
+            sqlstmt = sqlstmt + " WHERE t1." + date1[0] + " = t2." + date2[0]
+        else:
+            sqlstmt = sqlstmt + " WHERE t1." + joinvariable + " = t2." + joinvariable
+            
         cursor.execute(sqlstmt)
 
         return "success"
@@ -213,12 +212,12 @@ def getDepotColumnNamebi(tablename):
     except Exception as e:
         return "Something is wrong with getDepotColumnNamebi method"   
 
-def getCountryNameColumnNamebi(tablename):
+def getGeographicalLocationColumnNamebi(tablename):
     """
-        This method will get country name variables column names only
+        This method will get geographical location variables column names only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%country%'")
+        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%location%'")
 
         cols = []
 
@@ -227,14 +226,14 @@ def getCountryNameColumnNamebi(tablename):
 
         return cols
     except Exception as e:
-        return "Something is wrong with getCountryNameColumnNamebi method"   
+        return "Something is wrong with getGeographicalLocationColumnNamebi method"   
 
 def getCompanyValuesbi(tablename):
     """
         This method will get company values only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT Company FROM `" + tablename + "`")
+        cursor.execute("SELECT DISTINCT Company FROM " + tablename)
 
         cols = []
 
@@ -250,7 +249,7 @@ def getDepotValuesbi(tablename):
         This method will get depot values only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT Depot FROM `" + tablename + "`")
+        cursor.execute("SELECT DISTINCT Depot FROM " + tablename)
 
         cols = []
 
@@ -261,12 +260,12 @@ def getDepotValuesbi(tablename):
     except Exception as e:
         return ""      
 
-def getCountryNameValuesbi(tablename):
+def getGeographicalLocationValuesbi(tablename):
     """
-        This method will get country name values only
+        This method will get geographical location values only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT CountryName FROM `" + tablename + "`")
+        cursor.execute("SELECT DISTINCT GeographicalLocation FROM " + tablename)
 
         cols = []
 
@@ -282,7 +281,7 @@ def getFilterValuesbi(tablename, tablename2, filtervariable):
         This method will get the values based on the filter variable
     """ 
     try:
-        cursor.execute("SELECT DISTINCT " + filtervariable[3:] + " FROM `" + tablename + "` , `" + tablename2 + "`")
+        cursor.execute("SELECT DISTINCT " + filtervariable[3:] + " FROM " + tablename + "," + tablename2)
 
         cols = []
 
@@ -313,10 +312,8 @@ def weatherCrawlerbi(startdate, enddate, countryname):
         #extracting the months in integer
         startMonth = int(input_start_date[5:7])
         endMonth = int(input_end_date[5:7])
-        startYear = int(input_start_date[0:4])
-        endYear = int(input_end_date[0:4])
         #Start crawling, if it is same month, send only 1 API request
-        if startMonth == endMonth and startYear == endYear:
+        if startMonth == endMonth:
             #setting up the url
             url = base_url + "?key=" + api_key + "&q=" + country_name + "&date=" + input_start_date + "&enddate=" + input_end_date +"&tp=24&format=json"
             weather_r = requests.get(url)
@@ -337,9 +334,7 @@ def weatherCrawlerbi(startdate, enddate, countryname):
         #if not, deduct the number of months needed to crawl and send 1 api for each month.
         else:
             #calculating the number of months needed to loop which is the number of api calls
-            num_of_months = (endYear - startYear) * 12 - startMonth + endMonth
-            if startYear == endYear:
-                num_of_months = endMonth - startMonth
+            num_of_months = int(endMonth) - int(startMonth)
             #separating the year, month, and date for easier modification.
             start_crawl_year = int(input_start_date[0:4])
             start_crawl_month = int(input_start_date[5:7])
@@ -349,13 +344,6 @@ def weatherCrawlerbi(startdate, enddate, countryname):
             end_crawl_day = int(input_end_date[8:10])  
             #loop based on the number of months input by the user  
             while num_of_months >= 0:
-                """
-                print("this is number of months " + str(num_of_months))
-                print("this is start month " + str(start_crawl_month))
-                print("this is start year " + str(start_crawl_year))
-                print("this is end month " + str(end_crawl_month))
-                print("this is end year " + str(end_crawl_year))
-                """
                 start_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-" + str(start_crawl_day)
                 end_crawl_date = str(end_crawl_year) + "-" + str(end_crawl_month) + "-" + str(end_crawl_day)
                 #for last input month, the last date to crawl would be the input date
@@ -402,22 +390,19 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                         #combine the rows
                         rows = date + "," + meanTemperatureC + "," + meanTemperatureF
                         #add the rows in to an array to be placed in csv file later on
-                        bodyArray.append(rows)
-                    if start_crawl_month == 12:
-                        start_crawl_month = 1
-                        start_crawl_year += 1
-                    else:
-                        start_crawl_month += 1
+                        bodyArray.append(rows) 
+                    start_crawl_month += 1
                     start_crawl_day = 1
                 num_of_months-=1
 
         #write the data into a csv file
-        returnStr = headerArray
-        returnStr += "\n"
-        for i in bodyArray:
-            returnStr += i
-            returnStr += "\n"
-        print(returnStr)
-        return returnStr
+        filename = country_name + " weather data.csv"
+        with open(filename, "w+") as csvfile:
+            csvfile.write(headerArray)
+            csvfile.write("\n")
+            for i in bodyArray:
+                csvfile.write(i)
+                csvfile.write("\n")
+        return "Successfully crawled weather data."
     except Exception as e:
         return "Crawling of weather data unsuccessful."           
