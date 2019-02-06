@@ -51,7 +51,7 @@ class TableViewbi extends Component {
          });
 
          this.createOptions(mySQLTables);   
-
+         console.log(data['test']);
       }); 
    }   
 
@@ -343,13 +343,15 @@ class TableViewbi extends Component {
             </tr>
             <tr>
                <td id="testing" colspan="2" align="center" style={{"height":"400px", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
+                  <div>Combined Table</div>
                   <table>
                   <tbody>
                      <tr>
                         <td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
                            <div style={{"overflow-x":"auto"}}>
-                          
+
                               <table className="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
+
                                  {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
                                 {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
                               </table>
@@ -371,9 +373,12 @@ class TableViewbi extends Component {
                                     </td>                           
                                  </tr>
                               </tbody>
-                              </table>                            
-                              <table className="outputtable" style={{"width":"550px","max-width":"550px"}}>       
+                              </table> 
+                                                        
+                              <table className="outputtable" style={{"width":"550px","max-width":"550px"}}> 
+                              <thread><tr>Dataset one:</tr></thread>
                               <tbody>
+                                 <tr><td>Dataset one:</td></tr>
                                  {this.state.colnames.map((colname) => <th>{colname}</th>)}
                                  {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
                               </tbody>
