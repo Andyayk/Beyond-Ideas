@@ -120,15 +120,13 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
         cursor.execute("DROP TABLE IF EXISTS combinedtable")
         sqlstmt = "CREATE TABLE combinedtable AS SELECT "+ variables + " FROM `" + tablename + "` as t1 INNER JOIN `" + tablename2 + "` as t2"
         
-        if "activitydate" in joinvariable.lower(): #join by date
-            sqlstmt = sqlstmt + " WHERE t1." + "date" + " = t2." + "ActivityDate"
-        elif "company" in joinvariable.lower(): #join by company
-            sqlstmt = sqlstmt + " WHERE t1." + "company" + " = t2." + "company"   
-        elif "depot" in joinvariable.lower(): #join by depot
-            sqlstmt = sqlstmt + " ON t1." + "depot" + " = t2." + "SKUKey"  
-        elif "country" in joinvariable.lower(): #join by country name
-            sqlstmt = sqlstmt + " WHERE t1." + "countryname" + " = t2." + "countryname"                       
-        # sqlstmt = "CREATE TABLE potlala (id INT NOT NULL PRIMARY KEY, name  VARCHAR(40), email VARCHAR(40))"
+        if "date" in joinvariable.lower(): #join by date
+            date1 = getDateColumnNamebi(tablename)
+            date2 = getDateColumnNamebi(tablename2)
+           
+            sqlstmt = sqlstmt + " WHERE t1." + date1[0] + " = t2." + date2[0]
+        else:
+            sqlstmt = sqlstmt + " WHERE t1." + joinvariable + " = t2." + joinvariable
         cursor.execute(sqlstmt)
 
         return "success"
