@@ -37,6 +37,11 @@ class TableViewbi extends Component {
 
       this.getMySQLTables(); //retrieving user's uploaded tables
       this.getMySQLTables2();
+<<<<<<< HEAD
+=======
+
+	  this.checkradiobutton = this.checkradiobutton.bind(this);
+>>>>>>> parent of 544b2b2... Add dynamic radio button for table 1
      
    }
 
@@ -64,6 +69,25 @@ class TableViewbi extends Component {
       });
    }      
 
+<<<<<<< HEAD
+=======
+	checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames){
+      if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length){
+         this.setState({
+            selectedjoinvariable: ""
+         });  
+         document.getElementById(radiobutton).disabled = false; 
+         document.getElementById(labelnames).style = "color:black";
+      } else {
+         this.setState({
+            selectedjoinvariable: ""
+         });  
+         document.getElementById(radiobutton).disabled = true;
+         document.getElementById(labelnames).style = "color:#a3a3a3";         
+      }
+   }
+
+>>>>>>> parent of 544b2b2... Add dynamic radio button for table 1
    //creating select options for drop down list based on data from flask
    createOptions(data) {
       let options = [];
@@ -96,9 +120,75 @@ class TableViewbi extends Component {
          this.setState({
             colnames: (data['colnames']),
             colvalues: (data['coldata']),
+<<<<<<< HEAD
          });     
       }); 
    }
+   
+   //retrieving table display from flask
+   display2(event) {
+      var x = document.getElementById("message");
+         x.style.display = "none";
+         
+      this.setState({
+         exporttable2: event.target.value,
+      });
+      $.post(window.location.origin + "/tableviewbi/",
+      {
+         tablename: event.target.value,
+      },
+      (data) => {
+         this.setState({
+            colnames2: (data['colnames']),
+            colvalues2: (data['coldata']),
+         });            
+      });         
+   }   
+=======
+         });   
+         this.getVariables(this.state.exporttable1);
+		 
+      }); 
+   }
+
+   getVariables(table){
+      $.post(window.location.origin + "/variablesbi/",
+      {
+         tablename: table,
+      },
+      (data) => {
+         var datevariablelistdata = data['datevariablelist'];
+         var companyvariablelistdata = data['companyvariablelist'];
+         var depotvariablelistdata = data['depotvariablelist'];
+         var geographicallocationvaluelistdata = data['geographicallocationvaluelist'];   
+         //creating select options for drop down list based on date data variables from flask
+         let datevariablesoptions2 = this.createVariablesOptions(1, datevariablelistdata);  
+         //creating select options for drop down list based on company data variables from flask
+         let companyvariablesoptions2 = this.createVariablesOptions(1, companyvariablelistdata);
+         //creating select options for drop down list based on depot data variables from flask
+         let depotvariablesoptions2 = this.createVariablesOptions(1, depotvariablelistdata);
+         //creating select options for drop down list based on geographical location data values from flask
+         let geographicallocationvariablesoptions2 = this.createVariablesOptions(1, geographicallocationvaluelistdata);      
+
+         this.checkradiobutton(datevariablelistdata, datevariablesoptions2, "dateradio", "labeldate")
+         this.checkradiobutton(companyvariablelistdata, companyvariablesoptions2, "companyradio", "labelcompany");
+         this.checkradiobutton(depotvariablelistdata, depotvariablesoptions2, "depotradio", "labeldepot");
+         this.checkradiobutton(geographicallocationvaluelistdata, geographicallocationvariablesoptions2, "locationradio","labelcountry"); 
+      });
+   }
+
+   //general method for creating select options for drop down list based on data from flask
+   createVariablesOptions(methodNo, variablelistdata) {
+      let variables = [];
+      if (variablelistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
+         var variablelist = variablelistdata.toString().split(",");
+         for (let i = 0; i < variablelist.length; i++) {
+            variables.push(<option value={"t"+methodNo+"."+variablelist[i]}>{methodNo+": "+variablelist[i]}</option>);
+         };
+      }      
+      return variables;
+   }
+>>>>>>> parent of 544b2b2... Add dynamic radio button for table 1
    
    //retrieving table display from flask
    display2(event) {
