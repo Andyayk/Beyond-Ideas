@@ -99,12 +99,12 @@ class WebCrawlingbi extends Component {
             var element = document.createElement('a');
             var newContent = val.replace(/;/g, "\n")
             element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
-            element.setAttribute('download', 'weather_' + country + '_' + begindate + '_' + finishdate + '.csv');
+            element.setAttribute('download', country + '_weather.csv');
             element.style.display = 'none';
             document.body.appendChild(element);
             element.click();
             document.body.removeChild(element);
-            message = "Crawling of weather data successful.";
+            message = "Crawling of weather data is successful.";
          });  
 
          this.setState({
@@ -148,7 +148,7 @@ class WebCrawlingbi extends Component {
                               </tr><tr>
                                  <td align="center">
                                     <div className="cardsubtitle">
-                                       Start Date: e.g 25/10/2018
+                                       Start Date:
                                     </div>          
                                  </td>
                               </tr><tr>
@@ -158,7 +158,7 @@ class WebCrawlingbi extends Component {
                               </tr><tr>
                                  <td align="center">                                                                 
                                     <div className="cardsubtitle">
-                                       End Date: e.g 30/12/2018
+                                       End Date:
                                     </div>
                                  </td>
                               </tr><tr>
@@ -177,7 +177,7 @@ class WebCrawlingbi extends Component {
                               </tr><tr>                             
                                  <td align="center">
                                     <div className="cardsubtitle">
-                                       Country: e.g. Singapore
+                                       Country:
                                     </div>
                                  </td>
                               </tr><tr>

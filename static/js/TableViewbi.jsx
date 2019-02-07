@@ -19,7 +19,6 @@ class TableViewbi extends Component {
          exporttable1: "",
          exporttable2: "",
          selectedjoinvariable: "", 
-         tables2: "",
          table1boolean: false,
          table2boolean: false,
          combinedtableboolean: false
