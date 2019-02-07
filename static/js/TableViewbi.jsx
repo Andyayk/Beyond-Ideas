@@ -19,7 +19,10 @@ class TableViewbi extends Component {
          exporttable1: "",
          exporttable2: "",
          selectedjoinvariable: "", 
-         tables2: ""
+         tables2: "",
+         table1boolean: false,
+         table2boolean: false,
+         combinedtableboolean: false
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -175,8 +178,8 @@ class TableViewbi extends Component {
          this.setState({
             colnames: (data['colnames']),
             colvalues: (data['coldata']),
+            table1boolean: true,
          });
-         
       }); 
    }
    
@@ -203,6 +206,7 @@ class TableViewbi extends Component {
          this.setState({
             colnames2: (data['colnames']),
             colvalues2: (data['coldata']),
+            table2boolean: true,
          });       
                
       });         
@@ -234,6 +238,7 @@ class TableViewbi extends Component {
    			this.setState({
    			    combinedcolnames: (data['colnames']),
                 combinedcolvalues: (data['coldata']),
+                combinedtableboolean: true
    			})
          }              
       });        
@@ -249,7 +254,6 @@ class TableViewbi extends Component {
    render() {
       return (
       <div>
-      Test: {this.state.tables2}
          <form method="POST" onSubmit={this.formSubmitted}>        
          <table align="center" style={{"width":"100%"}}>
          <tbody>                   
@@ -348,7 +352,10 @@ class TableViewbi extends Component {
             			<tr>
             				<td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
                            <div style={{"overflow-x":"auto"}}>
-                          
+                              {this.state.combinedtableboolean?(
+                                 <div style={{"width":"1150px","max-width":"1150px","color":"white","background-color":"#357a38"}}>Combined Dataset</div> 
+                                 ):null
+                              }       
                               <table className="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
                                  {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
    							        {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
@@ -371,16 +378,22 @@ class TableViewbi extends Component {
                                     </td>                           
                                  </tr>
                               </tbody>
-                              </table>                            
-                              <table className="outputtable" style={{"width":"550px","max-width":"550px"}}>       
+                              </table>   
+                              {this.state.table1boolean?(
+                                 <div style={{"width":"550px","max-width":"550px","color":"white","background-color":"#357a38"}}>Dataset One</div> 
+                                 ):null
+                              }                           
+                              <table className="outputtable" style={{"width":"550px","max-width":"550px"}}> 
+
                               <tbody>
+
                                  {this.state.colnames.map((colname) => <th>{colname}</th>)}
    							         {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
                               </tbody>
                               </table>
                            </div>
                         </td><td></td><td></td><td></td><td></td><td></td>
-                        <td align="center" style={{"overflow":"auto", "max-width":"555px", "vertical-align":"top"}}>
+                        <td align="center" style={{"overflow":"auto", "max-width":"550px", "vertical-align":"top"}}>
                            <div style={{"overflow-x":"auto"}}>
                               <table id="data2area">
                               <tbody>
@@ -390,7 +403,11 @@ class TableViewbi extends Component {
                                     </td>                           
                                  </tr>
                               </tbody>
-                              </table>                              
+                              </table> 
+                              {this.state.table2boolean?(
+                                 <div style={{"width":"550px","max-width":"550px","color":"white","background-color":"#357a38"}}>Dataset Two</div> 
+                                 ):null
+                              }                                
                               <table className="outputtable" style={{"width":"550px","max-width":"550px"}}>  
                               <tbody> 
                                  {this.state.colnames2.map((colname2) => <th>{colname2}</th>)}
