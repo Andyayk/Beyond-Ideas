@@ -408,7 +408,7 @@ def create_app(config_name):
             """
                 This method will retrieve mysqltables for API call from react
             """       
-            tables = modelbi.getMySQLTablesbi() 
+            tables = modelbi.getMySQLTablesbi()
   
             return jsonify(
                 tables = tables
@@ -419,8 +419,12 @@ def create_app(config_name):
             """
                 This method will retrieve table display for API call from react 
             """           
-            tablename = request.form.get("tablename")        
-            table = modelbi.displayTablebi(tablename)
+            tablename = request.form.get("tablename") 
+            usertablename = ""
+            if current_user.is_authenticated:      
+                usertablename = tablename + "_" + str(current_user.id)       
+            
+            table = modelbi.displayTablebi(usertablename)
 
             return jsonify(
                 colnames = table[0],
@@ -486,21 +490,21 @@ def create_app(config_name):
             datevariablelist = modelbi.getDateColumnNamebi(tablename)  
             companyvariablelist = modelbi.getCompanyColumnNamebi(tablename)  
             depotvariablelist = modelbi.getDepotColumnNamebi(tablename)  
-            countrynamevariablelist = modelbi.getCountryNameColumnNamebi(tablename) 
+            geographicallocationvariablelist = modelbi.getGeographicalLocationColumnNamebi(tablename) 
 
             companyvaluelist = modelbi.getCompanyValuesbi(tablename) 
             depotvaluelist = modelbi.getDepotValuesbi(tablename)
-            countrynamevaluelist = modelbi.getCountryNameValuesbi(tablename)                  
+            geographicallocationvaluelist = modelbi.getGeographicalLocationValuesbi(tablename)                  
             
             return jsonify(
                 variablelist = variablelist,            
                 datevariablelist = datevariablelist,
                 companyvariablelist = companyvariablelist,
                 depotvariablelist = depotvariablelist,
-                countrynamevariablelist = countrynamevariablelist,
+                geographicallocationvariablelist = geographicallocationvariablelist,
                 companyvaluelist = companyvaluelist,
                 depotvaluelist = depotvaluelist,
-                countrynamevaluelist = countrynamevaluelist,
+                geographicallocationvaluelist = geographicallocationvaluelist,
                
             )
         
