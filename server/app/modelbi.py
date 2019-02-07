@@ -415,7 +415,7 @@ def weatherCrawlerbi(startdate, enddate, countryname):
         for i in bodyArray:
             returnStr += i
             returnStr += "\n"
-        print(returnStr)
+        #print(returnStr)
         return returnStr
     except Exception as e:
         return "Crawling of weather data unsuccessful."           
