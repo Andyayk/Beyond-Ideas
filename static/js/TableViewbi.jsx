@@ -25,8 +25,7 @@ class TableViewbi extends Component {
          combinedtableboolean: false
       };
 
-      this.getMySQLTables = this.getMySQLTables.bind(this);
-      this.getMySQLTables2 = this.getMySQLTables2.bind(this);      
+      this.getMySQLTables = this.getMySQLTables.bind(this);   
       this.checkradiobutton = this.checkradiobutton.bind(this);
       this.checksubmitbutton = this.checksubmitbutton.bind(this);
       this.enablesubmitbutton = this.enablesubmitbutton.bind(this);
@@ -39,35 +38,70 @@ class TableViewbi extends Component {
 
       this.formSubmitted = this.formSubmitted.bind(this);
 
+      //test
+      // this.test = this.test.bind(this);
+      // this.test();
+      this.callBackendAPI = this.callBackendAPI.bind(this);
+      //test
+
       this.getMySQLTables(); //retrieving user's uploaded tables
-      this.getMySQLTables2();
+
      
    }
 
+   // test() {
+   //    this.callBackendAPI("/get_all_dataset_api")
+   //    .then(res => {
+   //      console.log(res);
+   //      console.log(res.datasetNames);
+   //      this.setState({ datasetNames: res.datasets });
+   //    })
+   //    .catch(err => {
+   //      console.log(err);
+   //    });
+   // } 
+
+   
+
    //retrieving user's uploaded tables
+   // getMySQLTables() {
+   //    $.getJSON(window.location.origin + "/mysqltablesbi/", (data) => {
+   //       var mySQLTables = "";
+
+   //       $.each(data, function(key, val) {
+   //          mySQLTables = val;
+   //       });
+
+   //       this.createOptions(mySQLTables);
+   //       console.log(mySQLTables);
+   //    });
+   // }    
    getMySQLTables() {
-      $.getJSON(window.location.origin + "/mysqltablesbi/", (data) => {
-         var mySQLTables = "";
-
-         $.each(data, function(key, val) {
-            mySQLTables = val;
-         });
-
-         this.createOptions(mySQLTables);   
-
-      });
+      var mySQLTables = "";
+      this.callBackendAPI("/get_all_dataset_api")
+      .then(res => {
+         console.log(res);
+         console.log(res.datasetNames);
+         // this.setState({ datasetNames: res.datasets });
+         var datasetNames = res.datasetNames;
+         var mySQLTables = [];
+         datasetNames.map((datasetName, key) =>
+            mySQLTables.push(datasetName.name)
+         );
+         console.log(mySQLTables);
+         this.createOptions(mySQLTables);
+      })
    }  
 
-   //retrieving user's uploaded tables
-   getMySQLTables2() {
-      $.getJSON(window.location.origin + "/get_all_dataset_api", (data) => {
-         var mySQLTables = data['datasetNames'][0]['name'];
-
-         this.setState({
-            tables2: mySQLTables
-         });
-      });
-   }      
+   // GET METHOD CALL
+   async callBackendAPI(url) {
+      const response = await fetch(url);
+      const body = await response.json();
+      if (response.status !== 200) {
+         throw Error(body.message);
+      }
+      return body;
+   }
 
    //creating select options for drop down list based on data from flask
    createOptions(data) {
@@ -180,6 +214,7 @@ class TableViewbi extends Component {
             colvalues: (data['coldata']),
             table1boolean: true,
          });
+         console.log(this.state.colnames);
       }); 
    }
    
@@ -357,8 +392,8 @@ class TableViewbi extends Component {
                                  ):null
                               }       
                               <table className="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
-                                 {this.state.combinedcolnames.map((combinedcolname) => <th>{combinedcolname}</th>)}
-   							        {this.state.combinedcolvalues.map((combinedrows)=> <tr> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
+                                 {this.state.combinedcolnames.map((combinedcolname, key) => <th key={key}>{combinedcolname}</th>)}
+   							        {this.state.combinedcolvalues.map((combinedrows, key)=> <tr key={key}> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
             				      </table>
                            </div>
             				</td>
@@ -368,7 +403,7 @@ class TableViewbi extends Component {
                   <table>
                   <tbody>
                      <tr>
-                        <td align="center" style={{"overflow":"auto", "max-width":"555px", "vertical-align":"top", "align":"center"}}>
+                        <td align="center" style={{"overflow":"auto", "max-width":"550px", "vertical-align":"top", "align":"center"}}>
                            <div style={{"overflow-x":"auto"}}>
                               <table id="data1area">
                               <tbody>
@@ -387,8 +422,8 @@ class TableViewbi extends Component {
 
                               <tbody>
 
-                                 {this.state.colnames.map((colname) => <th>{colname}</th>)}
-   							         {this.state.colvalues.map((rows)=> <tr> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
+                                 {this.state.colnames.map((colname, key) => <th key={key}>{colname}</th>)}
+   							         {this.state.colvalues.map((rows, key)=> <tr key={key}> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
                               </tbody>
                               </table>
                            </div>
@@ -410,8 +445,8 @@ class TableViewbi extends Component {
                               }                                
                               <table className="outputtable" style={{"width":"550px","max-width":"550px"}}>  
                               <tbody> 
-                                 {this.state.colnames2.map((colname2) => <th>{colname2}</th>)}
-   							         {this.state.colvalues2.map((rows2)=> <tr> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
+                                 {this.state.colnames2.map((colname2, key) => <th key={key}>{colname2}</th>)}
+   							         {this.state.colvalues2.map((rows2, key)=> <tr key={key}> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
                               </tbody>
                               </table>
                            </div>
