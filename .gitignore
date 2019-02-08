@@ -11,6 +11,7 @@ venv
 *.sublime*
 node_modules
 dist
+twitter_credentials.json
 
 server/venv
 static/node_modules

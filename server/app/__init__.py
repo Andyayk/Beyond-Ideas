@@ -572,4 +572,22 @@ def create_app(config_name):
                 message = message
             )
 
+        @app.route("/testtwitterbi/")
+        def testtwitterbi(): #rendering our twitter web crawling page
+            """
+                This method will render our twitter web crawling page
+            """      
+            return render_template('testingtwittercrawlingpagebi.html')
+
+        @app.route("/twittercrawlingbi/")
+        def twittercrawlingbi(): 
+            """
+                This method will crawl twitter
+            """           
+            message = modelbi.twitterCrawlerbi()
+
+            return jsonify(
+                message = message
+            )            
+
     return app
