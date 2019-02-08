@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import TableViewbi from './TableViewbi';
 import Chartbi from './Chartbi';
 import WebCrawlingbi from './WebCrawlingbi';
+import TestingTwitterCrawlingbi from './TestingTwitterCrawlingbi';
 import App from "./App";
 import HomeContent from "./HomeContent";
 import UploadContent from "./UploadContent";
@@ -63,3 +64,7 @@ if (webcrawlingbi) {
    ReactDOM.render(<WebCrawlingbi />, webcrawlingbi);
 }
 
+const testingtwittercrawlingbi = document.getElementById('testingtwittercrawlingbi');
+if (testingtwittercrawlingbi) {
+   ReactDOM.render(<TestingTwitterCrawlingbi />, testingtwittercrawlingbi);
+}
