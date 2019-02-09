@@ -373,10 +373,10 @@ class Chartbi extends Component {
          var filtervalueslistdata = data['filtervalueslist']
          let filtervalues = []
          if (filtervalueslistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
-             var variablelist = filtervalueslistdata.toString().split(",");
-             for (let i = 0; i < variablelist.length; i++) {
-                filtervalues.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
-             };
+            var variablelist = filtervalueslistdata.toString().split(",");
+            for (let i = 0; i < variablelist.length; i++) {
+               filtervalues.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
+            };
          }
          
          this.setState({
@@ -399,7 +399,7 @@ class Chartbi extends Component {
    //store the  filter values 2 (if any) that the user has selected
    selectFilterValue2(event) {    
       if(this.state.selectedfiltervariable.toLowerCase().includes("date")){
-            this.validateDateRange(this.state.selectedfiltervalue, event.target.value);
+         this.validateDateRange(this.state.selectedfiltervalue, event.target.value);
       }
       this.setState({
          selectedfiltervalue2: event.target.value

@@ -29,34 +29,33 @@ class WebCrawlingbi extends Component {
    }
    
    validateDateRange(fromDate, toDate){
-        if(fromDate && toDate && fromDate > toDate){
-            this.setState({
-                errordatestatement: "Please select a valid date range"
-            });
-            this.enablesubmitbutton(false);
-        }else {
-            this.setState({errordatestatement: ""});
-            this.enablesubmitbutton(true);
-        }
+      if(fromDate && toDate && fromDate > toDate){
+         this.setState({
+            errordatestatement: "Please select a valid date range"
+         });
+         this.enablesubmitbutton(false);
+      } else {
+         this.setState({errordatestatement: ""});
+         this.enablesubmitbutton(true);
+      }
    }
    
    enablesubmitbutton(enable){
-       if(enable){
-            var element = document.getElementById('submitbutton');
-            element.disabled = false;
-            element.style.background = "#4CAF50";
-            element.style.opacity = "1";            
-            element.style.cursor = "pointer";
-       } else {
-            var element = document.getElementById('submitbutton');
-            element.disabled = true;
-            element.style.background = "red";
-            element.style.opacity = "0.6";
-            element.style.cursor = "not-allowed";
-       }
+      if(enable){
+         var element = document.getElementById('submitbutton');
+         element.disabled = false;
+         element.style.background = "#4CAF50";
+         element.style.opacity = "1";            
+         element.style.cursor = "pointer";
+      } else {
+         var element = document.getElementById('submitbutton');
+         element.disabled = true;
+         element.style.background = "red";
+         element.style.opacity = "0.6";
+         element.style.cursor = "not-allowed";
+      }
    }
    
-
    //store the start date values that the user has selected
    selectStartDate(event) {
       this.validateDateRange(event.target.value,this.state.enddate);
@@ -92,8 +91,6 @@ class WebCrawlingbi extends Component {
          countryname: country
       },
       (data) => {
-        
-
          var message = "";
          $.each(data, function(key, val) {
             var element = document.createElement('a');

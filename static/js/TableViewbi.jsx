@@ -93,18 +93,18 @@ class TableViewbi extends Component {
       // console.log(keyword);
       for (i=0; i < datavariable1.length; i++){
           
-          if(datavariable1[i].toLowerCase().includes(keyword)){
-            console.log(datavariable1[i].toLowerCase())
-              match1 = true;
-              break;
-          }
+         if(datavariable1[i].toLowerCase().includes(keyword)){
+         console.log(datavariable1[i].toLowerCase())
+            match1 = true;
+            break;
+         }
       }
       for (i=0; i < datavariable2.length; i++){
-          if(datavariable2[i].toLowerCase().includes(keyword)){
-            console.log(datavariable2[i].toLowerCase())
-              match2 = true;
-              break;
-          }
+         if(datavariable2[i].toLowerCase().includes(keyword)){
+         console.log(datavariable2[i].toLowerCase())
+            match2 = true;
+            break;
+         }
       }
       
       if (match1 && match2){
