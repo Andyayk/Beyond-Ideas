@@ -151,7 +151,7 @@ def getNumericalColumnNamebi(table_name):
     except Exception as e:
         return "Something is wrong with getNumericalColumnNamebi method"    
         
-def getAllColumnNamebi(table_name): 
+def getAllColumnNamebi(table_name):
     """
         This method will get selected variables data (varchar variables column names only)
     """    

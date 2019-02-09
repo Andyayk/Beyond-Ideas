@@ -430,8 +430,8 @@ def create_app(config_name):
                 colnames = table[0],
                 coldata = table[1]
             )
-              
-        @app.route('/savejoinedtablebi/', methods = ['POST']) 
+             
+        @app.route('/savejoinedtablebi/', methods = ['POST'])
         def savejoinedtablebi(): #retrieving combined table for API call from react
             """
                 This method will retrieve table display for API call from react 
