@@ -299,7 +299,7 @@ class TableViewbi extends Component {
                         <table align="center">
                         <tbody>                        
                            <tr>
-                              <th colspan="2" align="center">
+                              <th colSpan="2" align="center">
                                  <div className="cardtitle">Select Dataset(s) to View</div>
                               </th>
                            </tr><tr></tr><tr></tr><tr></tr><tr></tr><tr>
@@ -334,13 +334,13 @@ class TableViewbi extends Component {
                         <table align="center">
                         <tbody>
                            <tr>
-                              <td colspan="2" align="center">
+                              <td colSpan="2" align="center">
                                  <div className="cardtitle">
                                     Combine Selected Datasets
                                  </div>
                               </td>
                            </tr><tr></tr><tr></tr><tr></tr><tr>
-                              <td colspan="2" align="center">
+                              <td colSpan="2" align="center">
                                  <div className="cardsubtitle">
                                     <div className="tooltip">
                                        Select variable to combine both datasets:<span className="tooltiptext">Tip for user (?)</span>
@@ -348,7 +348,7 @@ class TableViewbi extends Component {
                                  </div>
                               </td>
                            </tr><tr>
-                              <td colspan="2" align="center">
+                              <td colSpan="2" align="center">
                                  <table>
                                  <tbody>
                                     <tr>
@@ -368,8 +368,8 @@ class TableViewbi extends Component {
                                  </table>
                               </td>
                            </tr><tr>
-                              <td colspan="2" align="center">
-                                 <button id="submitbutton" className="button" type="submit" style={{"vertical-align":"middle"}}><span>Combine Datasets & Save</span></button>
+                              <td colSpan="2" align="center">
+                                 <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}><span>Combine Datasets & Save</span></button>
                               </td>
                            </tr>
                         </tbody>
@@ -381,17 +381,17 @@ class TableViewbi extends Component {
             <tr>
             </tr>
             <tr>
-               <td id="testing" colspan="2" align="center" style={{"height":"400px", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
+               <td id="testing" colSpan="2" align="center" style={{"height":"400px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
                   <table>
                   <tbody>
             			<tr>
-            				<td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
-                           <div style={{"overflow-x":"auto"}}>
+            				<td align="center" style={{"overflow":"auto", "maxWidth":"1155px", "position":"relative", "verticalAlign":"top"}}>
+                           <div style={{"overflowX":"auto"}}>
                               {this.state.combinedtableboolean?(
-                                 <div style={{"width":"1150px","max-width":"1150px","color":"white","backgroundColor":"#357a38"}}>Combined Dataset</div> 
+                                 <div style={{"width":"1150px","maxWidth":"1150px","color":"white","backgroundColor":"#357a38"}}>Combined Dataset</div> 
                                  ):null
                               }       
-                              <table className="outputtable" style={{"width":"1150px","max-width":"1150px"}}>
+                              <table className="outputtable" style={{"width":"1150px","maxWidth":"1150px"}}>
                                  {this.state.combinedcolnames.map((combinedcolname, key) => <th key={key}>{combinedcolname}</th>)}
    							        {this.state.combinedcolvalues.map((combinedrows, key)=> <tr key={key}> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
             				      </table>
@@ -403,22 +403,22 @@ class TableViewbi extends Component {
                   <table>
                   <tbody>
                      <tr>
-                        <td align="center" style={{"overflow":"auto", "max-width":"550px", "vertical-align":"top", "align":"center"}}>
-                           <div style={{"overflow-x":"auto"}}>
+                        <td align="center" style={{"overflow":"auto", "maxWidth":"550px", "verticalAlign":"top", "align":"center"}}>
+                           <div style={{"overflowX":"auto"}}>
                               <table id="data1area">
                               <tbody>
                                  <tr>
-                                    <td align="center" style={{"width":"550px", "height":"500px", "border-radius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
-                                          <label style={{"vertical-align":"center"}}>Dataset One Display Area</label>                  
+                                    <td align="center" style={{"width":"550px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                                          <label style={{"verticalAlign":"center"}}>Dataset One Display Area</label>                  
                                     </td>                           
                                  </tr>
                               </tbody>
                               </table>   
                               {this.state.table1boolean?(
-                                 <div style={{"width":"550px","max-width":"550px","color":"white","background-color":"#357a38"}}>Dataset One</div> 
+                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","background-color":"#357a38"}}>Dataset One</div> 
                                  ):null
                               }                           
-                              <table className="outputtable" style={{"width":"550px","max-width":"550px"}}> 
+                              <table className="outputtable" style={{"width":"550px","maxWidth":"550px"}}> 
 
                               <tbody>
 
@@ -428,22 +428,22 @@ class TableViewbi extends Component {
                               </table>
                            </div>
                         </td><td></td><td></td><td></td><td></td><td></td>
-                        <td align="center" style={{"overflow":"auto", "max-width":"550px", "vertical-align":"top"}}>
-                           <div style={{"overflow-x":"auto"}}>
+                        <td align="center" style={{"overflow":"auto", "maxWidth":"550px", "verticalAlign":"top"}}>
+                           <div style={{"overflowX":"auto"}}>
                               <table id="data2area">
                               <tbody>
                                  <tr>
-                                    <td align="center" style={{"width":"550px", "height":"500px", "border-radius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
-                                          <label style={{"vertical-align":"center"}}>Dataset Two Display Area</label>                  
+                                    <td align="center" style={{"width":"550px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                                          <label style={{"verticalAlign":"center"}}>Dataset Two Display Area</label>                  
                                     </td>                           
                                  </tr>
                               </tbody>
                               </table> 
                               {this.state.table2boolean?(
-                                 <div style={{"width":"550px","max-width":"550px","color":"white","background-color":"#357a38"}}>Dataset Two</div> 
+                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","background-color":"#357a38"}}>Dataset Two</div> 
                                  ):null
                               }                                
-                              <table className="outputtable" style={{"width":"550px","max-width":"550px"}}>  
+                              <table className="outputtable" style={{"width":"550px","maxWidth":"550px"}}>  
                               <tbody> 
                                  {this.state.colnames2.map((colname2, key) => <th key={key}>{colname2}</th>)}
    							         {this.state.colvalues2.map((rows2, key)=> <tr key={key}> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
