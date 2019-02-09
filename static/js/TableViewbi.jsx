@@ -37,44 +37,12 @@ class TableViewbi extends Component {
 
       this.formSubmitted = this.formSubmitted.bind(this);
 
-      //test
-      // this.test = this.test.bind(this);
-      // this.test();
       this.callBackendAPI = this.callBackendAPI.bind(this);
-      //test
 
       this.getMySQLTables(); //retrieving user's uploaded tables
-
-     
    }
 
-   // test() {
-   //    this.callBackendAPI("/get_all_dataset_api")
-   //    .then(res => {
-   //      console.log(res);
-   //      console.log(res.datasetNames);
-   //      this.setState({ datasetNames: res.datasets });
-   //    })
-   //    .catch(err => {
-   //      console.log(err);
-   //    });
-   // } 
-
-   
-
-   //retrieving user's uploaded tables
-   // getMySQLTables() {
-   //    $.getJSON(window.location.origin + "/mysqltablesbi/", (data) => {
-   //       var mySQLTables = "";
-
-   //       $.each(data, function(key, val) {
-   //          mySQLTables = val;
-   //       });
-
-   //       this.createOptions(mySQLTables);
-   //       console.log(mySQLTables);
-   //    });
-   // }    
+   //retrieving user's uploaded tables   
    getMySQLTables() {
       var mySQLTables = "";
       this.callBackendAPI("/get_all_dataset_api")
@@ -173,19 +141,19 @@ class TableViewbi extends Component {
    
    //activating the submit button
    enablesubmitbutton(enable){
-       if(enable){
-            var element = document.getElementById('submitbutton');
-            element.disabled = false;
-            element.style.background = "#4CAF50";
-            element.style.opacity = "1";            
-            element.style.cursor = "pointer";
-       } else {
-            var element = document.getElementById('submitbutton');
-            element.disabled = true;
-            element.style.background = "red";
-            element.style.opacity = "0.6";
-            element.style.cursor = "not-allowed";
-       }
+      if(enable){
+         var element = document.getElementById('submitbutton');
+         element.disabled = false;
+         element.style.background = "#4CAF50";
+         element.style.opacity = "1";            
+         element.style.cursor = "pointer";
+      } else {
+         var element = document.getElementById('submitbutton');
+         element.disabled = true;
+         element.style.background = "red";
+         element.style.opacity = "0.6";
+         element.style.cursor = "not-allowed";
+      }
    }
 
    //retrieving table display from flask
@@ -229,8 +197,7 @@ class TableViewbi extends Component {
       {
          tablename: event.target.value,
       },
-      (data) => {
-          
+      (data) => {     
          this.checkradiobutton(data['colnames'], this.state.colnames, "dateradio", "labeldate", "date")
          this.checkradiobutton(data['colnames'], this.state.colnames, "companyradio", "labelcompany", "company");
          this.checkradiobutton(data['colnames'], this.state.colnames, "depotradio", "labeldepot", "depot");
@@ -358,12 +325,12 @@ class TableViewbi extends Component {
                                        </td>
                                     </tr><tr>
                                        <td>
-                                          <input id="locationradio" type="radio" name="joinvariable" value="geographicallocation" disabled required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "geographicallocation"}/><label id="labelcountry">Country Name</label>                                           
+                                          <input id="locationradio" type="radio" name="joinvariable" value="countryname" disabled required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "countryname"}/><label id="labelcountry">Country Name</label>                                           
                                        </td><td>  
                                           <input id="depotradio" type="radio" name="joinvariable" value="depot" disabled required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"}/><label id="labeldepot">Depot</label>
                                        </td>
                                     </tr>
-                                 </tbody>
+                                 </tbody>                        
                                  </table>
                               </td>
                            </tr><tr>

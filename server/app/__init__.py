@@ -402,17 +402,6 @@ def create_app(config_name):
                 This method will render our table view page
             """      
             return render_template('tablepagebi.html') 
-        
-        @app.route("/mysqltablesbi/")
-        def mysqltablesbi(): #retrieving mysqltables for API call from react
-            """
-                This method will retrieve mysqltables for API call from react
-            """       
-            tables = modelbi.getMySQLTablesbi()
-  
-            return jsonify(
-                tables = tables
-            )
 
         @app.route('/tableviewbi/', methods = ['POST'])
         def tableviewbi(): #retrieving table display for API call from react      
@@ -420,6 +409,7 @@ def create_app(config_name):
                 This method will retrieve table display for API call from react 
             """           
             tablename = request.form.get("tablename") 
+
             usertablename = ""
             if current_user.is_authenticated:      
                 usertablename = tablename + "_" + str(current_user.id)       
@@ -483,18 +473,22 @@ def create_app(config_name):
         def variablesbi(): #retrieving variables for API call from react
             """
                 This method will retrieve variables for API call from react
-            """     
+            """       
             tablename = request.form.get("tablename")
-            variablelist = modelbi.getNumericalColumnNamebi(tablename)    
-            
-            datevariablelist = modelbi.getDateColumnNamebi(tablename)  
-            companyvariablelist = modelbi.getCompanyColumnNamebi(tablename)  
-            depotvariablelist = modelbi.getDepotColumnNamebi(tablename)  
-            countrynamevariablelist = modelbi.getCountryNameColumnNamebi(tablename)  
 
-            companyvaluelist = modelbi.getCompanyValuesbi(tablename) 
-            depotvaluelist = modelbi.getDepotValuesbi(tablename)
-            countrynamevaluelist = modelbi.getCountryNameValuesbi(tablename)                 
+            if current_user.is_authenticated:      
+                usertablename = tablename + "_" + str(current_user.id)   
+
+            variablelist = modelbi.getNumericalColumnNamebi(usertablename)    
+            
+            datevariablelist = modelbi.getDateColumnNamebi(usertablename)  
+            companyvariablelist = modelbi.getCompanyColumnNamebi(usertablename)  
+            depotvariablelist = modelbi.getDepotColumnNamebi(usertablename)  
+            countrynamevariablelist = modelbi.getCountryNameColumnNamebi(usertablename)  
+
+            companyvaluelist = modelbi.getCompanyValuesbi(usertablename) 
+            depotvaluelist = modelbi.getDepotValuesbi(usertablename)
+            countrynamevaluelist = modelbi.getCountryNameValuesbi(usertablename)                 
             
             return jsonify(
                 variablelist = variablelist,            
@@ -512,9 +506,14 @@ def create_app(config_name):
         def filtervariablebi():
             tablename = request.form.get("tablename")
             tablename2 = request.form.get("tablename2")
+
+            if current_user.is_authenticated:      
+                usertablename = tablename + "_" + str(current_user.id)   
+                usertablename2 = tablename2 + "_" + str(current_user.id) 
+
             filtervariable = request.form.get("selectedfiltervariable")
             
-            filtervalueslist = modelbi.getFilterValuesbi(tablename, tablename2, filtervariable)
+            filtervalueslist = modelbi.getFilterValuesbi(usertablename, usertablename2, filtervariable)
             
             return jsonify(
                 filtervalueslist = filtervalueslist
@@ -528,6 +527,10 @@ def create_app(config_name):
             tablename = request.form.get("selectedtable")  
             tablename2 = request.form.get("selectedtable2")   
 
+            if current_user.is_authenticated:      
+                usertablename = tablename + "_" + str(current_user.id)   
+                usertablename2 = tablename2 + "_" + str(current_user.id)             
+
             variablenameX = request.form.get("selectedvariable")  
             variablenameY = request.form.get("selectedvariable2") 
 
@@ -538,7 +541,7 @@ def create_app(config_name):
             
             filtervariable = request.form.get("selectedfiltervariable")
 
-            combinedxyarray = modelbi.tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariable, filtervalue, filtervalue2, filtervariable)
+            combinedxyarray = modelbi.tablesJoinbi(usertablename, usertablename2, variablenameX, variablenameY, joinvariable, filtervalue, filtervalue2, filtervariable)
 
             return jsonify(
                 xarray = combinedxyarray[0],
