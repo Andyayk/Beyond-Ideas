@@ -151,14 +151,14 @@ def getNumericalColumnNamebi(table_name):
     except Exception as e:
         return "Something is wrong with getNumericalColumnNamebi method"    
         
-def getVarcharColumnNamebi(table_name):
+def getAllColumnNamebi(table_name):
     """
         This method will get selected variables data (varchar variables column names only)
     """    
     try:   
         cols = []
         
-        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "' AND DATA_TYPE IN ('VARCHAR', 'date')")
+        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "'")
         for col in cursor: # add table cols
             cols.append(col[0])
 
