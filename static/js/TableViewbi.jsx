@@ -422,7 +422,7 @@ class TableViewbi extends Component {
                               </tbody>
                               </table>   
                               {this.state.table1boolean?(
-                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","backgroundColor":"#357a38"}}>Dataset One</div> 
+                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","backgroundColor":"#357a38"}}>Dataset One: {this.state.exporttable1}</div> 
                                  ):null
                               }                           
                               <table className="outputtable" style={{"width":"550px","maxWidth":"550px"}}> 
@@ -455,7 +455,7 @@ class TableViewbi extends Component {
                               </tbody>
                               </table> 
                               {this.state.table2boolean?(
-                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","backgroundColor":"#357a38"}}>Dataset Two</div> 
+                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","backgroundColor":"#357a38"}}>Dataset Two: {this.state.exporttable2}</div> 
                                  ):null
                               }                                
                               <table className="outputtable" style={{"width":"550px","maxWidth":"550px"}}>  
