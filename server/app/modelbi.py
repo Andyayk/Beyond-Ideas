@@ -24,20 +24,6 @@ def is_emptybi(any_structure):
         return False
     else:
         return True
-
-def getMySQLTablesbi():
-    """
-        This method will get all MySQL tables
-    """    
-    try:
-        cursor.execute("USE `is480-term1-2018-19`")
-        cursor.execute("SHOW TABLES")
-        tables = []
-        for (table_name,) in cursor:
-            tables.append(table_name)
-        return tables
-    except Exception as e:
-        return "Something is wrong with getMySQLTablesbi method"    
  
 def displayTablebi(table_name):
     """

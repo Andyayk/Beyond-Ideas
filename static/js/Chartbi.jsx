@@ -68,31 +68,53 @@ class Chartbi extends Component {
 
       this.formSubmitted = this.formSubmitted.bind(this);
 
+      this.callBackendAPI = this.callBackendAPI.bind(this);
+
       this.getMySQLTables(); //retrieving user's uploaded tables
    }
 
-   //retrieving user's uploaded tables
-   getMySQLTables() { 
-      $.getJSON(window.location.origin + "/mysqltablesbi/", (data) => {
-         var mySQLTables = "";
-         $.each(data, function(key, val) {
-            mySQLTables = val;
-         });  
-
-         //creating select options for drop down list based on data from flask
-         let options = [];
-         if (mySQLTables.toString().replace(/\s/g, '').length) { //checking data is not empty       
-            var mySQLTables = mySQLTables.toString().split(",");
-            for (let i = 0; i < mySQLTables.length; i++) {
-               options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
-            };
-         }
-
-         this.setState({
-            options: options
-         });                        
-      });
+   //retrieving user's uploaded tables   
+   getMySQLTables() {
+      var mySQLTables = "";
+      this.callBackendAPI("/get_all_dataset_api")
+      .then(res => {
+         console.log(res);
+         console.log(res.datasetNames);
+         // this.setState({ datasetNames: res.datasets });
+         var datasetNames = res.datasetNames;
+         var mySQLTables = [];
+         datasetNames.map((datasetName, key) =>
+            mySQLTables.push(datasetName.name)
+         );
+         console.log(mySQLTables);
+         this.createOptions(mySQLTables);
+      })
    }
+
+   // GET METHOD CALL
+   async callBackendAPI(url) {
+      const response = await fetch(url);
+      const body = await response.json();
+      if (response.status !== 200) {
+         throw Error(body.message);
+      }
+      return body;
+   }   
+
+   //creating select options for drop down list based on data from flask
+   createOptions(data) {
+      let options = [];
+      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
+         var mySQLTables = data.toString().split(",");
+         for (let i = 0; i < mySQLTables.length; i++) {
+            options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+         };
+      }
+
+      this.setState({
+         options: options
+      });
+   }        
 
    checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames){
       if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length){
@@ -109,6 +131,7 @@ class Chartbi extends Component {
          document.getElementById(labelnames).style = "color:#a3a3a3";         
       }
    }
+
    checksubmitbutton(radiobutton1, radiobutton2, radiobutton3, radiobutton4, table){
       if (document.getElementById(radiobutton1).disabled && document.getElementById(radiobutton2).disabled && document.getElementById(radiobutton3).disabled && document.getElementById(radiobutton4).disabled && table != ""){
          this.enablesubmitbutton(false);
@@ -141,7 +164,7 @@ class Chartbi extends Component {
       }
    }
 
-    validateDateRange(fromDate, toDate){
+   validateDateRange(fromDate, toDate){
       if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
          if(fromDate && toDate && fromDate > toDate){
             this.setState({
@@ -239,7 +262,6 @@ class Chartbi extends Component {
          this.resetfiltervariabledropdown();
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable);         
 
-         
          this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, countrynamevariablelistdata, companyvaluelistdata, depotvaluelistdata, countrynamevaluelistdata);                     
       });  
    }       
@@ -348,14 +370,13 @@ class Chartbi extends Component {
          tablename2: this.state.selectedtable2
       },
       (data) => {
- 
          var filtervalueslistdata = data['filtervalueslist']
          let filtervalues = []
          if (filtervalueslistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
-             var variablelist = filtervalueslistdata.toString().split(",");
-             for (let i = 0; i < variablelist.length; i++) {
-                filtervalues.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
-             };
+            var variablelist = filtervalueslistdata.toString().split(",");
+            for (let i = 0; i < variablelist.length; i++) {
+               filtervalues.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
+            };
          }
          
          this.setState({
@@ -378,7 +399,7 @@ class Chartbi extends Component {
    //store the  filter values 2 (if any) that the user has selected
    selectFilterValue2(event) {    
       if(this.state.selectedfiltervariable.toLowerCase().includes("date")){
-            this.validateDateRange(this.state.selectedfiltervalue, event.target.value);
+         this.validateDateRange(this.state.selectedfiltervalue, event.target.value);
       }
       this.setState({
          selectedfiltervalue2: event.target.value
@@ -520,7 +541,7 @@ class Chartbi extends Component {
                            <td align="center">
 
                               <select required defaultValue="" onChange={this.getVariables} style={{"width":"210px"}}>
-                                 <option value="">---------- select a dataset ----------</option>
+                                 <option value="" disabled>---------- select a dataset ----------</option>
                                  {this.state.options}
                               </select>
                            </td>
@@ -533,7 +554,7 @@ class Chartbi extends Component {
                         </tr><tr>
                            <td align="center">                                                
                               <select required defaultValue="" onChange={this.getVariables2} style={{"width":"210px"}}>
-                                 <option value="">---------- select a dataset ----------</option>
+                                 <option value="" disabled>---------- select a dataset ----------</option>
                                  {this.state.options}
                               </select>
                            </td>
@@ -580,7 +601,7 @@ class Chartbi extends Component {
                         </tr><tr>
                            <td align="center">
                               <select required defaultValue="" onChange={this.selectVariable} style={{"width":"210px"}}>
-                                 <option value="">---------- select a variable ----------</option>
+                                 <option value="" disabled>---------- select a variable ----------</option>
                                  {this.state.variablesoptions}
                               </select>
                            </td>
@@ -593,7 +614,7 @@ class Chartbi extends Component {
                         </tr><tr>
                            <td align="center">
                               <select required defaultValue="" onChange={this.selectVariable2} style={{"width":"210px"}}>
-                                 <option value="">---------- select a variable ----------</option>
+                                 <option value="" disabled>---------- select a variable ----------</option>
                                  {this.state.variablesoptions2}
                               </select>
                            </td>
@@ -614,7 +635,7 @@ class Chartbi extends Component {
                         </tr><tr>
                            <td align="center">       
                               <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"210px"}}>
-                                 <option value="">--------------- optional ---------------</option>
+                                 <option value="" disabled>--------------- optional ---------------</option>
                                  {this.state.datevariablesoptions}
                                  {this.state.companyvariablesoptions}               
                                  {this.state.depotvariablesoptions}                 
@@ -654,7 +675,7 @@ class Chartbi extends Component {
                                        {this.state.selectedfiltervariable.substring(3,)}:
                                     </div>
                                     <select id="filtervaluedropdownid" required defaultValue="" onChange={this.selectFilterValue}>
-                                       <option id="firstoption" value="">---------- select a variable ----------</option>
+                                       <option id="firstoption" value="" disabled>---------- select a variable ----------</option>
                                        {this.state.filtervaluelistoptions}                         
                                     </select>
                                     <br/>
