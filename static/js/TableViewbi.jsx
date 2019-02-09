@@ -286,6 +286,7 @@ class TableViewbi extends Component {
 
    //rendering the html for table view
    render() {
+      // const combinedcolnamesArr = this.state.combinedcolnames
       return (
       <div>
          <form method="POST" onSubmit={this.formSubmitted}>        
@@ -387,7 +388,7 @@ class TableViewbi extends Component {
             				<td align="center" style={{"overflow":"auto", "max-width":"1155px", "position":"relative", "vertical-align":"top"}}>
                            <div style={{"overflow-x":"auto"}}>
                               {this.state.combinedtableboolean?(
-                                 <div style={{"width":"1150px","max-width":"1150px","color":"white","background-color":"#357a38"}}>Combined Dataset</div> 
+                                 <div style={{"width":"1150px","max-width":"1150px","color":"white","backgroundColor":"#357a38"}}>Combined Dataset</div> 
                                  ):null
                               }       
                               <table className="outputtable" style={{"width":"1150px","max-width":"1150px"}}>

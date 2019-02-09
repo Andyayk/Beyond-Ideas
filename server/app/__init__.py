@@ -436,13 +436,13 @@ def create_app(config_name):
             """
                 This method will retrieve table display for API call from react 
             """   
-            tablename = request.form.get("tablename1")
-            tablename2 = request.form.get("tablename2")
+            usertablename = request.form.get("tablename1")+ "_" + str(current_user.id) 
+            usertablename2 = request.form.get("tablename2")+ "_" + str(current_user.id) 
 			
             joinvariable = request.form.get("selectedjoinvariable")
 			
-            variablelist = modelbi.getVarcharColumnNamebi(tablename);
-            variablelist2 = modelbi.getVarcharColumnNamebi(tablename2);
+            variablelist = modelbi.getVarcharColumnNamebi(usertablename);
+            variablelist2 = modelbi.getVarcharColumnNamebi(usertablename2);
 			
             for n, variable in enumerate(variablelist):
                 for n2, variable2 in enumerate(variablelist2):
@@ -459,7 +459,7 @@ def create_app(config_name):
 
             variables = variables1 + "," + variables2;		
 			
-            combinetable = modelbi.tablesViewJoinbi(variables, tablename, tablename2, joinvariable);
+            combinetable = modelbi.tablesViewJoinbi(variables, usertablename, usertablename2, joinvariable);
 			
             combinedtable = modelbi.displayTablebi("combinedtable");
             
