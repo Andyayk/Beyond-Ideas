@@ -401,7 +401,10 @@ def create_app(config_name):
             """
                 This method will render our table view page
             """      
-            return render_template('tablepagebi.html') 
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('tablepagebi.html')            
 
         @app.route('/tableviewbi/', methods = ['POST'])
         def tableviewbi(): #retrieving table display for API call from react      
@@ -466,8 +469,11 @@ def create_app(config_name):
         def chartpagebi(): #rendering our chart page
             """
                 This method will render our chart page
-            """      
-            return render_template('chartpagebi.html')
+            """     
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('chartpagebi.html')
         
         @app.route('/variablesbi/', methods = ['POST'])
         def variablesbi(): #retrieving variables for API call from react
@@ -557,7 +563,10 @@ def create_app(config_name):
             """
                 This method will render our web crawling page
             """      
-            return render_template('webcrawlingpagebi.html')
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('webcrawlingpagebi.html')
         
         @app.route("/weathercrawlingbi/", methods = ['POST'])
         def weathercrawlingbi(): 
@@ -580,7 +589,10 @@ def create_app(config_name):
             """
                 This method will render our twitter web crawling page
             """      
-            return render_template('testingtwittercrawlingpagebi.html')
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('testingtwittercrawlingpagebi.html')         
 
         @app.route("/twittercrawlingbi/")
         def twittercrawlingbi(): 
