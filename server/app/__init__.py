@@ -441,8 +441,8 @@ def create_app(config_name):
 			
             joinvariable = request.form.get("selectedjoinvariable")
 			
-            variablelist = modelbi.getVarcharColumnNamebi(usertablename);
-            variablelist2 = modelbi.getVarcharColumnNamebi(usertablename2);
+            variablelist = modelbi.getAllColumnNamebi(usertablename);
+            variablelist2 = modelbi.getAllColumnNamebi(usertablename2);
 			
             for n, variable in enumerate(variablelist):
                 for n2, variable2 in enumerate(variablelist2):
