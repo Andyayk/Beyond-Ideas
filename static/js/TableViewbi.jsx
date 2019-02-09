@@ -242,7 +242,7 @@ class TableViewbi extends Component {
             colvalues2: (data['coldata']),
             table2boolean: true,
          });       
-               
+         console.log(this.state.colnames2);
       });         
    }   
    
@@ -286,7 +286,6 @@ class TableViewbi extends Component {
 
    //rendering the html for table view
    render() {
-      // const combinedcolnamesArr = this.state.combinedcolnames
       return (
       <div>
          <form method="POST" onSubmit={this.formSubmitted}>        
@@ -312,13 +311,13 @@ class TableViewbi extends Component {
                            </tr><tr>
                               <td align="center">
                                 <select required defaultValue="" onChange={this.display}>
-                                  <option value="">--------------- select a dataset ---------------</option>
+                                  <option value="" disabled>--------------- select a dataset ---------------</option>
                                   {this.state.options} 
                                 </select>                     
                               </td>
                               <td align="center">
                                 <select required defaultValue="" onChange={this.display2}>
-                                  <option value="">--------------- select a dataset ---------------</option>
+                                  <option value="" disabled>--------------- select a dataset ---------------</option>
                                   {this.state.options}
                                 </select>                  
                               </td>    
@@ -392,7 +391,15 @@ class TableViewbi extends Component {
                                  ):null
                               }       
                               <table className="outputtable" style={{"width":"1150px","maxWidth":"1150px"}}>
-                                 {this.state.combinedcolnames.map((combinedcolname, key) => <th key={key}>{combinedcolname}</th>)}
+                                 {this.state.combinedcolnames && this.state.combinedcolnames.length?
+                                    this.state.combinedcolnames.map((combinedcolname, key) => {
+                                       if (combinedcolname !== '') {
+                                          return (
+                                             <th key={key}>{combinedcolname}</th>
+                                          );
+                                       }
+                                    } ):null
+                                 }
    							        {this.state.combinedcolvalues.map((combinedrows, key)=> <tr key={key}> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
             				      </table>
                            </div>
@@ -415,14 +422,22 @@ class TableViewbi extends Component {
                               </tbody>
                               </table>   
                               {this.state.table1boolean?(
-                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","background-color":"#357a38"}}>Dataset One</div> 
+                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","backgroundColor":"#357a38"}}>Dataset One</div> 
                                  ):null
                               }                           
                               <table className="outputtable" style={{"width":"550px","maxWidth":"550px"}}> 
 
                               <tbody>
 
-                                 {this.state.colnames.map((colname, key) => <th key={key}>{colname}</th>)}
+                                 {this.state.colnames && this.state.colnames.length?
+                                    this.state.colnames.map((colname, key) => {
+                                       if (colname !== '') {
+                                          return (
+                                             <th key={key}>{colname}</th>
+                                          );
+                                       }
+                                    } ):null
+                                 }
    							         {this.state.colvalues.map((rows, key)=> <tr key={key}> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
                               </tbody>
                               </table>
@@ -440,12 +455,21 @@ class TableViewbi extends Component {
                               </tbody>
                               </table> 
                               {this.state.table2boolean?(
-                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","background-color":"#357a38"}}>Dataset Two</div> 
+                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","backgroundColor":"#357a38"}}>Dataset Two</div> 
                                  ):null
                               }                                
                               <table className="outputtable" style={{"width":"550px","maxWidth":"550px"}}>  
                               <tbody> 
-                                 {this.state.colnames2.map((colname2, key) => <th key={key}>{colname2}</th>)}
+                                 {this.state.colnames2 && this.state.colnames2.length?
+                                    this.state.colnames2.map((colname2, key) => {
+                                       if (colname2 !== '') {
+                                          return (
+                                             <th key={key}>{colname2}</th>
+                                          );
+                                       }
+                                    } ):null
+                                 }
+                                 
    							         {this.state.colvalues2.map((rows2, key)=> <tr key={key}> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
                               </tbody>
                               </table>
