@@ -635,7 +635,7 @@ class Chartbi extends Component {
                         </tr><tr>
                            <td align="center">       
                               <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"210px"}}>
-                                 <option value="" disabled>--------------- optional ---------------</option>
+                                 <option value="">--------------- optional ---------------</option>
                                  {this.state.datevariablesoptions}
                                  {this.state.companyvariablesoptions}               
                                  {this.state.depotvariablesoptions}                 
