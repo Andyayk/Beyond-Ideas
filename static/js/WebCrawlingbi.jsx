@@ -140,7 +140,7 @@ class WebCrawlingbi extends Component {
                                  <td align="center">
                                     <div className="cardtitle">
                                        Select Date Range
-                                    </div>
+                                    </div>                                    
                                  </td>
                               </tr><tr>
                                  <td align="center">
@@ -150,7 +150,7 @@ class WebCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">                                
-                                    <input type="date" style={{"width":"200px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectStartDate} />
+                                    <input type="date" style={{"width":"220px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectStartDate} />
                                  </td>
                               </tr><tr>
                                  <td align="center">                                                                 
@@ -160,12 +160,18 @@ class WebCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">                                
-                                    <input type="date" style={{"width":"200px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectEndDate} />
+                                    <input type="date" style={{"width":"220px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectEndDate} />
                                  </td>
-                              </tr>
-                              <div className="carderrormsg">{this.state.errordatestatement}</div>
-                              <br/>
-                              <tr>
+                              </tr><tr>
+                                 <td align="center">
+                                    <font size="2" color="grey"><i>Safari users, please use "yyyy-mm-dd"</i></font>
+        
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <div className="carderrormsg">{this.state.errordatestatement}</div>
+                                 </td>
+                              </tr><br/><tr>
                                  <td align="center">
                                     <div className="cardtitle">
                                        Select Country
@@ -179,7 +185,7 @@ class WebCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <select required defaultValue="" onChange={this.selectCountryName} style={{"width":"200px"}}>
+                                    <select required defaultValue="" onChange={this.selectCountryName} style={{"width":"220px"}}>
                                        <option value="" disabled>-------- select a country --------</option>
                                        <option value="Australia">Australia</option>
                                        <option value="Bangladesh">Bangladesh</option>
