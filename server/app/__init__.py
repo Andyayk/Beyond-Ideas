@@ -66,7 +66,7 @@ def create_app(config_name):
     migrate = Migrate(app, db)
 
     from app import models
-    from app.models import User, UserData
+    from app.models import User, UserData, GroupValidHeaders, UserVisualization, Group, GroupMember, GroupDataset
 
     # Render Homepage
 
@@ -83,6 +83,13 @@ def create_app(config_name):
             return redirect(url_for('login_r'))
         else:
             return render_template('visualisation.html')
+
+    @app.route("/manage/")
+    def manage():
+        if not current_user.is_authenticated:
+            return redirect(url_for('login_r'))
+        else:
+            return render_template('manage.html')
 
     @app.route('/signup')
     def signup_r():
@@ -169,12 +176,10 @@ def create_app(config_name):
     @app.route('/upload_api', methods=['GET', 'POST'])  # API for upload
     def upload_file():
         # if current_user.is_authenticated:
-        print("here2")
         if 'editData' in session:
             session.pop('editData')
         if request.method == 'POST':
             # check if the post request has the file part
-            print(request.files)
             if 'file' not in request.files:
                 # flash('No file part')
                 return jsonify({'status':402, 'error':'No File Part'})
@@ -189,18 +194,21 @@ def create_app(config_name):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 session['filePath'] = 'app/uploads/' + filename
                 session['fileName'] = filename
-                
-                value = json.loads(check_headers.suggest_headers('app/uploads/' + filename))
-                # print("==VALUE OUPUT==")
-                # print(value)
+                valid = GroupValidHeaders.query.filter_by(group_id=current_user.group_id).all()
+                valid_headers=[]
+                header_types ={}
+                for row in valid:
+                    valid_headers.append(row.header_name)
+                    header_types[row.header_name] = row.data_type
+                value = json.loads(check_headers.suggest_headers('app/uploads/' + filename, valid_headers, header_types))
+
                 if value['status'] == 400:
                     session['editData'] = value
                     return jsonify(value)
                 else:
                     f = filename[0:len(filename) - 4]+ "_" +str(current_user.id)
                     has = UserData.query.filter_by(data_name=f).first()
-                    # print("==HAS VALUE==")
-                    # print(has)
+
                     if has is None:
                         header = "("
                         headerNoType ="("
@@ -248,7 +256,7 @@ def create_app(config_name):
                         insertSQL += v[0:len(v) - 1] +";"
                         db.engine.execute(text(sql))
                         db.engine.execute(text(insertSQL))
-                        userData = UserData(data_name=f, user_id=current_user.id)
+                        userData = UserData(data_name=f, user_id=current_user.id, upload_date=datetime.datetime.now())
                         db.session.add(userData)
                         db.session.commit()
                         # if os.path.join(app.config['UPLOAD_FOLDER']).exists(filename):
@@ -267,7 +275,7 @@ def create_app(config_name):
     def get_all_dataset_api():
         if current_user.is_authenticated:
             c_id = current_user.id
-            ds_names = UserData.query.filter_by(user_id=c_id).all()
+            ds_names = UserData.query.filter_by(user_id=c_id).order_by(UserData.upload_date.desc()).all()
             returnList =[]
             for dd in range(len(ds_names)):
                 d = ds_names[dd]
@@ -275,11 +283,12 @@ def create_app(config_name):
                 temp["id"] = f'dataset-name-{dd+1}'
                 temp["name"] = d.data_name[0: d.data_name.rfind("_")]
                 returnList.append(temp)
+                # print(returnList)
             return jsonify({'datasetNames':returnList})
         else:
             return jsonify({'status':400})
 
-    
+
     @app.route('/get_headers_api', methods=['POST'])
     def get_headers_api():
         if current_user.is_authenticated:
@@ -309,7 +318,26 @@ def create_app(config_name):
     
     @app.route('/viz_filter_api', methods=["POST"])
     def viz_filter_api():
+        
+        def sortConvert(direction):
+            return {
+                "ascending": "ASC",
+                "descending": "DESC"
+            }[direction]
+        
+        def fixDate(dateStr):
+            dateObj = { 'Jan' : 1, 'Feb' : 2, 'Mar' : 3, 'Apr' : 4, 'May' : 5, 'Jun' : 6, 'Jul' : 7, 'Aug' : 8, 'Sep' : 9, 'Oct' : 10, 'Nov' : 11, 'Dec' : 12}
+            dateList = dateStr.split(" ")
+            date = datetime.date(int(dateList[3]), int(dateObj[dateList[2]]), int(dateList[1]))
+            return date
+
+        
         if current_user.is_authenticated:
+            valid = GroupValidHeaders.query.filter_by(group_id=current_user.group_id).all()
+            header_types ={}
+            for row in valid:
+                header_types[row.header_name] = row.data_type
+
             req = request.get_json()
 
             dataset = req['selectedData'] + "_" + str(current_user.id)
@@ -317,26 +345,45 @@ def create_app(config_name):
             y_axis = req['headers'][1]
             aggre = req['aggregate']
             filters = req['filter']
-
-            if len(filters) == 0:
-                sql = f'SELECT {x_axis}, {aggre}({y_axis}) as y_axis FROM {dataset} GROUP BY {x_axis} ORDER BY {x_axis} ASC'
-                returnSQL = db.engine.execute(sql)
-
-            else:
+            
+            conditions = ""
+            if len(filters) > 0:
                 conditions = "WHERE "
                 for f in filters:
-                    conditions += f['column'] + " " + f['condition'] + " '" + f['value'] + "' AND "
-
+                    if header_types[f['column']] == 'date':
+                        val = fixDate(f['value'])
+                        # print(val)
+                        conditions += f['column'] + " " + f['condition'] + " '" + str(val) + "' AND "
+                    else:
+                        conditions += f['column'] + " " + f['condition'] + " '" + f['value'] + "' AND "
                 conditions = conditions[0: len(conditions) - 4]
+            else:
+                conditions = ""
 
-                sql = f'SELECT {x_axis}, {aggre}({y_axis}) as y_axis FROM {dataset} {conditions} GROUP BY {x_axis} ORDER BY {x_axis} ASC'
+
+            orderBy = ""
+            if (req['topKSort'] is not None):
+                topKSort = sortConvert(req['topKSort'])
+                orderBy = f'ORDER BY y_axis {topKSort}, {x_axis} ASC'
+            else:
+                orderBy = f'ORDER BY {x_axis} ASC'
+
+
+            limitResult = ""
+            if (req['topKLimit'] is not None):
+                topKLimit = req['topKLimit']
+                limitResult = f'LIMIT {topKLimit}'
+            else:
+                limitResult = ""
+
+            sql = f'SELECT {x_axis}, {aggre}({y_axis}) as y_axis FROM {dataset} {conditions} GROUP BY {x_axis} {orderBy} {limitResult}'
 
             returnSQL = db.engine.execute(sql)
             returnDict = {}
             returnDict["xaxis"] = []
             returnDict["yaxis"] = []
             for row in returnSQL:
-                returnDict["xaxis"].append(row[0])
+                returnDict["xaxis"].append(str(row[0]))
                 returnDict["yaxis"].append(float(row[1]))
             
             if len(returnDict["xaxis"]) == 0 or len(returnDict["yaxis"]) == 0:
@@ -347,7 +394,7 @@ def create_app(config_name):
     
     @app.route("/update_api")
     def update_api():
-        print("here")
+        # print("here")
         if 'editData' not in session or session['editData'] == None:
             return jsonify({"status":500})
         else:
@@ -373,7 +420,7 @@ def create_app(config_name):
         rename_dict = {}
 
         for key, value in headers_dict.items():
-            if value == None:
+            if len(value) == 0:
                 to_drop.append(key)
             else:
                 rename_dict[key] = value
@@ -381,13 +428,128 @@ def create_app(config_name):
         df.drop(columns=to_drop, axis=1, inplace=True)
         df.rename(columns=rename_dict, inplace=True)
 
-        df.to_sql(name = filename[0:len(filename)-4]+"_"+str(current_user.id), con=db.engine)
+        date_columns = list(df.select_dtypes(include=['object']).columns)
 
-        userData = UserData(data_name=filename[0:len(filename)-4]+"_"+str(current_user.id), user_id=current_user.id)
+        for column in date_columns:
+            df[column] = pd.to_datetime(df[column], format = "%d/%m/%y")
+
+        df.to_sql(name = filename[0:len(filename)-4]+"_"+str(current_user.id), con=db.engine, index=False)
+
+        userData = UserData(data_name=filename[0:len(filename)-4]+"_"+str(current_user.id), user_id=current_user.id, upload_date=datetime.datetime.now())
         db.session.add(userData)
         db.session.commit()
 
         return jsonify({'status':200})
+
+    @app.route('/view_data_api', methods=["GET"])
+    def view_data_api():
+        filePath = session.get('filePath')
+        filename = session.get('fileName')
+
+        df = pd.read_csv(filePath)
+
+        df = df.head()
+
+        dic = {}
+        s = [list(l) for l in zip(*df.values)]
+        i = 0
+        for row in s:
+            dic[df.columns[i]] = row
+            i = i + 1
+
+        toReturn = [(k,v) for k,v in dic.items()]
+        return jsonify({'data': toReturn})
+
+    @app.route('/save_visualization', methods=["POST"])
+    def save_visualization():
+        userID = current_user.id
+        userViz = UserVisualization(upload_date=datetime.datetime.now(), configs=request.get_json(),user_id=userID)
+        db.session.add(userViz)
+        db.session.commit()
+        return jsonify({'status':200})
+
+    @app.route('/get_all_saved_viz')
+    def get_all_saved_viz():
+        userID = current_user.id
+        res = UserVisualization.query.filter_by(user_id=userID).order_by(UserVisualization.upload_date.desc()).all()
+        returnList = []
+        for item in res:
+            temp = {}
+            temp[str(item.upload_date)] = item.configs
+            returnList.append(temp)
+        
+        return jsonify({'data':returnList, 'status': 200})
+
+    @app.route('/has_group')
+    def has_group():
+        if(current_user.group_id is not None):
+            returnObj = {}
+            returnObj['status'] = 200
+            group = Group.query.filter_by(id=current_user.group_id).one()
+            returnObj['managerId'] = group.manager_id
+            members = GroupMember.query.filter_by(group_id=current_user.group_id).all()
+            returnObj['numMember'] = len(members)
+            returnObj['group_id'] = current_user.group_id
+            return jsonify(returnObj)
+        return jsonify({'status':400})
+
+    @app.route('/get_manager_info',methods=["POST"])
+    def get_manager_info():
+        dic = request.get_json()
+        manager_id = dic['manager_id']
+        man = User.query.filter_by(id=manager_id).one()
+        returnDict = {}
+        returnDict['name'] = man.fullname
+        returnDict['email'] = man.email
+        returnDict['status'] = 200
+        return jsonify(returnDict)
+        
+    @app.route('/get_group_user_dataset')
+    def get_group_user_dataset():
+        if current_user.is_authenticated:
+            c_id = current_user.id
+            g_id = current_user.group_id
+            ds_names = UserData.query.filter_by(user_id=c_id).order_by(UserData.upload_date.desc()).all()
+            gds_names = GroupDataset.query.filter_by(group_id=g_id).order_by(GroupDataset.upload_date.desc()).all()
+            yourList =[]
+            gList = []
+            for dd in range(len(ds_names)):
+                d = ds_names[dd]
+                yourList.append(d.data_name[0: d.data_name.rfind("_")])
+
+            for dd in range(len(gds_names)):
+                d = gds_names[dd]
+                gList.append(d.data_name[0:d.data_name.rfind("_")])
+
+            return jsonify({'yourData':yourList,'groupData':gList})
+        else:
+            return jsonify({'status':400})
+
+    @app.route('/push_to_group', methods=["post"])
+    def push_to_group():
+        d = request.get_json()
+        dsname = d['data_name']+"_" + str(current_user.id)
+        has = GroupDataset.query.filter_by(data_name=dsname).first()
+        if has is None:
+            g_id = current_user.group_id
+            groudDS = GroupDataset(group_id=g_id,data_name=dsname, upload_date=datetime.datetime.now())
+            db.session.add(groudDS)
+            db.session.commit()
+            return jsonify({'status':200})
+        else:
+            return jsonify({'status':400})
+
+    @app.route('/get_all_groups')
+    def get_all_groups():
+        groups = Group.query.all()
+        returnList = []
+        for data in groups:
+            temp = {}
+            temp['id'] = data.id
+            temp['manager_id'] = data.manager_id
+            returnList.append(temp)
+
+        return jsonify({'data':returnList, 'status':200})
 
 # ========================================================= Beyond-Ideas Classes START HERE ================================================
 

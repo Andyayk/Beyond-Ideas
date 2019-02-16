@@ -173,7 +173,7 @@ class TableViewbi extends Component {
          this.checkradiobutton(data['colnames'], this.state.colnames2, "dateradio", "labeldate", "date")
          this.checkradiobutton(data['colnames'], this.state.colnames2, "companyradio", "labelcompany", "company");
          this.checkradiobutton(data['colnames'], this.state.colnames2, "depotradio", "labeldepot", "depot");
-         this.checkradiobutton(data['colnames'], this.state.colnames2, "locationradio","labelcountry", "location");
+         this.checkradiobutton(data['colnames'], this.state.colnames2, "locationradio","labelcountry", "country");
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.colnames2);   
          
          this.setState({
@@ -201,7 +201,7 @@ class TableViewbi extends Component {
          this.checkradiobutton(data['colnames'], this.state.colnames, "dateradio", "labeldate", "date")
          this.checkradiobutton(data['colnames'], this.state.colnames, "companyradio", "labelcompany", "company");
          this.checkradiobutton(data['colnames'], this.state.colnames, "depotradio", "labeldepot", "depot");
-         this.checkradiobutton(data['colnames'], this.state.colnames, "locationradio","labelcountry", "location");
+         this.checkradiobutton(data['colnames'], this.state.colnames, "locationradio","labelcountry", "country");
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.colnames);   
           
          this.setState({
