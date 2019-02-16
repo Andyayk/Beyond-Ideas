@@ -20,77 +20,62 @@ export default class VisualisationContent extends React.Component {
     super();
     this.state = {
       currentPage: "selection",
-      datasetNames: [
-        {
-          id: "dataset-name-1",
-          name: "inventory.csv"
-        },
-        {
-          id: "dataset-name-2",
-          name: "sku.csv"
-        },
-        {
-          id: "dataset-name-3",
-          name: "movement.csv"
-        }
-      ],
+      datasetNames: {},
       chartTypes: [
         {
-          id: "line-chart",
-          name: "Line Chart"
+          id: "scatter",
+          name: "Line Chart (Time Series Analysis)"
         },
         {
-          id: "column-chart",
-          name: "Column Chart"
-        },
-        {
-          id: "bar-chart",
-          name: "Bar Chart"
-        },
-        {
-          id: "stacked-bar-chart",
-          name: "Stacked Bar Chart"
-        },
-        {
-          id: "synchronised-line-chart",
-          name: "Synchronised Line Chart"
+          id: "bar",
+          name: "Bar Chart (Top K Analysis)"
         },
         {
           id: "scatter-chart",
           name: "Scatter Chart"
-        },
-        {
-          id: "box-plot",
-          name: "Box Plot"
         }
       ],
       test: true
     };
     this.callBackendAPI = this.callBackendAPI.bind(this);
+    this.postData = this.postData.bind(this);
     this.navPageHandler = this.navPageHandler.bind(this);
     this.selectDatasetHandler = this.selectDatasetHandler.bind(this);
     this.selectChartTypeHandler = this.selectChartTypeHandler.bind(this);
   }
 
-  // componentDidMount() {
-  //   console.log("In ComponentDidMount method");
-  //   this.callBackendAPI("/get_all_dataset_api")
-  //     .then(res => {
-  //       console.log(res);
-  //       console.log(res.datasets);
-  //       this.setState({ datasetNames: res.datasets });
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //     });
-  // }
+  componentDidMount() {
+    // this.callBackendAPI("/get_all_dataset_api")
+    //   .then(res => {
+    //     this.setState({ datasetNames: res.datasetNames });
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
 
-  // getData() {
-  //   var sampleData = require("./SampleData.js").data;
-  //   this.state = {
-  //     data: sampleData
-  //   };
-  // }
+    this.callBackendAPI("/get_group_user_dataset")
+      .then(res => {
+        console.log("get call: datasetNames");
+        console.log(res);
+        this.setState({ datasetNames: res });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  async postData(url, bodyObj) {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(bodyObj)
+    });
+    const body = await response.json();
+    return body;
+  }
 
   // GET METHOD CALL
   async callBackendAPI(url) {
@@ -108,7 +93,6 @@ export default class VisualisationContent extends React.Component {
   }
 
   selectDatasetHandler(value) {
-    console.log("Change state of 'selectedDataset' to " + value);
     this.setState({ selectedDataset: value });
   }
 
@@ -119,20 +103,16 @@ export default class VisualisationContent extends React.Component {
 
   render() {
     if (this.state.currentPage === "selection") {
-      console.log("Vis Selection");
-      console.log(this.state);
       return (
         <VisSelection
           handler={this.navPageHandler}
-          datasetItems={this.state.datasetNames}
+          datasetNames={this.state.datasetNames}
           chartTypes={this.state.chartTypes}
           selectDatasetHandler={this.selectDatasetHandler}
           selectChartTypeHandler={this.selectChartTypeHandler}
         />
       );
     } else if (this.state.currentPage === "chart") {
-      console.log("Vis Display");
-      console.log(this.state);
       return (
         <VisChart
           handler={this.navPageHandler}

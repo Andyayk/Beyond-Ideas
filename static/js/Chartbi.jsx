@@ -667,6 +667,11 @@ class Chartbi extends Component {
                                     </div>
                                     <input type="date" style={{"width":"210px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
                                     <br/>
+                                    <tr>
+                                    <td align="center">
+                                       <font size="2" color="grey"><i>Safari users, please use "yyyy-mm-dd"</i></font>
+                                    </td>
+                                    </tr>
                                  </div>
                               }
                               {this.state.selectedfiltervariable && !this.state.selectedfiltervariable.toLowerCase().includes("date") &&

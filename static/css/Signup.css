@@ -14,7 +14,7 @@
   height: 100vh;
 }
 
-.form-half {
+.form-half{
   grid-area: form-half;
   background: white;
   width: 100%;
@@ -58,7 +58,7 @@
   height:100%;
 }
 
-.center-footer {
+.center-footer{
   grid-area: footer;
   /* border:1px solid black; */
 }
@@ -79,16 +79,6 @@
   background-color: #fcfcfc;
   border: solid 1px #eeeeee;
 }
-
-/* .signup-input {
-  width: 100%;
-  padding: 8px 138px;
-  margin: 8px 0;
-  box-sizing: border-box;
-  background-color: #fcfcfc;
-  border: solid 1px #eeeeee;
-  border-radius: 4px;
-} */
 
 .signup-label {
   font-family: "Roboto", sans-serif;

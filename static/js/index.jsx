@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
+// BEYOND IDEAS ----
 import TableViewbi from './TableViewbi';
 import Chartbi from './Chartbi';
 import WebCrawlingbi from './WebCrawlingbi';
 import TestingTwitterCrawlingbi from './TestingTwitterCrawlingbi';
+
+// PANDACONDA ----
 import App from "./App";
 import HomeContent from "./HomeContent";
 import UploadContent from "./UploadContent";
 import VisualisationContent from "./VisualisationContent";
 import Signup from "./Signup";
-import EditTable from "./EditTable";
+import EditTable from "./EditTable"
+import Manage from "./Manage"
+
+// COMMON ---
 import "babel-polyfill";
 
 require('../css/main.css');
@@ -45,6 +51,11 @@ if (signupPage) {
 const tablePage = document.getElementById("tablePage");
 if (tablePage) {
   ReactDOM.render(<EditTable />, tablePage);
+}
+
+const managePage = document.getElementById("managePage");
+if (managePage) {
+  ReactDOM.render(<Manage />, managePage);
 }
 
 // ========================================================= Beyond Ideas Classes START HERE ================================================

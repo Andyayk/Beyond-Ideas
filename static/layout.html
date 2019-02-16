@@ -25,40 +25,79 @@
   <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
   <div class="layout">
     <div class="header-layout">
+        <div class="logout-align-right">
+            <button style="display:flex;justify-content:center;align-content:center;text-align:center;padding: 15px 32px;" onclick="callBackendAPI('/logout_api')">Log Out</button>
+        </div>
+    
     </div>
+
     <div class="logo-layout">
       <img src="{{ url_for('static', filename='images/DHL_logo.png') }}" alt="Logo" />
     </div>
+
     <div class="sidebar-layout">
       <a id="home" class="sidebar-item" href="/">
         <img src="{{ url_for('static', filename='images/home.png') }}" alt="house" />
         Home
       </a>
+
       <a id="visualisation" class="sidebar-item" href="/visualisation/">
         <img src="{{ url_for('static', filename='images/chart.png') }}" alt="chart" />
         Visualisation
       </a>
+
       <a id="upload" class="sidebar-item" href="/upload/">
         <img src="{{ url_for('static', filename='images/upload.png') }}" alt="upload" />
         Upload Data
       </a>
+
+      <a id="upload" class="sidebar-item" href="/manage/">
+        <img
+          src="{{ url_for('site.static', filename='images/upload.png') }}"
+          alt="upload"
+        />
+        Your Group
+      </a>
+      
       <a id="viewtable" class="sidebar-item" href="/tablepagebi/">
         <img src="{{ url_for('static', filename='images/DatasetIcon.png') }}" alt="viewtable" />        
         View Datasets
       </a>
+
       <a id="correlation" class="sidebar-item" href="/chartpagebi/">
         <img src="{{ url_for('static', filename='images/CorrelationIcon.png') }}" alt="correlation" />        
         Correlation
       </a>
+
       <a id="webcrawling" class="sidebar-item" href="/webcrawlingpagebi/">
         <img src="{{ url_for('static', filename='images/WebCrawlIcon.png') }}" alt="webcrawling" />        
         Web Crawling
-      </a> 
+      </a>
     </div>
+
     <div class="content-layout">
       {% block content %}{% endblock %}
     </div>
   </div>
 </body>
 
+<script>
+    async function callBackendAPI(url) {
+      const response = await fetch(url);
+      window.location = "/";
+    }
+  
+  //   function open() {
+  //   document.getElementById("content-layout").style.marginLeft = "250px";
+  //   document.getElementById("sidebar-layout").style.width = "25%";
+  //   document.getElementById("sidebar-layout").style.display = "block";
+  //   document.getElementById("openNav").style.display = 'none';
+  // }
+    function close() {
+    document.getElementById("content-layout").style.marginLeft = "0";
+    document.getElementById("sidebar-layout").style.width = "0";
+    document.getElementById("sidebar-layout").style.display = "none";
+    document.getElementById("openNav").style.display = "inline-block";
+  }
+</script>
 </html>
