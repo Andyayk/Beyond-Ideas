@@ -7,14 +7,21 @@ import pandas as pd
 
 from twython import Twython
 
+from sqlalchemy import create_engine
+from sqlalchemy.sql import text
+engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
+
 #MySQL Configurations
-mydb = mysql.connector.connect(
-  host = "localhost",
-  user = "root",
-  passwd = "",
-  database = "is480-term1-2018-19"
-)
-cursor = mydb.cursor(buffered=True)    
+# mydb = mysql.connector.connect(
+  # host = "localhost",
+  # user = "root",
+  # passwd = "",
+  # database = "is480-term1-2018-19"
+# )
+# cursor = mydb.cursor(buffered=True)  
+
+  
+connection = engine.connect()
 
 def is_emptybi(any_structure):
     """
@@ -30,14 +37,19 @@ def displayTablebi(table_name):
         This method will display table 
     """      
     try:
-        cursor.execute("SELECT * FROM `" + table_name + "` LIMIT 20")
-        
+        resultQuery = text("SELECT * FROM `" + table_name + "` LIMIT 20")
+        result = connection.execute(resultQuery)
+
         cols = []
-        for col in cursor.description:
-            cols.append(col[0])
+        columnQuery = text("SELECT COLUMN_NAME FROM information_schema.columns WHERE table_schema='is480-term1-2018-19' AND table_name='" + table_name + "'")
+        header = connection.execute(columnQuery)
+        
+        for col in header:
+            for cl in col:
+                cols.append(cl)
 
         tabledata = []
-        for item in cursor:
+        for item in result:
             row = []
             for col in item:
                 row.append(col)   
@@ -56,33 +68,32 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         This method will join tables together using date or company or depot or country name
     """
     try:
-        sqlstmt = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+        sqlstmtQuery = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
         
         if "date" in joinvariable.lower(): #join by date
             date1 = getDateColumnNamebi(tablename)
             date2 = getDateColumnNamebi(tablename2)
            
-            sqlstmt = sqlstmt + " WHERE t1." + date1[0] + " = t2." + date2[0]
+            sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0]
         else:
-            sqlstmt = sqlstmt + " WHERE t1." + joinvariable + " = t2." + joinvariable   
+            sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable   
         
         
         if "date" in filtervariable.lower(): #filter by date
-            sqlstmt = sqlstmt + " AND " + filtervariable + " BETWEEN '" + filtervalue + "' AND '" + filtervalue2 + "'"
+            sqlstmtQuery = sqlstmtQuery + " AND " + filtervariable + " BETWEEN '" + filtervalue + "' AND '" + filtervalue2 + "'"
         elif not filtervariable == "":
-            sqlstmt = sqlstmt + " AND " + filtervariable + " = '" + filtervalue + "'"
+            sqlstmtQuery = sqlstmtQuery + " AND " + filtervariable + " = '" + filtervalue + "'"
         else:
-            sqlstmt = sqlstmt
+            sqlstmtQuery = sqlstmtQuery
             
-        cursor.execute(sqlstmt)
-
-        cols = []
+        sqlstmt = connection.execute(sqlstmtQuery)
+        sqlstmt = connection.execute(sqlstmtQuery)
         x = []
         y = []
-        for col in cursor.description: # add table cols
-            cols.append(col[0])    
+
+          
         
-        for row_data in cursor: #add table rows
+        for row_data in sqlstmt: #add table rows
             if is_emptybi(row_data[0]):
                 x.append(0)
             else: 
@@ -106,7 +117,7 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
         This method will join two tables together and save to MySQL database
     """
     try:
-        cursor.execute("DROP TABLE IF EXISTS combinedtable")
+        connection.execute("DROP TABLE IF EXISTS combinedtable")
         sqlstmt = "CREATE TABLE combinedtable AS SELECT "+ variables + " FROM `" + tablename + "` as t1 INNER JOIN `" + tablename2 + "` as t2"
         
         if "date" in joinvariable.lower(): #join by date
@@ -116,7 +127,7 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
             sqlstmt = sqlstmt + " WHERE t1." + date1[0] + " = t2." + date2[0]
         else:
             sqlstmt = sqlstmt + " WHERE t1." + joinvariable + " = t2." + joinvariable
-        cursor.execute(sqlstmt)
+        connection.execute(sqlstmt)
 
         return "success"
     except Exception as e:
@@ -129,9 +140,10 @@ def getNumericalColumnNamebi(table_name):
     try:   
         cols = []
         
-        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "' AND DATA_TYPE IN ('TINYINT', 'SMALLINT', 'MEDIUMINT', 'INT', 'BIGINT', 'DECIMAL', 'FLOAT', 'DOUBLE', 'REAL', 'BIT', 'BOOLEAN', 'SERIAL')")
-        for col in cursor: # add table cols
-            cols.append(col[0])
+        result = connection.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "' AND DATA_TYPE IN ('TINYINT', 'SMALLINT', 'MEDIUMINT', 'INT', 'BIGINT', 'DECIMAL', 'FLOAT', 'DOUBLE', 'REAL', 'BIT', 'BOOLEAN', 'SERIAL')")
+        for col in result: # add table cols]
+            for cl in col:
+                cols.append(cl)
 
         return cols
     except Exception as e:
@@ -144,9 +156,10 @@ def getAllColumnNamebi(table_name):
     try:   
         cols = []
         
-        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "'")
-        for col in cursor: # add table cols
-            cols.append(col[0])
+        result = connection.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table_name + "'")
+        for col in result: # add table cols
+            for cl in col:
+                cols.append(cl)
 
         return cols
     except Exception as e:
@@ -157,12 +170,13 @@ def getDateColumnNamebi(tablename):
         This method will get date variables column names only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND DATA_TYPE = 'date'")
+        result = connection.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND DATA_TYPE = 'date'")
 
         cols = []
 
-        for col in cursor: #add table cols
-            cols.append(col[0])
+        for col in result: #add table cols
+            for cl in col:
+                cols.append(cl)
 
         return cols
     except Exception as e:
@@ -173,12 +187,12 @@ def getCompanyColumnNamebi(tablename):
         This method will get company variables column names only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%company%'")
-
+        result = connection.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%%company%%'")
         cols = []
 
-        for col in cursor: #add table cols
-            cols.append(col[0])
+        for col in result: #add table cols
+            for cl in col:
+                cols.append(cl)
 
         return cols
     except Exception as e:
@@ -189,12 +203,13 @@ def getDepotColumnNamebi(tablename):
         This method will get depot variables column names only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%depot%'")
+        result = connection.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%%depot%%'")
 
         cols = []
 
-        for col in cursor: #add table cols
-            cols.append(col[0])
+        for col in result: #add table cols
+            for cl in col:
+                cols.append(cl)
 
         return cols
     except Exception as e:
@@ -205,12 +220,12 @@ def getCountryNameColumnNamebi(tablename):
         This method will get country name variables column names only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%country%'")
+        result = connection.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND COLUMN_NAME LIKE '%%country%%'")
 
         cols = []
-
-        for col in cursor: #add table cols
-            cols.append(col[0])
+        for col in result: #add table cols
+            for cl in col:
+                cols.append(cl)
 
         return cols
     except Exception as e:
@@ -221,12 +236,13 @@ def getCompanyValuesbi(tablename):
         This method will get company values only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT Company FROM `" + tablename + "`")
+        result = connection.execute("SELECT DISTINCT Company FROM `" + tablename + "`")
 
         cols = []
 
-        for col in cursor: #add table cols
-            cols.append(col[0])
+        for col in result: #add table cols
+            for cl in col:
+                cols.append(cl)
 
         return cols
     except Exception as e:
@@ -237,12 +253,13 @@ def getDepotValuesbi(tablename):
         This method will get depot values only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT Depot FROM `" + tablename + "`")
+        result = connection.execute("SELECT DISTINCT Depot FROM `" + tablename + "`")
 
         cols = []
 
-        for col in cursor: #add table cols
-            cols.append(col[0])
+        for col in result: #add table cols
+            for cl in col:
+                cols.append(cl)
 
         return cols
     except Exception as e:
@@ -253,12 +270,13 @@ def getCountryNameValuesbi(tablename):
         This method will get country name values only
     """ 
     try:
-        cursor.execute("SELECT DISTINCT CountryName FROM `" + tablename + "`")
+        result = connection.execute("SELECT DISTINCT CountryName FROM `" + tablename + "`")
 
         cols = []
 
-        for col in cursor: #add table cols
-            cols.append(col[0])
+        for col in result: #add table cols
+            for cl in col:
+                cols.append(cl)
 
         return cols
     except Exception as e:
@@ -269,12 +287,13 @@ def getFilterValuesbi(tablename, tablename2, filtervariable):
         This method will get the values based on the filter variable
     """ 
     try:
-        cursor.execute("SELECT DISTINCT " + filtervariable[3:] + " FROM `" + tablename + "` , `" + tablename2 + "`")
+        result = connection.execute("SELECT DISTINCT " + filtervariable[3:] + " FROM `" + tablename + "` , `" + tablename2 + "`")
 
         cols = []
 
-        for col in cursor: #add table cols
-            cols.append(col[0])
+        for col in result: #add table cols
+            for cl in col:
+                cols.append(cl)
 
         return cols
     except Exception as e:
