@@ -15,7 +15,8 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from sqlalchemy import text
 from werkzeug.utils import secure_filename
 import pandas as pd
-
+import re
+from flask_sslify import SSLify
 # db variable initialization
 db = SQLAlchemy()
 
@@ -24,7 +25,7 @@ db = SQLAlchemy()
 def create_app(config_name):
     app = Flask(__name__, static_folder='../../static/dist',
                 template_folder='../../static')
-
+    sslify = SSLify(app)
     # App Configurations
     app.config.from_pyfile('../instance/config.cfg', silent=True)
     # app.config["CUSTOM_STATIC_PATH"] = "../../static"
@@ -224,7 +225,7 @@ def create_app(config_name):
                             elif(v == 'string'):
                                 header = header + "VARCHAR(MAX)"
                             elif(v == 'date'):
-                                header = header + "DATETIME"
+                                header = header + "DATE"
                                 dateIndex.append(d)
                             elif(v == 'double'):
                                 header = header + "FLOAT"
@@ -402,10 +403,23 @@ def create_app(config_name):
             return jsonify(value)
 
     def convertToDate(i):
-        dateList = i.split("/")
+        dateList = []
+        date = ""
+        if(re.match("(^(((0[1-9]|1[0-9]|2[0-8])[\/\-\.](0[1-9]|1[012]))|((29|30|31)[\/\-\.](0[13578]|1[02]))|((29|30)[\/\-\.](0[4,6,9]|11)))[\/\-\.](19|[2-9][0-9])\d\d$)|(^29[\/\-\.]02[\/\-\.](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)",i)):
+            if("-" in i):
+                dateList = i.split("-")
+            elif("/" in i):
+                dateList = i.split("/")
+            date = datetime.date(int(dateList[2]), int(dateList[1]), int(dateList[0]))
+        elif(re.match("^\d{4}[\-\/\s]?((((0[13578])|(1[02]))[\-\/\s]?(([0-2][0-9])|(3[01])))|(((0[469])|(11))[\-\/\s]?(([0-2][0-9])|(30)))|(02[\-\/\s]?[0-2][0-9]))$",i)):
+            if("-" in i):
+                dateList = i.split("-")
+            elif("/" in i):
+                dateList = i.split("/")
+            date = datetime.date(int(dateList[0]), int(dateList[1]), int(dateList[2]))
         if len(dateList) != 3:
             return None
-        date = datetime.date(int(dateList[2]), int(dateList[1]), int(dateList[0]))
+        
         return date
 
     @app.route('/finalize_headers_api', methods=['POST'])  # API for the final headers
