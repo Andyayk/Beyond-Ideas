@@ -434,29 +434,30 @@ def twitterCrawlerbi():
     """ 
 
     # Load credentials from json file
-    with open(os.getcwd()+"\\twitter_credentials.json", "r") as file:  
-        creds = json.load(file)
+    fromtwitter = requests.get("https://api.twitter.com/1.1/application/rate_limit_status.json?resources=help,users,search,statuses")
 
-    # Instantiate an object
-    python_tweets = Twython(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
+    try:    
+        with open(os.getcwd()+"\\instance\\twitter_credentials.json", "r") as file:  
+            creds = json.load(file)
 
-    # Create our query
-    query = {'q': 'learn python',  
-            'result_type': 'popular',
-            'count': 10,
+        # Instantiate an object
+        python_tweets = Twython(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
+        
+        tweets = []
+
+        query = {
+            'q': 'learn python', 
             'lang': 'en',
-            }
+            'count': '100'
+        }
+        print(fromtwitter)
+        for status in python_tweets.search(**query)['statuses']:  
+            tweet = []     
+            tweet.append(status['user']['name'])            
+            tweet.append(status['text'])
+            tweet.append(status['created_at'])
+            tweets.append(tweet)
 
-    # Search tweets
-    dict_ = {'user': [], 'date': [], 'text': [], 'favorite_count': []}  
-    for status in python_tweets.search(**query)['statuses']:  
-        dict_['user'].append(status['user']['screen_name'])
-        dict_['date'].append(status['created_at'])
-        dict_['text'].append(status['text'])
-        dict_['favorite_count'].append(status['favorite_count'])
-
-    # Structure data in a pandas DataFrame for easier manipulation
-    df = pd.DataFrame(dict_)  
-    df.sort_values(by='favorite_count', inplace=True, ascending=False)    
-    print(df.head(5))
-    return "success"      
+        return tweets   
+    except Exception as e:
+        return "Twitter Call Limit Reached, Please Wait for 15 Minutes"

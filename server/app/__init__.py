@@ -760,15 +760,15 @@ def create_app(config_name):
                 message = message
             )
 
-        @app.route("/testtwitterbi/")
-        def testtwitterbi(): #rendering our twitter web crawling page
+        @app.route("/twittercrawlingpagebi/")
+        def twittercrawlingpagebi(): #rendering our twitter web crawling page
             """
                 This method will render our twitter web crawling page
             """      
             if not current_user.is_authenticated:
                 return redirect(url_for('login_r'))
             else:
-                return render_template('testingtwittercrawlingpagebi.html')         
+                return render_template('twittercrawlingpagebi.html')         
 
         @app.route("/twittercrawlingbi/")
         def twittercrawlingbi(): 

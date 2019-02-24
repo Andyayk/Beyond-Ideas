@@ -5,7 +5,7 @@ import "../css/main";
 
 var $ = require('jquery');
 
-class TestingTwitterCrawlingbi extends Component {  
+class TwitterCrawlingbi extends Component {  
    constructor() {
       super();
       this.state = {
@@ -41,13 +41,15 @@ class TestingTwitterCrawlingbi extends Component {
       return (
          <div>
             Twitter
-            <br/>
+            <br />
             <td align="center">                                                            
-               <button id="submitbutton" className="button" type="submit" style={{"vertical-align":"middle"}} onClick={this.getTwitterData}>Click Me!</button>
+               <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}} onClick={this.getTwitterData}>Click Me!</button>
             </td>   
-            {this.state.twitterData}      
+            Number of Tweets: {this.state.twitterData.length}<br />         
+
+            {this.state.twitterData}    
          </div>
       );
    }
 }
-export default TestingTwitterCrawlingbi;
+export default TwitterCrawlingbi;
