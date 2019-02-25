@@ -404,31 +404,32 @@ class TableViewbi extends Component {
             <tr>
                <td id="testing" colSpan="2" align="center" style={{"height":"400px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
                   <table>
-                  <tbody>
-            			<tr>
-            				<td align="center" style={{"overflow":"auto", "maxWidth":"1155px", "position":"relative", "verticalAlign":"top"}}>
-                           <div style={{"overflowX":"auto"}}>
-                              {this.state.combinedtableboolean?(
-                                 <div style={{"width":"1150px","maxWidth":"1150px","color":"white","backgroundColor":"#357a38"}}>Combined Dataset</div> 
-                                 ):null
-                              }       
-                              <table className="outputtable" style={{"width":"1150px","maxWidth":"1150px"}}>
-                                 {this.state.combinedcolnames && this.state.combinedcolnames.length?
-                                    this.state.combinedcolnames.map((combinedcolname, key) => {
-                                       if (combinedcolname !== '') {
-                                          return (
-                                             <th key={key}>{combinedcolname}</th>
-                                          );
-                                       }
-                                    } ):null
-                                 }
-   							        {this.state.combinedcolvalues.map((combinedrows, key)=> <tr key={key}> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
-            				      </table>
-                           </div>
-            				</td>
-            			</tr>
-                  </tbody>
+                     <tbody>
+               			<tr>
+               				<td align="center" style={{"overflow":"auto", "maxWidth":"1155px", "position":"relative", "verticalAlign":"top"}}>
+                              <div style={{"overflowX":"auto"}}>
+                                 {this.state.combinedtableboolean?(
+                                    <div style={{"width":"1150px","maxWidth":"1150px","color":"white","backgroundColor":"#357a38"}}>Combined Dataset</div> 
+                                    ):null
+                                 }       
+                                 <table className="outputtable" style={{"width":"1150px","maxWidth":"1150px"}}>
+                                    {this.state.combinedcolnames && this.state.combinedcolnames.length?
+                                       this.state.combinedcolnames.map((combinedcolname, key) => {
+                                          if (combinedcolname !== '') {
+                                             return (
+                                                <th key={key}>{combinedcolname}</th>
+                                             );
+                                          }
+                                       } ):null
+                                    }
+      							        {this.state.combinedcolvalues.map((combinedrows, key)=> <tr key={key}> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
+               				      </table>
+                              </div>
+               				</td>
+               			</tr>
+                     </tbody>
                   </table>
+
                   <table>
                   <tbody>
                      <tr>
@@ -466,7 +467,7 @@ class TableViewbi extends Component {
                               </table>
                            </div>
                         </td><td></td><td></td><td></td><td></td><td></td>
-                        <td align="center" style={{"overflow":"auto", "maxWidth":"550px", "verticalAlign":"top"}}>
+                        <td align="center" style={{"overflow":"auto", "maxWidth":"550px", "verticalAlign":"top", "align":"center"}}>
                            <div style={{"overflowX":"auto"}}>
                               <table id="data2area">
                               <tbody>
