@@ -74,7 +74,7 @@ class Chartbi extends Component {
       this.getMySQLTables(); //retrieving user's uploaded tables
 
       this.loadingBarInstance = (
-         <div class="loader"></div>                                   
+         <div className="loader"></div>                                   
       );    
    }
 
@@ -534,7 +534,7 @@ class Chartbi extends Component {
             <table style={{"width":"100%"}}>
             <tbody>
                <tr>             
-                  <td style={{"width":"22%", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px"}} valign="top" align="center" bgcolor="white">   
+                  <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
                   <form method="POST" onSubmit={this.formSubmitted}>                       
                      <br />
                      <table align="center">
@@ -705,7 +705,7 @@ class Chartbi extends Component {
                         <br/>
                         <tr>
                            <td align="center">                                                            
-                              <button id="submitbutton" className="button" type="submit" style={{"vertical-align":"middle"}}>Generate Scatterplot</button>                             
+                              <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Scatterplot</button>                             
                            </td>
                         </tr>
                         <br/>
@@ -722,12 +722,12 @@ class Chartbi extends Component {
                   </form>                   
                   </td>
                   <td></td>
-                  <td align="center" style={{"width":"80%", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"10px"}} bgcolor="white">
+                  <td align="center" style={{"width":"80%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                      <table id="message">
                      <tbody>
                         <tr>
-                           <td align="center" style={{"width":"850px", "height":"580px", "border-radius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
-                              <label style={{"vertical-align":"center"}}>Plot Display Area</label>          
+                           <td align="center" style={{"width":"850px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                              <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
                            </td>                           
                         </tr>
                      </tbody>   
