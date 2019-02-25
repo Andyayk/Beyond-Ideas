@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import "../css/main";
+import WeatherCrawlIcon from "../images/WeatherCrawlIcon.png";
 
 var $ = require('jquery');
 
@@ -14,6 +15,7 @@ class WebCrawlingbi extends Component {
          enddate: "",
          countryname: "",
          errordatestatement: "",
+         hideLoadingBar: true,         
       };
 
       this.validateDateRange = this.validateDateRange.bind(this);      
@@ -25,7 +27,11 @@ class WebCrawlingbi extends Component {
 
       this.weatherCrawler = this.weatherCrawler.bind(this);
 
-      this.formSubmitted = this.formSubmitted.bind(this);      
+      this.formSubmitted = this.formSubmitted.bind(this);  
+
+      this.loadingBarInstance = (
+         <div class="loader"></div>                                   
+      );    
    }
    
    validateDateRange(fromDate, toDate){
@@ -44,13 +50,15 @@ class WebCrawlingbi extends Component {
       if(enable){
          var element = document.getElementById('submitbutton');
          element.disabled = false;
-         element.style.background = "#4CAF50";
+         element.style.background = "#fecb2f";
+         element.style.color = "black";                  
          element.style.opacity = "1";            
          element.style.cursor = "pointer";
       } else {
          var element = document.getElementById('submitbutton');
          element.disabled = true;
          element.style.background = "red";
+         element.style.color = "white";         
          element.style.opacity = "0.6";
          element.style.cursor = "not-allowed";
       }
@@ -105,7 +113,8 @@ class WebCrawlingbi extends Component {
          });  
 
          this.setState({
-            message: message
+            message: message,
+            hideLoadingBar: true, //hide loading button
          });                        
       });
    }
@@ -115,10 +124,15 @@ class WebCrawlingbi extends Component {
    formSubmitted(event){
       event.preventDefault();
       this.weatherCrawler();
+      this.setState({
+         hideLoadingBar: false
+      });
    }
 
    //rendering the html for web crawling
    render() {
+      const style = this.state.hideLoadingBar ? {display: 'none'} : {};
+
       return (
          <div>
             <div className="content">
@@ -132,10 +146,9 @@ class WebCrawlingbi extends Component {
                            <tbody>
                               <tr>
                                  <td align="center">
-                                    <font size="6" style={{"color":"#4D4DFF","weight":"bold"}}>Historical Weather</font>           
+                                    <img src={WeatherCrawlIcon} width="100" height="100" />
                                  </td>
-                              </tr>
-                              <br/>
+                              </tr>                           
                               <tr>
                                  <td align="center">
                                     <div className="cardtitle">
@@ -231,22 +244,20 @@ class WebCrawlingbi extends Component {
                                  <td align="center">
                                     <button id="submitbutton" className="button" type="submit" style={{"vertical-align":"middle", "width":"220px"}}>Begin Crawling</button>    
                                  </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <font size="2" color="red"><i>Note: Process will be longer when date range is larger</i></font>
-                                 </td>
-                              </tr><tr>
+                              </tr>
+                              <br/>
+                              <tr>
                                  <td align="center">
                                     <font color="green"><b>{this.state.message}</b></font>  
+                                    <div className="LoadingBar" style={style}>
+                                       {this.loadingBarInstance}
+                                    </div>                                    
                                  </td>
                               </tr>
                               <br/>
                            </tbody>   
                            </table>
                         </form> 
-                     </td><td></td>
-                     <td align="center" style={{"width":"49.8%", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"12px"}} bgcolor="white">
-                        <font size="5" style={{"color":"#fecb2f","weight":"bold"}}>Under Construction</font>           
                      </td>
                   </tr>
                </tbody>   

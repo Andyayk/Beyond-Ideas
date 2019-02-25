@@ -21,7 +21,10 @@ class TableViewbi extends Component {
          selectedjoinvariable: "", 
          table1boolean: false,
          table2boolean: false,
-         combinedtableboolean: false
+         combinedtableboolean: false,
+         hideLoadingBarOne: true,
+         hideLoadingBarTwo: true,
+         hideLoadingBarThree: true
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);   
@@ -40,6 +43,19 @@ class TableViewbi extends Component {
       this.callBackendAPI = this.callBackendAPI.bind(this);
 
       this.getMySQLTables(); //retrieving user's uploaded tables
+
+      this.loadingBarInstanceOne = (
+         <div class="loader"></div>                                      
+      );
+
+      this.loadingBarInstanceTwo = (
+         <div class="loader"></div>                                   
+      );
+
+      this.loadingBarInstanceThree = (
+         <div class="loader"></div>                                   
+      );
+
    }
 
    //retrieving user's uploaded tables   
@@ -144,13 +160,15 @@ class TableViewbi extends Component {
       if(enable){
          var element = document.getElementById('submitbutton');
          element.disabled = false;
-         element.style.background = "#4CAF50";
+         element.style.background = "#fecb2f";
+         element.style.color = "black";                           
          element.style.opacity = "1";            
          element.style.cursor = "pointer";
       } else {
          var element = document.getElementById('submitbutton');
          element.disabled = true;
          element.style.background = "red";
+         element.style.color = "white";         
          element.style.opacity = "0.6";
          element.style.cursor = "not-allowed";
       }
@@ -160,6 +178,10 @@ class TableViewbi extends Component {
    display(event) {  
       var x = document.getElementById("data1area");
       x.style.display = "none";
+
+      this.setState({
+         hideLoadingBarOne: false
+      });
 
       this.setState({
          exporttable1: event.target.value,
@@ -179,17 +201,24 @@ class TableViewbi extends Component {
          this.setState({
             colnames: (data['colnames']),
             colvalues: (data['coldata']),
+            hideLoadingBarOne: true, //hide loading button
             table1boolean: true,
          });
          console.log(this.state.colnames);
-      }); 
+      });
+
+
    }
    
    //retrieving table display from flask
    display2(event) {
       var x = document.getElementById("data2area");
          x.style.display = "none";
-         
+
+      this.setState({
+         hideLoadingBarTwo: false
+      });
+
       this.setState({
          exporttable2: event.target.value,
       });
@@ -207,6 +236,7 @@ class TableViewbi extends Component {
          this.setState({
             colnames2: (data['colnames']),
             colvalues2: (data['coldata']),
+            hideLoadingBarTwo: true, //hide loading button            
             table2boolean: true,
          });       
          console.log(this.state.colnames2);
@@ -239,8 +269,11 @@ class TableViewbi extends Component {
    			this.setState({
    			    combinedcolnames: (data['colnames']),
                 combinedcolvalues: (data['coldata']),
+                hideLoadingBarThree: true,
                 combinedtableboolean: true
    			})
+
+
          }              
       });        
    }
@@ -249,16 +282,23 @@ class TableViewbi extends Component {
    formSubmitted(event){
       event.preventDefault();
       this.save();
+      this.setState({
+         hideLoadingBarThree: false
+      });      
    }
 
    //rendering the html for table view
    render() {
+      const style = this.state.hideLoadingBarOne ? {display: 'none'} : {};
+      const style2 = this.state.hideLoadingBarTwo ? {display: 'none'} : {};
+      const style3 = this.state.hideLoadingBarThree ? {display: 'none'} : {};
+
       return (
       <div>
          <form method="POST" onSubmit={this.formSubmitted}>        
          <table align="center" style={{"width":"100%"}}>
          <tbody>                   
-            <tr>                        
+            <tr>                       
                <td style={{"width":"50%"}}>                             
                   <div className="cardview">
                      <div className="containerview">                      
@@ -277,17 +317,28 @@ class TableViewbi extends Component {
                               </td>                              
                            </tr><tr>
                               <td align="center">
-                                <select required defaultValue="" onChange={this.display}>
+                                <select required defaultValue="" onChange={this.display} style={{"width":"250px"}}>
                                   <option value="" disabled>--------------- select a dataset ---------------</option>
                                   {this.state.options} 
-                                </select>                     
+                                </select>
                               </td>
                               <td align="center">
-                                <select required defaultValue="" onChange={this.display2}>
-                                  <option value="" disabled>--------------- select a dataset ---------------</option>
+                                <select required defaultValue="" onChange={this.display2} style={{"width":"250px"}}>
+                                  <option value="" disabled>--------------- select a dataset ---------------</option>8
                                   {this.state.options}
                                 </select>                  
                               </td>    
+                           </tr><tr></tr><tr></tr><tr></tr><tr></tr><tr>
+                              <td align="center">
+                                 <div className="LoadingBarOne" style={style}>
+                                    {this.loadingBarInstanceOne}
+                                 </div>
+                              </td>
+                              <td align="center">
+                                 <div className="LoadingBarTwo" style={style2}>
+                                    {this.loadingBarInstanceTwo}
+                                 </div>
+                              </td>                              
                            </tr>
                         </tbody> 
                         </table>                        
@@ -334,8 +385,12 @@ class TableViewbi extends Component {
                                  </table>
                               </td>
                            </tr><tr>
-                              <td colSpan="2" align="center">
+                              <td align="center">
                                  <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}><span>Combine Datasets & Save</span></button>
+                              </td><td>   
+                                 <div className="LoadingBarThree" style={style3}>
+                                    {this.loadingBarInstanceThree}
+                                 </div>                              
                               </td>
                            </tr>
                         </tbody>
@@ -380,14 +435,15 @@ class TableViewbi extends Component {
                         <td align="center" style={{"overflow":"auto", "maxWidth":"550px", "verticalAlign":"top", "align":"center"}}>
                            <div style={{"overflowX":"auto"}}>
                               <table id="data1area">
-                              <tbody>
-                                 <tr>
-                                    <td align="center" style={{"width":"550px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
-                                          <label style={{"verticalAlign":"center"}}>Dataset One Display Area</label>                  
-                                    </td>                           
-                                 </tr>
-                              </tbody>
-                              </table>   
+                                 <tbody>
+                                    <tr>
+                                       <td align="center" style={{"width":"550px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                                             <label style={{"verticalAlign":"center"}}>Dataset One Display Area</label>                                                     
+                                       </td>                           
+                                    </tr>
+                                 </tbody>
+                              </table>
+
                               {this.state.table1boolean?(
                                  <div style={{"width":"550px","maxWidth":"550px","color":"white","backgroundColor":"#357a38"}}>Dataset One: {this.state.exporttable1}</div> 
                                  ):null

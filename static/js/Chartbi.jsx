@@ -152,13 +152,15 @@ class Chartbi extends Component {
       if(enable){
          var element = document.getElementById('submitbutton');
          element.disabled = false;
-         element.style.background = "#4CAF50";
+         element.style.background = "#fecb2f";
+         element.style.color = "black";                           
          element.style.opacity = "1";            
          element.style.cursor = "pointer";
       } else {
          var element = document.getElementById('submitbutton');
          element.disabled = true;
          element.style.background = "red";
+         element.style.color = "white";                  
          element.style.opacity = "0.6";
          element.style.cursor = "not-allowed";
       }
