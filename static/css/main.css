@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:900");
+
 .body-layout {
   margin: 0;
   background-color: #f0f0f0;
@@ -152,9 +154,9 @@ li a:active {
 .button {
   display: inline-block;
   border-radius: 4px;
-  background-color: #4CAF50;
+  background-color: #fecb2f;
   border: none;
-  color: white;
+  color: black;
   text-align: center;
   font-size: 15px;
   padding: 6px;
@@ -162,6 +164,8 @@ li a:active {
   transition: all 0.5s;
   cursor: pointer;
   margin: 5px;
+  border-radius: 10px;
+
 }
 
 .cardview {
@@ -195,19 +199,28 @@ li a:active {
 }
 
 div.cardtitle {
-  font-size: 22px;
-  font-weight: bold;
-  color: #4d5762;
+  grid-area: 1/1/2/2;
+  justify-self: center;
+  align-self: center;
+  color: #333333;
+  font-family: "Roboto", sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 1px 2px 1px rgba(128, 128, 128, 0.3);
 }
 
 div.cardsubtitle{
   font-size: 15px;
+  font-family: "Roboto", sans-serif;  
   font-style: italic;
   color: #696969;  
 }
 
 div.carderrormsg{
   font-size: 14px;
+  font-family: "Roboto", sans-serif;  
   font-weight: bold;
   color: red;  
 }
@@ -234,6 +247,7 @@ table.outputtable tr:hover {background-color:#f5f5f5;}
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 120px;
+  font-family: "Roboto", sans-serif;  
   background-color: #4d5762;
   color: #fff;
   text-align: center;
@@ -252,4 +266,41 @@ table.outputtable tr:hover {background-color:#f5f5f5;}
   visibility: visible;
 }
 
+.loading {
+  background-color: #fecb2f; /* Green background */
+  border: none; /* Remove borders */
+  color: black; /* White text */
+  padding: 12px 24px; /* Some padding */
+  font-family: "Roboto", sans-serif;  
+  font-size: 16px; /* Set a font-size */
+  border-radius: 10px;
+  text-align: center;
+}
 
+/* Add a right margin to each icon */
+.fa {
+  margin-left: -12px;
+  margin-right: 8px;
+}
+
+
+.loader {
+  border: 10px solid orange;
+  border-radius: 50%;
+  border-top: 10px solid white;
+  width: 60px;
+  height: 60px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
