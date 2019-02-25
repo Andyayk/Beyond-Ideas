@@ -775,10 +775,12 @@ def create_app(config_name):
             """
                 This method will crawl twitter
             """           
-            message = modelbi.twitterCrawlerbi()
+            results = modelbi.twitterCrawlerbi()
 
             return jsonify(
-                message = message
+                tweets = results[2],
+                apicalllimit = results[0],
+                apicallreset = results[1]
             )            
 
     return app

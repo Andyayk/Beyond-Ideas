@@ -2,7 +2,7 @@
 @author: Beyond Ideas 
 """
 
-import mysql.connector, datetime, requests, json, csv, os
+import mysql.connector, datetime, requests, json, csv, os, time
 import pandas as pd
 
 from twython import Twython
@@ -431,33 +431,88 @@ def weatherCrawlerbi(startdate, enddate, countryname):
 def twitterCrawlerbi():
     """
         This method crawl data from Twitter
-    """ 
-
-    # Load credentials from json file
-    fromtwitter = requests.get("https://api.twitter.com/1.1/application/rate_limit_status.json?resources=help,users,search,statuses")
-
-    try:    
+    """
+    try:
+        #load credentials from json file        
         with open(os.getcwd()+"\\instance\\twitter_credentials.json", "r") as file:  
             creds = json.load(file)
 
-        # Instantiate an object
-        python_tweets = Twython(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
+        #instantiate an object
+        twitter = Twython(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
         
+        searchQuery = "DHL"
+        tweetsPerQuery = 100
         tweets = []
+        apicalllimit = ""
+        apicallreset = ""
+        maxTweets = 500 #some arbitrary large number
+
+        #if results from a specific ID onwards are reqd, set since_id to that ID.
+        #else default to no lower limit, go as far back as API allows
+        sinceId = None
+
+        #if results only below a specific ID are, set max_id to that ID.
+        #else default to no upper limit, start from the most recent tweet matching the search query.
+        max_id = -1
+
+        tweetCount = 0
 
         query = {
-            'q': 'learn python', 
+            'q': searchQuery, 
             'lang': 'en',
-            'count': '100'
+            'count': tweetsPerQuery
         }
-        print(fromtwitter)
-        for status in python_tweets.search(**query)['statuses']:  
-            tweet = []     
-            tweet.append(status['user']['name'])            
-            tweet.append(status['text'])
-            tweet.append(status['created_at'])
-            tweets.append(tweet)
 
-        return tweets   
+        while tweetCount < maxTweets:
+            if max_id <= 0: #first
+                if not sinceId: #do normal query first
+                    query = {
+                        'q': searchQuery, 
+                        'lang': 'en',
+                        'count': tweetsPerQuery
+                    }
+                else:
+                    query = {
+                        'q': searchQuery, 
+                        'lang': 'en',
+                        'count': tweetsPerQuery,
+                        'since_id': sinceId
+                    }                    
+            else:
+                if not sinceId:
+                    query = {
+                        'q': searchQuery, 
+                        'lang': 'en',
+                        'count': tweetsPerQuery,
+                        'max_id': str(max_id - 1)
+                    }                    
+                else:
+                    query = {
+                        'q': searchQuery, 
+                        'lang': 'en',
+                        'count': tweetsPerQuery,
+                        'max_id': str(max_id - 1),
+                        'since_id': sinceId                        
+                    }                     
+
+            new_tweets = twitter.search(**query)['statuses']
+
+            if not new_tweets:
+                break
+            
+            tweetCount += len(new_tweets)
+            max_id = new_tweets[-1]['id']
+
+            for result in new_tweets:  
+                tweet = []     
+                tweet.append(result['user']['name'])            
+                tweet.append(result['text'])
+                tweet.append(result['created_at'])
+                tweets.append(tweet)
+
+        apicalllimit = twitter.get_lastfunction_header('x-rate-limit-remaining')
+        apicallreset = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))
+
+        return (tweets, apicalllimit, apicallreset)  
     except Exception as e:
-        return "Twitter Call Limit Reached, Please Wait for 15 Minutes"
+        return (["No Tweets"], "Twitter Requests Limit Reached", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset')))))

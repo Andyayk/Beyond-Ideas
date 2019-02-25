@@ -9,7 +9,9 @@ class TwitterCrawlingbi extends Component {
    constructor() {
       super();
       this.state = {
-         twitterData: ""
+         twitterData: [],
+         apiCallLimit: "",
+         apiCallReset: ""
       };
 
       this.getTwitterData = this.getTwitterData.bind(this);
@@ -19,13 +21,23 @@ class TwitterCrawlingbi extends Component {
    //retrieving twitter data
    getTwitterData() { 
       $.getJSON(window.location.origin + "/twittercrawlingbi/", (data) => {
-         var twitterData = "";
+         var twitterData = [];
+         var apiCallLimit = [];
+         var apiCallReset = [];
          $.each(data, function(key, val) {
-            twitterData = val;
+            if(twitterData == "") {
+               twitterData = val;
+            } else if(apiCallLimit == "") {
+               apiCallLimit = val.toString();
+            } else {
+               apiCallReset = val.toString();
+            }
          });  
 
          this.setState({
-            twitterData: twitterData
+            twitterData: twitterData,
+            apiCallLimit: apiCallLimit,
+            apiCallReset: apiCallReset
          });                        
       });
    }   
@@ -40,14 +52,17 @@ class TwitterCrawlingbi extends Component {
    render() {
       return (
          <div>
-            Twitter
-            <br />
             <td align="center">                                                            
                <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}} onClick={this.getTwitterData}>Click Me!</button>
             </td>   
-            Number of Tweets: {this.state.twitterData.length}<br />         
-
-            {this.state.twitterData}    
+            Number of Tweets Retrieved: {this.state.twitterData.length}<br />   
+            Number of Twitter Requests Remaining: {this.state.apiCallLimit}<br />
+            Reset at: {this.state.apiCallReset}<br /><br />
+            <table className="outputtable" style={{"width":"1150px","maxWidth":"1150px"}}>
+            <tbody>            
+               {this.state.twitterData.map((combinedrows, key)=><tr key={key}>{combinedrows.map((combinedrow)=><td><center>{combinedrow}</center></td>)}</tr>)}  
+            </tbody>            
+            </table>
          </div>
       );
    }
