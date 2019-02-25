@@ -41,6 +41,7 @@ class Chartbi extends Component {
          countrynamevaluelistoptions2: "",
          errorstatement: "",
          errordatestatement: "",
+         hideLoadingBar: true,                  
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -71,6 +72,10 @@ class Chartbi extends Component {
       this.callBackendAPI = this.callBackendAPI.bind(this);
 
       this.getMySQLTables(); //retrieving user's uploaded tables
+
+      this.loadingBarInstance = (
+         <div class="loader"></div>                                   
+      );    
    }
 
    //retrieving user's uploaded tables   
@@ -499,7 +504,9 @@ class Chartbi extends Component {
                                  gridwidth: 2,
                               }                          
                            }}
-                        />               
+                        />,
+            hideLoadingBar: true, //hide loading button
+                           
             }))
            .catch(err => console.error(err));       
       });    
@@ -512,10 +519,15 @@ class Chartbi extends Component {
 
       event.preventDefault();
       this.generateScatterplot();
+      this.setState({
+         hideLoadingBar: false
+      });      
    }        
 
    //rendering the html for chart
    render() {
+      const style = this.state.hideLoadingBar ? {display: 'none'} : {};
+
       return (
          <div>
             <div className="content">
@@ -693,9 +705,17 @@ class Chartbi extends Component {
                         <br/>
                         <tr>
                            <td align="center">                                                            
-                              <button id="submitbutton" className="button" type="submit" style={{"vertical-align":"middle"}}>Generate Scatterplot</button>
+                              <button id="submitbutton" className="button" type="submit" style={{"vertical-align":"middle"}}>Generate Scatterplot</button>                             
                            </td>
                         </tr>
+                        <br/>
+                        <tr>
+                           <td align="center">                                                            
+                              <div className="LoadingBar" style={style}>
+                                 {this.loadingBarInstance}
+                              </div>                                  
+                           </td>
+                        </tr>                        
                      </tbody>   
                      </table>
                      <br/>          
@@ -707,12 +727,11 @@ class Chartbi extends Component {
                      <tbody>
                         <tr>
                            <td align="center" style={{"width":"850px", "height":"580px", "border-radius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
-                              <label style={{"vertical-align":"center"}}>Plot Display Area</label>                  
+                              <label style={{"vertical-align":"center"}}>Plot Display Area</label>          
                            </td>                           
                         </tr>
                      </tbody>   
-                     </table>       
-
+                     </table>           
                      {this.state.scatterplot}   
                   </td>
                </tr>
