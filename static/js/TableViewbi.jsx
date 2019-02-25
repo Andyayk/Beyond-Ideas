@@ -45,15 +45,15 @@ class TableViewbi extends Component {
       this.getMySQLTables(); //retrieving user's uploaded tables
 
       this.loadingBarInstanceOne = (
-         <div class="loader"></div>                                      
+         <div className="loader"></div>                                      
       );
 
       this.loadingBarInstanceTwo = (
-         <div class="loader"></div>                                   
+         <div className="loader"></div>                                   
       );
 
       this.loadingBarInstanceThree = (
-         <div class="loader"></div>                                   
+         <div className="loader"></div>                                   
       );
 
    }

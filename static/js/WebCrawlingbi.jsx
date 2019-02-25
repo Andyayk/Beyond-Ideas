@@ -30,7 +30,7 @@ class WebCrawlingbi extends Component {
       this.formSubmitted = this.formSubmitted.bind(this);  
 
       this.loadingBarInstance = (
-         <div class="loader"></div>                                   
+         <div className="loader"></div>                                   
       );    
    }
    
@@ -139,7 +139,7 @@ class WebCrawlingbi extends Component {
                <table style={{"width":"100%", "padding":"10px"}}>
                <tbody>
                   <tr>             
-                     <td style={{"width":"49.8%", "box-shadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "border-radius":"12px", "padding":"15px"}} valign="top" align="center" bgcolor="white">       
+                     <td style={{"width":"49.8%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"15px"}} valign="top" align="center" bgcolor="white">       
                         <form method="POST" onSubmit={this.formSubmitted}>       
                            <br/>
                            <table align="center">
@@ -242,7 +242,7 @@ class WebCrawlingbi extends Component {
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <button id="submitbutton" className="button" type="submit" style={{"vertical-align":"middle", "width":"220px"}}>Begin Crawling</button>    
+                                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Begin Crawling</button>    
                                  </td>
                               </tr>
                               <br/>
