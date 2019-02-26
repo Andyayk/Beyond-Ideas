@@ -242,8 +242,11 @@ class WebCrawlingbi extends Component {
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Begin Crawling</button>    
+                                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save Weather Data as CSV</button>    
                                  </td>
+                                 <td align="center">
+                                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save Weather Data into Database</button>    
+                                 </td>                                 
                               </tr>
                               <br/>
                               <tr>
