@@ -310,8 +310,11 @@ def weatherCrawlerbi(startdate, enddate, countryname):
         This method crawl weather data from worldweatheronline
     """ 
     try:
-        #Key to call the API, expire 26 March
-        api_key = "ab387d44d42d49238a3164423192501"
+        #Key to call the API, expire 27 April
+        with open(os.getcwd()+"\\instance\\weather_credentials.json", "r") as file:  
+            creds = json.load(file)
+        api_key = str(creds['API_KEY'])
+        print(api_key)
         #Start & end date indicated by user
         input_start_date = startdate
         input_end_date = enddate
