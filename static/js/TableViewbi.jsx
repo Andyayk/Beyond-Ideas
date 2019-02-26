@@ -63,15 +63,15 @@ class TableViewbi extends Component {
       var mySQLTables = "";
       this.callBackendAPI("/get_all_dataset_api")
       .then(res => {
-         console.log(res);
-         console.log(res.datasetNames);
+         // console.log(res);
+         // console.log(res.datasetNames);
          // this.setState({ datasetNames: res.datasets });
          var datasetNames = res.datasetNames;
          var mySQLTables = [];
          datasetNames.map((datasetName, key) =>
             mySQLTables.push(datasetName.name)
          );
-         console.log(mySQLTables);
+         // console.log(mySQLTables);
          this.createOptions(mySQLTables);
       })
    }  
@@ -110,14 +110,14 @@ class TableViewbi extends Component {
       for (i=0; i < datavariable1.length; i++){
           
          if(datavariable1[i].toLowerCase().includes(keyword)){
-         console.log(datavariable1[i].toLowerCase())
+         // console.log(datavariable1[i].toLowerCase())
             match1 = true;
             break;
          }
       }
       for (i=0; i < datavariable2.length; i++){
          if(datavariable2[i].toLowerCase().includes(keyword)){
-         console.log(datavariable2[i].toLowerCase())
+         // console.log(datavariable2[i].toLowerCase())
             match2 = true;
             break;
          }
@@ -204,7 +204,7 @@ class TableViewbi extends Component {
             hideLoadingBarOne: true, //hide loading button
             table1boolean: true,
          });
-         console.log(this.state.colnames);
+         // console.log(this.state.colnames);
       });
 
 
@@ -239,7 +239,7 @@ class TableViewbi extends Component {
             hideLoadingBarTwo: true, //hide loading button            
             table2boolean: true,
          });       
-         console.log(this.state.colnames2);
+         // console.log(this.state.colnames2);
       });         
    }   
    
@@ -252,7 +252,7 @@ class TableViewbi extends Component {
    
    //retrieving csv export from flask
    save(event) {
-      console.log(this.state.exporttable1);
+      // console.log(this.state.exporttable1);
       $.post(window.location.origin + "/savejoinedtablebi/",
       {
          tablename1: this.state.exporttable1,
@@ -265,7 +265,7 @@ class TableViewbi extends Component {
                error: "Please Select a Table",
             });
          } else {
-            console.log(data);
+            // console.log(data);
    			this.setState({
    			    combinedcolnames: (data['colnames']),
                 combinedcolvalues: (data['coldata']),

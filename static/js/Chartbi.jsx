@@ -83,15 +83,15 @@ class Chartbi extends Component {
       var mySQLTables = "";
       this.callBackendAPI("/get_all_dataset_api")
       .then(res => {
-         console.log(res);
-         console.log(res.datasetNames);
+         // console.log(res);
+         // console.log(res.datasetNames);
          // this.setState({ datasetNames: res.datasets });
          var datasetNames = res.datasetNames;
          var mySQLTables = [];
          datasetNames.map((datasetName, key) =>
             mySQLTables.push(datasetName.name)
          );
-         console.log(mySQLTables);
+         // console.log(mySQLTables);
          this.createOptions(mySQLTables);
       })
    }

@@ -428,91 +428,101 @@ def weatherCrawlerbi(startdate, enddate, countryname):
     except Exception as e:
         return "Crawling of weather data unsuccessful."           
 
-def twitterCrawlerbi():
+def twitterCrawlerbi(tags, nooftweets):
     """
         This method crawl data from Twitter
     """
-    try:
-        #load credentials from json file        
-        with open(os.getcwd()+"\\instance\\twitter_credentials.json", "r") as file:  
-            creds = json.load(file)
+    #load credentials from json file        
+    with open(os.getcwd()+"\\instance\\twitter_credentials.json", "r") as file:  
+        creds = json.load(file)
 
-        #instantiate an object
-        twitter = Twython(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
-        
-        searchQuery = "DHL"
-        tweetsPerQuery = 100
-        tweets = []
-        apicalllimit = ""
-        apicallreset = ""
-        maxTweets = 500 #some arbitrary large number
+    #instantiate an object
+    twitter = Twython(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
+    
+    searchQuery = tags
+    tweetsPerQuery = 100
+    tweets = []
+    apicalllimit = ""
+    apicallreset = ""
+    maxTweets = int(nooftweets)
 
-        #if results from a specific ID onwards are reqd, set since_id to that ID.
-        #else default to no lower limit, go as far back as API allows
-        sinceId = None
+    #if results from a specific ID onwards are reqd, set since_id to that ID.
+    #else default to no lower limit, go as far back as API allows
+    sinceId = None
 
-        #if results only below a specific ID are, set max_id to that ID.
-        #else default to no upper limit, start from the most recent tweet matching the search query.
-        max_id = -1
+    #if results only below a specific ID are, set max_id to that ID.
+    #else default to no upper limit, start from the most recent tweet matching the search query.
+    max_id = -1
 
-        tweetCount = 0
+    tweetCount = 0
+    query = {
+        'q': searchQuery, 
+        'lang': 'en',
+        'count': tweetsPerQuery
+    }
 
-        query = {
-            'q': searchQuery, 
-            'lang': 'en',
-            'count': tweetsPerQuery
-        }
+    headerArray = "tweetid,userid,name,tweet,date"
 
-        while tweetCount < maxTweets:
-            if max_id <= 0: #first
-                if not sinceId: #do normal query first
-                    query = {
-                        'q': searchQuery, 
-                        'lang': 'en',
-                        'count': tweetsPerQuery
-                    }
-                else:
-                    query = {
-                        'q': searchQuery, 
-                        'lang': 'en',
-                        'count': tweetsPerQuery,
-                        'since_id': sinceId
-                    }                    
+    while tweetCount < maxTweets:
+        if max_id <= 0: #first
+            if not sinceId: #do normal query first
+                query = {
+                    'q': searchQuery, 
+                    'lang': 'en',
+                    'count': tweetsPerQuery
+                }
             else:
-                if not sinceId:
-                    query = {
-                        'q': searchQuery, 
-                        'lang': 'en',
-                        'count': tweetsPerQuery,
-                        'max_id': str(max_id - 1)
-                    }                    
-                else:
-                    query = {
-                        'q': searchQuery, 
-                        'lang': 'en',
-                        'count': tweetsPerQuery,
-                        'max_id': str(max_id - 1),
-                        'since_id': sinceId                        
-                    }                     
-
+                query = {
+                    'q': searchQuery, 
+                    'lang': 'en',
+                    'count': tweetsPerQuery,
+                    'since_id': sinceId
+                }                    
+        else:
+            if not sinceId:
+                query = {
+                    'q': searchQuery, 
+                    'lang': 'en',
+                    'count': tweetsPerQuery,
+                    'max_id': str(max_id - 1)
+                }                    
+            else:
+                query = {
+                    'q': searchQuery, 
+                    'lang': 'en',
+                    'count': tweetsPerQuery,
+                    'max_id': str(max_id - 1),
+                    'since_id': sinceId                        
+                }                     
+        try:
             new_tweets = twitter.search(**query)['statuses']
 
             if not new_tweets:
-                break
-            
+                break     
+
             tweetCount += len(new_tweets)
             max_id = new_tweets[-1]['id']
 
             for result in new_tweets:  
-                tweet = []     
-                tweet.append(result['user']['name'])            
-                tweet.append(result['text'])
-                tweet.append(result['created_at'])
-                tweets.append(tweet)
+                created_at = results['created_at'] #Wed Dec 19 20:20:32 +0000 2007
+                datesplit = created_at.split(" ")
+                dateformatted = datetime.date(datesplit[5], time.strptime(datesplit[1],'%b').tm_mon, datesplit[2])
 
-        apicalllimit = twitter.get_lastfunction_header('x-rate-limit-remaining')
-        apicallreset = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))
+                row = result['id'] + "," + result['user']['id'] + "," + result['user']['name'] + "," + result['text'] + "," + dateformatted
 
-        return (tweets, apicalllimit, apicallreset)  
-    except Exception as e:
-        return (["No Tweets"], "Twitter Requests Limit Reached", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset')))))
+                tweets.append(row)                       
+        except Exception as e:
+            return [["No Tweets"], "Twitter Requests Limit Reached", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))]
+
+    apicalllimit = twitter.get_lastfunction_header('x-rate-limit-remaining')
+    apicallreset = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))
+
+    #write the data into a csv file
+    returnStr = headerArray
+    returnStr += "\n"
+    for i in tweets:
+        returnStr += i
+        returnStr += "\n"
+
+    results = [returnStr, apicalllimit, apicallreset]
+    return results  
