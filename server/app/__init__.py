@@ -770,17 +770,20 @@ def create_app(config_name):
             else:
                 return render_template('twittercrawlingpagebi.html')         
 
-        @app.route("/twittercrawlingbi/")
+        @app.route("/twittercrawlingbi/", methods = ['POST'])
         def twittercrawlingbi(): 
             """
                 This method will crawl twitter
-            """           
-            results = modelbi.twitterCrawlerbi()
+            """      
+            tags = request.form.get("tags")  
+            nooftweets = request.form.get("nooftweets") 
+
+            results = modelbi.twitterCrawlerbi(tags, nooftweets)
 
             return jsonify(
-                tweets = results[2],
-                apicalllimit = results[0],
-                apicallreset = results[1]
+                tweets = results[0],
+                apicalllimit = results[1],
+                apicallreset = results[2]
             )            
 
     return app
