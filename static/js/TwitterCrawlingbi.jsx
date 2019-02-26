@@ -12,8 +12,8 @@ class TwitterCrawlingbi extends Component {
       this.state = {
          message: "",
          twitterData: [],
-         apiCallLimit: "",
-         apiCallReset: "",
+         apiCallLimit: "-",
+         apiCallReset: "15 Minutes*",
          tags: "",
          nooftweets: "",
          hideLoadingBar: true,            
@@ -41,20 +41,20 @@ class TwitterCrawlingbi extends Component {
          var message = "";
          var twitterData = data['tweets'];
          var apiCallLimit = data['apicalllimit'];
-         var apiCallReset = data['apicallreset'];      
-         
-         $.each(twitterData, function(key, val) {
+         var apiCallReset = data['apicallreset'];  
+
+         if (!twitterData.includes("No Tweets") && twitterData.length > 2) {   
+            //console.log(twitterData)
             var element = document.createElement('a');
-            var newContent = val.replace(/;/g, "\n")
+            var newContent = twitterData
             element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
-            element.setAttribute('download', 'tweets_test.csv');
+            element.setAttribute('download', 'tweets.csv');
             element.style.display = 'none';
             document.body.appendChild(element);
             element.click();
             document.body.removeChild(element);
-            message = "Crawling of weather data is successful.";
-         });  
-
+            message = "Twitter Data Retrieval is Successful.";
+         }
          this.setState({
             message: message,
             twitterData: twitterData,
@@ -137,17 +137,21 @@ class TwitterCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <input required type="number" id="nooftweets" onChange={this.selectNoOfTweets} min="1" max="45000"/>                    
+                                    <input required type="number" id="nooftweets" onChange={this.selectNoOfTweets} min="100" max="45000"/>                    
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <font size="2" color="grey"><i>Only tweets from the past 7 days will be retrieved</i></font>
+                                    <font size="2" color="grey"><i>No. of tweets will be rounded up to the nearest hundreds</i></font>
                                  </td>
                               </tr>
                               <br/>
                               <tr>
                                  <td align="center">
                                     <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Retrieve Tweets</button>    
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <font size="2" color="grey"><i>Only tweets from the past 7 days will be retrieved</i></font>                             
                                  </td>
                               </tr>
                               <br/>
@@ -158,11 +162,12 @@ class TwitterCrawlingbi extends Component {
                                        {this.loadingBarInstance}
                                     </div>                                    
                                  </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <font size="2"><i>No. of Twitter Requests Remaining: {this.state.apiCallLimit} (Reset at: {this.state.apiCallReset})</i></font>                          
+                                 </td>
                               </tr>
-                              <br/>
-                              No. of Tweets Retrieved: {this.state.twitterData.length}<br />   
-                              No. of Twitter Requests Remaining: {this.state.apiCallLimit}<br />
-                              Reset Limit at: {this.state.apiCallReset}<br />                              
+                              <br/>                           
                            </tbody>   
                            </table>
                         </form> 
