@@ -2,11 +2,11 @@
 @author: Beyond Ideas 
 """
 
-import mysql.connector, datetime, requests, json, csv, os, time
+import mysql.connector, datetime, requests, json, csv, os, time, io
 import pandas as pd
 
 from twython import Twython
-
+from io import StringIO
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
@@ -32,6 +32,12 @@ def is_emptybi(any_structure):
     else:
         return True
  
+def csv2string(data):
+    si = StringIO()
+    cw = csv.writer(si)
+    cw.writerow(data)
+    return si.getvalue()
+
 def displayTablebi(table_name):
     """
         This method will display table 
@@ -504,15 +510,31 @@ def twitterCrawlerbi(tags, nooftweets):
             max_id = new_tweets[-1]['id']
 
             for result in new_tweets:  
-                created_at = results['created_at'] #Wed Dec 19 20:20:32 +0000 2007
+                created_at = result['created_at'] #Wed Dec 19 20:20:32 +0000 2007
                 datesplit = created_at.split(" ")
-                dateformatted = datetime.date(datesplit[5], time.strptime(datesplit[1],'%b').tm_mon, datesplit[2])
 
-                row = result['id'] + "," + result['user']['id'] + "," + result['user']['name'] + "," + result['text'] + "," + dateformatted
+                t = datetime.datetime(int(datesplit[5]), int(time.strptime(datesplit[1],'%b').tm_mon), int(datesplit[2]), 0, 0)
+                dateformatted = t.strftime('%Y-%m-%d')  
+                tweet = []
+
+                tweet.append(result['id'])
+                tweet.append(result['user']['id'])
+                tweet.append(result['user']['name'])
+                tweet.append(result['text'])
+                tweet.append(dateformatted)                                                                
+                
+                row = csv2string(tweet)
 
                 tweets.append(row)                       
         except Exception as e:
-            return [["No Tweets"], "Twitter Requests Limit Reached", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))]
+            #print(str(e))
+            #write the data into a csv file
+            returnStr = headerArray
+            returnStr += "\n"
+            for i in tweets:
+                returnStr += i     
+                       
+            return [returnStr, "Twitter Requests Limit Reached", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))]
 
     apicalllimit = twitter.get_lastfunction_header('x-rate-limit-remaining')
     apicallreset = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))
@@ -522,7 +544,6 @@ def twitterCrawlerbi(tags, nooftweets):
     returnStr += "\n"
     for i in tweets:
         returnStr += i
-        returnStr += "\n"
 
     results = [returnStr, apicalllimit, apicallreset]
     return results  
