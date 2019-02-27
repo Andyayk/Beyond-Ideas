@@ -2,7 +2,7 @@
 @author: Beyond Ideas 
 """
 
-import mysql.connector, datetime, requests, json, csv, os, time, io
+import mysql.connector, datetime, requests, json, csv, os, time, io, math, random
 import pandas as pd
 
 from twython import Twython
@@ -33,6 +33,9 @@ def is_emptybi(any_structure):
         return True
  
 def csv2string(data):
+    """
+        This method will turn csv into string
+    """     
     si = StringIO()
     cw = csv.writer(si)
     cw.writerow(data)
@@ -309,12 +312,12 @@ def weatherCrawlerbi(startdate, enddate, countryname):
     """
         This method crawl weather data from worldweatheronline
     """ 
+    print("came to line 312")    
     try:
         #Key to call the API, expire 27 April
         with open(os.getcwd()+"\\instance\\weather_credentials.json", "r") as file:  
             creds = json.load(file)
         api_key = str(creds['API_KEY'])
-        print(api_key)
         #Start & end date indicated by user
         input_start_date = startdate
         input_end_date = enddate
@@ -346,7 +349,7 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                 #retrieve mean temperature in fahrenheit
                 meanTemperatureF = str(i["hourly"][0]["tempF"])
                 #combine the rows
-                rows = date + "," + meanTemperatureC + "," + meanTemperatureF
+                rows = "\"" + date + "\"" + "," + meanTemperatureC + "," + meanTemperatureF
                 #add the rows in to an array to be placed in csv file later on
                 bodyArray.append(rows)
         #if not, deduct the number of months needed to crawl and send 1 api for each month.
@@ -390,7 +393,7 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                         #retrieve mean temperature in fahrenheit
                         meanTemperatureF = str(i["hourly"][0]["tempF"])
                         #combine the rows
-                        rows = date + "," + meanTemperatureC + "," + meanTemperatureF
+                        rows = "\"" + date + "\"" + "," + meanTemperatureC + "," + meanTemperatureF
                         #add the rows in to an array to be placed in csv file later on
                         bodyArray.append(rows)        
                 else:
@@ -415,7 +418,7 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                         #retrieve mean temperature in fahrenheit
                         meanTemperatureF = str(i["hourly"][0]["tempF"])
                         #combine the rows
-                        rows = date + "," + meanTemperatureC + "," + meanTemperatureF
+                        rows = "\"" + date + "\"" + "," + meanTemperatureC + "," + meanTemperatureF
                         #add the rows in to an array to be placed in csv file later on
                         bodyArray.append(rows)
                     if start_crawl_month == 12:
@@ -425,7 +428,9 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                         start_crawl_month += 1
                     start_crawl_day = 1
                 num_of_months-=1
-
+        tableName = "weather_data_" + input_start_date[8:10] + input_start_date[5:7] + input_start_date[0:4] + "_" + input_end_date[8:10] + input_end_date[5:7] + input_end_date[0:4]
+        connection.execute("CREATE TABLE " + tableName + " (date date, meanTemperatureC int(2), meanTemperatureF int(2));")
+        status = insertToDatabase(headerArray, bodyArray, tableName)
         #write the data into a csv file
         returnStr = headerArray
         returnStr += "\n"
@@ -550,3 +555,125 @@ def twitterCrawlerbi(tags, nooftweets):
 
     results = [returnStr, apicalllimit, apicallreset]
     return results  
+  
+def insertToDatabase(header, bodyArray, tableName):
+    try:
+        sqlstmt = "INSERT INTO " + tableName + " (" + header + ") VALUES"
+        for i in bodyArray:
+            sqlstmt += "("
+            sqlstmt += i
+            sqlstmt += "),"
+        sqlstmt = sqlstmt[0:len(sqlstmt)-1]
+        sqlstmt += ";"
+        connection.execute(sqlstmt)
+        return True
+    except Exception as e:
+        return False
+  
+def naiveBayesClassifier():
+    """
+        This method will implement naive bayes classifier
+    """    
+    filename = 'diabetes.csv'
+    splitRatio = 0.67 #how we are splitting our train and test data set
+    dataset = []
+    with open(os.getcwd()+"\\"+filename, mode='r', newline='') as new_file: #loading our dataset
+        csv_reader = csv.reader(new_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        line_count = 0
+        for row in csv_reader:
+            if line_count == 0:
+                line_count += 1
+            else:
+                dataset.append([float(x) for x in row])
+                line_count += 1
+
+    trainSet, testSet = splitDataset(dataset, splitRatio)
+    
+    #preparing model
+    separated = separateByClass(trainSet)
+    summaries = {}
+    for classValue, instances in separated.items():
+        summaries[classValue] = summarize(instances)
+
+    #test model
+    predictions = getPredictions(summaries, testSet)
+    accuracy = getAccuracy(testSet, predictions)
+
+    for idx, val in enumerate(testSet):
+        print(testSet[idx]) 
+        print(" predict ") 
+        print(predictions[idx])
+
+    print(accuracy)
+ 
+def splitDataset(dataset, splitRatio):
+    """
+        This method will split our dataset into train and test according to split ratio
+    """      
+    trainSetSize = int(len(dataset) * splitRatio)
+    trainSet = []
+
+    testSet = list(dataset)
+    while len(trainSet) < trainSetSize:
+        index = random.randrange(len(testSet))
+        trainSet.append(testSet.pop(index))
+    return [trainSet, testSet]
+ 
+def separateByClass(dataset):
+    separated = {}
+    for i in range(len(dataset)):
+        vector = dataset[i]
+        if (vector[-1] not in separated):
+            separated[vector[-1]] = []
+        separated[vector[-1]].append(vector)
+    return separated
+ 
+def mean(numbers):
+    return sum(numbers)/float(len(numbers))
+ 
+def stdev(numbers):
+    avg = mean(numbers)
+    variance = sum([pow(x-avg,2) for x in numbers])/float(len(numbers)-1)
+    return math.sqrt(variance)
+ 
+def summarize(dataset):
+    summaries = [(mean(attribute), stdev(attribute)) for attribute in zip(*dataset)]
+    del summaries[-1]
+    return summaries
+ 
+def calculateProbability(x, mean, stdev):
+    exponent = math.exp(-(math.pow(x-mean,2)/(2*math.pow(stdev,2))))
+    return (1 / (math.sqrt(2*math.pi) * stdev)) * exponent
+ 
+def calculateClassProbabilities(summaries, inputVector):
+    probabilities = {}
+    for classValue, classSummaries in summaries.items():
+        probabilities[classValue] = 1
+        for i in range(len(classSummaries)):
+            mean, stdev = classSummaries[i]
+            x = inputVector[i]
+            probabilities[classValue] *= calculateProbability(x, mean, stdev)
+    return probabilities
+            
+def predict(summaries, inputVector):
+    probabilities = calculateClassProbabilities(summaries, inputVector)
+    bestLabel, bestProb = None, -1
+    for classValue, probability in probabilities.items():
+        if bestLabel is None or probability > bestProb:
+            bestProb = probability
+            bestLabel = classValue
+    return bestLabel
+ 
+def getPredictions(summaries, testSet):
+    predictions = []
+    for i in range(len(testSet)):
+        result = predict(summaries, testSet[i])
+        predictions.append(result)
+    return predictions
+ 
+def getAccuracy(testSet, predictions):
+    correct = 0
+    for i in range(len(testSet)):
+        if testSet[i][-1] == predictions[i]:
+            correct += 1
+    return (correct/float(len(testSet))) * 100.0
