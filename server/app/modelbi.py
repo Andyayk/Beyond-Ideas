@@ -309,12 +309,12 @@ def weatherCrawlerbi(startdate, enddate, countryname):
     """
         This method crawl weather data from worldweatheronline
     """ 
+    print("came to line 312")    
     try:
         #Key to call the API, expire 27 April
         with open(os.getcwd()+"\\instance\\weather_credentials.json", "r") as file:  
             creds = json.load(file)
         api_key = str(creds['API_KEY'])
-        print(api_key)
         #Start & end date indicated by user
         input_start_date = startdate
         input_end_date = enddate
@@ -346,7 +346,7 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                 #retrieve mean temperature in fahrenheit
                 meanTemperatureF = str(i["hourly"][0]["tempF"])
                 #combine the rows
-                rows = date + "," + meanTemperatureC + "," + meanTemperatureF
+                rows = "\"" + date + "\"" + "," + meanTemperatureC + "," + meanTemperatureF
                 #add the rows in to an array to be placed in csv file later on
                 bodyArray.append(rows)
         #if not, deduct the number of months needed to crawl and send 1 api for each month.
@@ -390,7 +390,7 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                         #retrieve mean temperature in fahrenheit
                         meanTemperatureF = str(i["hourly"][0]["tempF"])
                         #combine the rows
-                        rows = date + "," + meanTemperatureC + "," + meanTemperatureF
+                        rows = "\"" + date + "\"" + "," + meanTemperatureC + "," + meanTemperatureF
                         #add the rows in to an array to be placed in csv file later on
                         bodyArray.append(rows)        
                 else:
@@ -415,7 +415,7 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                         #retrieve mean temperature in fahrenheit
                         meanTemperatureF = str(i["hourly"][0]["tempF"])
                         #combine the rows
-                        rows = date + "," + meanTemperatureC + "," + meanTemperatureF
+                        rows = "\"" + date + "\"" + "," + meanTemperatureC + "," + meanTemperatureF
                         #add the rows in to an array to be placed in csv file later on
                         bodyArray.append(rows)
                     if start_crawl_month == 12:
@@ -425,7 +425,9 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                         start_crawl_month += 1
                     start_crawl_day = 1
                 num_of_months-=1
-
+        tableName = "weather_data_" + input_start_date[8:10] + input_start_date[5:7] + input_start_date[0:4] + "_" + input_end_date[8:10] + input_end_date[5:7] + input_end_date[0:4]
+        connection.execute("CREATE TABLE " + tableName + " (date date, meanTemperatureC int(2), meanTemperatureF int(2));")
+        status = insertToDatabase(headerArray, bodyArray, tableName)
         #write the data into a csv file
         returnStr = headerArray
         returnStr += "\n"
@@ -550,3 +552,19 @@ def twitterCrawlerbi(tags, nooftweets):
 
     results = [returnStr, apicalllimit, apicallreset]
     return results  
+
+def insertToDatabase(header, bodyArray, tableName):
+    try:
+        sqlstmt = "INSERT INTO " + tableName + " (" + header + ") VALUES"
+        for i in bodyArray:
+            sqlstmt += "("
+            sqlstmt += i
+            sqlstmt += "),"
+        sqlstmt = sqlstmt[0:len(sqlstmt)-1]
+        sqlstmt += ";"
+        connection.execute(sqlstmt)
+        return True
+    except Exception as e:
+        return False
+
+    
