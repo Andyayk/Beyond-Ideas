@@ -41,6 +41,7 @@ class Chartbi extends Component {
          countrynamevaluelistoptions2: "",
          errorstatement: "",
          errordatestatement: "",
+         radioButtonCount: "",
          hideLoadingBar: true,                  
       };
 
@@ -63,6 +64,8 @@ class Chartbi extends Component {
       this.checksubmitbutton = this.checksubmitbutton.bind(this);
       this.enablesubmitbutton = this.enablesubmitbutton.bind(this);
       this.validateDateRange = this.validateDateRange.bind(this);
+      this.resetxvariabledropdown = this.resetxvariabledropdown.bind(this);
+      this.resetyvariabledropdown = this.resetyvariabledropdown.bind(this);
       this.resetfiltervariabledropdown = this.resetfiltervariabledropdown.bind(this);  
       this.resetfiltervaluedropdown = this.resetfiltervaluedropdown.bind(this);  
       this.generateScatterplot = this.generateScatterplot.bind(this); 
@@ -122,12 +125,15 @@ class Chartbi extends Component {
    }        
 
    checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames){
-      if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length){
+      if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length && (this.state.selectedtable != this.state.selectedtable2)){
          this.setState({
             selectedjoinvariable: ""
          });  
          document.getElementById(radiobutton).disabled = false; 
          document.getElementById(labelnames).style = "color:black";
+         var currentCount = this.state.radioButtonCount + 1;
+         this.setState({radioButtonCount : currentCount});
+
       } else {
          this.setState({
             selectedjoinvariable: ""
@@ -184,23 +190,43 @@ class Chartbi extends Component {
          }
       }
     }
+    
+   resetxvariabledropdown(){
+       this.setState({
+           selectedvariable : ""
+       });
+       document.getElementById("xvariabledropdownid").selectedIndex = 0;
+   }
+   
+   resetyvariabledropdown(){
+       this.setState({
+           selectedvariable2 : ""
+       });
+       document.getElementById("yvariabledropdownid").selectedIndex = 0;
+   }
 
    resetfiltervariabledropdown(){
       this.setState({
-         selectedfiltervariable: ""
+         selectedfiltervariable: "",
+         selectedfiltervalue: "",
       });
-      document.getElementById("filtervariabledropdownid").default = true;
+      document.getElementById("filtervariabledropdownid").selectedIndex = -1;
    }
 
    
    resetfiltervaluedropdown(){
-      /*
-      if(this.state.selectedfiltervariable != ""){
-         var thisElement = document.getElementById("filtervaluedropdownid");
-         thisElement.default = true;
-         thisElement.selectedIndex = "0";
+      this.setState({
+         selectedfiltervalue : "" 
+      });
+      if(this.state.selectedfiltervariable != "" && !this.state.selectedfiltervariable.toLowerCase().includes("date")){
+        document.getElementById("filtervaluedropdownid").selectedIndex = 0; 
       }
-      */
+      // if(this.state.selectedfiltervariable != ""){
+         // var thisElement = document.getElementById("filtervaluedropdownid");
+         // thisElement.default = true;
+         // thisElement.selectedIndex = "0";
+      // }
+      
    }
 
    //retrieving variables from flask
@@ -208,6 +234,9 @@ class Chartbi extends Component {
       this.setState({
          selectedtable: event.target.value
       });
+      this.resetfiltervariabledropdown();
+      this.resetxvariabledropdown();
+      this.setState({radioButtonCount : 0});
 
       $.post(window.location.origin + "/variablesbi/",
       {
@@ -230,7 +259,26 @@ class Chartbi extends Component {
          this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions2, "depotradio", "labeldepot");
          this.checkradiobutton(countrynamevaluelistdata, this.state.countrynamevariablesoptions2, "locationradio","labelcountry");
          
-         this.resetfiltervariabledropdown();
+         if(this.state.radioButtonCount == 1){
+              var dateEle = document.getElementById("dateradio");
+              var companyEle = document.getElementById("companyradio");
+              var depotEle = document.getElementById("depotradio");
+              var locationEle = document.getElementById("locationradio");
+              if(!dateEle.disabled){
+                  this.setState({selectedjoinvariable : "activitydate"});
+              } 
+              else if(companyEle.disabled == false){
+                  this.setState({selectedjoinvariable : "company"});
+              } 
+              else if(depotEle.disabled == false){
+                  this.setState({selectedjoinvariable : "depot"});
+              } 
+              else if(locationEle.disabled == false){
+                  this.setState({selectedjoinvariable : "countryname"});
+              }
+         }
+         
+         
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable2);         
          
          this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, countrynamevariablelistdata, companyvaluelistdata, depotvaluelistdata, countrynamevaluelistdata);                     
@@ -243,6 +291,10 @@ class Chartbi extends Component {
          selectedtable2: event.target.value
       });
 
+      this.resetfiltervariabledropdown();  
+      this.resetyvariabledropdown();
+      this.setState({radioButtonCount : 0});
+      
       $.post(window.location.origin + "/variablesbi/",
       {
          tablename: event.target.value,
@@ -266,7 +318,25 @@ class Chartbi extends Component {
          this.checkradiobutton(depotvariablelistdata, this.state.depotvariablesoptions, "depotradio", "labeldepot");
          this.checkradiobutton(countrynamevaluelistdata, this.state.countrynamevariablesoptions, "locationradio", "labelcountry");
          
-         this.resetfiltervariabledropdown();
+         if(this.state.radioButtonCount == 1){
+              var dateEle = document.getElementById("dateradio");
+              var companyEle = document.getElementById("companyradio");
+              var depotEle = document.getElementById("depotradio");
+              var locationEle = document.getElementById("locationradio");
+              if(!dateEle.disabled){
+                  this.setState({selectedjoinvariable : "activitydate"});
+              } 
+              else if(companyEle.disabled == false){
+                  this.setState({selectedjoinvariable : "company"});
+              } 
+              else if(depotEle.disabled == false){
+                  this.setState({selectedjoinvariable : "depot"});
+              } 
+              else if(locationEle.disabled == false){
+                  this.setState({selectedjoinvariable : "countryname"});
+              }
+         }
+         
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.selectedtable);         
 
          this.createVariables(methodNo, variablelistdata, datevariablelistdata, companyvariablelistdata, depotvariablelistdata, countrynamevariablelistdata, companyvaluelistdata, depotvaluelistdata, countrynamevaluelistdata);                     
@@ -464,6 +534,9 @@ class Chartbi extends Component {
          var minY = Math.min(...yarray);
 
          var spearmanrho = new SpearmanRHO(xarray, yarray);
+         
+         var currentTimeStamp = new Date().getTime();
+         currentTimeStamp = new Intl.DateTimeFormat('en-SG', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(currentTimeStamp);
 
          spearmanrho.calc()
            .then(rho =>
@@ -489,7 +562,7 @@ class Chartbi extends Component {
                            layout={{
                               width: 800, 
                               height: 700, 
-                              title: '<b>Correlation between ' + this.state.selectedvariable + ' and ' + this.state.selectedvariable2 + '</b><br>R: ' + r + ', Rho: ' + rho.toFixed(2) + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
+                              title: '<b>Generated Time:' + currentTimeStamp + '</b><br>' + '<b>Correlation between ' + this.state.selectedvariable + ' and ' + this.state.selectedvariable2 + '</b><br>R: ' + r + ', Rho: ' + rho.toFixed(2) + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
                               hovermode: 'closest',
                               xaxis: {
                                  title: this.state.selectedvariable,
@@ -535,7 +608,7 @@ class Chartbi extends Component {
             <tbody>
                <tr>             
                   <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
-                  <form method="POST" onSubmit={this.formSubmitted}>                       
+                  <form name="submitForm" method="POST" onSubmit={this.formSubmitted}>                       
                      <br />
                      <table align="center">
                      <tbody>
@@ -609,12 +682,12 @@ class Chartbi extends Component {
                         </tr><tr>
                            <td align="center">
                               <div className="cardsubtitle">
-                                 Independent Variable (X):
+                                 Variable (X):
                               </div>
                            </td>
                         </tr><tr>
                            <td align="center">
-                              <select required defaultValue="" onChange={this.selectVariable} style={{"width":"210px"}}>
+                              <select id="xvariabledropdownid" required defaultValue="" onChange={this.selectVariable} style={{"width":"210px"}}>
                                  <option value="" disabled>---------- select a variable ----------</option>
                                  {this.state.variablesoptions}
                               </select>
@@ -622,12 +695,12 @@ class Chartbi extends Component {
                         </tr><tr>
                            <td align="center">                        
                               <div className="cardsubtitle">
-                                 Dependent Variable (Y):
+                                 Variable (Y):
                               </div>
                            </td>
                         </tr><tr>
                            <td align="center">
-                              <select required defaultValue="" onChange={this.selectVariable2} style={{"width":"210px"}}>
+                              <select id="yvariabledropdownid" required defaultValue="" onChange={this.selectVariable2} style={{"width":"210px"}}>
                                  <option value="" disabled>---------- select a variable ----------</option>
                                  {this.state.variablesoptions2}
                               </select>
@@ -693,8 +766,8 @@ class Chartbi extends Component {
                                     <div className="cardsubtitle">
                                        {this.state.selectedfiltervariable.substring(3,)}:
                                     </div>
-                                    <select id="filtervaluedropdownid" required defaultValue="" onChange={this.selectFilterValue}>
-                                       <option id="firstoption" value="" disabled>---------- select a variable ----------</option>
+                                    <select id="filtervaluedropdownid" defaultValue="" required onChange={this.selectFilterValue}>
+                                       <option value="" disabled>---------- select a variable ----------</option>
                                        {this.state.filtervaluelistoptions}                         
                                     </select>
                                     <br/>
