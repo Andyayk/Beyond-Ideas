@@ -25,9 +25,10 @@ db = SQLAlchemy()
 def create_app(config_name):
     app = Flask(__name__, static_folder='../../static/dist',
                 template_folder='../../static')
-    sslify = SSLify(app)
+    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root@127.0.0.1:3306/is480-term1-2018-19"
+    app.secret_key='super secret key'
     # App Configurations
-    app.config.from_pyfile('../instance/config.cfg', silent=True)
+    app.config.from_pyfile('config.cfg', silent=True)
     # app.config["CUSTOM_STATIC_PATH"] = "../../static"
 
     blueprint = Blueprint(
@@ -91,6 +92,13 @@ def create_app(config_name):
             return redirect(url_for('login_r'))
         else:
             return render_template('manage.html')
+            
+    @app.route("/datasets/")
+    def datasets():
+        if not current_user.is_authenticated:
+            return redirect(url_for('login_r'))
+        else:
+            return render_template('datasets.html')
 
     @app.route('/signup')
     def signup_r():

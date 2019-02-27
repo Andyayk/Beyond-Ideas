@@ -24,6 +24,7 @@ class TableViewbi extends Component {
          combinedtableboolean: false,
          hideLoadingBarOne: true,
          hideLoadingBarTwo: true,
+         radioButtonCount: "",
          hideLoadingBarThree: true
       };
 
@@ -123,12 +124,14 @@ class TableViewbi extends Component {
          }
       }
       
-      if (match1 && match2){
+      if (match1 && match2 && (this.state.exporttable1 != this.state.exporttable2)){
          this.setState({
             selectedjoinvariable: ""
          });  
          document.getElementById(radiobutton).disabled = false; 
          document.getElementById(labelnames).style = "color:black";
+         var currentCount = this.state.radioButtonCount + 1;
+         this.setState({radioButtonCount : currentCount});         
       } else {
          this.setState({
             selectedjoinvariable: ""
@@ -178,6 +181,7 @@ class TableViewbi extends Component {
    display(event) {  
       var x = document.getElementById("data1area");
       x.style.display = "none";
+      this.setState({radioButtonCount : 0});
 
       this.setState({
          hideLoadingBarOne: false
@@ -197,6 +201,25 @@ class TableViewbi extends Component {
          this.checkradiobutton(data['colnames'], this.state.colnames2, "depotradio", "labeldepot", "depot");
          this.checkradiobutton(data['colnames'], this.state.colnames2, "locationradio","labelcountry", "country");
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.colnames2);   
+         
+         if(this.state.radioButtonCount == 1){
+              var dateEle = document.getElementById("dateradio");
+              var companyEle = document.getElementById("companyradio");
+              var depotEle = document.getElementById("depotradio");
+              var locationEle = document.getElementById("locationradio");
+              if(!dateEle.disabled){
+                  this.setState({selectedjoinvariable : "activitydate"});
+              } 
+              else if(companyEle.disabled == false){
+                  this.setState({selectedjoinvariable : "company"});
+              } 
+              else if(depotEle.disabled == false){
+                  this.setState({selectedjoinvariable : "depot"});
+              } 
+              else if(locationEle.disabled == false){
+                  this.setState({selectedjoinvariable : "countryname"});
+              }
+         }
          
          this.setState({
             colnames: (data['colnames']),
@@ -218,6 +241,8 @@ class TableViewbi extends Component {
       this.setState({
          hideLoadingBarTwo: false
       });
+      
+      this.setState({radioButtonCount : 0});
 
       this.setState({
          exporttable2: event.target.value,
@@ -232,7 +257,26 @@ class TableViewbi extends Component {
          this.checkradiobutton(data['colnames'], this.state.colnames, "depotradio", "labeldepot", "depot");
          this.checkradiobutton(data['colnames'], this.state.colnames, "locationradio","labelcountry", "country");
          this.checksubmitbutton("dateradio", "companyradio", "depotradio", "locationradio", this.state.colnames);   
-          
+         
+         if(this.state.radioButtonCount == 1){
+              var dateEle = document.getElementById("dateradio");
+              var companyEle = document.getElementById("companyradio");
+              var depotEle = document.getElementById("depotradio");
+              var locationEle = document.getElementById("locationradio");
+              if(!dateEle.disabled){
+                  this.setState({selectedjoinvariable : "activitydate"});
+              } 
+              else if(companyEle.disabled == false){
+                  this.setState({selectedjoinvariable : "company"});
+              } 
+              else if(depotEle.disabled == false){
+                  this.setState({selectedjoinvariable : "depot"});
+              } 
+              else if(locationEle.disabled == false){
+                  this.setState({selectedjoinvariable : "countryname"});
+              }
+         }
+         
          this.setState({
             colnames2: (data['colnames']),
             colvalues2: (data['coldata']),
