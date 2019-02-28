@@ -14,6 +14,7 @@ class WebCrawlingbi extends Component {
          startdate: "",
          enddate: "",
          countryname: "",
+         save: "",
          errordatestatement: "",
          hideLoadingBar: true,         
       };
@@ -87,16 +88,24 @@ class WebCrawlingbi extends Component {
       });      
    }    
 
+   btnClick(){
+      this.setState({
+         save: "true"
+      });
+   }  
+
    //retrieve web crawl results
    weatherCrawler(event){
       var country = this.state.countryname
       var begindate = this.state.startdate
       var finishdate = this.state.enddate
+      var saveToDB = this.state.save
       $.post(window.location.origin + "/weathercrawlingbi/",
       {
          startdate: begindate,
          enddate: finishdate,
-         countryname: country
+         countryname: country,
+         save: saveToDB
       },
       (data) => {
          var message = "";
@@ -245,7 +254,7 @@ class WebCrawlingbi extends Component {
                                     <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save Weather Data as CSV</button>    
                                  </td>
                                  <td align="center">
-                                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save Weather Data into Database</button>    
+                                    <button onClick={this.btnClick.bind(this)} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save Weather Data into Database</button>    
                                  </td>                                 
                               </tr>
                               <br/>

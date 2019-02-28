@@ -308,11 +308,12 @@ def getFilterValuesbi(tablename, tablename2, filtervariable):
     except Exception as e:
         return "" 
 
-def weatherCrawlerbi(startdate, enddate, countryname):
+def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID):
     """
         This method crawl weather data from worldweatheronline
     """ 
-    print("came to line 312")    
+    print("line 315")
+    print(saveToDB)
     try:
         #Key to call the API, expire 27 April
         with open(os.getcwd()+"\\instance\\weather_credentials.json", "r") as file:  
@@ -428,18 +429,23 @@ def weatherCrawlerbi(startdate, enddate, countryname):
                         start_crawl_month += 1
                     start_crawl_day = 1
                 num_of_months-=1
-        tableName = "weather_data_" + input_start_date[8:10] + input_start_date[5:7] + input_start_date[0:4] + "_" + input_end_date[8:10] + input_end_date[5:7] + input_end_date[0:4]
-        connection.execute("CREATE TABLE " + tableName + " (date date, meanTemperatureC int(2), meanTemperatureF int(2));")
-        status = insertToDatabase(headerArray, bodyArray, tableName)
-        #write the data into a csv file
-        returnStr = headerArray
-        returnStr += "\n"
-        for i in bodyArray:
-            returnStr += i
+        if saveToDB == "true":        
+            tableName = "weather_data_" + country_name + "_" + input_start_date[8:10] + input_start_date[5:7] + input_start_date[0:4] + "_" + input_end_date[8:10] + input_end_date[5:7] + input_end_date[0:4]
+            connection.execute("CREATE TABLE " + tableName + " (date date, meanTemperatureC int(2), meanTemperatureF int(2));")
+            timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+            connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
+            status = insertToDatabase(headerArray, bodyArray, tableName)
+        else:
+            #write the data into a csv file
+            returnStr = headerArray
             returnStr += "\n"
-        #print(returnStr)
-        return returnStr
+            for i in bodyArray:
+                returnStr += i
+                returnStr += "\n"
+            #print(returnStr)
+            return returnStr
     except Exception as e:
+        print(e)
         return "Crawling of weather data unsuccessful."           
 
 def twitterCrawlerbi(tags, nooftweets):
