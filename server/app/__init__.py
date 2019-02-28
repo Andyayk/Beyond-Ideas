@@ -775,8 +775,7 @@ def create_app(config_name):
             """      
             if not current_user.is_authenticated:
                 return redirect(url_for('login_r'))
-            else:
-                modelbi.naiveBayesClassifier()                
+            else:               
                 return render_template('twittercrawlingpagebi.html')         
 
         @app.route("/twittercrawlingbi/", methods = ['POST'])
@@ -794,5 +793,13 @@ def create_app(config_name):
                 apicalllimit = results[1],
                 apicallreset = results[2]
             )            
+
+        @app.route("/twittertest/")
+        def twittertest(): #rendering our twitter web crawling page
+            """
+                This method will render our twitter web crawling page
+            """      
+            modelbi.naiveBayesClassifier()                
+            return render_template('twittercrawlingpagebi.html') 
 
     return app
