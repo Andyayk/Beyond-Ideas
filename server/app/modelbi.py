@@ -430,11 +430,12 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID):
                     start_crawl_day = 1
                 num_of_months-=1
         if saveToDB == "true":        
-            tableName = "weather_data_" + country_name + "_" + input_start_date[8:10] + input_start_date[5:7] + input_start_date[0:4] + "_" + input_end_date[8:10] + input_end_date[5:7] + input_end_date[0:4]
+            tableName = "weather_data_" + country_name + "_" + input_start_date[8:10] + input_start_date[5:7] + input_start_date[0:4] + "_" + input_end_date[8:10] + input_end_date[5:7] + input_end_date[0:4] + "_" + str(userID)
             connection.execute("CREATE TABLE " + tableName + " (date date, meanTemperatureC int(2), meanTemperatureF int(2));")
             timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
             connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
             status = insertToDatabase(headerArray, bodyArray, tableName)
+            return "success"
         else:
             #write the data into a csv file
             returnStr = headerArray
