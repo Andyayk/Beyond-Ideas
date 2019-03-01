@@ -25,8 +25,9 @@ class WebCrawlingbi extends Component {
       this.selectEndDate = this.selectEndDate.bind(this);
 
       this.selectCountryName = this.selectCountryName.bind(this);            
-
+      this.btnClick = this.btnClick.bind(this);
       this.weatherCrawler = this.weatherCrawler.bind(this);
+
 
       this.formSubmitted = this.formSubmitted.bind(this);  
 
@@ -108,23 +109,31 @@ class WebCrawlingbi extends Component {
          save: saveToDB
       },
       (data) => {
-         var message = "";
+         var message = ""; 
          $.each(data, function(key, val) {
-            var element = document.createElement('a');
-            var newContent = val.replace(/;/g, "\n")
-            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
-            element.setAttribute('download', country + '_weather.csv');
-            element.style.display = 'none';
-            document.body.appendChild(element);
-            element.click();
-            document.body.removeChild(element);
-            message = "Crawling of weather data is successful.";
+            console.log(val)
+            if (val == "success"){
+               message = "Successfully saved weather data into the database."
+            } else {
+               var element = document.createElement('a');
+               var newContent = val.replace(/;/g, "\n");
+               element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
+               element.setAttribute('download', country + '_weather.csv');
+               element.style.display = 'none';
+               document.body.appendChild(element);
+               element.click();
+               document.body.removeChild(element);
+               message = "Crawling of weather data is successful.";
+            }
          });  
 
          this.setState({
             message: message,
+            save: "",
             hideLoadingBar: true, //hide loading button
-         });                        
+         });  
+          console.log("came to line 135")    
+          console.log(save)                  
       });
    }
 
