@@ -762,8 +762,8 @@ def create_app(config_name):
 
             countryname = request.form.get("countryname") 
             saveToDB = request.form.get("save") 
-            print("here is init")
-            print(saveToDB)
+            #print("here is init")
+            #print(saveToDB)
             message = modelbi.weatherCrawlerbi(startdate, enddate, countryname, saveToDB, current_user.id)
             return jsonify(
                 message = message
@@ -786,8 +786,9 @@ def create_app(config_name):
             """      
             tags = request.form.get("tags")  
             nooftweets = request.form.get("nooftweets") 
+            saveToDB = request.form.get("save")             
 
-            results = modelbi.twitterCrawlerbi(tags, nooftweets)
+            results = modelbi.twitterCrawlerbi(tags, nooftweets, saveToDB, current_user.id)
 
             return jsonify(
                 tweets = results[0],

@@ -16,12 +16,15 @@ class TwitterCrawlingbi extends Component {
          apiCallReset: "15 Minutes*",
          tags: "",
          nooftweets: "",
+         save: "",         
          hideLoadingBar: true,            
       };
 
       this.twitterCrawler = this.twitterCrawler.bind(this);
       this.selectTags = this.selectTags.bind(this);        
       this.selectNoOfTweets = this.selectNoOfTweets.bind(this);    
+
+      this.btnClick = this.btnClick.bind(this);
 
       this.formSubmitted = this.formSubmitted.bind(this);     
 
@@ -35,7 +38,8 @@ class TwitterCrawlingbi extends Component {
       $.post(window.location.origin + "/twittercrawlingbi/",
       {
          tags: this.state.tags,
-         nooftweets: this.state.nooftweets
+         nooftweets: this.state.nooftweets,
+         save: this.state.save
       },
       (data) => {
          var message = "";
@@ -43,23 +47,28 @@ class TwitterCrawlingbi extends Component {
          var apiCallLimit = data['apicalllimit'];
          var apiCallReset = data['apicallreset'];  
 
-         if (!twitterData.includes("No Tweets") && twitterData.length > 2) {   
+         if (!twitterData.includes("no tweets") && twitterData.length > 2) {   
             //console.log(twitterData)
-            var element = document.createElement('a');
-            var newContent = twitterData
-            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
-            element.setAttribute('download', 'tweets.csv');
-            element.style.display = 'none';
-            document.body.appendChild(element);
-            element.click();
-            document.body.removeChild(element);
-            message = "Twitter Data Retrieval is Successful.";
+            if (twitterData == "Successfully saved twitter data into the database"){
+               message = "Successfully saved twitter data into the database."
+            } else {            
+               var element = document.createElement('a');
+               var newContent = twitterData
+               element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
+               element.setAttribute('download', 'tweets.csv');
+               element.style.display = 'none';
+               document.body.appendChild(element);
+               element.click();
+               document.body.removeChild(element);
+               message = "Successfully saved twitter data into CSV file.";
+            }
          }
          this.setState({
             message: message,
             twitterData: twitterData,
             apiCallLimit: apiCallLimit,
             apiCallReset: apiCallReset,
+            save: "",            
             hideLoadingBar: true, //hide loading button            
          });               
       }); 
@@ -77,7 +86,14 @@ class TwitterCrawlingbi extends Component {
       this.setState({
          nooftweets: event.target.value
       });      
-   }   
+   }  
+
+   //switch between saving to database (true) or CSV file
+   btnClick(){
+      this.setState({
+         save: "true"
+      });
+   }      
 
    //handle form submission
    formSubmitted(event){
@@ -123,6 +139,10 @@ class TwitterCrawlingbi extends Component {
                                  <td align="center">
                                     <input required type="text" id="tags" onChange={this.selectTags}/>
                                  </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <font size="2" color="grey"><i>Only tweets from the past 7 days will be retrieved</i></font>                             
+                                 </td>
                               </tr><br/><tr>
                                  <td align="center">
                                     <div className="cardtitle">
@@ -137,7 +157,7 @@ class TwitterCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <input required type="number" id="nooftweets" onChange={this.selectNoOfTweets} min="100" max="45000"/>                    
+                                    <input required type="number" id="nooftweets" onChange={this.selectNoOfTweets} min="100" max="5000"/>                    
                                  </td>
                               </tr><tr>
                                  <td align="center">
@@ -147,11 +167,21 @@ class TwitterCrawlingbi extends Component {
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Retrieve Tweets</button>    
+                                    <button onClick={this.btnClick.bind(this)} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save into Database</button>    
+                                 </td>                                                              
+                              </tr><tr>
+                                 <td align="center">
+                                    <div className="cardtitle">                                 
+                                    Or
+                                    </div>
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <font size="2" color="grey"><i>Only tweets from the past 7 days will be retrieved</i></font>                             
+                                    <button id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV File</button>    
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <font size="2"><i>No. of Twitter Requests Remaining: {this.state.apiCallLimit} (Reset at: {this.state.apiCallReset})</i></font>                          
                                  </td>
                               </tr>
                               <br/>
@@ -161,10 +191,6 @@ class TwitterCrawlingbi extends Component {
                                     <div className="LoadingBar" style={style}>
                                        {this.loadingBarInstance}
                                     </div>                                    
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <font size="2"><i>No. of Twitter Requests Remaining: {this.state.apiCallLimit} (Reset at: {this.state.apiCallReset})</i></font>                          
                                  </td>
                               </tr>
                               <br/>                           

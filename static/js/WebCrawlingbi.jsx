@@ -28,7 +28,6 @@ class WebCrawlingbi extends Component {
       this.btnClick = this.btnClick.bind(this);
       this.weatherCrawler = this.weatherCrawler.bind(this);
 
-
       this.formSubmitted = this.formSubmitted.bind(this);  
 
       this.loadingBarInstance = (
@@ -56,6 +55,13 @@ class WebCrawlingbi extends Component {
          element.style.color = "black";                  
          element.style.opacity = "1";            
          element.style.cursor = "pointer";
+
+         var element2 = document.getElementById('submitbutton2');
+         element2.disabled = false;
+         element2.style.background = "#fecb2f";
+         element2.style.color = "black";                  
+         element2.style.opacity = "1";            
+         element2.style.cursor = "pointer";         
       } else {
          var element = document.getElementById('submitbutton');
          element.disabled = true;
@@ -63,6 +69,13 @@ class WebCrawlingbi extends Component {
          element.style.color = "white";         
          element.style.opacity = "0.6";
          element.style.cursor = "not-allowed";
+
+         var element2 = document.getElementById('submitbutton2');
+         element2.disabled = true;
+         element2.style.background = "red";
+         element2.style.color = "white";         
+         element2.style.opacity = "0.6";
+         element2.style.cursor = "not-allowed";         
       }
    }
    
@@ -89,6 +102,7 @@ class WebCrawlingbi extends Component {
       });      
    }    
 
+   //switch between saving to database (true) or CSV file
    btnClick(){
       this.setState({
          save: "true"
@@ -111,7 +125,7 @@ class WebCrawlingbi extends Component {
       (data) => {
          var message = ""; 
          $.each(data, function(key, val) {
-            console.log(val)
+            //console.log(val)
             if (val == "success"){
                message = "Successfully saved weather data into the database."
             } else {
@@ -123,7 +137,7 @@ class WebCrawlingbi extends Component {
                document.body.appendChild(element);
                element.click();
                document.body.removeChild(element);
-               message = "Crawling of weather data is successful.";
+               message = "Successfully saved weather data into CSV file.";
             }
          });  
 
@@ -132,8 +146,8 @@ class WebCrawlingbi extends Component {
             save: "",
             hideLoadingBar: true, //hide loading button
          });  
-          console.log("came to line 135")    
-          console.log(save)                  
+         //console.log("came to line 135")    
+         //console.log(save)                  
       });
    }
 
@@ -260,11 +274,18 @@ class WebCrawlingbi extends Component {
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save Weather Data as CSV</button>    
-                                 </td>
+                                    <button onClick={this.btnClick.bind(this)} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save into Database</button>    
+                                 </td>                                                              
+                              </tr><tr>
                                  <td align="center">
-                                    <button onClick={this.btnClick.bind(this)} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save Weather Data into Database</button>    
-                                 </td>                                 
+                                    <div className="cardtitle">                                 
+                                    Or
+                                    </div>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <button id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV File</button>    
+                                 </td>
                               </tr>
                               <br/>
                               <tr>

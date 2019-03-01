@@ -2,7 +2,7 @@
 @author: Beyond Ideas 
 """
 
-import mysql.connector, datetime, requests, json, csv, os, time, io, math, random, operator
+import mysql.connector, datetime, requests, json, csv, os, time, io, math, random, operator, re
 import pandas as pd
 import numpy as np
 from twython import Twython
@@ -431,7 +431,7 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID):
                 num_of_months-=1
         if saveToDB == "true":        
             tableName = "weather_data_" + country_name + "_" + input_start_date[8:10] + input_start_date[5:7] + input_start_date[0:4] + "_" + input_end_date[8:10] + input_end_date[5:7] + input_end_date[0:4] + "_" + str(userID)
-            connection.execute("CREATE TABLE " + tableName + " (date date, meanTemperatureC int(2), meanTemperatureF int(2));")
+            connection.execute("CREATE TABLE `" + tableName + "` (date date, meanTemperatureC int(2), meanTemperatureF int(2));")
             timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
             connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
             status = insertToDatabase(headerArray, bodyArray, tableName)
@@ -447,9 +447,9 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID):
             return returnStr
     except Exception as e:
         print(e)
-        return "Crawling of weather data unsuccessful."           
+        return "Retrieval of weather data unsuccessful."           
 
-def twitterCrawlerbi(tags, nooftweets):
+def twitterCrawlerbi(tags, nooftweets, saveToDB, userID):
     """
         This method crawl data from Twitter
     """
@@ -534,8 +534,8 @@ def twitterCrawlerbi(tags, nooftweets):
 
                 tweet.append(result['id'])
                 tweet.append(result['user']['id'])
-                tweet.append(result['user']['name'])
-                tweet.append(result['text'])
+                tweet.append(re.sub(r'[^a-zA-Z]+', ' ', result['user']['name']))
+                tweet.append(re.sub(r'https?://\S+|[^a-zA-Z]+', ' ', result['text']))
                 tweet.append(dateformatted)                                                                
                 
                 row = csv2string(tweet)
@@ -543,35 +543,40 @@ def twitterCrawlerbi(tags, nooftweets):
                 tweets.append(row)                       
         except Exception as e:
             #print(str(e))
-            #write the data into a csv file
-            returnStr = headerArray
-            returnStr += "\n"
-            for i in tweets:
-                returnStr += i     
-                       
-            return [returnStr, "Twitter Requests Limit Reached", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))]
+            return ["no tweets", "Twitter Requests Limit Reached", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))]
 
     apicalllimit = twitter.get_lastfunction_header('x-rate-limit-remaining')
     apicallreset = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))
 
-    #write the data into a csv file
-    returnStr = headerArray
-    returnStr += "\n"
-    for i in tweets:
-        returnStr += i
+    if saveToDB == "true":        
+        tableName = "tweets_" + str(userID)
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid BIGINT(255), userid BIGINT(255), name VARCHAR(255), tweet VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci, date date);")
+        timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+        connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
+        status = insertToDatabase(headerArray, tweets, tableName)
 
-    results = [returnStr, apicalllimit, apicallreset]
-    return results  
+        results = ["Successfully saved twitter data into the database", apicalllimit, apicallreset]        
+        return results
+    else:
+        #write the data into a csv file
+        returnStr = headerArray
+        returnStr += "\n"
+        for i in tweets:
+            returnStr += i
+
+        results = [returnStr, apicalllimit, apicallreset]
+        return results   
   
 def insertToDatabase(header, bodyArray, tableName):
     try:
-        sqlstmt = "INSERT INTO " + tableName + " (" + header + ") VALUES"
+        sqlstmt = "INSERT INTO `" + tableName + "` (" + header + ") VALUES"
         for i in bodyArray:
             sqlstmt += "("
             sqlstmt += i
             sqlstmt += "),"
         sqlstmt = sqlstmt[0:len(sqlstmt)-1]
         sqlstmt += ";"
+        print(sqlstmt)
         connection.execute(sqlstmt)
         return True
     except Exception as e:
