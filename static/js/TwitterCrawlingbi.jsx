@@ -14,6 +14,7 @@ class TwitterCrawlingbi extends Component {
          twitterData: [],
          apiCallLimit: "-",
          apiCallReset: "15 Minutes*",
+         filename: "",
          tags: "",
          nooftweets: "",
          save: "",         
@@ -24,7 +25,9 @@ class TwitterCrawlingbi extends Component {
       this.selectTags = this.selectTags.bind(this);        
       this.selectNoOfTweets = this.selectNoOfTweets.bind(this);    
 
-      this.btnClick = this.btnClick.bind(this);
+      this.switchToDatabase = this.switchToDatabase.bind(this);
+      this.switchToCSV = this.switchToCSV.bind(this);      
+      this.selectFilename = this.selectFilename.bind(this);      
 
       this.formSubmitted = this.formSubmitted.bind(this);     
 
@@ -35,11 +38,13 @@ class TwitterCrawlingbi extends Component {
  
    //retrieving twitter data
    twitterCrawler() { 
+      var filename = this.state.filename;
       $.post(window.location.origin + "/twittercrawlingbi/",
       {
          tags: this.state.tags,
          nooftweets: this.state.nooftweets,
-         save: this.state.save
+         save: this.state.save,
+         filename: filename
       },
       (data) => {
          var message = "";
@@ -50,12 +55,12 @@ class TwitterCrawlingbi extends Component {
          if (!twitterData.includes("no tweets") && twitterData.length > 2) {   
             //console.log(twitterData)
             if (twitterData == "Successfully saved twitter data into the database"){
-               message = "Successfully saved twitter data into the database."
+               message = "Successfully saved twitter data into the database.";
             } else {            
                var element = document.createElement('a');
-               var newContent = twitterData
+               var newContent = twitterData;
                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
-               element.setAttribute('download', 'tweets.csv');
+               element.setAttribute('download', filename + '.csv');
                element.style.display = 'none';
                document.body.appendChild(element);
                element.click();
@@ -74,6 +79,13 @@ class TwitterCrawlingbi extends Component {
       }); 
    }   
 
+   //store the file name that the user has selected
+   selectFilename(event) {
+      this.setState({
+         filename: event.target.value
+      });      
+   }  
+
    //store the tags that the user has selected
    selectTags(event) {
       this.setState({
@@ -89,11 +101,18 @@ class TwitterCrawlingbi extends Component {
    }  
 
    //switch between saving to database (true) or CSV file
-   btnClick(){
+   switchToDatabase(){
       this.setState({
          save: "true"
       });
    }      
+
+   //switch between saving to database (true) or CSV file
+   switchToCSV(){
+      this.setState({
+         save: ""
+      });
+   } 
 
    //handle form submission
    formSubmitted(event){
@@ -163,11 +182,28 @@ class TwitterCrawlingbi extends Component {
                                  <td align="center">
                                     <font size="2" color="grey"><i>No. of tweets will be rounded up to the nearest hundreds</i></font>
                                  </td>
+                              </tr><br/><tr>
+                                 <td align="center">
+                                    <div className="cardtitle">
+                                       Enter File Name
+                                    </div>
+                                 </td> 
+                              </tr>
+                              <tr>                             
+                                 <td align="center">
+                                    <div className="cardsubtitle">
+                                       File Name:
+                                    </div>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <input required type="text" id="filename" onChange={this.selectFilename}/>
+                                 </td>
                               </tr>
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <button onClick={this.btnClick.bind(this)} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save into Database</button>    
+                                    <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save into Database</button>    
                                  </td>                                                              
                               </tr><tr>
                                  <td align="center">
@@ -177,7 +213,7 @@ class TwitterCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <button id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV File</button>    
+                                    <button onClick={this.switchToCSV} id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV File</button>    
                                  </td>
                               </tr><tr>
                                  <td align="center">

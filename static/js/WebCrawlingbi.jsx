@@ -25,7 +25,8 @@ class WebCrawlingbi extends Component {
       this.selectEndDate = this.selectEndDate.bind(this);
 
       this.selectCountryName = this.selectCountryName.bind(this);            
-      this.btnClick = this.btnClick.bind(this);
+      this.switchToDatabase = this.switchToDatabase.bind(this);
+      this.switchToCSV = this.switchToCSV.bind(this);           
       this.weatherCrawler = this.weatherCrawler.bind(this);
 
       this.formSubmitted = this.formSubmitted.bind(this);  
@@ -103,18 +104,25 @@ class WebCrawlingbi extends Component {
    }    
 
    //switch between saving to database (true) or CSV file
-   btnClick(){
+   switchToDatabase(){
       this.setState({
          save: "true"
       });
    }  
 
+   //switch between saving to database (true) or CSV file
+   switchToCSV(){
+      this.setState({
+         save: ""
+      });
+   }    
+
    //retrieve web crawl results
    weatherCrawler(event){
-      var country = this.state.countryname
-      var begindate = this.state.startdate
-      var finishdate = this.state.enddate
-      var saveToDB = this.state.save
+      var country = this.state.countryname;
+      var begindate = this.state.startdate;
+      var finishdate = this.state.enddate;
+      var saveToDB = this.state.save;
       $.post(window.location.origin + "/weathercrawlingbi/",
       {
          startdate: begindate,
@@ -127,7 +135,7 @@ class WebCrawlingbi extends Component {
          $.each(data, function(key, val) {
             //console.log(val)
             if (val == "success"){
-               message = "Successfully saved weather data into the database."
+               message = "Successfully saved weather data into the database.";
             } else {
                var element = document.createElement('a');
                var newContent = val.replace(/;/g, "\n");
@@ -274,7 +282,7 @@ class WebCrawlingbi extends Component {
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <button onClick={this.btnClick.bind(this)} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save into Database</button>    
+                                    <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save into Database</button>    
                                  </td>                                                              
                               </tr><tr>
                                  <td align="center">
@@ -284,7 +292,7 @@ class WebCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <button id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV File</button>    
+                                    <button onClick={this.switchToCSV} id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV File</button>    
                                  </td>
                               </tr>
                               <br/>

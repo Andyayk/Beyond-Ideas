@@ -31,15 +31,6 @@ def is_emptybi(any_structure):
         return False
     else:
         return True
- 
-def csv2string(data):
-    """
-        This method will turn csv into string
-    """     
-    si = StringIO()
-    cw = csv.writer(si)
-    cw.writerow(data)
-    return si.getvalue()
 
 def displayTablebi(table_name):
     """
@@ -312,8 +303,8 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID):
     """
         This method crawl weather data from worldweatheronline
     """ 
-    print("line 315")
-    print(saveToDB)
+    #print("line 315")
+    #print(saveToDB)
     try:
         #Key to call the API, expire 27 April
         with open(os.getcwd()+"\\instance\\weather_credentials.json", "r") as file:  
@@ -449,7 +440,7 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID):
         print(e)
         return "Retrieval of weather data unsuccessful."           
 
-def twitterCrawlerbi(tags, nooftweets, saveToDB, userID):
+def twitterCrawlerbi(tags, nooftweets, saveToDB, userID, filename):
     """
         This method crawl data from Twitter
     """
@@ -530,15 +521,14 @@ def twitterCrawlerbi(tags, nooftweets, saveToDB, userID):
 
                 t = datetime.datetime(int(datesplit[5]), int(time.strptime(datesplit[1],'%b').tm_mon), int(datesplit[2]), 0, 0)
                 dateformatted = t.strftime('%Y-%m-%d')  
-                tweet = []
 
-                tweet.append(result['id'])
-                tweet.append(result['user']['id'])
-                tweet.append(re.sub(r'[^a-zA-Z]+', ' ', result['user']['name']))
-                tweet.append(re.sub(r'https?://\S+|[^a-zA-Z]+', ' ', result['text']))
-                tweet.append(dateformatted)                                                                
-                
-                row = csv2string(tweet)
+                tweetid = str(result['id'])
+                userid = str(result['user']['id'])
+                name = re.sub(r'[^a-zA-Z]+', ' ', result['user']['name'])
+                tweet = re.sub(r'https?://\S+|[^a-zA-Z]+', ' ', result['text'])
+                date = dateformatted
+
+                row = tweetid + "," + userid + "," + "\"" + name + "\"" + "," + "\"" + tweet + "\"" + "," + "\"" + date + "\""
 
                 tweets.append(row)                       
         except Exception as e:
@@ -549,7 +539,7 @@ def twitterCrawlerbi(tags, nooftweets, saveToDB, userID):
     apicallreset = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))
 
     if saveToDB == "true":        
-        tableName = "tweets_" + str(userID)
+        tableName = filename + "_" + str(userID)
         connection.execute("CREATE TABLE `" + tableName + "` (tweetid BIGINT(255), userid BIGINT(255), name VARCHAR(255), tweet VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci, date date);")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
         connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
@@ -563,6 +553,7 @@ def twitterCrawlerbi(tags, nooftweets, saveToDB, userID):
         returnStr += "\n"
         for i in tweets:
             returnStr += i
+            returnStr += "\n"            
 
         results = [returnStr, apicalllimit, apicallreset]
         return results   
@@ -576,7 +567,7 @@ def insertToDatabase(header, bodyArray, tableName):
             sqlstmt += "),"
         sqlstmt = sqlstmt[0:len(sqlstmt)-1]
         sqlstmt += ";"
-        print(sqlstmt)
+
         connection.execute(sqlstmt)
         return True
     except Exception as e:
