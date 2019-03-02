@@ -651,7 +651,7 @@ def naiveBayesClassifier():
     #we can perform some smoothing of the learned probabilities
     #simply add one count to each word under each class
     a = 0.001
-    wordsInVocabulary = 61188
+    wordsInVocabulary = 16688
 
     #calculate probability of each word based on class
     p_ij = df.groupby(['classId','wordId'])
@@ -669,7 +669,165 @@ def naiveBayesClassifier():
     Pr_dict = Pr.to_dict()
 
     print(Pr)
- 
+
+    #common stop words from online
+    stop_words = [
+    "a", "about", "above", "across", "after", "afterwards", 
+    "again", "all", "almost", "alone", "along", "already", "also",    
+    "although", "always", "am", "among", "amongst", "amoungst", "amount", "an", "and", "another", "any", "anyhow", "anyone", "anything", "anyway", "anywhere", "are", "as", "at", "be", "became", "because", "become","becomes", "becoming", "been", "before", "behind", "being", "beside", "besides", "between", "beyond", "both", "but", "by","can", "cannot", "cant", "could", "couldnt", "de", "describe", "do", "done", "each", "eg", "either", "else", "enough", "etc", "even", "ever", "every", "everyone", "everything", "everywhere", "except", "few", "find","for","found", "four", "from", "further", "get", "give", "go", "had", "has", "hasnt", "have", "he", "hence", "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers", "herself", "him", "himself", "his", "how", "however", "i", "ie", "if", "in", "indeed", "is", "it", "its", "itself", "keep", "least", "less", "ltd", "made", "many", "may", "me", "meanwhile", "might", "mine", "more", "moreover", "most", "mostly", "much", "must", "my", "myself", "name", "namely", "neither", "never", "nevertheless", "next","no", "nobody", "none", "noone", "nor", "not", "nothing", "now", "nowhere", "of", "off", "often", "on", "once", "one", "only", "onto", "or", "other", "others", "otherwise", "our", "ours", "ourselves", "out", "over", "own", "part","perhaps", "please", "put", "rather", "re", "same", "see", "seem", "seemed", "seeming", "seems", "she", "should","since", "sincere","so", "some", "somehow", "someone", "something", "sometime", "sometimes", "somewhere", "still", "such", "take","than", "that", "the", "their", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "therefore", "therein", "thereupon", "these", "they",
+    "this", "those", "though", "through", "throughout",
+    "thru", "thus", "to", "together", "too", "toward", "towards",
+    "under", "until", "up", "upon", "us",
+    "very", "was", "we", "well", "were", "what", "whatever", "when",
+    "whence", "whenever", "where", "whereafter", "whereas", "whereby",
+    "wherein", "whereupon", "wherever", "whether", "which", "while", 
+    "who", "whoever", "whom", "whose", "why", "will", "with",
+    "within", "without", "would", "yet", "you", "your", "yours", "yourself", "yourselves"
+    ]    
+    
+    #create vocabulary dataframe
+    vocab = open('20news-bydate/matlab/vocabulary.txt') 
+    vocab_df = pd.read_csv(vocab, names = ['word']) 
+    vocab_df = vocab_df.reset_index() 
+    vocab_df['index'] = vocab_df['index'].apply(lambda x: x+1) 
+    print(vocab_df.head())
+
+    #index of all words
+    tot_list = set(vocab_df['index'])
+
+    #index of good words
+    vocab_df = vocab_df[~vocab_df['word'].isin(stop_words)]
+    good_list = vocab_df['index'].tolist()
+    good_list = set(good_list)
+
+    #index of stop words
+    bad_list = tot_list - good_list
+
+    #set all stop words to 0
+    for bad in bad_list:
+        for j in range(1,21):
+            Pr_dict[j][bad] = a/(p_j['count'].sum()[j] + wordsInVocabulary + 1)
+
+    #calculate IDF 
+    tot = len(df['docId'].unique()) 
+    p_ij = df.groupby(['wordId']) 
+    IDF = np.log(tot/p_ij['docId'].count()) 
+    IDF_dict = IDF.to_dict()
+
+    regular_predict = MNB(df, pclasses, smooth=False, IDF=False)
+    smooth_predict  = MNB(df, pclasses, smooth=True, IDF=False)
+    tfidf_predict   = MNB(df, pclasses, smooth=False, IDF=True)
+    all_predict     = MNB(df, pclasses, smooth=True, IDF=True)
+    #Get list of labels
+    train_label = pd.read_csv('20news-bydate/matlab/train.label',
+                              names=['t'])
+    train_label= train_label['t'].tolist()
+    total = len(train_label) 
+    models = [regular_predict, smooth_predict, 
+              tfidf_predict, all_predict] 
+    strings = ['Regular', 'Smooth', 'IDF', 'Both'] 
+     
+    for m,s in zip(models,strings):
+        val = 0
+        for i,j in zip(m, train_label):
+            if i != j:
+                val +=1
+            else:
+                pass   
+        print(s,"Error:\t\t",val/total * 100, "%")    
+
+    #Get test data
+    test_data = open('20news-bydate/matlab/test.data')
+    df = pd.read_csv(test_data, delimiter=' ', names=['docId', 'wordId', 'count'])
+
+    #Get list of labels
+    test_label = pd.read_csv('20news-bydate/matlab/test.label', names=['t'])
+    test_label= test_label['t'].tolist()
+
+    #MNB Calculation
+    predict = MNB(df, pclasses, smooth = True, IDF = False)
+
+    total = len(test_label)
+    val = 0
+    for i,j in zip(predict, test_label):
+        if i == j:
+            val +=1
+        else:
+            pass
+    print("Error:\t",(1-(val/total)) * 100, "%")        
+
+def MNB(df, pclasses, smooth = False, IDF = False):
+    '''
+    Multinomial Naive Bayes classifier
+    :param df [Pandas Dataframe]: Dataframe of data
+    :param smooth [bool]: Apply Smoothing if True
+    :param IDF [bool]: Apply Inverse Document Frequency if True
+    :return predict [list]: Predicted class ID
+    '''
+    #Using dictionaries for greater speed
+    df_dict = df.to_dict()
+    new_dict = {}
+    prediction = []
+    
+    #new_dict = {docId : {wordId: count},....}
+    for index in range(len(df_dict['docId'])):
+        docId = df_dict['docId'][index]
+        wordId = df_dict['wordId'][index]
+        count = df_dict['count'][index]
+        try: 
+            new_dict[docId][wordId] = count 
+        except:
+            new_dict[df_dict['docId'][index]] = {}
+            new_dict[docId][wordId] = count
+
+    #Calculating the scores for each doc
+    for docId in range(1, len(new_dict)+1):
+        score_dict = {}
+        #Creating a probability row for each class
+        for classId in range(1,21):
+            score_dict[classId] = 1
+            #For each word:
+            for wordId in new_dict[docId]:
+                #Check for frequency smoothing
+                #log(1+f)*log(Pr(i|j))
+                if smooth: 
+                    try:
+                        probability=Pr_dict[wordId][classId]         
+                        power = np.log(1+ new_dict[docId][wordId])     
+                        #Check for IDF
+                        if IDF:
+                            score_dict[classId]+=(
+                               power*np.log(
+                               probability*IDF_dict[wordId]))
+                        else:
+                            score_dict[classId]+=power*np.log(
+                                                   probability)
+                    except:
+                        #Missing V will have log(1+0)*log(a/16689)=0 
+                        score_dict[classId] += 0                        
+                #f*log(Pr(i|j))
+                else: 
+                    try:
+                        probability = Pr_dict[wordId][classId]        
+                        power = new_dict[docId][wordId]               
+                        score_dict[classId]+=power*np.log(
+                                           probability) 
+                        #Check for IDF
+                        if IDF:
+                            score_dict[classId]+= power*np.log(
+                                   probability*IDF_dict[wordId]) 
+                    except:
+                        #Missing V will have 0*log(a/16689) = 0
+                        score_dict[classId] += 0      
+            #Multiply final with pclasses         
+            score_dict[classId] +=  np.log(pclasses[classId])                          
+
+        #Get class with max probabilty for the given docId 
+        max_score = max(score_dict, key=score_dict.get)
+        prediction.append(max_score)
+        
+    return prediction
+
 def splitDataset(dataset, splitRatio):
     """
         This method will split our dataset into train and test according to split ratio
