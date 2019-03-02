@@ -786,9 +786,10 @@ def create_app(config_name):
             """      
             tags = request.form.get("tags")  
             nooftweets = request.form.get("nooftweets") 
-            saveToDB = request.form.get("save")             
+            saveToDB = request.form.get("save") 
+            filename = request.form.get("filename")                         
 
-            results = modelbi.twitterCrawlerbi(tags, nooftweets, saveToDB, current_user.id)
+            results = modelbi.twitterCrawlerbi(tags, nooftweets, saveToDB, current_user.id, filename)
 
             return jsonify(
                 tweets = results[0],
