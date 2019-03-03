@@ -5,10 +5,15 @@
 import mysql.connector, datetime, requests, json, csv, os, time, io, math, random, operator, re
 import pandas as pd
 import numpy as np
+import nltk
 from twython import Twython
 from io import StringIO
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem.porter import *
+from sklearn.model_selection import train_test_split
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
 
 #MySQL Configurations
@@ -841,3 +846,50 @@ def splitDataset(dataset, splitRatio):
         trainSet.append(testSet.pop(index))
     return [trainSet, testSet]
  
+def preprocessDataset():
+    """
+        This method will pre-process our training dataset and then split it into train (70%) and test (30%)
+    """
+    df = pd.read_csv('Twitter_TrainingDatasets/train.csv', encoding = "ISO-8859-1")
+
+    #change all to lowercase letters 
+    df['SentimentText'] = df['SentimentText'].apply(lambda x: " ".join(x.lower() for x in x.split()))
+
+    #remove punctuation 
+    df['SentimentText'] = df['SentimentText'].str.replace('[^\w\s]','')
+
+    #remove stopwords
+    stop = stopwords.words('english')
+    df['SentimentText'] = df['SentimentText'].apply(lambda x: " ".join(x for x in x.split() if x not in stop))
+             
+    #tokenize each tweet and save into dataframe
+    listOfTokenizedTweets = []
+    for x in df['SentimentText']:
+        tokenized_word = word_tokenize(x)
+        listOfTokenizedTweets.append(tokenized_word)
+    df['SentimentText'] = listOfTokenizedTweets
+
+    #stemming each tweet
+    stemmer = PorterStemmer()
+    df['SentimentText'] = df['SentimentText'].apply(lambda x: [stemmer.stem(y) for y in x])    
+
+    # Set up training and test sets by choosing random samples from classes
+    X_train, X_test, y_train, y_test = train_test_split(df['Sentiment'], df['SentimentText'], test_size=0.30, random_state=0)
+
+    df_train = pd.DataFrame()
+    df_test = pd.DataFrame()
+
+    df_train['Sentiment'] = X_train
+    df_train['SentimentText'] = y_train
+    df_train = df_train.reset_index(drop=True)
+
+    df_test['Sentiment'] = X_test
+    df_test['SentimentText'] = y_test
+    df_test = df_test.reset_index(drop=True)
+
+    print(df_train)
+    print('testing')
+    print(df_test)
+
+#split by sentiment 
+#get all the words 
