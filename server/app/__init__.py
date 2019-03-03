@@ -762,9 +762,10 @@ def create_app(config_name):
 
             countryname = request.form.get("countryname") 
             saveToDB = request.form.get("save") 
+            filename = request.form.get("filename")               
             #print("here is init")
             #print(saveToDB)
-            message = modelbi.weatherCrawlerbi(startdate, enddate, countryname, saveToDB, current_user.id)
+            message = modelbi.weatherCrawlerbi(startdate, enddate, countryname, saveToDB, current_user.id, filename)
             return jsonify(
                 message = message
             )
