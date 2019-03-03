@@ -14,6 +14,7 @@ class WebCrawlingbi extends Component {
          startdate: "",
          enddate: "",
          countryname: "",
+         filename: "",        
          save: "",
          errordatestatement: "",
          hideLoadingBar: true,         
@@ -24,7 +25,8 @@ class WebCrawlingbi extends Component {
       this.selectStartDate = this.selectStartDate.bind(this); 
       this.selectEndDate = this.selectEndDate.bind(this);
 
-      this.selectCountryName = this.selectCountryName.bind(this);            
+      this.selectCountryName = this.selectCountryName.bind(this);  
+      this.selectFilename = this.selectFilename.bind(this);                
       this.switchToDatabase = this.switchToDatabase.bind(this);
       this.switchToCSV = this.switchToCSV.bind(this);           
       this.weatherCrawler = this.weatherCrawler.bind(this);
@@ -101,7 +103,13 @@ class WebCrawlingbi extends Component {
       this.setState({
          countryname: event.target.value
       });      
-   }    
+   }   
+
+   selectFilename(event) {
+      this.setState({
+         filename: event.target.value
+      });      
+   }      
 
    //switch between saving to database (true) or CSV file
    switchToDatabase(){
@@ -123,11 +131,13 @@ class WebCrawlingbi extends Component {
       var begindate = this.state.startdate;
       var finishdate = this.state.enddate;
       var saveToDB = this.state.save;
+      var filename = this.state.filename;
       $.post(window.location.origin + "/weathercrawlingbi/",
       {
          startdate: begindate,
          enddate: finishdate,
          countryname: country,
+         filename: filename,      
          save: saveToDB
       },
       (data) => {
@@ -140,7 +150,7 @@ class WebCrawlingbi extends Component {
                var element = document.createElement('a');
                var newContent = val.replace(/;/g, "\n");
                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
-               element.setAttribute('download', country + '_weather.csv');
+               element.setAttribute('download', filename + '_weather.csv');
                element.style.display = 'none';
                document.body.appendChild(element);
                element.click();
@@ -277,6 +287,23 @@ class WebCrawlingbi extends Component {
                                        <option value="Vanuatu">Vanuatu</option>   
                                        <option value="Vietnam">Vietnam</option>                        
                                     </select>
+                                 </td>
+                              </tr><br/><tr>
+                                 <td align="center">
+                                    <div className="cardtitle">
+                                       Enter File Name
+                                    </div>
+                                 </td> 
+                              </tr>
+                              <tr>                             
+                                 <td align="center">
+                                    <div className="cardsubtitle">
+                                       File Name:
+                                    </div>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <input required type="text" id="filename" onChange={this.selectFilename}/>
                                  </td>
                               </tr>
                               <br/>
