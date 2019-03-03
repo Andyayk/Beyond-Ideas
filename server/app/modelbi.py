@@ -6,14 +6,14 @@ import mysql.connector, datetime, requests, json, csv, os, time, io, math, rando
 import pandas as pd
 import numpy as np
 import nltk
-from twython import Twython
-from io import StringIO
-from sqlalchemy import create_engine
-from sqlalchemy.sql import text
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import *
 from sklearn.model_selection import train_test_split
+from twython import Twython
+from io import StringIO
+from sqlalchemy import create_engine
+from sqlalchemy.sql import text
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
 
 #MySQL Configurations
@@ -846,11 +846,11 @@ def splitDataset(dataset, splitRatio):
         trainSet.append(testSet.pop(index))
     return [trainSet, testSet]
  
-def preprocessDataset():
-    """
-        This method will pre-process our training dataset and then split it into train (70%) and test (30%)
-    """
-    df = pd.read_csv('Twitter_TrainingDatasets/train.csv', encoding = "ISO-8859-1")
+ """
+ This method will pre-process the training dataset and split int into train and test (70:30)
+ def preprocessingDataset():
+  
+    df = pd.read_csv('train.csv', encoding = "ISO-8859-1")
 
     #change all to lowercase letters 
     df['SentimentText'] = df['SentimentText'].apply(lambda x: " ".join(x.lower() for x in x.split()))
@@ -891,5 +891,6 @@ def preprocessDataset():
     print('testing')
     print(df_test)
 
-#split by sentiment 
-#get all the words 
+    #split by sentiment 
+    #get all the words 
+    """
