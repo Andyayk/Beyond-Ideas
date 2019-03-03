@@ -49,6 +49,8 @@ class TableViewbi extends Component {
 
       this.getMySQLTables(); //retrieving user's uploaded tables
 
+      this.selectFilename = this.selectFilename.bind(this);    
+
       this.loadingBarInstanceOne = (
          <div className="loader"></div>                                      
       );
@@ -181,6 +183,13 @@ class TableViewbi extends Component {
       }
    }
 
+   //store the file name that the user has selected
+   selectFilename(event) {
+      this.setState({
+         filename: event.target.value
+      });     
+   } 
+
    //retrieving table display from flask
    display(event) {  
       var x = document.getElementById("data1area");
@@ -301,12 +310,12 @@ class TableViewbi extends Component {
    
    //retrieving csv export from flask
    save(event) {
-      // console.log(this.state.exporttable1);
       $.post(window.location.origin + "/savejoinedtablebi/",
       {
          tablename1: this.state.exporttable1,
          tablename2: this.state.exporttable2,
          selectedjoinvariable: this.state.selectedjoinvariable,
+         filename: this.state.filename,
       },
       (data) => {  
          if(data == "Something is wrong with writeToCSV method") {
@@ -321,8 +330,6 @@ class TableViewbi extends Component {
                 hideLoadingBarThree: true,
                 combinedtableboolean: true
    			})
-
-
          }              
       });        
    }
@@ -433,7 +440,25 @@ class TableViewbi extends Component {
                                  </tbody>                        
                                  </table>
                               </td>
-                           </tr><tr> 
+                           </tr><br/><tr>
+                                 <td align="center">
+                                    <div className="cardtitle">
+                                       Enter Combined Dataset Name
+                                    </div>
+                                 </td> 
+                              </tr>
+                              <tr>                             
+                                 <td align="center">
+                                    <div className="cardsubtitle">
+                                       Combined Dataset Name:
+                                    </div>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <input required type="text" id="filename" onChange={this.selectFilename}/>
+                                 </td>
+                              </tr>
+                              <br/><tr> 
                               <td align="center">
                                  <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}><span>Combine Datasets & Save</span></button>
                               </td><td>   
@@ -459,6 +484,7 @@ class TableViewbi extends Component {
                               <div style={{"overflowX":"auto"}}>
 
                                  <div className="outputtable" style={{"width":"1150px","maxWidth":"1150px"}}>
+
                                     {this.state.combinedtableboolean?(   
                                      <MUIDataTable
                                         title={"Combined Dataset"}

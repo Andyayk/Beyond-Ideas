@@ -617,6 +617,8 @@ def create_app(config_name):
             usertablename2 = request.form.get("tablename2")+ "_" + str(current_user.id) 
 			
             joinvariable = request.form.get("selectedjoinvariable")
+
+            combinedtablename = request.form.get("filename")  
 			
             variablelist = modelbi.getAllColumnNamebi(usertablename);
             variablelist2 = modelbi.getAllColumnNamebi(usertablename2);
@@ -636,9 +638,9 @@ def create_app(config_name):
 
             variables = variables1 + "," + variables2;		
 			
-            combinetable = modelbi.tablesViewJoinbi(variables, usertablename, usertablename2, joinvariable);
+            combinetable = modelbi.tablesViewJoinbi(variables, usertablename, usertablename2, joinvariable, combinedtablename);
 			
-            combinedtable = modelbi.displayTablebi("combinedtable");
+            combinedtable = modelbi.displayTablebi(combinedtablename);
             
             return jsonify(
                 colnames = combinedtable[0],
