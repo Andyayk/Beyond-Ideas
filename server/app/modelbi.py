@@ -847,7 +847,7 @@ def splitDataset(dataset, splitRatio):
     return [trainSet, testSet]
  
  """
- This method will pre-process the training dataset and split int into train and test (70:30)
+ This method will pre-process the training dataset and split int into train and test (70%:30%)
  def preprocessingDataset():
   
     df = pd.read_csv('train.csv', encoding = "ISO-8859-1")
