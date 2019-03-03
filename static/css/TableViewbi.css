@@ -2,7 +2,7 @@
   width: 44px !important;
 }   
 
-div.outputtable{
+div.outputtable {
   border-collapse: collapse;
   border-radius: 12px;          
 }
@@ -16,3 +16,11 @@ div.outputtable th{
 div.outputtable tr:nth-child(even){background-color: white}
 div.outputtable tr:nth-child(odd){background-color: #fdfcfb}
 div.outputtable tr:hover {background-color:#f5f5f5;}
+
+.cardcombine {
+  height: 330px !important;
+}
+
+.cardview {
+  height: 330px !important;
+}

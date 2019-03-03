@@ -112,13 +112,13 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
     except Exception as e:
         return "Something is wrong with tablesJoinbi method"   
 
-def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
+def tablesViewJoinbi(variables, tablename, tablename2, joinvariable, combinedtablename):
     """
         This method will join two tables together and save to MySQL database
     """
     try:
-        connection.execute("DROP TABLE IF EXISTS combinedtable")
-        sqlstmt = "CREATE TABLE combinedtable AS SELECT "+ variables + " FROM `" + tablename + "` as t1 INNER JOIN `" + tablename2 + "` as t2"
+        connection.execute("DROP TABLE IF EXISTS "+ combinedtablename)
+        sqlstmt = "CREATE TABLE "+ combinedtablename + " AS SELECT "+ variables + " FROM `" + tablename + "` as t1 INNER JOIN `" + tablename2 + "` as t2"
         
         if "date" in joinvariable.lower(): #join by date
             date1 = getDateColumnNamebi(tablename)
