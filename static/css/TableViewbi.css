@@ -1,0 +1,18 @@
+.MuiIconButton-root-90 {
+  width: 44px !important;
+}   
+
+div.outputtable{
+  border-collapse: collapse;
+  border-radius: 12px;          
+}
+
+div.outputtable th{
+  background-color: #4CAF50;
+  color: white;  
+  padding: 5px;
+}
+
+div.outputtable tr:nth-child(even){background-color: white}
+div.outputtable tr:nth-child(odd){background-color: #fdfcfb}
+div.outputtable tr:hover {background-color:#f5f5f5;}

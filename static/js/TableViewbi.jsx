@@ -412,7 +412,7 @@ class TableViewbi extends Component {
                                        Select variable to combine both datasets:<span className="tooltiptext">Tip for user (?)</span>
                                     </div>
                                  </div>
-                              </td>
+                              </td> 
                            </tr><tr>
                               <td colSpan="2" align="center">
                                  <table>
@@ -433,7 +433,7 @@ class TableViewbi extends Component {
                                  </tbody>                        
                                  </table>
                               </td>
-                           </tr><tr>
+                           </tr><tr> 
                               <td align="center">
                                  <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}><span>Combine Datasets & Save</span></button>
                               </td><td>   
@@ -468,7 +468,7 @@ class TableViewbi extends Component {
                                      ):null
                                     } 
                                  </div> 
-                              
+
                               </div>
                				</td>
                			</tr>
