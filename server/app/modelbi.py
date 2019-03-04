@@ -42,7 +42,7 @@ def displayTablebi(table_name):
         This method will display table 
     """      
     try:
-        resultQuery = text("SELECT * FROM `" + table_name + "` LIMIT 20")
+        resultQuery = text("SELECT * FROM `" + table_name + "`")
         result = connection.execute(resultQuery)
 
         cols = []
@@ -95,8 +95,6 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         sqlstmt = connection.execute(sqlstmtQuery)
         x = []
         y = []
-
-          
         
         for row_data in sqlstmt: #add table rows
             if is_emptybi(row_data[0]):
@@ -117,13 +115,13 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
     except Exception as e:
         return "Something is wrong with tablesJoinbi method"   
 
-def tablesViewJoinbi(variables, tablename, tablename2, joinvariable, combinedtablename):
+def tablesViewJoinbi(variables, tablename, tablename2, joinvariable, combinedtablename, userID):
     """
         This method will join two tables together and save to MySQL database
     """
     try:
-        connection.execute("DROP TABLE IF EXISTS "+ combinedtablename)
-        sqlstmt = "CREATE TABLE "+ combinedtablename + " AS SELECT "+ variables + " FROM `" + tablename + "` as t1 INNER JOIN `" + tablename2 + "` as t2"
+        connection.execute("DROP TABLE IF EXISTS `"+ combinedtablename + "`")
+        sqlstmt = "CREATE TABLE `"+ combinedtablename + "` AS SELECT "+ variables + " FROM `" + tablename + "` as t1 INNER JOIN `" + tablename2 + "` as t2"
         
         if "date" in joinvariable.lower(): #join by date
             date1 = getDateColumnNamebi(tablename)
@@ -133,6 +131,10 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable, combinedtab
         else:
             sqlstmt = sqlstmt + " WHERE t1." + joinvariable + " = t2." + joinvariable
         connection.execute(sqlstmt)
+
+        connection.execute("DELETE FROM user_data WHERE data_name = '" + combinedtablename + "'")
+        timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+        connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + combinedtablename + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
 
         return "success"
     except Exception as e:
@@ -427,7 +429,10 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
                 num_of_months-=1
         if saveToDB == "true":        
             tableName = filename + "_" + str(userID)
+            connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
             connection.execute("CREATE TABLE `" + tableName + "` (date date, meanTemperatureC int(2), meanTemperatureF int(2));")
+            
+            connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
             timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
             connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
             status = insertToDatabase(headerArray, bodyArray, tableName)
@@ -545,7 +550,10 @@ def twitterCrawlerbi(tags, nooftweets, saveToDB, userID, filename):
 
     if saveToDB == "true":        
         tableName = filename + "_" + str(userID)
+        connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
         connection.execute("CREATE TABLE `" + tableName + "` (tweetid BIGINT(255), userid BIGINT(255), name VARCHAR(255), tweet VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci, date date);")
+        
+        connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
         connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
         status = insertToDatabase(headerArray, tweets, tableName)
@@ -582,277 +590,14 @@ def naiveBayesClassifier():
     """
         This method will implement naive bayes classifier
     """    
-    """
-    filename = 'diabetes.csv'
-    splitRatio = 0.67 #how we are splitting our train and test data set
-    dataset = []
-    with open(os.getcwd()+"\\"+filename, mode='r', newline='') as new_file: #loading our dataset
-        csv_reader = csv.reader(new_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        line_count = 0
-        for row in csv_reader:
-            if line_count == 0:
-                line_count += 1
-            else:
-                dataset.append([float(x) for x in row])
-                line_count += 1
-
-    trainSet, testSet = splitDataset(dataset, splitRatio)
-    """
-    #training label
-    train_label = open('20news-bydate/matlab/train.label')
-
-    #contains p(class), where p(class) = no. of class-1 documents / total number of documents
-    pclasses = {}
-
-    #set a class index for each document as key
-    for i in range(1,21):
-        pclasses[i] = 0
-        
-    #extract values from training labels
-    rows = train_label.readlines()
-
-    #count total number of documents available
-    total = len(rows)
-
-    #count the total documents of each class
-    for row in rows:
-        val = int(row.split()[0])
-        pclasses[val] += 1
-
-    #calculate p(class) here, dividing the count of each class by total documents 
-    for key in pclasses:
-        pclasses[key] /= total
-        
-    print("Probability of each class:")
-    print("\n".join("{}: {}".format(k, v) for k, v in pclasses.items()))
-
-    #training data
-    train_data = open('20news-bydate/matlab/train.data')
-    df = pd.read_csv(train_data, delimiter=' ', names=['docId', 'wordId', 'count'])
-
-    #training label
-    label = []
-
-    for row in rows:
-        label.append(int(row.split()[0]))
-
-    #increase label length to match docId
-    docId = df['docId'].values
-    i = 0
-    new_label = []
-    for index in range(len(docId)-1):
-        new_label.append(label[i])
-        if docId[index] != docId[index+1]:
-            i += 1
-    new_label.append(label[i]) #for-loop ignores last value
-
-    #add label column
-    df['classId'] = new_label
-
-    print(df.head())
-
-    #alpha value for smoothing - some words may have 0 values, 
-    #to avoid giving a zero probability to a word under any class during training, 
-    #we can perform some smoothing of the learned probabilities
-    #simply add one count to each word under each class
-    a = 0.001
-    wordsInVocabulary = 16688
-
-    #calculate probability of each word based on class
-    p_ij = df.groupby(['classId','wordId'])
-    p_j = df.groupby(['classId'])
-    Pr =  (p_ij['count'].sum() + a) / (p_j['count'].sum() + wordsInVocabulary + 1)    
-
-    #unstack series
-    Pr = Pr.unstack()
-
-    #replace NaN or columns with 0 as word count with a/(count+|V|+1)
-    for c in range(1,21):
-        Pr.loc[c,:] = Pr.loc[c,:].fillna(a/(p_j['count'].sum()[c] + wordsInVocabulary + 1))
-
-    #convert to dictionary for greater speed
-    Pr_dict = Pr.to_dict()
-
-    print(Pr)
-
-    #common stop words from online
-    stop_words = [
-    "a", "about", "above", "across", "after", "afterwards", 
-    "again", "all", "almost", "alone", "along", "already", "also",    
-    "although", "always", "am", "among", "amongst", "amoungst", "amount", "an", "and", "another", "any", "anyhow", "anyone", "anything", "anyway", "anywhere", "are", "as", "at", "be", "became", "because", "become","becomes", "becoming", "been", "before", "behind", "being", "beside", "besides", "between", "beyond", "both", "but", "by","can", "cannot", "cant", "could", "couldnt", "de", "describe", "do", "done", "each", "eg", "either", "else", "enough", "etc", "even", "ever", "every", "everyone", "everything", "everywhere", "except", "few", "find","for","found", "four", "from", "further", "get", "give", "go", "had", "has", "hasnt", "have", "he", "hence", "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers", "herself", "him", "himself", "his", "how", "however", "i", "ie", "if", "in", "indeed", "is", "it", "its", "itself", "keep", "least", "less", "ltd", "made", "many", "may", "me", "meanwhile", "might", "mine", "more", "moreover", "most", "mostly", "much", "must", "my", "myself", "name", "namely", "neither", "never", "nevertheless", "next","no", "nobody", "none", "noone", "nor", "not", "nothing", "now", "nowhere", "of", "off", "often", "on", "once", "one", "only", "onto", "or", "other", "others", "otherwise", "our", "ours", "ourselves", "out", "over", "own", "part","perhaps", "please", "put", "rather", "re", "same", "see", "seem", "seemed", "seeming", "seems", "she", "should","since", "sincere","so", "some", "somehow", "someone", "something", "sometime", "sometimes", "somewhere", "still", "such", "take","than", "that", "the", "their", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "therefore", "therein", "thereupon", "these", "they",
-    "this", "those", "though", "through", "throughout",
-    "thru", "thus", "to", "together", "too", "toward", "towards",
-    "under", "until", "up", "upon", "us",
-    "very", "was", "we", "well", "were", "what", "whatever", "when",
-    "whence", "whenever", "where", "whereafter", "whereas", "whereby",
-    "wherein", "whereupon", "wherever", "whether", "which", "while", 
-    "who", "whoever", "whom", "whose", "why", "will", "with",
-    "within", "without", "would", "yet", "you", "your", "yours", "yourself", "yourselves"
-    ]    
-    
-    #create vocabulary dataframe
-    vocab = open('20news-bydate/matlab/vocabulary.txt') 
-    vocab_df = pd.read_csv(vocab, names = ['word']) 
-    vocab_df = vocab_df.reset_index() 
-    vocab_df['index'] = vocab_df['index'].apply(lambda x: x+1) 
-    print(vocab_df.head())
-
-    #index of all words
-    tot_list = set(vocab_df['index'])
-
-    #index of good words
-    vocab_df = vocab_df[~vocab_df['word'].isin(stop_words)]
-    good_list = vocab_df['index'].tolist()
-    good_list = set(good_list)
-
-    #index of stop words
-    bad_list = tot_list - good_list
-
-    #set all stop words to 0
-    for bad in bad_list:
-        for j in range(1,21):
-            Pr_dict[j][bad] = a/(p_j['count'].sum()[j] + wordsInVocabulary + 1)
-
-    #calculate IDF 
-    tot = len(df['docId'].unique()) 
-    p_ij = df.groupby(['wordId']) 
-    IDF = np.log(tot/p_ij['docId'].count()) 
-    IDF_dict = IDF.to_dict()
-
-    regular_predict = MNB(df, pclasses, smooth=False, IDF=False)
-    smooth_predict  = MNB(df, pclasses, smooth=True, IDF=False)
-    tfidf_predict   = MNB(df, pclasses, smooth=False, IDF=True)
-    all_predict     = MNB(df, pclasses, smooth=True, IDF=True)
-    #Get list of labels
-    train_label = pd.read_csv('20news-bydate/matlab/train.label',
-                              names=['t'])
-    train_label= train_label['t'].tolist()
-    total = len(train_label) 
-    models = [regular_predict, smooth_predict, 
-              tfidf_predict, all_predict] 
-    strings = ['Regular', 'Smooth', 'IDF', 'Both'] 
-     
-    for m,s in zip(models,strings):
-        val = 0
-        for i,j in zip(m, train_label):
-            if i != j:
-                val +=1
-            else:
-                pass   
-        print(s,"Error:\t\t",val/total * 100, "%")    
-
-    #Get test data
-    test_data = open('20news-bydate/matlab/test.data')
-    df = pd.read_csv(test_data, delimiter=' ', names=['docId', 'wordId', 'count'])
-
-    #Get list of labels
-    test_label = pd.read_csv('20news-bydate/matlab/test.label', names=['t'])
-    test_label= test_label['t'].tolist()
-
-    #MNB Calculation
-    predict = MNB(df, pclasses, smooth = True, IDF = False)
-
-    total = len(test_label)
-    val = 0
-    for i,j in zip(predict, test_label):
-        if i == j:
-            val +=1
-        else:
-            pass
-    print("Error:\t",(1-(val/total)) * 100, "%")        
-
-def MNB(df, pclasses, smooth = False, IDF = False):
-    '''
-    Multinomial Naive Bayes classifier
-    :param df [Pandas Dataframe]: Dataframe of data
-    :param smooth [bool]: Apply Smoothing if True
-    :param IDF [bool]: Apply Inverse Document Frequency if True
-    :return predict [list]: Predicted class ID
-    '''
-    #Using dictionaries for greater speed
-    df_dict = df.to_dict()
-    new_dict = {}
-    prediction = []
-    
-    #new_dict = {docId : {wordId: count},....}
-    for index in range(len(df_dict['docId'])):
-        docId = df_dict['docId'][index]
-        wordId = df_dict['wordId'][index]
-        count = df_dict['count'][index]
-        try: 
-            new_dict[docId][wordId] = count 
-        except:
-            new_dict[df_dict['docId'][index]] = {}
-            new_dict[docId][wordId] = count
-
-    #Calculating the scores for each doc
-    for docId in range(1, len(new_dict)+1):
-        score_dict = {}
-        #Creating a probability row for each class
-        for classId in range(1,21):
-            score_dict[classId] = 1
-            #For each word:
-            for wordId in new_dict[docId]:
-                #Check for frequency smoothing
-                #log(1+f)*log(Pr(i|j))
-                if smooth: 
-                    try:
-                        probability=Pr_dict[wordId][classId]         
-                        power = np.log(1+ new_dict[docId][wordId])     
-                        #Check for IDF
-                        if IDF:
-                            score_dict[classId]+=(
-                               power*np.log(
-                               probability*IDF_dict[wordId]))
-                        else:
-                            score_dict[classId]+=power*np.log(
-                                                   probability)
-                    except:
-                        #Missing V will have log(1+0)*log(a/16689)=0 
-                        score_dict[classId] += 0                        
-                #f*log(Pr(i|j))
-                else: 
-                    try:
-                        probability = Pr_dict[wordId][classId]        
-                        power = new_dict[docId][wordId]               
-                        score_dict[classId]+=power*np.log(
-                                           probability) 
-                        #Check for IDF
-                        if IDF:
-                            score_dict[classId]+= power*np.log(
-                                   probability*IDF_dict[wordId]) 
-                    except:
-                        #Missing V will have 0*log(a/16689) = 0
-                        score_dict[classId] += 0      
-            #Multiply final with pclasses         
-            score_dict[classId] +=  np.log(pclasses[classId])                          
-
-        #Get class with max probabilty for the given docId 
-        max_score = max(score_dict, key=score_dict.get)
-        prediction.append(max_score)
-        
-    return prediction
-
-def splitDataset(dataset, splitRatio):
-    """
-        This method will split our dataset into train and test according to split ratio
-    """      
-    trainSetSize = int(len(dataset) * splitRatio)
-    trainSet = []
-
-    testSet = list(dataset)
-    while len(trainSet) < trainSetSize:
-        index = random.randrange(len(testSet))
-        trainSet.append(testSet.pop(index))
-    return [trainSet, testSet]
+    return ""
  
- 
- #def preprocessingDataset():
+def preprocessingDataset():
     """
     This method will pre-process the training dataset and split int into train and test (70%:30%)
-
+    """
   
-    df = pd.read_csv('train.csv', encoding = "ISO-8859-1")
+    df = pd.read_csv(os.getcwd()+'/train.csv', encoding = "ISO-8859-1")
 
     #change all to lowercase letters 
     df['SentimentText'] = df['SentimentText'].apply(lambda x: " ".join(x.lower() for x in x.split()))
@@ -895,4 +640,3 @@ def splitDataset(dataset, splitRatio):
 
     #split by sentiment 
     #get all the words 
-    """

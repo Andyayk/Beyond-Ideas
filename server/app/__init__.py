@@ -618,29 +618,29 @@ def create_app(config_name):
 			
             joinvariable = request.form.get("selectedjoinvariable")
 
-            combinedtablename = request.form.get("filename")  
+            combinedtablename = request.form.get("filename")+ "_" + str(current_user.id) 
 			
-            variablelist = modelbi.getAllColumnNamebi(usertablename);
-            variablelist2 = modelbi.getAllColumnNamebi(usertablename2);
+            variablelist = modelbi.getAllColumnNamebi(usertablename)
+            variablelist2 = modelbi.getAllColumnNamebi(usertablename2)
 			
             for n, variable in enumerate(variablelist):
                 for n2, variable2 in enumerate(variablelist2):
-                    variable2 = variable2;
+                    variable2 = variable2
                     if variablelist[n] == variablelist2[n2]:
-                        variablelist[n] = "t1."+variable+" as "+variable+"1";
-                        variablelist2[n2] = "t2."+variable2+" as "+variable2+"2";
+                        variablelist[n] = "t1."+variable+" as "+variable+"1"
+                        variablelist2[n2] = "t2."+variable2+" as "+variable2+"2"
                 
-            variableset = set(variablelist);
-            variableset2 = set(variablelist2);	
+            variableset = set(variablelist)
+            variableset2 = set(variablelist2)
 
-            variables1 = ",".join(list(variableset));
-            variables2 = ",".join(list(variableset2)); 	
+            variables1 = ",".join(list(variableset))
+            variables2 = ",".join(list(variableset2)) 	
 
-            variables = variables1 + "," + variables2;		
+            variables = variables1 + "," + variables2	
 			
-            combinetable = modelbi.tablesViewJoinbi(variables, usertablename, usertablename2, joinvariable, combinedtablename);
+            combinetable = modelbi.tablesViewJoinbi(variables, usertablename, usertablename2, joinvariable, combinedtablename, current_user.id)
 			
-            combinedtable = modelbi.displayTablebi(combinedtablename);
+            combinedtable = modelbi.displayTablebi(combinedtablename)
             
             return jsonify(
                 colnames = combinedtable[0],
@@ -805,7 +805,7 @@ def create_app(config_name):
             """
                 This method will render our twitter web crawling page
             """      
-            modelbi.naiveBayesClassifier()                
+            modelbi.preprocessingDataset()                
             return render_template('twittercrawlingpagebi.html') 
 
     return app
