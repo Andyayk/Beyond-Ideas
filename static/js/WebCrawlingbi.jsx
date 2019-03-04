@@ -150,7 +150,7 @@ class WebCrawlingbi extends Component {
                var element = document.createElement('a');
                var newContent = val.replace(/;/g, "\n");
                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
-               element.setAttribute('download', filename + '_weather.csv');
+               element.setAttribute('download', filename + '.csv');
                element.style.display = 'none';
                document.body.appendChild(element);
                element.click();
