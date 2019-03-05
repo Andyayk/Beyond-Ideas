@@ -24,15 +24,18 @@ export default class VisualisationContent extends React.Component {
       chartTypes: [
         {
           id: "scatter",
-          name: "Line Chart (Time Series Analysis)"
+          mode: "lines",
+          name: "Line Chart"
         },
         {
           id: "bar",
-          name: "Bar Chart (Top K Analysis)"
+          mode: "",
+          name: "Bar Chart & Top K Analysis"
         },
         {
           id: "scatter-chart",
-          name: "Scatter Chart"
+          mode: "markers",
+          name: "Scatter Plot"
         }
       ],
       test: true
@@ -55,8 +58,6 @@ export default class VisualisationContent extends React.Component {
 
     this.callBackendAPI("/get_group_user_dataset")
       .then(res => {
-        console.log("get call: datasetNames");
-        console.log(res);
         this.setState({ datasetNames: res });
       })
       .catch(err => {
@@ -88,7 +89,6 @@ export default class VisualisationContent extends React.Component {
   }
 
   navPageHandler(value) {
-    console.log("clicked " + value);
     this.setState({ currentPage: value });
   }
 
@@ -97,11 +97,19 @@ export default class VisualisationContent extends React.Component {
   }
 
   selectChartTypeHandler(value) {
-    console.log("Change state of 'selectedChartType' to " + value);
     this.setState({ selectedChartType: value });
   }
 
   render() {
+    if(localStorage.getItem('viz') !== null) {
+        return (
+            <VisChart
+              handler={this.navPageHandler}
+              dataset={this.state.selectedDataset}
+              chart={this.state.selectedChartType}
+            />
+        );
+    }
     if (this.state.currentPage === "selection") {
       return (
         <VisSelection
