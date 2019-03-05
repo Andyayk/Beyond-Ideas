@@ -9,6 +9,7 @@ class Visual extends React.Component {
           {
             x: this.props.x,
             y: this.props.y,
+            mode: this.props.mode,
             type: this.props.plotlyType,
             // mode: "lines+markers",
             marker: { color: "red" }
@@ -16,7 +17,13 @@ class Visual extends React.Component {
           //   {type: 'bar', x: [1, 2, 3], y: [2, 5, 3]},
         ]}
         layout={{
-          xaxis: { type: "category" },
+          xaxis: { 
+              type: "category",
+              title: this.props.xtitle
+          },
+          yaxis: {
+            title: this.props.ytitle
+          },
           width: 800,
           height: 500,
           title: "Visualisation"
