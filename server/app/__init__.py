@@ -810,10 +810,11 @@ def create_app(config_name):
             """      
             tags = request.form.get("tags")  
             nooftweets = request.form.get("nooftweets") 
+            datebefore = request.form.get("datebefore")             
             saveToDB = request.form.get("save") 
             filename = request.form.get("filename")                         
 
-            results = modelbi.twitterCrawlerbi(tags, nooftweets, saveToDB, current_user.id, filename)
+            results = modelbi.twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, current_user.id, filename)
 
             return jsonify(
                 tweets = results[0],
@@ -835,12 +836,16 @@ def create_app(config_name):
             else:
                 return render_template('analysispagebi.html')
 
-        @app.route("/twittertest/")
-        def twittertest(): #rendering our twitter web crawling page
+        @app.route("/twittertest/", methods = ['POST'])
+        def twittertest(): #testing
             """
-                This method will render our twitter web crawling page
-            """      
+                This method will test
+            """    
+            tablename = request.form.get("selectedtable") 
+
             modelbi.preprocessingDataset()                
-            return render_template('twittercrawlingpagebi.html') 
+            return jsonify(
+                message = "You generated something"
+            )
 
     return app

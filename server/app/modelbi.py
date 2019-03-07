@@ -450,7 +450,7 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
         print(e)
         return "Retrieval of weather data unsuccessful."           
 
-def twitterCrawlerbi(tags, nooftweets, saveToDB, userID, filename):
+def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
     """
         This method crawl data from Twitter
     """
@@ -461,7 +461,20 @@ def twitterCrawlerbi(tags, nooftweets, saveToDB, userID, filename):
     #instantiate an object
     twitter = Twython(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
     
-    searchQuery = tags
+    #'"developer" OR "designer" OR "social media"'
+    splittags = tags.split(",")
+    searchQuery = ""
+
+    if len(splittags) == 1:
+        searchQuery = "'" + splittags[0].strip() + "'" 
+    elif len(splittags) >= 2:
+        counter = 1 
+        for tag in splittags:
+            searchQuery += "'" + tag.strip() + "'"
+            if counter < len(splittags):
+                searchQuery += ' OR '
+            counter+=1
+
     tweetsPerQuery = 100
     tweets = []
     apicalllimit = ""
@@ -480,10 +493,11 @@ def twitterCrawlerbi(tags, nooftweets, saveToDB, userID, filename):
     query = {
         'q': searchQuery, 
         'lang': 'en',
-        'count': tweetsPerQuery
+        'count': tweetsPerQuery,
+        'until': datebefore
     }
 
-    headerArray = "tweetid,userid,name,tweet,date"
+    headerArray = "tweetid,userid,name,tweet,retweet_count,favorite_count,followers_count,friends_count,date,tweettime"
 
     while tweetCount < maxTweets:
         if max_id <= 0: #first
@@ -491,14 +505,16 @@ def twitterCrawlerbi(tags, nooftweets, saveToDB, userID, filename):
                 query = {
                     'q': searchQuery, 
                     'lang': 'en',
-                    'count': tweetsPerQuery
+                    'count': tweetsPerQuery,
+                    'until': datebefore
                 }
             else:
                 query = {
                     'q': searchQuery, 
                     'lang': 'en',
                     'count': tweetsPerQuery,
-                    'since_id': sinceId
+                    'since_id': sinceId,
+                    'until': datebefore
                 }                    
         else:
             if not sinceId:
@@ -506,7 +522,8 @@ def twitterCrawlerbi(tags, nooftweets, saveToDB, userID, filename):
                     'q': searchQuery, 
                     'lang': 'en',
                     'count': tweetsPerQuery,
-                    'max_id': str(max_id - 1)
+                    'max_id': str(max_id - 1),
+                    'until': datebefore
                 }                    
             else:
                 query = {
@@ -514,7 +531,8 @@ def twitterCrawlerbi(tags, nooftweets, saveToDB, userID, filename):
                     'lang': 'en',
                     'count': tweetsPerQuery,
                     'max_id': str(max_id - 1),
-                    'since_id': sinceId                        
+                    'since_id': sinceId,
+                    'until': datebefore                   
                 }                     
         try:
             new_tweets = twitter.search(**query)['statuses']
@@ -536,9 +554,16 @@ def twitterCrawlerbi(tags, nooftweets, saveToDB, userID, filename):
                 userid = str(result['user']['id'])
                 name = re.sub(r'[^a-zA-Z]+', ' ', result['user']['name'])
                 tweet = re.sub(r'https?://\S+|[^a-zA-Z]+', ' ', result['text'])
+                retweet_count = str(result['retweet_count'])
+                favorite_count = str(result['favorite_count'])
+                followers_count = str(result['user']['followers_count'])
+                friends_count = str(result['user']['friends_count'])
                 date = dateformatted
+                tweettime = datesplit[3]
 
-                row = tweetid + "," + userid + "," + "\"" + name + "\"" + "," + "\"" + tweet + "\"" + "," + "\"" + date + "\""
+                row = tweetid + "," + userid + "," + "\"" + name + "\"" + "," + "\"" + tweet + "\"" + "," \
+                    + "\"" + retweet_count + "\"" + "," + "\"" + favorite_count + "\"" + "," + "\"" + followers_count + "\"" \
+                    + "," + "\"" + friends_count + "\"" + "," + "\"" + date + "\"" + "," + "\"" + tweettime + "\""
 
                 tweets.append(row)                       
         except Exception as e:
@@ -551,7 +576,7 @@ def twitterCrawlerbi(tags, nooftweets, saveToDB, userID, filename):
     if saveToDB == "true":        
         tableName = filename + "_" + str(userID)
         connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
-        connection.execute("CREATE TABLE `" + tableName + "` (tweetid BIGINT(255), userid BIGINT(255), name VARCHAR(255), tweet VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci, date date);")
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid BIGINT(255), userid BIGINT(255), name VARCHAR(255), tweet VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), friends_count INT(255), date date, tweettime VARCHAR(255));")
         
         connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
