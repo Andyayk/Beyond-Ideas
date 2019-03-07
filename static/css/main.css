@@ -168,6 +168,22 @@ li a:active {
 
 }
 
+.block {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #fecb2f;
+  border: none;
+  color: black;
+  text-align: center;
+  font-size: 15px;
+  padding: 250px;
+  width: 100%;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+  border-radius: 10px;
+}
+
 .cardview {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   background-color: white;

@@ -1,5 +1,14 @@
 {% extends "layout.html" %}
-{% block content %}
-	<div id="webcrawlingbi"></div>
-    <script type="text/javascript" src="../dist/bundle.js"></script></body>
+{% block content %}   
+	<table align="center">
+		<tr><td>
+		<form action="/weathercrawlingpagebi">
+			<button class="block" type="submit">Retrieve Weather Data</button> 
+		</form>
+		</td><td>  
+		<form action="/twittercrawlingpagebi">
+			<button class="block" type="submit">Retrieve Twitter Data</button> 
+		</form>
+		</td></tr> 
+	</table> 	   
 {% endblock content %}
