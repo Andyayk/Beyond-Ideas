@@ -650,7 +650,18 @@ def create_app(config_name):
     class ChartClassbi():
         """
             This is the chart page
-        """      
+        """ 
+        @app.route('/correlationpagebi/')
+        def correlationpagebi(): #rendering our correlation page
+            """
+                This method will render our correlation page
+            """     
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('correlationpagebi.html')        
+
+
         @app.route('/chartpagebi/')
         def chartpagebi(): #rendering our chart page
             """
@@ -753,6 +764,16 @@ def create_app(config_name):
                 return redirect(url_for('login_r'))
             else:
                 return render_template('webcrawlingpagebi.html')
+
+        @app.route("/weathercrawlingpagebi/")
+        def weathercrawlingpagebi(): #rendering our weather crawling page
+            """
+                This method will render our weather crawling page
+            """      
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('weathercrawlingpagebi.html')                
         
         @app.route("/weathercrawlingbi/", methods = ['POST'])
         def weathercrawlingbi(): 
@@ -799,6 +820,20 @@ def create_app(config_name):
                 apicalllimit = results[1],
                 apicallreset = results[2]
             )            
+
+    class AnalysisClassbi():
+        """
+            This is the analysis page
+        """        
+        @app.route("/analysispagebi/")
+        def analysispagebi(): #rendering our analysis page
+            """
+                This method will render our analysis page
+            """      
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('analysispagebi.html')
 
         @app.route("/twittertest/")
         def twittertest(): #rendering our twitter web crawling page
