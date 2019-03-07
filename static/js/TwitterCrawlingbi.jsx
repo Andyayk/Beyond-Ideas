@@ -18,12 +18,14 @@ class TwitterCrawlingbi extends Component {
          tags: "",
          nooftweets: "",
          save: "",         
-         hideLoadingBar: true,            
+         hideLoadingBar: true, 
+         datebefore: "",                    
       };
 
       this.twitterCrawler = this.twitterCrawler.bind(this);
       this.selectTags = this.selectTags.bind(this);        
       this.selectNoOfTweets = this.selectNoOfTweets.bind(this);    
+      this.selectDateBefore = this.selectDateBefore.bind(this);
 
       this.switchToDatabase = this.switchToDatabase.bind(this);
       this.switchToCSV = this.switchToCSV.bind(this);      
@@ -43,6 +45,7 @@ class TwitterCrawlingbi extends Component {
       {
          tags: this.state.tags,
          nooftweets: this.state.nooftweets,
+         datebefore: this.state.datebefore,
          save: this.state.save,
          filename: filename
       },
@@ -99,6 +102,13 @@ class TwitterCrawlingbi extends Component {
          nooftweets: event.target.value
       });      
    }  
+
+   //store the date values that the user has selected
+   selectDateBefore(event) {
+      this.setState({
+         datebefore: event.target.value
+      });      
+   }   
 
    //switch between saving to database (true) or CSV file
    switchToDatabase(){
@@ -160,7 +170,7 @@ class TwitterCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <font size="2" color="grey"><i>Only tweets from the past 7 days will be retrieved</i></font>                             
+                                    <font size="2" color="grey"><i>Separate multiple tags with commas</i></font><br/>                            
                                  </td>
                               </tr><br/><tr>
                                  <td align="center">
@@ -180,7 +190,31 @@ class TwitterCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <font size="2" color="grey"><i>No. of tweets will be rounded up to the nearest hundreds</i></font>
+                                    <font size="2" color="grey"><i>Rounded up to the nearest hundreds</i></font>
+                                 </td>
+                              </tr><br/><tr>
+                                 <td align="center">
+                                    <div className="cardtitle">
+                                       Before the Given Date
+                                    </div>
+                                 </td> 
+                              </tr><tr>                             
+                                 <td align="center">
+                                    <div className="cardsubtitle">
+                                       Date:
+                                    </div>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">                                
+                                    <input type="date" min="1900-01-01" max="2100-12-31" required onChange={this.selectDateBefore} />
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <font size="2" color="grey"><i>Only tweets from the past 7 days will be retrieved</i></font><br/>                            
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <font size="2" color="grey"><i>Safari users, please use "yyyy-mm-dd"</i></font>
                                  </td>
                               </tr><br/><tr>
                                  <td align="center">

@@ -228,7 +228,6 @@ class WebCrawlingbi extends Component {
                               </tr><tr>
                                  <td align="center">
                                     <font size="2" color="grey"><i>Safari users, please use "yyyy-mm-dd"</i></font>
-        
                                  </td>
                               </tr><tr>
                                  <td align="center">
