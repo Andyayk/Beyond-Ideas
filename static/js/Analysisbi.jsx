@@ -144,7 +144,7 @@ class Analysisbi extends Component {
                   <br/>
                   <tr>
                   <td align="center">                                                            
-                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Plot</button>                             
+                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Train Model</button>                             
                   </td>
                   </tr>
                   <br/>
