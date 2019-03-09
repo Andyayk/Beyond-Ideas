@@ -885,10 +885,16 @@ def create_app(config_name):
             """    
             tablename = request.form.get("selectedtable") 
 
-            modelbi.trainModels()
             modelbi.naiveBayesClassifier('Unseen_Test.csv')                
             return jsonify(
                 message = "You generated something"
             )
+
+
+        @app.route("/twittertrain/", methods = ['POST'])
+        def twittertrain(): #testing
+            modelbi.trainModels()   
+
+            return ""         
 
     return app
