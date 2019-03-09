@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 // BEYOND IDEAS ----
 import TableViewbi from './TableViewbi';
 import Chartbi from './Chartbi';
+import AutoChartbi from './AutoChartbi';
 import WebCrawlingbi from './WebCrawlingbi';
 import TwitterCrawlingbi from './TwitterCrawlingbi';
 import Analysisbi from './Analysisbi';
@@ -69,6 +70,11 @@ if (tableviewbi) {
 const chartbi = document.getElementById('chartbi');
 if (chartbi) {
    ReactDOM.render(<Chartbi />, chartbi);
+}
+
+const autocharbi = document.getElementById('autochartbi');
+if (autochartbi) {
+   ReactDOM.render(<AutoChartbi />, autochartbi);
 }
 
 const webcrawlingbi = document.getElementById('webcrawlingbi');

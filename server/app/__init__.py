@@ -750,7 +750,49 @@ def create_app(config_name):
                 xarray = combinedxyarray[0],
                 yarray = combinedxyarray[1]
             )
+   
+
+    class AutoChartClassbi():
+        """
+            This is the chart page
+        """      
+        @app.route('/autochartpagebi/')
+        def autochartpagebi(): #rendering our chart page
+            """
+                This method will render our auto chart page
+            """     
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('autochartpagebi.html')
         
+        @app.route('/autoscatterplotdatabi/', methods = ['POST'])
+        def autoscatterplotdatabi(): #retrieving mysql data for API call from react
+            """
+                This method will retrieve mysql data for API call from react
+            """     
+            tablename = request.form.get("selectedtable")  
+            tablename2 = request.form.get("selectedtable2")   
+
+            if current_user.is_authenticated:      
+                usertablename = tablename + "_" + str(current_user.id)   
+                usertablename2 = tablename2 + "_" + str(current_user.id)             
+
+            variablenameX = request.form.get("selectedvariables1")[1:-1].split(",")
+            variablenameY = request.form.get("selectedvariables2")[1:-1].split(",")
+
+            joinvariable = request.form.get("selectedjoinvariable") 
+            print(variablenameX);
+            allcombinedxyarrays = [];
+            for x in variablenameX:
+                for y in variablenameY:
+                    combinedxyarray = modelbi.tablesJoinbi(usertablename, usertablename2, x, y, joinvariable, "", "", "")
+                    allcombinedxyarrays.append(combinedxyarray)
+            return jsonify(
+                allcombinedxyarrays
+            )
+       
+     
     class WebCrawlingClassbi():
         """
             This is the web crawling page
