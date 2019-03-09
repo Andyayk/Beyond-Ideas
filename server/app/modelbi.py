@@ -10,26 +10,19 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import *
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import classification_report
 from sklearn import metrics
 from twython import Twython
 from io import StringIO
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
+
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
 
-#MySQL Configurations
-# mydb = mysql.connector.connect(
-  # host = "localhost",
-  # user = "root",
-  # passwd = "",
-  # database = "is480-term1-2018-19"
-# )
-# cursor = mydb.cursor(buffered=True)  
-
-  
 connection = engine.connect()
 
 def is_emptybi(any_structure):
@@ -614,124 +607,135 @@ def insertToDatabase(header, bodyArray, tableName):
     except Exception as e:
         return False
   
-def naiveBayesClassifier():
+def naiveBayesClassifier(data):
     """
         This method will implement naive bayes classifier
     """    
     #load dictionary
-    loaded_vec = pickle.load(open(os.getcwd()+'/dictionary.pickle', "rb"))
+    #loaded_vec = pickle.load(open(os.getcwd()+'/dictionary.pickle', "rb"))
 
     classifier_saved = open("naivebayes.pickle", "rb") #binary read
     classifier_load = pickle.load(classifier_saved)
     classifier_saved.close()
 
+    tweetColumnName = 'SentimentText'
+    isTrainData = False
+
     # Load unseen testing dataset 
-    testing = pd.read_csv('Unseen_Test.csv', encoding="ISO-8859-1")
+    testdf = pd.read_csv(data, encoding="ISO-8859-1")
 
-    # Change all to lowercase letters
-    testing['SentimentText'] = testing['SentimentText'].apply(lambda x: " ".join(x.lower() for x in x.split()))
-
-    # Remove punctuation
-    testing['SentimentText'] = testing['SentimentText'].str.replace('[^\w\s]', '')
-
-    # Remove stopwords
-    stop = stopwords.words('english')
-    testing['SentimentText'] = testing['SentimentText'].apply(lambda x: " ".join(x for x in x.split() if x not in stop))
-
-    # Tokenize each tweet and save into data frame
-    listOfTokenizedTweets = []
-    for x in testing['SentimentText']:
-        tokenized_word = word_tokenize(x)
-        listOfTokenizedTweets.append(tokenized_word)
-    testing['SentimentText'] = listOfTokenizedTweets
-
-    # Stemming each tweet
-    stemmer = PorterStemmer()
-    testing['SentimentText'] = testing['SentimentText'].apply(lambda x: [stemmer.stem(y) for y in x])
-
-    # Convert stemmed tweets from data frame to a list
-    listOfStemmedTweets = testing['SentimentText'].tolist()
-
-    # Rejoin the tokenize words into a sentence after stemming as count vectorizer need it to be a string
-    stringOfTokenizedTweets = []
-    for x in listOfStemmedTweets:
-        sentenceTweet = (' '.join(x))
-        stringOfTokenizedTweets.append(sentenceTweet)
+    # Preprocess the text
+    stringOfTokenizedTweets = preprocessingDataset(testdf, tweetColumnName, isTrainData)
 
     # Generate document term matrix for unseen training set - bag of words
-    dt_sentimentText = loaded_vec.transform(stringOfTokenizedTweets)
+    #dt_sentimentText = loaded_vec.transform(stringOfTokenizedTweets)
 
     # Classify the unseen test dataset with the train model
-    Test_predicted = classifier_load.predict(dt_sentimentText)
+    Test_predicted = classifier_load.predict(stringOfTokenizedTweets)
     print(Test_predicted)
-
 
     return ""
  
-def preprocessingDataset():
+def preprocessingDataset(df, tweetColumnName, isTrainData):
     """
-    This method will pre-process the training dataset and split int into train and test (70%:30%)
+    This method will pre-process the dataset
     """
-    df = pd.read_csv(os.getcwd()+'/train.csv', encoding = "ISO-8859-1")
-
-    # Convert the labellings in data frame to a list
-    listOfLabels = df['Sentiment'].tolist()
 
     # Change all to lowercase letters
-    df['SentimentText'] = df['SentimentText'].apply(lambda x: " ".join(x.lower() for x in x.split()))
+    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x.lower() for x in x.split()))
 
     # Remove punctuation
-    df['SentimentText'] = df['SentimentText'].str.replace('[^\w\s]', '')
+    df[tweetColumnName] = df[tweetColumnName].str.replace('[^\w\s]', '')
 
     # Remove stopwords
     stop = stopwords.words('english')
-    df['SentimentText'] = df['SentimentText'].apply(lambda x: " ".join(x for x in x.split() if x not in stop))
+    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x for x in x.split() if x not in stop))
 
-    # Remove uncommon words - can become noise
-    freq = pd.Series(' '.join(df['SentimentText']).split()).value_counts()[-10:]
-    freq = list(freq.index)
-    df['SentimentText'] = df['SentimentText'].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
+    if isTrainData:
+        # Remove uncommon words - can become noise
+        freq = pd.Series(' '.join(df[tweetColumnName]).split()).value_counts()[-10:]
+        freq = list(freq.index)
+        df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
 
     # Tokenize each tweet and save into data frame
     listOfTokenizedTweets = []
-    for x in df['SentimentText']:
+    for x in df[tweetColumnName]:
         tokenized_word = word_tokenize(x)
         listOfTokenizedTweets.append(tokenized_word)
-    df['SentimentText'] = listOfTokenizedTweets
+    df[tweetColumnName] = listOfTokenizedTweets
 
     # Stemming each tweet
     stemmer = PorterStemmer()
-    df['SentimentText'] = df['SentimentText'].apply(lambda x: [stemmer.stem(y) for y in x])
+    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [stemmer.stem(y) for y in x])
 
     # Convert stemmed tweets from data frame to a list
-    listOfStemmedTweets = df['SentimentText'].tolist()
+    listOfStemmedTweets = df[tweetColumnName].tolist()
 
     # Rejoin the tokenize words into a sentence after stemming as count vectorizer need it to be a string
     stringOfTokenizedTweets = []
     for x in listOfStemmedTweets:
         sentenceTweet = (' '.join(x))
         stringOfTokenizedTweets.append(sentenceTweet)
+
+    return stringOfTokenizedTweets
+
+def trainModels():
+    """
+    This method split datas set into train and test (70%:30%), and save to dictionary.pickle, train the model and validate the model
+    """    
+    df = pd.read_csv(os.getcwd()+'/train.csv', encoding = "ISO-8859-1")
+
+    labelColumnName = 'Sentiment'
+    tweetColumnName = 'SentimentText'
+    isTrainData = True
+
+    # Convert the labellings in data frame to a list
+    listOfLabels = df[labelColumnName].tolist()
+
+    # Preprocess the text
+    stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, isTrainData)
 
     # Generate document term matrix - bag of words
     vectorizer = CountVectorizer()
     dt_sentimentText = vectorizer.fit_transform(stringOfTokenizedTweets)
-
-    # Save vectorizer into dictionary file
-    pickle.dump(vectorizer, open("dictionary.pickle", "wb"))
-
-    # Set up training and test sets by choosing random samples from classes, x_train is the training data set, y_train is the x_train labels, x_test is the testing data set and y_test is the training labels
-    X_train, X_test, y_train, y_test = train_test_split(dt_sentimentText, listOfLabels, test_size=0.30, random_state=0)
+    
+    """
+    Set up training and test sets by choosing random samples from classes, 
+    x_train is the training data set, y_train is the x_train labels, 
+    x_test is the testing data set and y_test is the training labels
+    """
+    X_train, X_test, y_train, y_test = train_test_split(stringOfTokenizedTweets, listOfLabels, test_size=0.30, random_state=0)
 
     # Model Generation Using Multinomial Naive Bayes
-    clf = MultinomialNB().fit(X_train, y_train)
-    print(X_test)
-    predicted = clf.predict(X_test)
+    #clf = MultinomialNB().fit(X_train, y_train)
+    #print(X_test)
+    #predicted = clf.predict(X_test)
 
     # Accuracy calculation
-    print("Pre-MultinomialNB Accuracy:", metrics.accuracy_score(y_test, predicted))
+    #print("Pre-MultinomialNB Accuracy:", metrics.accuracy_score(y_test, predicted))
 
-    save_classifier = open(os.getcwd()+'/naivebayes.pickle', "wb") #binary write
-    pickle.dump(clf, save_classifier)
-    save_classifier.close()
+    # K fold cross validation
+    text_clf = Pipeline([('vect', vectorizer),
+                         ('tfidf', TfidfTransformer()),
+                         ('clf', MultinomialNB())])
+    tuned_parameters = {
+        'vect__ngram_range': [(1, 1), (1, 2)],
+        'tfidf__use_idf': (True, False),
+        'tfidf__norm': ('l1', 'l2'),
+        'clf__alpha': [1, 1e-1, 1e-2]
+    }
+
+    clf = GridSearchCV(text_clf, tuned_parameters, cv=2, scoring='f1')
+    clf.fit(X_train, y_train)
+
+    print(classification_report(y_test, clf.predict(X_test), digits=4))
+
+    # Save vectorizer into dictionary file
+    #pickle.dump(vectorizer, open("dictionary.pickle", "wb")) #binary write
+
+    # Save model into file
+    pickle.dump(clf, open(os.getcwd()+'/naivebayes.pickle', "wb")) #binary write
+
+    return ""
 
 
