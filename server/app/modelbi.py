@@ -96,7 +96,6 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
             sqlstmtQuery = sqlstmtQuery
             
         sqlstmt = connection.execute(sqlstmtQuery)
-        sqlstmt = connection.execute(sqlstmtQuery)
         x = []
         y = []
 
