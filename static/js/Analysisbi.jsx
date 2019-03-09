@@ -20,6 +20,7 @@ class Analysisbi extends Component {
     this.getMySQLTables = this.getMySQLTables.bind(this);
     this.selectTable = this.selectTable.bind(this);
 
+    this.trainModel = this.trainModel.bind(this);
     this.generatePlot = this.generatePlot.bind(this); 
     this.formSubmitted = this.formSubmitted.bind(this);
 
@@ -83,6 +84,22 @@ class Analysisbi extends Component {
   }
 
   //retrieving chart data from flask and creating chart using plotly
+  trainModel(event) {
+    this.setState({
+      hideLoadingBar: false
+    });      
+    $.post(window.location.origin + "/twittertrain/",
+    {
+      selectedtable: this.state.selectedtable   
+    },
+    (data) => {
+      this.setState({
+        hideLoadingBar: true //hide loading button             
+      })      
+    });    
+  }  
+
+  //retrieving chart data from flask and creating chart using plotly
   generatePlot(event) {
     $.post(window.location.origin + "/twittertest/",
     {
@@ -143,8 +160,9 @@ class Analysisbi extends Component {
                   </tr>
                   <br/>
                   <tr>
-                  <td align="center">                                                            
-                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Train Model</button>                             
+                  <td align="center">   
+                    <button id="submitbutton" onClick={this.trainModel} className="button" type="button" style={{"verticalAlign":"middle"}}>Train Model</button>                                                                           
+                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Test Model</button>                             
                   </td>
                   </tr>
                   <br/>

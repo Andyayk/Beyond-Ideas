@@ -72,7 +72,7 @@ if (chartbi) {
    ReactDOM.render(<Chartbi />, chartbi);
 }
 
-const autocharbi = document.getElementById('autochartbi');
+const autochartbi = document.getElementById('autochartbi');
 if (autochartbi) {
    ReactDOM.render(<AutoChartbi />, autochartbi);
 }

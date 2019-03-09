@@ -719,17 +719,20 @@ def trainModels():
                          ('tfidf', TfidfTransformer()),
                          ('clf', MultinomialNB())])
     tuned_parameters = {
-        'vect__ngram_range': [(1, 1), (1, 2)],
+        'vect__ngram_range': [(1, 1), (1, 2), (2, 2)],
         'tfidf__use_idf': (True, False),
         'tfidf__norm': ('l1', 'l2'),
         'clf__alpha': [1, 1e-1, 1e-2]
     }
-
-    clf = GridSearchCV(text_clf, tuned_parameters, cv=2, scoring='f1')
+    scores = 'f1'
+    
+    clf = GridSearchCV(text_clf, tuned_parameters, cv=2, scoring=scores)
     clf.fit(X_train, y_train)
 
     print(classification_report(y_test, clf.predict(X_test), digits=4))
-
+    
+    print(clf.best_params_)
+    
     # Save vectorizer into dictionary file
     #pickle.dump(vectorizer, open("dictionary.pickle", "wb")) #binary write
 
