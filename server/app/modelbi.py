@@ -2,9 +2,18 @@
 @author: Beyond Ideas 
 """
 
-import mysql.connector, datetime, requests, json, csv, os, time, io, math, random, operator
+import mysql.connector, datetime, requests, json, csv, os, time, io, math, random, operator, re
 import pandas as pd
 import numpy as np
+import pickle
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem.porter import *
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn import metrics
 from twython import Twython
 from io import StringIO
 from sqlalchemy import create_engine
@@ -31,22 +40,13 @@ def is_emptybi(any_structure):
         return False
     else:
         return True
- 
-def csv2string(data):
-    """
-        This method will turn csv into string
-    """     
-    si = StringIO()
-    cw = csv.writer(si)
-    cw.writerow(data)
-    return si.getvalue()
 
 def displayTablebi(table_name):
     """
         This method will display table 
     """      
     try:
-        resultQuery = text("SELECT * FROM `" + table_name + "` LIMIT 20")
+        resultQuery = text("SELECT * FROM `" + table_name + "`")
         result = connection.execute(resultQuery)
 
         cols = []
@@ -98,8 +98,6 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         sqlstmt = connection.execute(sqlstmtQuery)
         x = []
         y = []
-
-          
         
         for row_data in sqlstmt: #add table rows
             if is_emptybi(row_data[0]):
@@ -120,13 +118,13 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
     except Exception as e:
         return "Something is wrong with tablesJoinbi method"   
 
-def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
+def tablesViewJoinbi(variables, tablename, tablename2, joinvariable, combinedtablename, userID):
     """
         This method will join two tables together and save to MySQL database
     """
     try:
-        connection.execute("DROP TABLE IF EXISTS combinedtable")
-        sqlstmt = "CREATE TABLE combinedtable AS SELECT "+ variables + " FROM `" + tablename + "` as t1 INNER JOIN `" + tablename2 + "` as t2"
+        connection.execute("DROP TABLE IF EXISTS `"+ combinedtablename + "`")
+        sqlstmt = "CREATE TABLE `"+ combinedtablename + "` AS SELECT "+ variables + " FROM `" + tablename + "` as t1 INNER JOIN `" + tablename2 + "` as t2"
         
         if "date" in joinvariable.lower(): #join by date
             date1 = getDateColumnNamebi(tablename)
@@ -136,6 +134,10 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable):
         else:
             sqlstmt = sqlstmt + " WHERE t1." + joinvariable + " = t2." + joinvariable
         connection.execute(sqlstmt)
+
+        connection.execute("DELETE FROM user_data WHERE data_name = '" + combinedtablename + "'")
+        timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+        connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + combinedtablename + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
 
         return "success"
     except Exception as e:
@@ -307,12 +309,12 @@ def getFilterValuesbi(tablename, tablename2, filtervariable):
     except Exception as e:
         return "" 
 
-def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID):
+def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename):
     """
         This method crawl weather data from worldweatheronline
     """ 
-    print("line 315")
-    print(saveToDB)
+    #print("line 315")
+    #print(saveToDB)
     try:
         #Key to call the API, expire 27 April
         with open(os.getcwd()+"\\instance\\weather_credentials.json", "r") as file:  
@@ -429,8 +431,11 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID):
                     start_crawl_day = 1
                 num_of_months-=1
         if saveToDB == "true":        
-            tableName = "weather_data_" + country_name + "_" + input_start_date[8:10] + input_start_date[5:7] + input_start_date[0:4] + "_" + input_end_date[8:10] + input_end_date[5:7] + input_end_date[0:4] + "_" + str(userID)
-            connection.execute("CREATE TABLE " + tableName + " (date date, meanTemperatureC int(2), meanTemperatureF int(2));")
+            tableName = filename + "_" + str(userID)
+            connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
+            connection.execute("CREATE TABLE `" + tableName + "` (date date, meanTemperatureC int(2), meanTemperatureF int(2));")
+            
+            connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
             timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
             connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
             status = insertToDatabase(headerArray, bodyArray, tableName)
@@ -446,9 +451,9 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID):
             return returnStr
     except Exception as e:
         print(e)
-        return "Crawling of weather data unsuccessful."           
+        return "Retrieval of weather data unsuccessful."           
 
-def twitterCrawlerbi(tags, nooftweets):
+def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
     """
         This method crawl data from Twitter
     """
@@ -459,7 +464,20 @@ def twitterCrawlerbi(tags, nooftweets):
     #instantiate an object
     twitter = Twython(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
     
-    searchQuery = tags
+    #'"developer" OR "designer" OR "social media"'
+    splittags = tags.split(",")
+    searchQuery = ""
+
+    if len(splittags) == 1:
+        searchQuery = "'" + splittags[0].strip() + "'" 
+    elif len(splittags) >= 2:
+        counter = 1 
+        for tag in splittags:
+            searchQuery += "'" + tag.strip() + "'"
+            if counter < len(splittags):
+                searchQuery += ' OR '
+            counter+=1
+
     tweetsPerQuery = 100
     tweets = []
     apicalllimit = ""
@@ -478,10 +496,11 @@ def twitterCrawlerbi(tags, nooftweets):
     query = {
         'q': searchQuery, 
         'lang': 'en',
-        'count': tweetsPerQuery
+        'count': tweetsPerQuery,
+        'until': datebefore
     }
 
-    headerArray = "tweetid,userid,name,tweet,date"
+    headerArray = "tweetid,userid,name,tweet,retweet_count,favorite_count,followers_count,friends_count,date,tweettime"
 
     while tweetCount < maxTweets:
         if max_id <= 0: #first
@@ -489,14 +508,16 @@ def twitterCrawlerbi(tags, nooftweets):
                 query = {
                     'q': searchQuery, 
                     'lang': 'en',
-                    'count': tweetsPerQuery
+                    'count': tweetsPerQuery,
+                    'until': datebefore
                 }
             else:
                 query = {
                     'q': searchQuery, 
                     'lang': 'en',
                     'count': tweetsPerQuery,
-                    'since_id': sinceId
+                    'since_id': sinceId,
+                    'until': datebefore
                 }                    
         else:
             if not sinceId:
@@ -504,7 +525,8 @@ def twitterCrawlerbi(tags, nooftweets):
                     'q': searchQuery, 
                     'lang': 'en',
                     'count': tweetsPerQuery,
-                    'max_id': str(max_id - 1)
+                    'max_id': str(max_id - 1),
+                    'until': datebefore
                 }                    
             else:
                 query = {
@@ -512,7 +534,8 @@ def twitterCrawlerbi(tags, nooftweets):
                     'lang': 'en',
                     'count': tweetsPerQuery,
                     'max_id': str(max_id - 1),
-                    'since_id': sinceId                        
+                    'since_id': sinceId,
+                    'until': datebefore                   
                 }                     
         try:
             new_tweets = twitter.search(**query)['statuses']
@@ -529,48 +552,63 @@ def twitterCrawlerbi(tags, nooftweets):
 
                 t = datetime.datetime(int(datesplit[5]), int(time.strptime(datesplit[1],'%b').tm_mon), int(datesplit[2]), 0, 0)
                 dateformatted = t.strftime('%Y-%m-%d')  
-                tweet = []
 
-                tweet.append(result['id'])
-                tweet.append(result['user']['id'])
-                tweet.append(result['user']['name'])
-                tweet.append(result['text'])
-                tweet.append(dateformatted)                                                                
-                
-                row = csv2string(tweet)
+                tweetid = str(result['id'])
+                userid = str(result['user']['id'])
+                name = re.sub(r'[^a-zA-Z]+', ' ', result['user']['name'])
+                tweet = re.sub(r'https?://\S+|[^a-zA-Z]+', ' ', result['text'])
+                retweet_count = str(result['retweet_count'])
+                favorite_count = str(result['favorite_count'])
+                followers_count = str(result['user']['followers_count'])
+                friends_count = str(result['user']['friends_count'])
+                date = dateformatted
+                tweettime = datesplit[3]
+
+                row = tweetid + "," + userid + "," + "\"" + name + "\"" + "," + "\"" + tweet + "\"" + "," \
+                    + "\"" + retweet_count + "\"" + "," + "\"" + favorite_count + "\"" + "," + "\"" + followers_count + "\"" \
+                    + "," + "\"" + friends_count + "\"" + "," + "\"" + date + "\"" + "," + "\"" + tweettime + "\""
 
                 tweets.append(row)                       
         except Exception as e:
             #print(str(e))
-            #write the data into a csv file
-            returnStr = headerArray
-            returnStr += "\n"
-            for i in tweets:
-                returnStr += i     
-                       
-            return [returnStr, "Twitter Requests Limit Reached", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))]
+            return ["no tweets", "Twitter Requests Limit Reached", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))]
 
     apicalllimit = twitter.get_lastfunction_header('x-rate-limit-remaining')
     apicallreset = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))
 
-    #write the data into a csv file
-    returnStr = headerArray
-    returnStr += "\n"
-    for i in tweets:
-        returnStr += i
+    if saveToDB == "true":        
+        tableName = filename + "_" + str(userID)
+        connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid BIGINT(255), userid BIGINT(255), name VARCHAR(255), tweet VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), friends_count INT(255), date date, tweettime VARCHAR(255));")
+        
+        connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
+        timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+        connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
+        status = insertToDatabase(headerArray, tweets, tableName)
 
-    results = [returnStr, apicalllimit, apicallreset]
-    return results  
+        results = ["Successfully saved twitter data into the database", apicalllimit, apicallreset]        
+        return results
+    else:
+        #write the data into a csv file
+        returnStr = headerArray
+        returnStr += "\n"
+        for i in tweets:
+            returnStr += i
+            returnStr += "\n"            
+
+        results = [returnStr, apicalllimit, apicallreset]
+        return results   
   
 def insertToDatabase(header, bodyArray, tableName):
     try:
-        sqlstmt = "INSERT INTO " + tableName + " (" + header + ") VALUES"
+        sqlstmt = "INSERT INTO `" + tableName + "` (" + header + ") VALUES"
         for i in bodyArray:
             sqlstmt += "("
             sqlstmt += i
             sqlstmt += "),"
         sqlstmt = sqlstmt[0:len(sqlstmt)-1]
         sqlstmt += ";"
+
         connection.execute(sqlstmt)
         return True
     except Exception as e:
@@ -580,109 +618,120 @@ def naiveBayesClassifier():
     """
         This method will implement naive bayes classifier
     """    
-    """
-    filename = 'diabetes.csv'
-    splitRatio = 0.67 #how we are splitting our train and test data set
-    dataset = []
-    with open(os.getcwd()+"\\"+filename, mode='r', newline='') as new_file: #loading our dataset
-        csv_reader = csv.reader(new_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        line_count = 0
-        for row in csv_reader:
-            if line_count == 0:
-                line_count += 1
-            else:
-                dataset.append([float(x) for x in row])
-                line_count += 1
+    #load dictionary
+    loaded_vec = pickle.load(open(os.getcwd()+'/dictionary.pickle', "rb"))
 
-    trainSet, testSet = splitDataset(dataset, splitRatio)
-    """
-    #training label
-    train_label = open('20news-bydate/matlab/train.label')
+    classifier_saved = open("naivebayes.pickle", "rb") #binary read
+    classifier_load = pickle.load(classifier_saved)
+    classifier_saved.close()
 
-    #contains p(class), where p(class) = no. of class-1 documents / total number of documents
-    pclasses = {}
+    # Load unseen testing dataset 
+    testing = pd.read_csv('Unseen_Test.csv', encoding="ISO-8859-1")
 
-    #set a class index for each document as key
-    for i in range(1,21):
-        pclasses[i] = 0
-        
-    #extract values from training labels
-    rows = train_label.readlines()
+    # Change all to lowercase letters
+    testing['SentimentText'] = testing['SentimentText'].apply(lambda x: " ".join(x.lower() for x in x.split()))
 
-    #count total number of documents available
-    total = len(rows)
+    # Remove punctuation
+    testing['SentimentText'] = testing['SentimentText'].str.replace('[^\w\s]', '')
 
-    #count the total documents of each class
-    for row in rows:
-        val = int(row.split()[0])
-        pclasses[val] += 1
+    # Remove stopwords
+    stop = stopwords.words('english')
+    testing['SentimentText'] = testing['SentimentText'].apply(lambda x: " ".join(x for x in x.split() if x not in stop))
 
-    #calculate p(class) here, dividing the count of each class by total documents 
-    for key in pclasses:
-        pclasses[key] /= total
-        
-    print("Probability of each class:")
-    print("\n".join("{}: {}".format(k, v) for k, v in pclasses.items()))
+    # Tokenize each tweet and save into data frame
+    listOfTokenizedTweets = []
+    for x in testing['SentimentText']:
+        tokenized_word = word_tokenize(x)
+        listOfTokenizedTweets.append(tokenized_word)
+    testing['SentimentText'] = listOfTokenizedTweets
 
-    #training data
-    train_data = open('20news-bydate/matlab/train.data')
-    df = pd.read_csv(train_data, delimiter=' ', names=['docId', 'wordId', 'count'])
+    # Stemming each tweet
+    stemmer = PorterStemmer()
+    testing['SentimentText'] = testing['SentimentText'].apply(lambda x: [stemmer.stem(y) for y in x])
 
-    #training label
-    label = []
+    # Convert stemmed tweets from data frame to a list
+    listOfStemmedTweets = testing['SentimentText'].tolist()
 
-    for row in rows:
-        label.append(int(row.split()[0]))
+    # Rejoin the tokenize words into a sentence after stemming as count vectorizer need it to be a string
+    stringOfTokenizedTweets = []
+    for x in listOfStemmedTweets:
+        sentenceTweet = (' '.join(x))
+        stringOfTokenizedTweets.append(sentenceTweet)
 
-    #increase label length to match docId
-    docId = df['docId'].values
-    i = 0
-    new_label = []
-    for index in range(len(docId)-1):
-        new_label.append(label[i])
-        if docId[index] != docId[index+1]:
-            i += 1
-    new_label.append(label[i]) #for-loop ignores last value
+    # Generate document term matrix for unseen training set - bag of words
+    dt_sentimentText = loaded_vec.transform(stringOfTokenizedTweets)
 
-    #add label column
-    df['classId'] = new_label
+    # Classify the unseen test dataset with the train model
+    Test_predicted = classifier_load.predict(dt_sentimentText)
+    print(Test_predicted)
 
-    print(df.head())
 
-    #alpha value for smoothing - some words may have 0 values, 
-    #to avoid giving a zero probability to a word under any class during training, 
-    #we can perform some smoothing of the learned probabilities
-    #simply add one count to each word under each class
-    a = 0.001
-    wordsInVocabulary = 61188
-
-    #calculate probability of each word based on class
-    p_ij = df.groupby(['classId','wordId'])
-    p_j = df.groupby(['classId'])
-    Pr =  (p_ij['count'].sum() + a) / (p_j['count'].sum() + wordsInVocabulary + 1)    
-
-    #unstack series
-    Pr = Pr.unstack()
-
-    #replace NaN or columns with 0 as word count with a/(count+|V|+1)
-    for c in range(1,21):
-        Pr.loc[c,:] = Pr.loc[c,:].fillna(a/(p_j['count'].sum()[c] + wordsInVocabulary + 1))
-
-    #convert to dictionary for greater speed
-    Pr_dict = Pr.to_dict()
-
-    print(Pr)
+    return ""
  
-def splitDataset(dataset, splitRatio):
+def preprocessingDataset():
     """
-        This method will split our dataset into train and test according to split ratio
-    """      
-    trainSetSize = int(len(dataset) * splitRatio)
-    trainSet = []
+    This method will pre-process the training dataset and split int into train and test (70%:30%)
+    """
+    df = pd.read_csv(os.getcwd()+'/train.csv', encoding = "ISO-8859-1")
 
-    testSet = list(dataset)
-    while len(trainSet) < trainSetSize:
-        index = random.randrange(len(testSet))
-        trainSet.append(testSet.pop(index))
-    return [trainSet, testSet]
- 
+    # Convert the labellings in data frame to a list
+    listOfLabels = df['Sentiment'].tolist()
+
+    # Change all to lowercase letters
+    df['SentimentText'] = df['SentimentText'].apply(lambda x: " ".join(x.lower() for x in x.split()))
+
+    # Remove punctuation
+    df['SentimentText'] = df['SentimentText'].str.replace('[^\w\s]', '')
+
+    # Remove stopwords
+    stop = stopwords.words('english')
+    df['SentimentText'] = df['SentimentText'].apply(lambda x: " ".join(x for x in x.split() if x not in stop))
+
+    # Remove uncommon words - can become noise
+    freq = pd.Series(' '.join(df['SentimentText']).split()).value_counts()[-10:]
+    freq = list(freq.index)
+    df['SentimentText'] = df['SentimentText'].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
+
+    # Tokenize each tweet and save into data frame
+    listOfTokenizedTweets = []
+    for x in df['SentimentText']:
+        tokenized_word = word_tokenize(x)
+        listOfTokenizedTweets.append(tokenized_word)
+    df['SentimentText'] = listOfTokenizedTweets
+
+    # Stemming each tweet
+    stemmer = PorterStemmer()
+    df['SentimentText'] = df['SentimentText'].apply(lambda x: [stemmer.stem(y) for y in x])
+
+    # Convert stemmed tweets from data frame to a list
+    listOfStemmedTweets = df['SentimentText'].tolist()
+
+    # Rejoin the tokenize words into a sentence after stemming as count vectorizer need it to be a string
+    stringOfTokenizedTweets = []
+    for x in listOfStemmedTweets:
+        sentenceTweet = (' '.join(x))
+        stringOfTokenizedTweets.append(sentenceTweet)
+
+    # Generate document term matrix - bag of words
+    vectorizer = CountVectorizer()
+    dt_sentimentText = vectorizer.fit_transform(stringOfTokenizedTweets)
+
+    # Save vectorizer into dictionary file
+    pickle.dump(vectorizer, open("dictionary.pickle", "wb"))
+
+    # Set up training and test sets by choosing random samples from classes, x_train is the training data set, y_train is the x_train labels, x_test is the testing data set and y_test is the training labels
+    X_train, X_test, y_train, y_test = train_test_split(dt_sentimentText, listOfLabels, test_size=0.30, random_state=0)
+
+    # Model Generation Using Multinomial Naive Bayes
+    clf = MultinomialNB().fit(X_train, y_train)
+    print(X_test)
+    predicted = clf.predict(X_test)
+
+    # Accuracy calculation
+    print("Pre-MultinomialNB Accuracy:", metrics.accuracy_score(y_test, predicted))
+
+    save_classifier = open(os.getcwd()+'/naivebayes.pickle', "wb") #binary write
+    pickle.dump(clf, save_classifier)
+    save_classifier.close()
+
+

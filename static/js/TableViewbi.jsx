@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+// import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import MUIDataTable from 'mui-datatables';
 
+import "../css/TableViewbi";
 import "../css/main";
+
 
 var $ = require('jquery');
 
@@ -44,6 +48,8 @@ class TableViewbi extends Component {
       this.callBackendAPI = this.callBackendAPI.bind(this);
 
       this.getMySQLTables(); //retrieving user's uploaded tables
+
+      this.selectFilename = this.selectFilename.bind(this);    
 
       this.loadingBarInstanceOne = (
          <div className="loader"></div>                                      
@@ -177,6 +183,13 @@ class TableViewbi extends Component {
       }
    }
 
+   //store the file name that the user has selected
+   selectFilename(event) {
+      this.setState({
+         filename: event.target.value
+      });     
+   } 
+
    //retrieving table display from flask
    display(event) {  
       var x = document.getElementById("data1area");
@@ -227,6 +240,7 @@ class TableViewbi extends Component {
             hideLoadingBarOne: true, //hide loading button
             table1boolean: true,
          });
+
          // console.log(this.state.colnames);
       });
 
@@ -296,12 +310,12 @@ class TableViewbi extends Component {
    
    //retrieving csv export from flask
    save(event) {
-      // console.log(this.state.exporttable1);
       $.post(window.location.origin + "/savejoinedtablebi/",
       {
          tablename1: this.state.exporttable1,
          tablename2: this.state.exporttable2,
          selectedjoinvariable: this.state.selectedjoinvariable,
+         filename: this.state.filename,
       },
       (data) => {  
          if(data == "Something is wrong with writeToCSV method") {
@@ -316,8 +330,6 @@ class TableViewbi extends Component {
                 hideLoadingBarThree: true,
                 combinedtableboolean: true
    			})
-
-
          }              
       });        
    }
@@ -407,7 +419,7 @@ class TableViewbi extends Component {
                                        Select variable to combine both datasets:<span className="tooltiptext">Tip for user (?)</span>
                                     </div>
                                  </div>
-                              </td>
+                              </td> 
                            </tr><tr>
                               <td colSpan="2" align="center">
                                  <table>
@@ -428,7 +440,25 @@ class TableViewbi extends Component {
                                  </tbody>                        
                                  </table>
                               </td>
-                           </tr><tr>
+                           </tr><br/><tr>
+                                 <td align="center">
+                                    <div className="cardtitle">
+                                       Enter Combined Dataset Name
+                                    </div>
+                                 </td> 
+                              </tr>
+                              <tr>                             
+                                 <td align="center">
+                                    <div className="cardsubtitle">
+                                       Combined Dataset Name:
+                                    </div>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <input required type="text" id="filename" onChange={this.selectFilename}/>
+                                 </td>
+                              </tr>
+                              <br/><tr> 
                               <td align="center">
                                  <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}><span>Combine Datasets & Save</span></button>
                               </td><td>   
@@ -452,22 +482,19 @@ class TableViewbi extends Component {
                			<tr>
                				<td align="center" style={{"overflow":"auto", "maxWidth":"1155px", "position":"relative", "verticalAlign":"top"}}>
                               <div style={{"overflowX":"auto"}}>
-                                 {this.state.combinedtableboolean?(
-                                    <div style={{"width":"1150px","maxWidth":"1150px","color":"white","backgroundColor":"#357a38"}}>Combined Dataset</div> 
-                                    ):null
-                                 }       
-                                 <table className="outputtable" style={{"width":"1150px","maxWidth":"1150px"}}>
-                                    {this.state.combinedcolnames && this.state.combinedcolnames.length?
-                                       this.state.combinedcolnames.map((combinedcolname, key) => {
-                                          if (combinedcolname !== '') {
-                                             return (
-                                                <th key={key}>{combinedcolname}</th>
-                                             );
-                                          }
-                                       } ):null
-                                    }
-      							        {this.state.combinedcolvalues.map((combinedrows, key)=> <tr key={key}> {combinedrows.map((combinedrow) => <td><center>{combinedrow}</center></td>)}</tr>)}
-               				      </table>
+
+                                 <div className="outputtable" style={{"width":"1150px","maxWidth":"1150px"}}>
+
+                                    {this.state.combinedtableboolean?(   
+                                     <MUIDataTable
+                                        title={"Combined Dataset"}
+                                        data={this.state.combinedcolvalues}
+                                        columns={this.state.combinedcolnames}
+                                     />  
+                                     ):null
+                                    } 
+                                 </div> 
+
                               </div>
                				</td>
                			</tr>
@@ -489,26 +516,17 @@ class TableViewbi extends Component {
                                  </tbody>
                               </table>
 
-                              {this.state.table1boolean?(
-                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","backgroundColor":"#357a38"}}>Dataset One: {this.state.exporttable1}</div> 
-                                 ):null
-                              }                           
-                              <table className="outputtable" style={{"width":"550px","maxWidth":"550px"}}> 
+                              <div className="outputtable" style={{"width":"550px","maxWidth":"550px"}}>
+                                 {this.state.table1boolean?(   
+                                  <MUIDataTable
+                                     title={"Dataset One: "+this.state.exporttable1}
+                                     data={this.state.colvalues}
+                                     columns={this.state.colnames}
+                                  />  
+                                  ):null
+                                 } 
+                              </div>               
 
-                              <tbody>
-
-                                 {this.state.colnames && this.state.colnames.length?
-                                    this.state.colnames.map((colname, key) => {
-                                       if (colname !== '') {
-                                          return (
-                                             <th key={key}>{colname}</th>
-                                          );
-                                       }
-                                    } ):null
-                                 }
-   							         {this.state.colvalues.map((rows, key)=> <tr key={key}> {rows.map((row) => <td><center>{row}</center></td>)}</tr>)}
-                              </tbody>
-                              </table>
                            </div>
                         </td><td></td><td></td><td></td><td></td><td></td>
                         <td align="center" style={{"overflow":"auto", "maxWidth":"550px", "verticalAlign":"top", "align":"center"}}>
@@ -522,25 +540,18 @@ class TableViewbi extends Component {
                                  </tr>
                               </tbody>
                               </table> 
-                              {this.state.table2boolean?(
-                                 <div style={{"width":"550px","maxWidth":"550px","color":"white","backgroundColor":"#357a38"}}>Dataset Two: {this.state.exporttable2}</div> 
-                                 ):null
-                              }                                
-                              <table className="outputtable" style={{"width":"550px","maxWidth":"550px"}}>  
-                              <tbody> 
-                                 {this.state.colnames2 && this.state.colnames2.length?
-                                    this.state.colnames2.map((colname2, key) => {
-                                       if (colname2 !== '') {
-                                          return (
-                                             <th key={key}>{colname2}</th>
-                                          );
-                                       }
-                                    } ):null
-                                 }
-                                 
-   							         {this.state.colvalues2.map((rows2, key)=> <tr key={key}> {rows2.map((row2) => <td><center>{row2}</center></td>)}</tr>)}
-                              </tbody>
-                              </table>
+
+                              <div className="outputtable" style={{"width":"550px","maxWidth":"550px"}}>
+                                 {this.state.table2boolean?(  
+                                  <MUIDataTable
+                                     title={"Dataset Two: "+this.state.exporttable2}
+                                     data={this.state.colvalues2}
+                                     columns={this.state.colnames2}
+                                  />  
+                                  ):null
+                                 }   
+                              </div>   
+
                            </div>
                         </td>
                      </tr>

@@ -617,28 +617,30 @@ def create_app(config_name):
             usertablename2 = request.form.get("tablename2")+ "_" + str(current_user.id) 
 			
             joinvariable = request.form.get("selectedjoinvariable")
+
+            combinedtablename = request.form.get("filename")+ "_" + str(current_user.id) 
 			
-            variablelist = modelbi.getAllColumnNamebi(usertablename);
-            variablelist2 = modelbi.getAllColumnNamebi(usertablename2);
+            variablelist = modelbi.getAllColumnNamebi(usertablename)
+            variablelist2 = modelbi.getAllColumnNamebi(usertablename2)
 			
             for n, variable in enumerate(variablelist):
                 for n2, variable2 in enumerate(variablelist2):
-                    variable2 = variable2;
+                    variable2 = variable2
                     if variablelist[n] == variablelist2[n2]:
-                        variablelist[n] = "t1."+variable+" as "+variable+"1";
-                        variablelist2[n2] = "t2."+variable2+" as "+variable2+"2";
+                        variablelist[n] = "t1."+variable+" as "+variable+"1"
+                        variablelist2[n2] = "t2."+variable2+" as "+variable2+"2"
                 
-            variableset = set(variablelist);
-            variableset2 = set(variablelist2);	
+            variableset = set(variablelist)
+            variableset2 = set(variablelist2)
 
-            variables1 = ",".join(list(variableset));
-            variables2 = ",".join(list(variableset2)); 	
+            variables1 = ",".join(list(variableset))
+            variables2 = ",".join(list(variableset2)) 	
 
-            variables = variables1 + "," + variables2;		
+            variables = variables1 + "," + variables2	
 			
-            combinetable = modelbi.tablesViewJoinbi(variables, usertablename, usertablename2, joinvariable);
+            combinetable = modelbi.tablesViewJoinbi(variables, usertablename, usertablename2, joinvariable, combinedtablename, current_user.id)
 			
-            combinedtable = modelbi.displayTablebi("combinedtable");
+            combinedtable = modelbi.displayTablebi(combinedtablename)
             
             return jsonify(
                 colnames = combinedtable[0],
@@ -648,7 +650,18 @@ def create_app(config_name):
     class ChartClassbi():
         """
             This is the chart page
-        """      
+        """ 
+        @app.route('/correlationpagebi/')
+        def correlationpagebi(): #rendering our correlation page
+            """
+                This method will render our correlation page
+            """     
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('correlationpagebi.html')        
+
+
         @app.route('/chartpagebi/')
         def chartpagebi(): #rendering our chart page
             """
@@ -793,6 +806,16 @@ def create_app(config_name):
                 return redirect(url_for('login_r'))
             else:
                 return render_template('webcrawlingpagebi.html')
+
+        @app.route("/weathercrawlingpagebi/")
+        def weathercrawlingpagebi(): #rendering our weather crawling page
+            """
+                This method will render our weather crawling page
+            """      
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('weathercrawlingpagebi.html')                
         
         @app.route("/weathercrawlingbi/", methods = ['POST'])
         def weathercrawlingbi(): 
@@ -804,9 +827,10 @@ def create_app(config_name):
 
             countryname = request.form.get("countryname") 
             saveToDB = request.form.get("save") 
-            print("here is init")
-            print(saveToDB)
-            message = modelbi.weatherCrawlerbi(startdate, enddate, countryname, saveToDB, current_user.id)
+            filename = request.form.get("filename")               
+            #print("here is init")
+            #print(saveToDB)
+            message = modelbi.weatherCrawlerbi(startdate, enddate, countryname, saveToDB, current_user.id, filename)
             return jsonify(
                 message = message
             )
@@ -828,8 +852,11 @@ def create_app(config_name):
             """      
             tags = request.form.get("tags")  
             nooftweets = request.form.get("nooftweets") 
+            datebefore = request.form.get("datebefore")             
+            saveToDB = request.form.get("save") 
+            filename = request.form.get("filename")                         
 
-            results = modelbi.twitterCrawlerbi(tags, nooftweets)
+            results = modelbi.twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, current_user.id, filename)
 
             return jsonify(
                 tweets = results[0],
@@ -837,12 +864,30 @@ def create_app(config_name):
                 apicallreset = results[2]
             )            
 
-        @app.route("/twittertest/")
-        def twittertest(): #rendering our twitter web crawling page
+    class AnalysisClassbi():
+        """
+            This is the analysis page
+        """        
+        @app.route("/analysispagebi/")
+        def analysispagebi(): #rendering our analysis page
             """
-                This method will render our twitter web crawling page
+                This method will render our analysis page
             """      
-            modelbi.naiveBayesClassifier()                
-            return render_template('twittercrawlingpagebi.html') 
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('analysispagebi.html')
+
+        @app.route("/twittertest/", methods = ['POST'])
+        def twittertest(): #testing
+            """
+                This method will test
+            """    
+            tablename = request.form.get("selectedtable") 
+
+            modelbi.preprocessingDataset()                
+            return jsonify(
+                message = "You generated something"
+            )
 
     return app

@@ -14,6 +14,7 @@ class WebCrawlingbi extends Component {
          startdate: "",
          enddate: "",
          countryname: "",
+         filename: "",        
          save: "",
          errordatestatement: "",
          hideLoadingBar: true,         
@@ -24,10 +25,11 @@ class WebCrawlingbi extends Component {
       this.selectStartDate = this.selectStartDate.bind(this); 
       this.selectEndDate = this.selectEndDate.bind(this);
 
-      this.selectCountryName = this.selectCountryName.bind(this);            
-      this.btnClick = this.btnClick.bind(this);
+      this.selectCountryName = this.selectCountryName.bind(this);  
+      this.selectFilename = this.selectFilename.bind(this);                
+      this.switchToDatabase = this.switchToDatabase.bind(this);
+      this.switchToCSV = this.switchToCSV.bind(this);           
       this.weatherCrawler = this.weatherCrawler.bind(this);
-
 
       this.formSubmitted = this.formSubmitted.bind(this);  
 
@@ -56,6 +58,13 @@ class WebCrawlingbi extends Component {
          element.style.color = "black";                  
          element.style.opacity = "1";            
          element.style.cursor = "pointer";
+
+         var element2 = document.getElementById('submitbutton2');
+         element2.disabled = false;
+         element2.style.background = "#fecb2f";
+         element2.style.color = "black";                  
+         element2.style.opacity = "1";            
+         element2.style.cursor = "pointer";         
       } else {
          var element = document.getElementById('submitbutton');
          element.disabled = true;
@@ -63,6 +72,13 @@ class WebCrawlingbi extends Component {
          element.style.color = "white";         
          element.style.opacity = "0.6";
          element.style.cursor = "not-allowed";
+
+         var element2 = document.getElementById('submitbutton2');
+         element2.disabled = true;
+         element2.style.background = "red";
+         element2.style.color = "white";         
+         element2.style.opacity = "0.6";
+         element2.style.cursor = "not-allowed";         
       }
    }
    
@@ -87,43 +103,59 @@ class WebCrawlingbi extends Component {
       this.setState({
          countryname: event.target.value
       });      
-   }    
+   }   
 
-   btnClick(){
+   selectFilename(event) {
+      this.setState({
+         filename: event.target.value
+      });      
+   }      
+
+   //switch between saving to database (true) or CSV file
+   switchToDatabase(){
       this.setState({
          save: "true"
       });
    }  
 
+   //switch between saving to database (true) or CSV file
+   switchToCSV(){
+      this.setState({
+         save: ""
+      });
+   }    
+
    //retrieve web crawl results
    weatherCrawler(event){
-      var country = this.state.countryname
-      var begindate = this.state.startdate
-      var finishdate = this.state.enddate
-      var saveToDB = this.state.save
+      var country = this.state.countryname;
+      var begindate = this.state.startdate;
+      var finishdate = this.state.enddate;
+      var saveToDB = this.state.save;
+      var filename = this.state.filename;
       $.post(window.location.origin + "/weathercrawlingbi/",
       {
          startdate: begindate,
          enddate: finishdate,
          countryname: country,
+         filename: filename,      
          save: saveToDB
       },
       (data) => {
          var message = ""; 
          $.each(data, function(key, val) {
-            console.log(val)
+            //console.log(val)
             if (val == "success"){
-               message = "Successfully saved weather data into the database."
+               message = "Successfully saved weather data into the database.";
             } else {
                var element = document.createElement('a');
                var newContent = val.replace(/;/g, "\n");
                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(newContent));
-               element.setAttribute('download', country + '_weather.csv');
+               element.setAttribute('download', filename + '.csv');
                element.style.display = 'none';
                document.body.appendChild(element);
                element.click();
                document.body.removeChild(element);
-               message = "Crawling of weather data is successful.";
+               message = "Successfully saved weather data into CSV file.";
             }
          });  
 
@@ -132,8 +164,8 @@ class WebCrawlingbi extends Component {
             save: "",
             hideLoadingBar: true, //hide loading button
          });  
-          console.log("came to line 135")    
-          console.log(save)                  
+         //console.log("came to line 135")    
+         //console.log(save)                  
       });
    }
 
@@ -196,7 +228,6 @@ class WebCrawlingbi extends Component {
                               </tr><tr>
                                  <td align="center">
                                     <font size="2" color="grey"><i>Safari users, please use "yyyy-mm-dd"</i></font>
-        
                                  </td>
                               </tr><tr>
                                  <td align="center">
@@ -256,15 +287,39 @@ class WebCrawlingbi extends Component {
                                        <option value="Vietnam">Vietnam</option>                        
                                     </select>
                                  </td>
+                              </tr><br/><tr>
+                                 <td align="center">
+                                    <div className="cardtitle">
+                                       Enter File Name
+                                    </div>
+                                 </td> 
+                              </tr>
+                              <tr>                             
+                                 <td align="center">
+                                    <div className="cardsubtitle">
+                                       File Name:
+                                    </div>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <input required type="text" id="filename" onChange={this.selectFilename}/>
+                                 </td>
                               </tr>
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save Weather Data as CSV</button>    
-                                 </td>
+                                    <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save into Database</button>    
+                                 </td>                                                              
+                              </tr><tr>
                                  <td align="center">
-                                    <button onClick={this.btnClick.bind(this)} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save Weather Data into Database</button>    
-                                 </td>                                 
+                                    <div className="cardtitle">                                 
+                                    Or
+                                    </div>
+                                 </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <button onClick={this.switchToCSV} id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV File</button>    
+                                 </td>
                               </tr>
                               <br/>
                               <tr>
