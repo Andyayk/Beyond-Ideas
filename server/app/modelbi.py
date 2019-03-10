@@ -631,10 +631,9 @@ def naiveBayesClassifier(data):
     #dt_sentimentText = loaded_vec.transform(stringOfTokenizedTweets)
 
     # Classify the unseen test dataset with the train model
-    Test_predicted = classifier_load.predict(stringOfTokenizedTweets)
-    print(Test_predicted)
+    test_predicted = classifier_load.predict(stringOfTokenizedTweets)
 
-    return ""
+    return test_predicted
  
 def preprocessingDataset(df, tweetColumnName, isTrainData):
     """
@@ -697,7 +696,7 @@ def trainModels():
 
     # Generate document term matrix - bag of words
     vectorizer = CountVectorizer()
-    dt_sentimentText = vectorizer.fit_transform(stringOfTokenizedTweets)
+    #dt_sentimentText = vectorizer.fit_transform(stringOfTokenizedTweets)
     
     """
     Set up training and test sets by choosing random samples from classes, 
@@ -706,35 +705,30 @@ def trainModels():
     """
     X_train, X_test, y_train, y_test = train_test_split(stringOfTokenizedTweets, listOfLabels, test_size=0.30, random_state=0)
 
-    # Model Generation Using Multinomial Naive Bayes
-    #clf = MultinomialNB().fit(X_train, y_train)
-    #print(X_test)
-    #predicted = clf.predict(X_test)
-
-    # Accuracy calculation
-    #print("Pre-MultinomialNB Accuracy:", metrics.accuracy_score(y_test, predicted))
 
     # K fold cross validation
     text_clf = Pipeline([('vect', vectorizer),
                          ('tfidf', TfidfTransformer()),
                          ('clf', MultinomialNB())])
+
     tuned_parameters = {
         'vect__ngram_range': [(1, 1), (1, 2), (2, 2)],
         'tfidf__use_idf': (True, False),
         'tfidf__norm': ('l1', 'l2'),
         'clf__alpha': [1, 1e-1, 1e-2]
     }
+
     scores = 'f1'
-    
+
+    # Model Generation Using Multinomial Naive Bayes
     clf = GridSearchCV(text_clf, tuned_parameters, cv=2, scoring=scores)
     clf.fit(X_train, y_train)
 
+    # Accuracy calculation
     print(classification_report(y_test, clf.predict(X_test), digits=4))
-    
+
+    # Best hyperparameters to use for model
     print(clf.best_params_)
-    
-    # Save vectorizer into dictionary file
-    #pickle.dump(vectorizer, open("dictionary.pickle", "wb")) #binary write
 
     # Save model into file
     pickle.dump(clf, open(os.getcwd()+'/naivebayes.pickle', "wb")) #binary write
