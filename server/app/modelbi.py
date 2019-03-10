@@ -632,31 +632,59 @@ def topicModeling(data):
     """   
     tweetColumnName2 = 'tweet'
     isTrainData = False
-    print(data)
+    # print(data)
+    print("testtesthii")
 
-    #Load the corpus and convert to vectors
-    corpus = nltk.corpus.PlaintextCorpusReader('./server', '.+\.txt')
-    docs = corpus2docs(corpus)
+    #test data
+    doc1 = "Sugar is bad to consume. My sister likes to have sugar, but not my father."
+    doc2 = "My father spends a lot of time driving my sister around to dance practice."
+    doc3 = "Doctors suggest that driving may cause increased stress and blood pressure."
+    doc4 = "Sometimes I feel pressure to perform well at school, but my father never seems to drive my sister to do better."
+    doc5 = "Health experts say that Sugar is not good for your lifestyle."
+
+    # compile documents
+    doc_complete = [doc1, doc2, doc3, doc4, doc5]
+
+    #Clearning & Preprocessing
+    stop = set(stopwords.words('english'))
+    exclude = set(string.punctuation) 
+    lemma = WordNetLemmatizer()
     
-    dictionary = gensim.corpora.Dictionary(docs) 
-    vecs = docs2vecs(docs, dictionary)
+    doc_clean = [clean(doc).split() for doc in doc_complete]
+    #Load the corpus and convert to vectors
+    # corpus = nltk.corpus.PlaintextCorpusReader('./server', '.+\.txt')
+    # docs = corpus2docs(corpus)
+    
+    # Converting list of documents (corpus) into Document Term Matrix using dictionary prepared above.
+    doc_term_matrix = [dictionary.doc2bow(doc) for doc in doc_clean]
+    
+    # dictionary = gensim.corpora.Dictionary(docs) 
+    # vecs = docs2vecs(docs, dictionary)
+
+    # Creating the object for LDA model using gensim library
+    Lda = gensim.models.ldamodel.LdaModel
+
+    #Running and Trainign LDA model on the document term matrix.
+    ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
+
+    print(ldamodel.print_topics(num_topics=3, num_words=3))[0.168*health + 0.083*sugar + 0.072*bad,0.061*consume + 0.050*drive + 0.050*sister,0.049*pressur + 0.049*father + 0.049*sister]
 
     # Call LDA model from disk and print the topics for each document in the TestLDA
-    lda_disk=gensim.models.ldamodel.LdaModel.load("sg_lda")
+    # lda_disk=gensim.models.ldamodel.LdaModel.load("sg_lda")
 
     #I choose model_list[1] where the number of topics is 4
-    df_topic_sents_keywords2 = format_topics_sentences(ldamodel=lda_disk, corpus=test_vecs, data=test_docs)
+    # df_topic_sents_keywords2 = format_topics_sentences(ldamodel=lda_disk, corpus=test_vecs, data=test_docs)
 
     # Format
-    df_dominant_topic2 = df_topic_sents_keywords2.reset_index()
-    df_dominant_topic2.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contrib', 'Keywords', 'Text']
+    # df_dominant_topic2 = df_topic_sents_keywords2.reset_index()
+    # df_dominant_topic2.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contrib', 'Keywords', 'Text']
 
     # Show
-    df_dominant_topic2.head(10)
+    # df_dominant_topic2.head(10)
 
     # Print the top words in the topics displayed above for test doc 0. 
     # Change the topic number accrodingly - the one with high probability
-    lda_disk.print_topic(3, topn=10)
+    # lda_disk.print_topic(3, topn=10)
 
     return ""
 
