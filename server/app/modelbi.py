@@ -609,6 +609,25 @@ def insertToDatabase(header, bodyArray, tableName):
     except Exception as e:
         return False
 
+def corpus2docs(corpus):
+    # corpus is a object returned by load_corpus that represents a corpus.
+    fids = corpus.fileids()
+    docs1 = []
+    for fid in fids:
+        doc_raw = corpus.raw(fid)
+        doc = nltk.word_tokenize(doc_raw)
+        docs1.append(doc)
+    docs2 = [[w.lower() for w in doc] for doc in docs1]
+    docs3 = [[w for w in doc if re.search('^[a-z]+$', w)] for doc in docs2]
+    docs4 = [[w for w in doc if w not in stop_list] for doc in docs3]
+    return docs4
+
+def docs2vecs(docs, dictionary):
+    # docs is a list of documents returned by corpus2docs.
+    # dictionary is a gensim.corpora.Dictionary object.
+    vecs1 = [dictionary.doc2bow(doc) for doc in docs]
+    return vecs1
+
 def topicModeling(data):
     """
         This method will implement best topic modeling model
@@ -616,6 +635,31 @@ def topicModeling(data):
     tweetColumnName2 = 'tweet'
     isTrainData = False
     print(data)
+
+    #Load the corpus and convert to vectors
+    corpus = nltk.corpus.PlaintextCorpusReader('./server', '.+\.txt')
+    docs = corpus2docs(corpus)
+    
+    dictionary = gensim.corpora.Dictionary(docs) 
+    vecs = docs2vecs(docs, dictionary)
+
+    # Call LDA model from disk and print the topics for each document in the TestLDA
+    lda_disk=gensim.models.ldamodel.LdaModel.load("sg_lda")
+
+    #I choose model_list[1] where the number of topics is 4
+    df_topic_sents_keywords2 = format_topics_sentences(ldamodel=lda_disk, corpus=test_vecs, data=test_docs)
+
+    # Format
+    df_dominant_topic2 = df_topic_sents_keywords2.reset_index()
+    df_dominant_topic2.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contrib', 'Keywords', 'Text']
+
+    # Show
+    df_dominant_topic2.head(10)
+
+    # Print the top words in the topics displayed above for test doc 0. 
+    # Change the topic number accrodingly - the one with high probability
+    lda_disk.print_topic(3, topn=10)
+
     return ""
 
 def sentimentAnalysis(data):
