@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import nltk
+import gensim
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import *
@@ -20,6 +21,7 @@ from twython import Twython
 from io import StringIO
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
+
 
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
 
@@ -617,7 +619,8 @@ def naiveBayesClassifier(data):
     classifier_saved = open("naivebayes.pickle", "rb") #binary read
     classifier_load = pickle.load(classifier_saved)
     classifier_saved.close()
-
+    
+    #Sentiment Analysis
     tweetColumnName = 'SentimentText'
     isTrainData = False
 
@@ -633,7 +636,17 @@ def naiveBayesClassifier(data):
     # Classify the unseen test dataset with the train model
     test_predicted = classifier_load.predict(stringOfTokenizedTweets)
 
+<<<<<<< HEAD
     return test_predicted
+=======
+    #Topic Modeling
+    tweetColumnName2 = 'tweet'
+    isTrainData = False
+
+
+
+    return ""
+>>>>>>> 8741a6ca0638b712d69a460763e58ee61d89260b
  
 def preprocessingDataset(df, tweetColumnName, isTrainData):
     """
