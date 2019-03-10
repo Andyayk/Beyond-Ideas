@@ -885,7 +885,9 @@ def create_app(config_name):
             """    
             tablename = request.form.get("selectedtable") 
 
-            modelbi.naiveBayesClassifier('Unseen_Test.csv')                
+            modelbi.sentimentAnalysis('Unseen_Test.csv')   
+
+            modelbi.topicModeling("hello")             
             return jsonify(
                 message = "You generated something"
             )
@@ -893,7 +895,7 @@ def create_app(config_name):
 
         @app.route("/twittertrain/", methods = ['POST'])
         def twittertrain(): #testing
-            modelbi.trainModels()   
+            modelbi.trainSentimentAnalysisModels()   
 
             return ""         
 
