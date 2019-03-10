@@ -878,18 +878,23 @@ def create_app(config_name):
             else:
                 return render_template('analysispagebi.html')
 
-        @app.route("/twittertest/", methods = ['POST'])
-        def twittertest(): #testing
+        @app.route("/generateplotbi/", methods = ['POST'])
+        def generateplotbi():
             """
-                This method will test
+                This method will render our analysis charts
             """    
             tablename = request.form.get("selectedtable") 
 
-            modelbi.sentimentAnalysis('Unseen_Test.csv')   
+            usertablename = ""
+            if current_user.is_authenticated:      
+                usertablename = tablename + "_" + str(current_user.id)   
 
-            modelbi.topicModeling("hello")             
+            sentimentData = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)   
+
+            topicModelData = modelbi.topicModeling("hello")     
+
             return jsonify(
-                message = "You generated something"
+                message = str(sentimentData)
             )
 
 
