@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Plot from 'react-plotly.js';
+// import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import MUIDataTable from 'mui-datatables';
 
 import "../css/main";
 
@@ -14,7 +16,10 @@ class Analysisbi extends Component {
       selectedtable: "",      
       selectedtable: "",
       hideLoadingBar: true,
-      plot: ""                 
+      plot: "",
+      columns: "",
+      values: "",
+      tableboolean: false     
     };
 
     this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -109,8 +114,10 @@ class Analysisbi extends Component {
     },
     (data) => {
       this.setState({
-        plot: data['message'],
-        hideLoadingBar: true //hide loading button             
+        columns: data['columns'],
+        values: data['values'],
+        hideLoadingBar: true, //hide loading button
+        tableboolean: true             
       })      
     });    
   }        
@@ -193,12 +200,24 @@ class Analysisbi extends Component {
                 </tr>
               </tbody>   
               </table>           
-              {this.state.plot}   
+              {this.state.plot}
               </td>
             </tr>
           </tbody>   
           </table>  
-          </div>                                 
+          </div> 
+          <div style={{"overflowX":"auto"}}>
+            <div className="outputtable" style={{"width":"700px","maxWidth":"700px"}}>
+              {this.state.tableboolean?(                 
+                <MUIDataTable
+                   title={"test"}
+                   data={this.state.values}
+                   columns={this.state.columns}
+                /> 
+                ):null
+              } 
+            </div> 
+          </div>                                          
         </div>
       );
    }

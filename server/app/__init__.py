@@ -889,12 +889,13 @@ def create_app(config_name):
             if current_user.is_authenticated:      
                 usertablename = tablename + "_" + str(current_user.id)   
 
-            sentimentData = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)   
+            columns, values = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)   
 
-            topicModelData = modelbi.topicModeling("hello")     
+            #topicModelData = modelbi.topicModeling("hello")     
 
             return jsonify(
-                message = str(sentimentData)
+                columns = columns,
+                values = values
             )
 
 

@@ -572,7 +572,9 @@ def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
     if saveToDB == "true":        
         tableName = filename + "_tweets_" + str(userID)
         connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
-        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), friends_count INT(255), date date, tweettime VARCHAR(255));")
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), \
+            tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), \
+            friends_count INT(255), date date, tweettime VARCHAR(255));")
         
         connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
@@ -699,7 +701,6 @@ def sentimentAnalysis(tablename, usertablename, userID):
     
     # Sentiment Analysis
     tweetColumnName = 'tweet'
-    isTrainData = False
 
     try:
         # Load unseen testing dataset 
@@ -710,27 +711,39 @@ def sentimentAnalysis(tablename, usertablename, userID):
         copytestdf = testdf.copy()
 
         # Preprocess the text
-        stringOfTokenizedTweets = preprocessingDataset(testdf, tweetColumnName, isTrainData)
+        stringOfTokenizedTweets = preprocessingDataset(testdf, tweetColumnName)
 
         # Classify the unseen test dataset with the train model
         test_predicted = classifier_load.predict(stringOfTokenizedTweets)
 
+        # Adding predicted sentiment to dataframe
+        copytestdf['sentiment'] = test_predicted 
+
         tableName = tablename + "_w_sentiment_" + str(userID)
         connection.execute("DROP TABLE IF EXISTS `" + tableName + "`")
-        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), friends_count INT(255), date date, tweettime VARCHAR(255));")
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), \
+            name VARCHAR(255), tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), \
+            followers_count INT(255), friends_count INT(255), date date, tweettime VARCHAR(255), sentiment INT(255));")
         
         connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
         connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
 
-        copytestdf.to_sql(name=tableName, con=engine, if_exists = 'append', index=False, chunksize=1000, dtype={'tweetid': sqlalchemy.types.VARCHAR(), 'userid': sqlalchemy.types.VARCHAR(), 'name': sqlalchemy.types.VARCHAR(), 'tweet': sqlalchemy.types.VARCHAR(), 'retweet_count': sqlalchemy.types.INTEGER(), 'favorite_count': sqlalchemy.types.INTEGER(), 'followers_count': sqlalchemy.types.INTEGER(), 'friends_count': sqlalchemy.types.INTEGER(), 'date': sqlalchemy.DateTime(), 'tweettime': sqlalchemy.types.VARCHAR()})
+        copytestdf.to_sql(name=tableName, con=engine, if_exists = 'append', index=False, chunksize=1000, \
+            dtype={'tweetid': sqlalchemy.types.VARCHAR(), 'userid': sqlalchemy.types.VARCHAR(), 'name': sqlalchemy.types.VARCHAR(), \
+            'tweet': sqlalchemy.types.VARCHAR(), 'retweet_count': sqlalchemy.types.INTEGER(), \
+            'favorite_count': sqlalchemy.types.INTEGER(), 'followers_count': sqlalchemy.types.INTEGER(), \
+            'friends_count': sqlalchemy.types.INTEGER(), 'date': sqlalchemy.DateTime(), 'tweettime': sqlalchemy.types.VARCHAR(), \
+            'sentiment': sqlalchemy.types.INTEGER()})
 
-        return test_predicted
+        columns = copytestdf.columns.tolist()
+        values = copytestdf.values.tolist()
+
+        return [columns, values]
     except Exception as e:
-        print(str(e))
-        return "Something is wrong with sentimentAnalysis method"  
+        return ["Something is wrong with sentimentAnalysis method", "error"]  
 
-def preprocessingDataset(df, tweetColumnName, isTrainData):
+def preprocessingDataset(df, tweetColumnName):
     """
     This method will pre-process the dataset
     """
@@ -745,11 +758,10 @@ def preprocessingDataset(df, tweetColumnName, isTrainData):
     stop = stopwords.words('english')
     df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x for x in x.split() if x not in stop))
 
-    if isTrainData:
-        # Remove uncommon words - can become noise
-        freq = pd.Series(' '.join(df[tweetColumnName]).split()).value_counts()[-10:]
-        freq = list(freq.index)
-        df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
+    # Remove uncommon words - can become noise
+    freq = pd.Series(' '.join(df[tweetColumnName]).split()).value_counts()[-10:]
+    freq = list(freq.index)
+    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
 
     # Tokenize each tweet and save into data frame
     listOfTokenizedTweets = []
@@ -781,13 +793,12 @@ def trainSentimentAnalysisModels():
 
     labelColumnName = 'Sentiment'
     tweetColumnName = 'SentimentText'
-    isTrainData = True
 
     # Convert the labellings in data frame to a list
     listOfLabels = df[labelColumnName].tolist()
 
     # Preprocess the text
-    stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, isTrainData)
+    stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName)
 
     # Generate document term matrix - bag of words
     vectorizer = CountVectorizer()
