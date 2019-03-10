@@ -2,12 +2,9 @@
 @author: Beyond Ideas 
 """
 
-import mysql.connector, datetime, requests, json, csv, os, time, io, math, random, operator, re
+import mysql.connector, datetime, requests, json, csv, os, time, io, math, random, operator, re, sqlalchemy, pickle, nltk, gensim
 import pandas as pd
 import numpy as np
-import pickle
-import nltk
-import gensim
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import *
@@ -21,6 +18,7 @@ from twython import Twython
 from io import StringIO
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
+from pandas import DataFrame
 
 
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
@@ -156,7 +154,7 @@ def getNumericalColumnNamebi(table_name):
         
 def getAllColumnNamebi(table_name):
     """
-        This method will get selected variables data (varchar variables column names only)
+        This method will get selected variables data
     """    
     try:   
         cols = []
@@ -572,9 +570,9 @@ def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
     apicallreset = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))
 
     if saveToDB == "true":        
-        tableName = filename + "_" + str(userID)
+        tableName = filename + "_tweets_" + str(userID)
         connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
-        connection.execute("CREATE TABLE `" + tableName + "` (tweetid BIGINT(255), userid BIGINT(255), name VARCHAR(255), tweet VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), friends_count INT(255), date date, tweettime VARCHAR(255));")
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), friends_count INT(255), date date, tweettime VARCHAR(255));")
         
         connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
@@ -662,35 +660,48 @@ def topicModeling(data):
 
     return ""
 
-def sentimentAnalysis(data):
+def sentimentAnalysis(tablename, usertablename, userID):
     """
         This method will implement best sentiment analysis model
     """    
-    #load dictionary
-    #loaded_vec = pickle.load(open(os.getcwd()+'/dictionary.pickle', "rb"))
-
+    # Load the trained model
     classifier_saved = open("sentimentanalysis.pickle", "rb") #binary read
     classifier_load = pickle.load(classifier_saved)
     classifier_saved.close()
     
-    #Sentiment Analysis
-    tweetColumnName = 'SentimentText'
+    # Sentiment Analysis
+    tweetColumnName = 'tweet'
     isTrainData = False
 
-    # Load unseen testing dataset 
-    testdf = pd.read_csv(data, encoding="ISO-8859-1")
+    try:
+        # Load unseen testing dataset 
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
 
-    # Preprocess the text
-    stringOfTokenizedTweets = preprocessingDataset(testdf, tweetColumnName, isTrainData)
+        testdf = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
 
-    # Generate document term matrix for unseen training set - bag of words
-    #dt_sentimentText = loaded_vec.transform(stringOfTokenizedTweets)
+        copytestdf = testdf.copy()
 
-    # Classify the unseen test dataset with the train model
-    test_predicted = classifier_load.predict(stringOfTokenizedTweets)
+        # Preprocess the text
+        stringOfTokenizedTweets = preprocessingDataset(testdf, tweetColumnName, isTrainData)
 
-    return test_predicted
- 
+        # Classify the unseen test dataset with the train model
+        test_predicted = classifier_load.predict(stringOfTokenizedTweets)
+
+        tableName = tablename + "_w_sentiment_" + str(userID)
+        connection.execute("DROP TABLE IF EXISTS `" + tableName + "`")
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), friends_count INT(255), date date, tweettime VARCHAR(255));")
+        
+        connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
+        timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+        connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
+
+        copytestdf.to_sql(name=tableName, con=engine, if_exists = 'append', index=False, chunksize=1000, dtype={'tweetid': sqlalchemy.types.VARCHAR(), 'userid': sqlalchemy.types.VARCHAR(), 'name': sqlalchemy.types.VARCHAR(), 'tweet': sqlalchemy.types.VARCHAR(), 'retweet_count': sqlalchemy.types.INTEGER(), 'favorite_count': sqlalchemy.types.INTEGER(), 'followers_count': sqlalchemy.types.INTEGER(), 'friends_count': sqlalchemy.types.INTEGER(), 'date': sqlalchemy.DateTime(), 'tweettime': sqlalchemy.types.VARCHAR()})
+
+        return test_predicted
+    except Exception as e:
+        print(str(e))
+        return "Something is wrong with sentimentAnalysis method"  
+
 def preprocessingDataset(df, tweetColumnName, isTrainData):
     """
     This method will pre-process the dataset
@@ -752,7 +763,6 @@ def trainSentimentAnalysisModels():
 
     # Generate document term matrix - bag of words
     vectorizer = CountVectorizer()
-    #dt_sentimentText = vectorizer.fit_transform(stringOfTokenizedTweets)
     
     """
     Set up training and test sets by choosing random samples from classes, 

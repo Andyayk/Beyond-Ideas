@@ -44,7 +44,7 @@ class Analysisbi extends Component {
       var datasetNames = res.datasetNames;
       var mySQLTables = [];
       datasetNames.map((datasetName, key) =>
-        mySQLTables.push(datasetName.name)
+        mySQLTables.push(datasetName.name)      
       );
       // console.log(mySQLTables);
       this.createOptions(mySQLTables);
@@ -67,7 +67,9 @@ class Analysisbi extends Component {
     if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
       var mySQLTables = data.toString().split(",");
       for (let i = 0; i < mySQLTables.length; i++) {
-        options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+        if(mySQLTables[i].includes("_tweets")){
+          options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+        }
       };
     }
 
@@ -101,7 +103,7 @@ class Analysisbi extends Component {
 
   //retrieving chart data from flask and creating chart using plotly
   generatePlot(event) {
-    $.post(window.location.origin + "/twittertest/",
+    $.post(window.location.origin + "/generateplotbi/",
     {
       selectedtable: this.state.selectedtable   
     },
@@ -129,6 +131,8 @@ class Analysisbi extends Component {
 
       return (
         <div>
+          This button takes quite long to train the model, don't press unless you want to train model
+          <button id="submitbutton" onClick={this.trainModel} className="button" type="button" style={{"verticalAlign":"middle"}}>Train Model</button>
           <div className="content">
           <table style={{"width":"100%"}}>
           <tbody>
@@ -160,9 +164,8 @@ class Analysisbi extends Component {
                   </tr>
                   <br/>
                   <tr>
-                  <td align="center">   
-                    <button id="submitbutton" onClick={this.trainModel} className="button" type="button" style={{"verticalAlign":"middle"}}>Train Model</button>                                                                           
-                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Test Model</button>                             
+                  <td align="center">                                                                              
+                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Analyse Tweets</button>                             
                   </td>
                   </tr>
                   <br/>
