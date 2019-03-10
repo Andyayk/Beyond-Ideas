@@ -45,6 +45,11 @@ class AutoChartbi extends Component {
          selectedvariables1 : "",
          selectedvariables2 : "",
          rtworesults : "",
+         filterresultoptions: "",
+         filterwords1 : "",
+         filterwords2: "",
+         rxyKeyValues : "",
+         correlationresultexplanation : "",
       };
       
      
@@ -72,6 +77,8 @@ class AutoChartbi extends Component {
       this.callBackendAPI = this.callBackendAPI.bind(this);
 
       this.getMySQLTables(); //retrieving user's uploaded tables
+      
+      this.filterresults = this.filterresults.bind(this);
 
       this.loadingBarInstance = (
          <div className="loader"></div>                                   
@@ -417,10 +424,10 @@ class AutoChartbi extends Component {
          var yname = yVariables[currentYNo];
 
          
-         if(rxyKeyVal[r2]){
-            rxyKeyVal[r2].push([xname,yname,xarray,yarray]);
+         if(rxyKeyVal[r]){
+            rxyKeyVal[r].push([xname,yname,xarray,yarray]);
          } else {
-            rxyKeyVal[r2] = [[xname,yname, xarray, yarray]];          
+            rxyKeyVal[r] = [[xname,yname, xarray, yarray]];          
          }
          if(currentYNo < yVariables.length-1){
             currentYNo++;
@@ -434,16 +441,42 @@ class AutoChartbi extends Component {
         
         var keys = Object.keys(rxyKeyVal);
         keys.sort(function ( a, b ) { return b - a; });
-        let rxypairs = [<tr><th>X</th><th>Y</th><th>R2</th></tr>]
+        let rxypairs = [<tr><th>X</th><th>Y</th><th>R</th></tr>]
+        var filteroptions = [];
         
         for ( var i = 0; i < keys.length; i++ ) {
+            filteroptions.push(<option value={i+1}>{i+1}</option>);
             for( var j = 0; j < rxyKeyVal[keys[i]].length; j++){
             rxypairs.push(<tr class="rxytr" onClick={this.displayChart}><input type="text" name="xval[]" value={rxyKeyVal[keys[i]][j][2]} hidden/><input type="text" name="yval[]" value={rxyKeyVal[keys[i]][j][3]} hidden/><td>{rxyKeyVal[keys[i]][j][0]}</td><td>{rxyKeyVal[keys[i]][j][1]}</td><td>{keys[i]}</td></tr>);
             }
         }
-         this.setState({hideLoadingBar: true, rtworesults:rxypairs});
+        this.setState({hideLoadingBar: true, rtworesults:rxypairs, rxyKeyValues:rxyKeyVal});
+         
+         if(keys.length > 0){
+             this.setState({
+                 correlationresultexplanation : "Based on the datasets of " + this.state.selectedtable + " and " + this.state.selectedtable2 + " the highest correlated variables are " + rxyKeyVal[keys[0]][0][0] + " and " + rxyKeyVal[keys[0]][0][1] + " with the R value of " + keys[0],
+                 filterwords1 : "Filter by top ",
+                 filterwords2 : " K's result",
+                 filterresultoptions : <select required defaultValue={keys.length} onChange={this.filterresults}> + {filteroptions} + </select>
+             });
+         }
 
       });
+    }
+    
+    filterresults(event){
+        var rxyKeyVal = this.state.rxyKeyValues;
+        var keys = Object.keys(rxyKeyVal);
+        keys.sort(function ( a, b ) { return b - a; });
+        let rxypairs = [<tr><th>X</th><th>Y</th><th>R</th></tr>]
+        for ( var i = 0; i < event.target.value; i++ ) {
+            for( var j = 0; j < rxyKeyVal[keys[i]].length; j++){
+            rxypairs.push(<tr class="rxytr" onClick={this.displayChart}><input type="text" name="xval[]" value={rxyKeyVal[keys[i]][j][2]} hidden/><input type="text" name="yval[]" value={rxyKeyVal[keys[i]][j][3]} hidden/><td>{rxyKeyVal[keys[i]][j][0]}</td><td>{rxyKeyVal[keys[i]][j][1]}</td><td>{keys[i]}</td></tr>);
+            }
+        }
+        this.setState({hideLoadingBar: true, rtworesults:rxypairs});
+        
+        
     }
     
     displayChart(event){
@@ -527,7 +560,6 @@ class AutoChartbi extends Component {
            .catch(err => console.error(err));   
 
     }
-
 
    //handle form submission
    formSubmitted(event){
@@ -623,7 +655,7 @@ class AutoChartbi extends Component {
                         <br/>
                         <tr>
                            <td align="center">                                                            
-                              <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Scatterplot</button>                             
+                              <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Result</button>                             
                            </td>
                         </tr>
                         <br/>
@@ -633,6 +665,21 @@ class AutoChartbi extends Component {
                                  {this.loadingBarInstance}
                               </div>                                  
                            </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <i>
+                        {this.state.correlationresultexplanation}
+                        </i>
+                        </td>
+                        <br/>
+                        </tr>
+                        <tr>
+                            <td>
+                            {this.state.filterwords1}
+                            {this.state.filterresultoptions}
+                            {this.state.filterwords2}
+                            </td>
                         </tr>
                         <table id="rtwotables" border="1">
                         {this.state.rtworesults}

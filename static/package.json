@@ -69,6 +69,7 @@
     "node-correlation": "^1.0.2",
     "plotly.js": "^1.44.1",
     "react-html-parser": "^2.0.2",
+    "react-mui-datatables": "^1.1.2",
     "react-plotly.js": "^2.2.0",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
