@@ -16,7 +16,8 @@ class Analysisbi extends Component {
       selectedtable: "",      
       selectedtable: "",
       hideLoadingBar: true,
-      plot: "",
+      barchart: "",
+      timeseries: "",
       columns: "",
       values: "",
       tableboolean: false     
@@ -26,8 +27,14 @@ class Analysisbi extends Component {
     this.selectTable = this.selectTable.bind(this);
 
     this.trainModel = this.trainModel.bind(this);
+
+    this.barChart = this.barChart.bind(this);
+    this.timeSeries = this.timeSeries.bind(this);
+
     this.generatePlot = this.generatePlot.bind(this); 
+    this.generateHistoricalPlot = this.generateHistoricalPlot.bind(this);     
     this.formSubmitted = this.formSubmitted.bind(this);
+    this.formSubmitted2 = this.formSubmitted2.bind(this);    
 
     this.callBackendAPI = this.callBackendAPI.bind(this);
 
@@ -90,7 +97,7 @@ class Analysisbi extends Component {
     });      
   }
 
-  //retrieving chart data from flask and creating chart using plotly
+  //this will train the models
   trainModel(event) {
     this.setState({
       hideLoadingBar: false
@@ -106,21 +113,118 @@ class Analysisbi extends Component {
     });    
   }  
 
+  //creating bar chart using plotly
+  barChart(yData){
+    this.setState({
+      barchart: <Plot data={[{
+                  x: ['Positive','Negative'],
+                  y: yData,
+                  type: 'bar',
+                  marker:{
+                    color: ['rgba(123, 239, 178, 1)', 'rgba(222, 45, 38, 0.8)']
+                  },
+                  name: 'Positive vs Negative Tweets',
+                  hoverlabel: {namelength: -1}
+                  }]}
+                  layout={{
+                    width: 600, 
+                    height: 500, 
+                    title: '<b>Positive vs Negative Tweets</b>',
+                    hovermode: 'closest',
+                    xaxis: {
+                      title: 'Sentiments',
+                      ticklen: 5,
+                      zeroline: false,
+                      gridwidth: 2,
+                    },
+                    yaxis: {
+                      title: 'No. of Tweets',
+                      ticklen: 5,
+                      zeroline: false,
+                      gridwidth: 2,
+                    }                          
+                  }}
+                />
+      })
+  }
+
+  //creating time series using plotly
+  timeSeries(xData, yData, yData2){
+    this.setState({    
+      timeseries: <Plot data={[{
+                  x: xData,
+                  y: yData,
+                  type: 'scatter',
+                  marker: {color: 'rgba(123, 239, 178, 1)'},
+                  name: 'Positive Tweets',
+                  hoverlabel: {namelength: -1}
+                  },{
+                  x: xData,
+                  y: yData2,
+                  type: 'scatter',
+                  marker: {color: 'rgba(222, 45, 38, 0.8)'},
+                  name: 'Negative Tweets',
+                  hoverlabel: {namelength: -1}
+                  }]}
+                  layout={{
+                    width: 600, 
+                    height: 500, 
+                    title: '<b>Timelime of Tweets</b>',
+                    hovermode: 'closest',
+                    xaxis: {
+                      title: 'No. of Tweets',
+                      ticklen: 5,
+                      zeroline: false,
+                      gridwidth: 2,
+                    },
+                    yaxis: {
+                      title: 'abc',
+                      ticklen: 5,
+                      zeroline: false,
+                      gridwidth: 2,
+                    }                          
+                  }}
+                />
+      })
+  }
+
   //retrieving chart data from flask and creating chart using plotly
-  generatePlot(event) {
+  generatePlot(event){
     $.post(window.location.origin + "/generateplotbi/",
     {
       selectedtable: this.state.selectedtable   
     },
     (data) => {
-      this.setState({
+      this.barChart([1,3]);
+      this.timeSeries(['2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00'], [1,2,6], [9,5,3]);
+
+      var x = document.getElementById("message");
+      x.style.display = "none";
+
+      this.setState({                  
         columns: data['columns'],
         values: data['values'],
         hideLoadingBar: true, //hide loading button
-        tableboolean: true             
-      })      
+        tableboolean: true                  
+      });
+    });  
+  }      
+
+  //retrieving chart data from flask and creating chart using plotly
+  generateHistoricalPlot(event){
+    this.barChart([1,3]);
+    this.timeSeries(['2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00'], [1,2,6], [9,5,3]);
+
+    var x = document.getElementById("message");
+    x.style.display = "none";
+
+    this.setState({                  
+      columns: data['a','b',"c"],
+      values: data[1,2,3],
+      hideLoadingBar: true, //hide loading button
+      tableboolean: true                  
     });    
-  }        
+  }    
 
   //handle form submission
   formSubmitted(event){
@@ -130,7 +234,17 @@ class Analysisbi extends Component {
     this.setState({
       hideLoadingBar: false
     });      
-  }        
+  }  
+
+  //handle form submission 2
+  formSubmitted2(event){
+    event.preventDefault();
+    this.generateHistoricalPlot();
+
+    this.setState({
+      hideLoadingBar: false
+    });      
+  }           
 
    //rendering the html for chart
    render() {
@@ -138,12 +252,12 @@ class Analysisbi extends Component {
 
       return (
         <div>
-          This button takes quite long to train the model, don't press unless you want to train model
-          <button id="submitbutton" onClick={this.trainModel} className="button" type="button" style={{"verticalAlign":"middle"}}>Train Model</button>
+          {/*uncomment below to train model*/}
+          {/*<button id="submitbutton" onClick={this.trainModel} className="button" type="button" style={{"verticalAlign":"middle"}}>Train Model</button>*/}
           <div className="content">
           <table style={{"width":"100%"}}>
           <tbody>
-            <tr>             
+            <tr>
               <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
               <form name="submitForm" method="POST" onSubmit={this.formSubmitted}>                       
                 <br />
@@ -180,16 +294,65 @@ class Analysisbi extends Component {
                   <td align="center">                                                            
                     <div className="LoadingBar" style={style}>
                       {this.loadingBarInstance}
-                    </div>                     
-                    Will print in command prompt             
+                    </div>                                
                   </td>
                   </tr>                                 
                 </tbody>   
                 </table>
                 <br/>          
-              </form>                   
-              </td>
-              <td></td>
+              </form>
+              </td>    
+              <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
+              <form name="submitForm" method="POST" onSubmit={this.formSubmitted2}>                       
+                <br />
+                <table align="center">
+                <tbody>
+                  <tr>
+                  <td align="center">
+                    <div className="cardtitle">
+                      Select Historical Dataset
+                    </div>
+                  </td>
+                  </tr><tr>
+                  <td align="center">
+                    <div className="cardsubtitle">
+                      Dataset:
+                    </div>
+                  </td>
+                  </tr><tr>
+                  <td align="center">
+                    <select required defaultValue="" onChange={this.selectTable} style={{"width":"210px"}}>
+                      <option value="" disabled>---------- select a dataset ----------</option>
+                      {this.state.options}
+                    </select>
+                  </td>
+                  </tr>
+                  <br/>
+                  <tr>
+                  <td align="center">                                                                              
+                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Analyse Tweets</button>                             
+                  </td>
+                  </tr>
+                  <br/>
+                  <tr>
+                  <td align="center">                                                            
+                    <div className="LoadingBar" style={style}>
+                      {this.loadingBarInstance}
+                    </div>                                
+                  </td>
+                  </tr>                                 
+                </tbody>   
+                </table>
+                <br/>          
+              </form>
+              </td>                             
+            </tr>
+          </tbody>   
+          </table>
+          <table style={{"width":"100%"}}>
+          <tbody>                       
+            <tr></tr>
+            <tr>
               <td align="center" style={{"width":"80%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
               <table id="message">
               <tbody>
@@ -199,15 +362,25 @@ class Analysisbi extends Component {
                 </td>                           
                 </tr>
               </tbody>   
-              </table>           
-              {this.state.plot}
-              </td>
+              </table> 
+              <table>
+              <tbody>  
+                <tr>
+                  <td>        
+                    {this.state.barchart}
+                  </td><td>
+                    {this.state.timeseries}  
+                  </td>                           
+                </tr>
+              </tbody>   
+              </table>                  
+              </td>          
             </tr>
           </tbody>   
           </table>  
           </div> 
           <div style={{"overflowX":"auto"}}>
-            <div className="outputtable" style={{"width":"700px","maxWidth":"700px"}}>
+            <div className="outputtable" style={{"width":"1000px","maxWidth":"1000px"}}>
               {this.state.tableboolean?(                 
                 <MUIDataTable
                    title={"test"}
