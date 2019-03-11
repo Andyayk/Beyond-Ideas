@@ -302,6 +302,30 @@ def getFilterValuesbi(tablename, tablename2, filtervariable):
     except Exception as e:
         return "" 
 
+def getDataForAnalysis(usertablename):
+    try:
+        # Load dataset 
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
+
+        df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
+
+        copydf = df.copy()
+        copydf2 = df.copy()
+
+        sliceddf = copydf[['tweet','date','tweettime','sentiment']]
+
+        columns = sliceddf.columns.tolist() #column names
+        values = sliceddf.values.tolist() #all values
+
+        sentimentcolumn = copydf2['sentiment'].tolist()
+
+        aggregatedsentiment = [sentimentcolumn.count(1), sentimentcolumn.count(0)] #1 is positive, 0 is negative
+
+        return [columns, values, aggregatedsentiment]
+    except Exception as e:
+        print(str(e))
+        return "Something is wrong with sentimentAnalysis method"
+
 def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename):
     """
         This method crawl weather data from worldweatheronline
@@ -736,12 +760,9 @@ def sentimentAnalysis(tablename, usertablename, userID):
             'friends_count': sqlalchemy.types.INTEGER(), 'date': sqlalchemy.DateTime(), 'tweettime': sqlalchemy.types.VARCHAR(), \
             'sentiment': sqlalchemy.types.INTEGER()})
 
-        columns = copytestdf.columns.tolist()
-        values = copytestdf.values.tolist()
-
-        return [columns, values]
+        return tableName
     except Exception as e:
-        return ["Something is wrong with sentimentAnalysis method", "error"]  
+        return "Something is wrong with sentimentAnalysis method"  
 
 def preprocessingDataset(df, tweetColumnName):
     """
