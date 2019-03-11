@@ -721,9 +721,9 @@ def sentimentAnalysis(tablename, usertablename, userID):
 
         tableName = tablename + "_w_sentiment_" + str(userID)
         connection.execute("DROP TABLE IF EXISTS `" + tableName + "`")
-        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), \
-            name VARCHAR(255), tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), \
-            followers_count INT(255), friends_count INT(255), date date, tweettime VARCHAR(255), sentiment INT(255));")
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), \
+            tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), \
+            friends_count INT(255), date date, tweettime VARCHAR(255), sentiment INT(255));")
         
         connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')

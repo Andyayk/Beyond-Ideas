@@ -900,7 +900,7 @@ def create_app(config_name):
 
 
         @app.route("/twittertrain/", methods = ['POST'])
-        def twittertrain(): #testing
+        def twittertrain(): #train model
             modelbi.trainSentimentAnalysisModels()   
 
             return ""         
