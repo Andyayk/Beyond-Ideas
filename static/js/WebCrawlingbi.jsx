@@ -354,4 +354,5 @@ class WebCrawlingbi extends Component {
       );
    }
 }
+
 export default WebCrawlingbi;
