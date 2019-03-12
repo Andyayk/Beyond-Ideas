@@ -78,7 +78,13 @@ class TwitterCrawlingbi extends Component {
             apiCallReset: apiCallReset,
             save: "",            
             hideLoadingBar: true, //hide loading button            
-         });               
+         });       
+
+         var y = document.getElementById("messageArea");
+         y.style.display = "block";
+         var x = document.getElementById("csvButton");
+         x.style.display = "block";
+
       }); 
    }   
 
@@ -131,6 +137,11 @@ class TwitterCrawlingbi extends Component {
       this.setState({
          hideLoadingBar: false
       });
+      var y = document.getElementById("messageArea");
+      y.style.display = "none";
+      var x = document.getElementById("csvButton");
+      x.style.display = "none";
+
    }
 
    //rendering the html for web crawling
@@ -166,7 +177,7 @@ class TwitterCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <input required type="text" id="tags" onChange={this.selectTags}/>
+                                    <input required type="text" id="tags" style={{"width":"220px"}} onChange={this.selectTags}/>
                                  </td>
                               </tr><tr>
                                  <td align="center">
@@ -186,7 +197,7 @@ class TwitterCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <input required type="number" id="nooftweets" onChange={this.selectNoOfTweets} min="100" max="5000"/>                    
+                                    <input required type="number" id="nooftweets" style={{"width":"220px"}} onChange={this.selectNoOfTweets} min="100" max="5000"/>                    
                                  </td>
                               </tr><tr>
                                  <td align="center">
@@ -206,7 +217,7 @@ class TwitterCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">                                
-                                    <input type="date" min="1900-01-01" max="2100-12-31" required onChange={this.selectDateBefore} />
+                                    <input type="date" min="1900-01-01" max="2100-12-31" style={{"width":"220px"}} required onChange={this.selectDateBefore} />
                                  </td>
                               </tr><tr>
                                  <td align="center">
@@ -231,33 +242,36 @@ class TwitterCrawlingbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <input required type="text" id="filename" onChange={this.selectFilename}/>
+                                    <input required type="text" id="filename" style={{"width":"220px"}} onChange={this.selectFilename}/>
                                  </td>
                               </tr>
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save into Database</button>    
+                                    <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Retrieve Tweets</button>    
                                  </td>                                                              
-                              </tr><tr>
-                                 <td align="center">
-                                    <div className="cardtitle">                                 
-                                    Or
-                                    </div>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <button onClick={this.switchToCSV} id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV File</button>    
-                                 </td>
                               </tr><tr>
                                  <td align="center">
                                     <font size="2"><i>No. of Twitter Requests Remaining: {this.state.apiCallLimit} (Reset at: {this.state.apiCallReset})</i></font>                          
                                  </td>
+                              </tr><tr>
+                                 <td align="center">
+                                    <div id="messageArea" style={{"display":"none"}}> 
+                                       <font color="green"><b>{this.state.message}</b></font>   
+                                    </div>                                 
+                                 </td>
+                              </tr><tr>
+                              </tr><tr>
+                              </tr><tr>
+                                 <td align="center">
+                                    <div id="csvButton" style={{"display":"none"}}>
+                                       <button onClick={this.switchToCSV} id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV file?</button>    
+                                    </div>
+                                 </td>
                               </tr>
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <font color="green"><b>{this.state.message}</b></font>  
                                     <div className="LoadingBar" style={style}>
                                        {this.loadingBarInstance}
                                     </div>                                    
@@ -276,4 +290,5 @@ class TwitterCrawlingbi extends Component {
       );      
    }
 }
+
 export default TwitterCrawlingbi;

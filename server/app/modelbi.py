@@ -634,12 +634,11 @@ def insertToDatabase(header, bodyArray, tableName):
         return False
 
 def corpus2docs(corpus):
-    # corpus is a object returned by load_corpus that represents a corpus.
-    fids = corpus.fileids()
+    stop_list = nltk.corpus.stopwords.words('english')
+
     docs1 = []
-    for fid in fids:
-        doc_raw = corpus.raw(fid)
-        doc = nltk.word_tokenize(doc_raw)
+    for tweet in corpus:
+        doc = nltk.word_tokenize(tweet)
         docs1.append(doc)
     docs2 = [[w.lower() for w in doc] for doc in docs1]
     docs3 = [[w for w in doc if re.search('^[a-z]+$', w)] for doc in docs2]
@@ -652,67 +651,31 @@ def docs2vecs(docs, dictionary):
     vecs1 = [dictionary.doc2bow(doc) for doc in docs]
     return vecs1
 
-def topicModeling(data):
+def topicModeling(tablename, usertablename, userID):
     """
         This method will implement best topic modeling model
     """   
-    tweetColumnName2 = 'tweet'
-    isTrainData = False
-    # print(data)
-    print("testtesthii")
+    try:
+        # Load unseen testing dataset 
+        df = pd.read_csv(os.getcwd()+'/train.csv', encoding = "ISO-8859-1")
 
-    #test data
-    doc1 = "Sugar is bad to consume. My sister likes to have sugar, but not my father."
-    doc2 = "My father spends a lot of time driving my sister around to dance practice."
-    doc3 = "Doctors suggest that driving may cause increased stress and blood pressure."
-    doc4 = "Sometimes I feel pressure to perform well at school, but my father never seems to drive my sister to do better."
-    doc5 = "Health experts say that Sugar is not good for your lifestyle."
+        tweetColumnName = 'SentimentText'
 
-    # compile documents
-    doc_complete = [doc1, doc2, doc3, doc4, doc5]
+        processedTweets = corpus2docs(df[tweetColumnName].tolist())
 
-    #Clearning & Preprocessing
-    stop = set(stopwords.words('english'))
-    exclude = set(string.punctuation) 
-    lemma = WordNetLemmatizer()
-    
-    doc_clean = [clean(doc).split() for doc in doc_complete]
-    #Load the corpus and convert to vectors
-    # corpus = nltk.corpus.PlaintextCorpusReader('./server', '.+\.txt')
-    # docs = corpus2docs(corpus)
-    
-    # Converting list of documents (corpus) into Document Term Matrix using dictionary prepared above.
-    doc_term_matrix = [dictionary.doc2bow(doc) for doc in doc_clean]
-    
-    # dictionary = gensim.corpora.Dictionary(docs) 
-    # vecs = docs2vecs(docs, dictionary)
+        tweets_dictionary = gensim.corpora.Dictionary(processedTweets)
+        tweets_vecs = docs2vecs(processedTweets, tweets_dictionary)        
 
-    # Creating the object for LDA model using gensim library
-    Lda = gensim.models.ldamodel.LdaModel
+        lda = gensim.models.ldamodel.LdaModel(corpus=tweets_vecs, id2word=tweets_dictionary, num_topics=5)
 
-    #Running and Trainign LDA model on the document term matrix.
-    ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
+        topics = lda.show_topics(5, 15)
 
-    print(ldamodel.print_topics(num_topics=3, num_words=3))[0.168*health + 0.083*sugar + 0.072*bad,0.061*consume + 0.050*drive + 0.050*sister,0.049*pressur + 0.049*father + 0.049*sister]
-
-    # Call LDA model from disk and print the topics for each document in the TestLDA
-    # lda_disk=gensim.models.ldamodel.LdaModel.load("sg_lda")
-
-    #I choose model_list[1] where the number of topics is 4
-    # df_topic_sents_keywords2 = format_topics_sentences(ldamodel=lda_disk, corpus=test_vecs, data=test_docs)
-
-    # Format
-    # df_dominant_topic2 = df_topic_sents_keywords2.reset_index()
-    # df_dominant_topic2.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contrib', 'Keywords', 'Text']
-
-    # Show
-    # df_dominant_topic2.head(10)
-
-    # Print the top words in the topics displayed above for test doc 0. 
-    # Change the topic number accrodingly - the one with high probability
-    # lda_disk.print_topic(3, topn=10)
-
-    return ""
+        for i in range(0, 5):
+            print(topics[i])
+        return ""
+    except Exception as e:
+        print(str(e))
+        return "Something is wrong with sentimentAnalysis method"  
 
 def sentimentAnalysis(tablename, usertablename, userID):
     """
@@ -725,6 +688,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
     
     # Sentiment Analysis
     tweetColumnName = 'tweet'
+    isTrainData = False
 
     try:
         # Load unseen testing dataset 
@@ -735,7 +699,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
         copytestdf = testdf.copy()
 
         # Preprocess the text
-        stringOfTokenizedTweets = preprocessingDataset(testdf, tweetColumnName)
+        stringOfTokenizedTweets = preprocessingDataset(testdf, tweetColumnName, isTrainData)
 
         # Classify the unseen test dataset with the train model
         test_predicted = classifier_load.predict(stringOfTokenizedTweets)
@@ -764,25 +728,10 @@ def sentimentAnalysis(tablename, usertablename, userID):
     except Exception as e:
         return "Something is wrong with sentimentAnalysis method"  
 
-def preprocessingDataset(df, tweetColumnName):
+def preprocessingDataset(df, tweetColumnName, isTrainData):
     """
     This method will pre-process the dataset
     """
-
-    # Change all to lowercase letters
-    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x.lower() for x in x.split()))
-
-    # Remove punctuation
-    df[tweetColumnName] = df[tweetColumnName].str.replace('[^\w\s]', '')
-
-    # Remove stopwords
-    stop = stopwords.words('english')
-    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x for x in x.split() if x not in stop))
-
-    # Remove uncommon words - can become noise
-    freq = pd.Series(' '.join(df[tweetColumnName]).split()).value_counts()[-10:]
-    freq = list(freq.index)
-    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
 
     # Tokenize each tweet and save into data frame
     listOfTokenizedTweets = []
@@ -791,16 +740,32 @@ def preprocessingDataset(df, tweetColumnName):
         listOfTokenizedTweets.append(tokenized_word)
     df[tweetColumnName] = listOfTokenizedTweets
 
+    # Change all to lowercase letters
+    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y.lower() for y in x])
+
+    # Remove punctuation
+    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if re.search('^[a-z]+$', y)])
+    """
+    # Remove stopwords
+    stop = stopwords.words('english')
+    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if y not in stop])
+    """
     # Stemming each tweet
     stemmer = PorterStemmer()
     df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [stemmer.stem(y) for y in x])
+    """
+    if isTrainData:
+        # Remove uncommon words - can become noise
+        freq = pd.Series(' '.join(df[tweetColumnName]).split()).value_counts()[-10:]
+        freq = list(freq.index)
+        df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if y not in freq])
+    """
+    # Convert processed tweets from data frame to a list
+    processedTweets = df[tweetColumnName].tolist()
 
-    # Convert stemmed tweets from data frame to a list
-    listOfStemmedTweets = df[tweetColumnName].tolist()
-
-    # Rejoin the tokenize words into a sentence after stemming as count vectorizer need it to be a string
+    # Rejoin the tokenize words into a sentence after preprocessing as count vectorizer need it to be a string
     stringOfTokenizedTweets = []
-    for x in listOfStemmedTweets:
+    for x in processedTweets:
         sentenceTweet = (' '.join(x))
         stringOfTokenizedTweets.append(sentenceTweet)
 
@@ -814,12 +779,13 @@ def trainSentimentAnalysisModels():
 
     labelColumnName = 'Sentiment'
     tweetColumnName = 'SentimentText'
+    isTrainData = True
 
     # Convert the labellings in data frame to a list
     listOfLabels = df[labelColumnName].tolist()
 
     # Preprocess the text
-    stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName)
+    stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, isTrainData)
 
     # Generate document term matrix - bag of words
     vectorizer = CountVectorizer()
@@ -854,6 +820,10 @@ def trainSentimentAnalysisModels():
 
     # Best hyperparameters to use for model
     print(clf.best_params_)
+
+    # Fit full data into model
+    X_train, X_test, y_train, y_test = train_test_split(stringOfTokenizedTweets, listOfLabels, test_size=0, random_state=0)
+    clf.fit(X_train, y_train)
 
     # Save model into file
     pickle.dump(clf, open(os.getcwd()+'/sentimentanalysis.pickle', "wb")) #binary write
