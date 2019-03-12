@@ -462,6 +462,7 @@ class AutoChartbi extends Component {
          }
 
       });
+        
     }
     
     filterresults(event){
@@ -480,6 +481,12 @@ class AutoChartbi extends Component {
     }
     
     displayChart(event){
+        
+        $(".rxytr").click(function(){
+            $(this).addClass("selected").siblings().removeClass("selected");
+        });
+        
+        
         var plotpointname = "";
         var index = event.currentTarget.rowIndex;
         var currentrow = document.body.getElementsByClassName("rxytr")[index-1];

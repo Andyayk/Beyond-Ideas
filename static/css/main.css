@@ -151,6 +151,15 @@ li a:active {
   font-size:18px;
 }
 
+.rxytr:hover{
+    background-color: #ffff99;
+    cursor: pointer;
+}
+
+.rxytr.selected td{
+    background-color: #fecb2f;
+}
+
 .button {
   display: inline-block;
   border-radius: 4px;
