@@ -175,9 +175,11 @@ li a:active {
   border: none;
   color: black;
   text-align: center;
+  vertical-align: center;
   font-size: 15px;
-  padding: 250px;
+  padding: 150px;
   width: 100%;
+  height: 450px;
   transition: all 0.5s;
   cursor: pointer;
   margin: 5px;
@@ -232,6 +234,35 @@ div.cardsubtitle{
   font-family: "Roboto", sans-serif;  
   font-style: italic;
   color: #696969;  
+}
+
+div.cardPageButton{
+  grid-area: 1/1/2/2;
+  justify-self: center;
+  align-self: center;
+  color: #D40511;
+  font-family: "Roboto", sans-serif;
+  font-size: 30px;
+  font-weight: 900;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 1px 2px 1px rgba(128, 128, 128, 0.3); 
+}
+
+div.cardButtonInfo{
+  font-size: 14px;
+  font-family: "Roboto", sans-serif;  
+  font-weight: normal;
+  text-transform: lowercase;
+  color: black;  
+}
+
+div.cardClickHere{
+  font-size: 18px;
+  font-family: "Roboto", sans-serif;  
+  font-weight: bold;
+  text-transform: none;
+  color: black;  
 }
 
 div.carderrormsg{
