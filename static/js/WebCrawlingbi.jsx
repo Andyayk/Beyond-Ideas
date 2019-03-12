@@ -145,7 +145,7 @@ class WebCrawlingbi extends Component {
          $.each(data, function(key, val) {
             //console.log(val)
             if (val == "success"){
-               message = "Successfully saved weather data into the database.";
+               message = "Successfully saved weather data into database.";
             } else {
                var element = document.createElement('a');
                var newContent = val.replace(/;/g, "\n");
@@ -155,7 +155,7 @@ class WebCrawlingbi extends Component {
                document.body.appendChild(element);
                element.click();
                document.body.removeChild(element);
-               message = "Successfully saved weather data into CSV file.";
+               message = "Successfully saved retrieved weather data into CSV file.";
             }
          });  
 
@@ -164,6 +164,11 @@ class WebCrawlingbi extends Component {
             save: "",
             hideLoadingBar: true, //hide loading button
          });  
+         var y = document.getElementById("messageArea");
+         y.style.display = "block";
+         var x = document.getElementById("csvButton");
+         x.style.display = "block";
+
          //console.log("came to line 135")    
          //console.log(save)                  
       });
@@ -177,6 +182,11 @@ class WebCrawlingbi extends Component {
       this.setState({
          hideLoadingBar: false
       });
+
+      var x = document.getElementById("csvButton");
+      x.style.display = "none";
+      var y = document.getElementById("messageArea");
+      y.style.display = "none";
    }
 
    //rendering the html for web crawling
@@ -290,41 +300,42 @@ class WebCrawlingbi extends Component {
                               </tr><br/><tr>
                                  <td align="center">
                                     <div className="cardtitle">
-                                       Enter File Name
+                                       Enter Dataset Name
                                     </div>
                                  </td> 
                               </tr>
                               <tr>                             
                                  <td align="center">
                                     <div className="cardsubtitle">
-                                       File Name:
+                                       Dataset Name:
                                     </div>
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <input required type="text" id="filename" onChange={this.selectFilename}/>
+                                    <input required type="text" id="filename" style={{"width":"220px"}} onChange={this.selectFilename}/>
                                  </td>
                               </tr>
                               <br/>
                               <tr>
                                  <td align="center">
-                                    <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save into Database</button>    
+                                    <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Retrieve Weather Data</button>    
                                  </td>                                                              
                               </tr><tr>
                                  <td align="center">
-                                    <div className="cardtitle">                                 
-                                    Or
+                                    <div id="messageArea" style={{"display":"none"}}> 
+                                       <font color="green"><b>{this.state.message}</b></font>   
+                                    </div>                                 
+                                 </td>
+                              </tr><tr>
+                              </tr><tr>
+                              </tr><tr>
+                                 <td align="center">                                   
+                                    <div id="csvButton" style={{"display":"none"}}>
+                                          <button onClick={this.switchToCSV} id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV file?</button>    
                                     </div>
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <button onClick={this.switchToCSV} id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV File</button>    
-                                 </td>
-                              </tr>
-                              <br/>
-                              <tr>
-                                 <td align="center">
-                                    <font color="green"><b>{this.state.message}</b></font>  
                                     <div className="LoadingBar" style={style}>
                                        {this.loadingBarInstance}
                                     </div>                                    
