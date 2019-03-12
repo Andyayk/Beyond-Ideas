@@ -922,6 +922,8 @@ def create_app(config_name):
 
         @app.route("/twittertrain/", methods = ['POST'])
         def twittertrain(): #train model
+            modelbi.topicModeling('a','b','c')
+
             modelbi.trainSentimentAnalysisModels()   
 
             return ""         
