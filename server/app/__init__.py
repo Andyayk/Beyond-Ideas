@@ -893,37 +893,24 @@ def create_app(config_name):
 
             columns, values, aggregatedsentiment = modelbi.getDataForAnalysis(tableName) 
 
-            #topicModelData = modelbi.topicModeling("hello")     
+            sent_topics_sorteddf_mallet = modelbi.topicModeling(tablename, usertablename, current_user.id) 
+
+            topiccolumns = sent_topics_sorteddf_mallet.columns.tolist()
+            topicvalues = sent_topics_sorteddf_mallet.values.tolist()
 
             return jsonify(
                 columns = columns,
                 values = values,
-                aggregatedsentiment = aggregatedsentiment
-            )
-
-        @app.route("/generatehistoricalplotbi/", methods = ['POST'])
-        def generatehistoricalplotbi():
-            """
-                This method will render our analysis charts
-            """    
-            tablename = request.form.get("selectedtable2") 
-
-            usertablename = ""
-            if current_user.is_authenticated:      
-                usertablename = tablename + "_" + str(current_user.id)   
-
-            columns, values, aggregatedsentiment = modelbi.getDataForAnalysis(usertablename) 
-
-            return jsonify(
-                columns = columns,
-                values = values,
-                aggregatedsentiment = aggregatedsentiment
+                aggregatedsentiment = aggregatedsentiment,
+                topiccolumns = topiccolumns,
+                topicvalues = topicvalues
             )
 
         @app.route("/twittertrain/", methods = ['POST'])
         def twittertrain(): #train model
-            modelbi.topicModeling('a','b','c')
-
+            """
+                This method will train our model
+            """            
             modelbi.trainSentimentAnalysisModels()   
 
             return ""         

@@ -8,6 +8,7 @@ import numpy as np
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import *
+from nltk.stem import WordNetLemmatizer
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
@@ -19,7 +20,7 @@ from io import StringIO
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from pandas import DataFrame
-
+from gensim.models import CoherenceModel
 
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
 
@@ -619,6 +620,9 @@ def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
         return results   
   
 def insertToDatabase(header, bodyArray, tableName):
+    """
+        This method will insert to database
+    """    
     try:
         sqlstmt = "INSERT INTO `" + tableName + "` (" + header + ") VALUES"
         for i in bodyArray:
@@ -634,22 +638,74 @@ def insertToDatabase(header, bodyArray, tableName):
         return False
 
 def corpus2docs(corpus):
+    """
+        This method will preprocess the data
+    """    
     stop_list = nltk.corpus.stopwords.words('english')
+    stop_list += ['would', 'said', 'say', 'year', 'day', 'also', 'first', 'last', 'one', 'two', 'people', 'told', 'new', 'could', \
+        'three', 'may', 'like', 'world', 'since', 'rt', 'http', 'https']
+    
+    wordnet_lemmatizer = WordNetLemmatizer()
 
     docs1 = []
     for tweet in corpus:
         doc = nltk.word_tokenize(tweet)
         docs1.append(doc)
-    docs2 = [[w.lower() for w in doc] for doc in docs1]
-    docs3 = [[w for w in doc if re.search('^[a-z]+$', w)] for doc in docs2]
-    docs4 = [[w for w in doc if w not in stop_list] for doc in docs3]
-    return docs4
+    docs2 = [[w.lower() for w in doc] for doc in docs1] #lower case
+    docs3 = [[w for w in doc if re.search('^[a-z]+$', w)] for doc in docs2] #keep only alphabets
+    docs4 = [[w for w in doc if w not in stop_list] for doc in docs3] #remove stopwords
+    docs5 = [[w for w in doc if len(w) >= 2] for doc in docs4] #remove single letters
+    docs6 = [[wordnet_lemmatizer.lemmatize(w) for w in doc] for doc in docs5] #lemmatize
+
+    #remove common words - can become noise
+    freqarray = []
+    for tweet in docs4:
+        for w in tweet:
+            freqarray.append(w)
+    
+    fdist = nltk.FreqDist(freqarray)
+    mostcommon = fdist.most_common(2)
+    freq = []
+    for tuples in mostcommon:
+        freq.append(tuples[0])
+
+    docs7 = [[w for w in doc if w not in freq] for doc in docs6] #remove top 2 words
+    
+    return docs7
 
 def docs2vecs(docs, dictionary):
+    """
+        This method convert documents to vectors
+    """
     # docs is a list of documents returned by corpus2docs.
     # dictionary is a gensim.corpora.Dictionary object.
-    vecs1 = [dictionary.doc2bow(doc) for doc in docs]
-    return vecs1
+    vecs = [dictionary.doc2bow(doc) for doc in docs]
+    return vecs
+
+def format_topics_sentences(ldamodel, corpus, data):
+    """
+        This method will find the most dominant topic
+    """    
+    # Init output
+    sent_topics_df = pd.DataFrame()
+
+    # Get main topic in each document
+    for i, row in enumerate(ldamodel[corpus]):
+        row = sorted(row[0], key=lambda x: (x[1]), reverse=True)
+        # Get the Dominant topic, Perc Contribution and Keywords for each document
+        for j, (topic_num, prop_topic) in enumerate(row):
+            if j == 0:  # => dominant topic
+                wp = ldamodel.show_topic(topic_num)
+                topic_keywords = ", ".join([word for word, prop in wp])
+                sent_topics_df = sent_topics_df.append(pd.Series([int(topic_num), round(prop_topic,4), topic_keywords]), ignore_index=True)
+            else:
+                break
+    sent_topics_df.columns = ['Dominant_Topic', 'Perc_Contribution', 'Topic_Keywords']
+
+    # Add original text to the end of the output
+    contents = pd.Series(data)
+    sent_topics_df = pd.concat([sent_topics_df, contents], axis=1)
+    return (sent_topics_df)
 
 def topicModeling(tablename, usertablename, userID):
     """
@@ -657,22 +713,69 @@ def topicModeling(tablename, usertablename, userID):
     """   
     try:
         # Load unseen testing dataset 
-        df = pd.read_csv(os.getcwd()+'/train.csv', encoding = "ISO-8859-1")
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
 
-        tweetColumnName = 'SentimentText'
+        df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
 
-        processedTweets = corpus2docs(df[tweetColumnName].tolist())
+        copydf = df.copy()
 
-        tweets_dictionary = gensim.corpora.Dictionary(processedTweets)
-        tweets_vecs = docs2vecs(processedTweets, tweets_dictionary)        
+        tweetColumnName = 'tweet'
+        nooftopics = 5
 
-        lda = gensim.models.ldamodel.LdaModel(corpus=tweets_vecs, id2word=tweets_dictionary, num_topics=5)
+        # Preprocess the text
+        tweets_docs = corpus2docs(df[tweetColumnName].tolist())
 
-        topics = lda.show_topics(5, 15)
+        # Generate a vocabulary of text
+        tweets_dictionary = gensim.corpora.Dictionary(tweets_docs)
 
-        for i in range(0, 5):
-            print(topics[i])
-        return ""
+        # Convert text into vectors
+        tweets_vecs = docs2vecs(tweets_docs, tweets_dictionary)        
+
+        # Train lda model with the unseen test dataset
+        lda = gensim.models.ldamodel.LdaModel(corpus=tweets_vecs, 
+                                              id2word=tweets_dictionary,
+                                              num_topics=nooftopics,  
+                                              random_state=0,
+                                              update_every=1,
+                                              chunksize=100,
+                                              passes=10,
+                                              alpha='auto',
+                                              per_word_topics=True)
+        """
+        # Compute Perplexity
+        print('\nPerplexity: ', lda.log_perplexity(tweets_vecs)) # a measure of how good the model is. lower the better.
+
+        # Compute Coherence Score
+        coherence_model_lda = CoherenceModel(model=lda, texts=tweets_docs, dictionary=tweets_dictionary, coherence='c_v')
+        coherence_lda = coherence_model_lda.get_coherence()
+        print('\nCoherence Score: ', coherence_lda)      
+        """
+
+        # Format
+        df_topic_sents_keywords = format_topics_sentences(ldamodel=lda, corpus=tweets_vecs, data=tweets_docs)
+
+        """
+        df_dominant_topic = df_topic_sents_keywords.reset_index()
+        df_dominant_topic.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contrib', 'Keywords', 'Text']
+        """
+
+        # Group top 5 sentences under each topic
+        sent_topics_sorteddf_mallet = pd.DataFrame()
+
+        sent_topics_outdf_grpd = df_topic_sents_keywords.groupby('Dominant_Topic')
+
+        for i, grp in sent_topics_outdf_grpd:
+            sent_topics_sorteddf_mallet = pd.concat([sent_topics_sorteddf_mallet, 
+                                                     grp.sort_values(['Perc_Contribution'], ascending=[0]).head(1)], 
+                                                    axis=0)
+
+        # Reset Index    
+        sent_topics_sorteddf_mallet.reset_index(drop=True, inplace=True)
+
+        # Format
+        sent_topics_sorteddf_mallet.columns = ['Topics', "Topic Percent Contribution", "Keywords", "Most Representative Tweet"]
+
+        return sent_topics_sorteddf_mallet[['Topics', "Keywords"]]
     except Exception as e:
         print(str(e))
         return "Something is wrong with sentimentAnalysis method"  
