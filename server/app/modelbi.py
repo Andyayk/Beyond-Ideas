@@ -643,7 +643,22 @@ def corpus2docs(corpus):
     docs2 = [[w.lower() for w in doc] for doc in docs1]
     docs3 = [[w for w in doc if re.search('^[a-z]+$', w)] for doc in docs2]
     docs4 = [[w for w in doc if w not in stop_list] for doc in docs3]
-    return docs4
+
+    # Remove common words - can become noise
+    freqarray = []
+    for tweet in docs4:
+        for w in tweet:
+            freqarray.append(w)
+
+    fdist = nltk.FreqDist(freqarray)
+    mostcommon = fdist.most_common(2)
+    freq = []
+    for tuples in mostcommon:
+        freq.append(tuples[0])
+
+    docs5 = [[w for w in doc if w not in freq] for doc in docs4]
+
+    return docs5
 
 def docs2vecs(docs, dictionary):
     # docs is a list of documents returned by corpus2docs.
@@ -657,20 +672,29 @@ def topicModeling(tablename, usertablename, userID):
     """   
     try:
         # Load unseen testing dataset 
-        df = pd.read_csv(os.getcwd()+'/train.csv', encoding = "ISO-8859-1")
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
 
-        tweetColumnName = 'SentimentText'
+        df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
 
+        copydf = df.copy()
+
+        tweetColumnName = 'tweet'
+
+        # Preprocess the text
         processedTweets = corpus2docs(df[tweetColumnName].tolist())
 
+        # Generate a vocabulary of text
         tweets_dictionary = gensim.corpora.Dictionary(processedTweets)
+
+        # Convert text into vectors
         tweets_vecs = docs2vecs(processedTweets, tweets_dictionary)        
 
-        lda = gensim.models.ldamodel.LdaModel(corpus=tweets_vecs, id2word=tweets_dictionary, num_topics=5)
+        # train lda model with the unseen test dataset
+        lda = gensim.models.ldamodel.LdaModel(corpus=tweets_vecs, id2word=tweets_dictionary, num_topics=3)
 
-        topics = lda.show_topics(5, 15)
+        topics = lda.show_topics(num_topics=3, num_words=15)
 
-        for i in range(0, 5):
+        for i in range(0, 3):
             print(topics[i])
         return ""
     except Exception as e:
