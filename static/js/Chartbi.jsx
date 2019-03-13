@@ -6,6 +6,7 @@ import Correlation from 'node-correlation';
 import SpearmanRHO from 'spearman-rho';
 
 import "../css/main";
+import arrowicon from "../images/arrow.png";
 
 var $ = require('jquery');
 
@@ -560,7 +561,7 @@ class Chartbi extends Component {
                            hoverlabel: {namelength: -1}                          
                            }]}
                            layout={{
-                              width: 800, 
+                              width: 1000, 
                               height: 700, 
                               title: '<b>Generated Time:' + currentTimeStamp + '</b><br>' + '<b>Correlation between ' + this.state.selectedvariable + ' and ' + this.state.selectedvariable2 + '</b><br>R: ' + r + ', Rho: ' + rho.toFixed(2) + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
                               hovermode: 'closest',
@@ -608,122 +609,155 @@ class Chartbi extends Component {
             <tbody>
             <tr>
                <tr><tr>             
-                  <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
+                  <td>   
                   <form name="submitForm" method="POST" onSubmit={this.formSubmitted}>                       
-                     <br />
                      <table align="center">
                      <tbody>
-                        <tr><td>
+                        <tr>
+                          <td style={{"width":"350px", "height":"150px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                             <tr>
-                               <td align="center">
-                                  <div className="cardtitle">
-                                     Select Datasets
-                                  </div>
-                               </td>
-                            </tr><tr>
-                               <td align="center">
-
-                                  <select required defaultValue="" onChange={this.getVariables} style={{"width":"210px"}}>
-                                     <option value="" disabled>-------- select dataset 1 --------</option>
-                                     {this.state.options}
-                                  </select>
-                               </td>
-                            </tr><tr>
-                               <td align="center">                                                
-                                  <select required defaultValue="" onChange={this.getVariables2} style={{"width":"210px"}}>
-                                     <option value="" disabled>-------- select dataset 2 --------</option>
-                                     {this.state.options}
-                                  </select>
-                               </td>
-                            </tr><tr>
-                               <td align="center">                  
-                                  <div className="carderrormsg">
-                                     {this.state.errorstatement}
-                                  </div>
-                               </td>
-                            </tr><tr>
-                               <td align="center">
-                                  <div className="cardsubtitle">
-                                     Combine both datasets based on:
-                                  </div>
-                               </td>
-                            </tr><tr>
-                               <table align="center">
-                               <tbody>
-                                  <tr>                        
-                                     <td><input id="dateradio" type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/></td><td><label id="labeldate">Activity Date</label></td>
-                                  
-                                      <td><input id="companyradio" type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/></td><td><label id ="labelcompany">Company</label></td>
-                                  </tr><tr>
-                                     <td><input id="locationradio" type="radio" name="joinvariable" value="countryname" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "countryname"} disabled required/></td><td><label id="labelcountry">Country Name</label></td>
-                                                    
-                                     <td><input id="depotradio" type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/></td><td><label id="labeldepot">Depot</label></td>                  
-                                  </tr>
-                               </tbody>
-                               </table>
+                              <td align="center">
+                                <div className="cardtitle">
+                                  1. Select Datasets
+                                </div>
+                              </td>
                             </tr>
-                        </td><td>
-                                <tr>
-                                   <td align="center">                           
-                                      <div className="cardtitle">
-                                         Select Variables
-                                      </div>
-                                   </td>
-                                </tr><tr>
-                                   <td align="center">
-                                      <div className="cardsubtitle">
-                                         Variable (X):
-                                      </div>
-                                   </td>
-                                </tr><tr>
-                                   <td align="center">
-                                      <select id="xvariabledropdownid" required defaultValue="" onChange={this.selectVariable} style={{"width":"210px"}}>
-                                         <option value="" disabled>---------- select a variable ----------</option>
-                                         {this.state.variablesoptions}
-                                      </select>
-                                   </td>
-                                </tr><tr>
-                                   <td align="center">                        
-                                      <div className="cardsubtitle">
-                                         Variable (Y):
-                                      </div>
-                                   </td>
-                                </tr><tr>
-                                   <td align="center">
-                                      <select id="yvariabledropdownid" required defaultValue="" onChange={this.selectVariable2} style={{"width":"210px"}}>
-                                         <option value="" disabled>---------- select a variable ----------</option>
-                                         {this.state.variablesoptions2}
-                                      </select>
-                                   </td>
-                                </tr>
-                        </td><td>
-                                <tr>
-                                   <td align="center">
-                                      <div className="cardtitle">
-                                         Filtering
-                                      </div>
-                                   </td>
-                                </tr><tr>
-                                   <td align="center">
-                                      <div className="cardsubtitle">
-                                         Filter By:
-                                      </div>
-                                   </td>
-                                </tr><tr>
-                               <td align="center">       
-                                  <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"210px"}}>
-                                     <option value="">--------------- optional ---------------</option>
-                                     {this.state.datevariablesoptions}
-                                     {this.state.companyvariablesoptions}               
-                                     {this.state.depotvariablesoptions}                 
-                                     {this.state.countrynamevariablesoptions}
-                                     <option disabled>----------------------------------------</option>                                                                
-                                     {this.state.datevariablesoptions2}
-                                     {this.state.companyvariablesoptions2}              
-                                     {this.state.depotvariablesoptions2}                
-                                     {this.state.countrynamevariablesoptions2}                                              
-                                  </select>
-                               </td>
+                            <tr>
+                              <td align="center">
+                                <div className="cardsubtitle">
+                                  Dataset One:  
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>                             
+                              <td align="center">
+                                <select required defaultValue="" onChange={this.getVariables} style={{"width":"210px"}}>
+                                  <option value="" disabled>-------- select a dataset --------</option>
+                                    {this.state.options}
+                                </select>
+                              </td>
+                            </tr><tr>
+                            </tr><tr>
+                            </tr><tr>
+                            </tr><tr>
+                              <td align="center">
+                                <div className="cardsubtitle">
+                                  Dataset Two:  
+                                </div>
+                              </td>   
+                            </tr>                         
+                            <tr>
+                              <td align="center">                                                
+                                <select required defaultValue="" onChange={this.getVariables2} style={{"width":"210px"}}>
+                                  <option value="" disabled>-------- select a dataset --------</option>
+                                    {this.state.options}
+                                </select>
+                              </td>
+                            </tr><tr>
+                              <td align="center">                  
+                                <div className="carderrormsg">
+                                  {this.state.errorstatement}
+                                </div>
+                              </td>
+                            </tr><tr>
+                            </tr><tr>
+                            </tr><tr>
+                            </tr><tr>        
+                            </tr><tr>
+                            </tr><tr>                     
+                              <td align="center">
+                                <div className="cardsubtitle">
+                                  Combine both datasets based on:
+                                </div>
+                              </td>
+                            </tr><tr>
+                              <table align="center">
+                                <tbody>
+                                  <tr>                        
+                                    <td><input id="dateradio" type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/></td><td><label id="labeldate">Activity Date</label></td>
+                                    
+                                    <td><input id="companyradio" type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/></td><td><label id ="labelcompany">Company</label></td>
+                                  </tr><tr>
+                                    <td><input id="locationradio" type="radio" name="joinvariable" value="countryname" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "countryname"} disabled required/></td><td><label id="labelcountry">Country Name</label></td>
+                                                      
+                                    <td><input id="depotradio" type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/></td><td><label id="labeldepot">Depot</label></td>                  
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </tr>        
+                          </td>
+                          <td style={{"width":"50px", "height":"150px"}} valign="center" align="center">
+                            <img src={arrowicon} width="45" height="45" />
+                          </td>
+                          <td style={{"width":"350px", "height":"150px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                            <tr>
+                              <td align="center">                           
+                                <div className="cardtitle">
+                                  2. Select Variables
+                                </div>
+                              </td>
+                            </tr><tr>
+                              <td align="center">
+                                <div className="cardsubtitle">
+                                  Variable (X):
+                                </div>
+                              </td>
+                            </tr><tr>
+                              <td align="center">
+                                <select id="xvariabledropdownid" required defaultValue="" onChange={this.selectVariable} style={{"width":"210px"}}>
+                                  <option value="" disabled>---------- select a variable ----------</option>
+                                    {this.state.variablesoptions}
+                                </select>
+                              </td>
+                            </tr><tr>
+                            </tr><tr>
+                            </tr><tr>
+                            </tr><tr>
+                              <td align="center">                        
+                                <div className="cardsubtitle">
+                                  Variable (Y):
+                                </div>
+                              </td>
+                            </tr><tr>
+                              <td align="center">
+                                <select id="yvariabledropdownid" required defaultValue="" onChange={this.selectVariable2} style={{"width":"210px"}}>
+                                  <option value="" disabled>---------- select a variable ----------</option>
+                                    {this.state.variablesoptions2}
+                                </select>
+                              </td>
+                            </tr>
+                          </td>
+                          <td style={{"width":"50px", "height":"150px"}} valign="center" align="center">
+                            <img src={arrowicon} width="45" height="45" />
+                          </td>                        
+                          <td style={{"width":"350px", "height":"150px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                            <tr>
+                              <td align="center">
+                                <div className="cardtitle">
+                                  3. Filtering
+                                </div>
+                              </td>
+                            </tr><tr>
+                              <td align="center">
+                                <div className="cardsubtitle">
+                                  Filter By:
+                                </div>
+                              </td>
+                            </tr><tr>
+                              <td align="center">       
+                                <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"210px"}}>
+                                  <option value="">--------------- optional ---------------</option>
+                                    {this.state.datevariablesoptions}
+                                    {this.state.companyvariablesoptions}               
+                                    {this.state.depotvariablesoptions}                 
+                                    {this.state.countrynamevariablesoptions}
+                                  <option disabled>----------------------------------------</option>                                                                
+                                    {this.state.datevariablesoptions2}
+                                    {this.state.companyvariablesoptions2}              
+                                    {this.state.depotvariablesoptions2}                
+                                   {this.state.countrynamevariablesoptions2}                                              
+                                </select>
+                              </td>
                             </tr>
                             <tr>
                                <td align="center">
@@ -764,43 +798,43 @@ class Chartbi extends Component {
                                      </div>
                                   }  
                                </td>
-                            </tr>
-                            <tr>
-                               <td align="center">                                                            
-                                  <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Scatterplot</button>                             
-                               </td>
-                            </tr>
-                            <br/>
-                            <tr>
-                               <td align="center">                                                            
-                                  <div className="LoadingBar" style={style}>
-                                     {this.loadingBarInstance}
-                                  </div>                                  
-                               </td>
-                            </tr>
+                          </tr>
+                          <tr>
+                            <td align="center">                                                            
+                              <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Scatterplot</button>                             
+                            </td>
+                          </tr><tr>
+                          </tr><tr>
+                          </tr><tr>                          
+                          </tr><tr>
+                            <td align="center">                                                            
+                              <div className="LoadingBar" style={style}>
+                                {this.loadingBarInstance}
+                              </div>                                  
+                            </td>
+                          </tr>
                     </td></tr>
-                     </tbody>   
-                     </table>
-                     <br/>          
+                    </tbody>   
+                    </table>
+                    <br/>          
                   </form>                   
                   </td>
                   </tr>
                   <tr>
-                  <td align="center" style={{"width":"80%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
+                  <td align="center" style={{"width":"1100px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                      <table id="message">
-                     <tbody>
-                        <tr>
-                           <td align="center" style={{"width":"850px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
-                              <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
-                           </td>                           
-                        </tr>
-                     </tbody>   
+                       <tbody>
+                          <tr>
+                             <td align="center" style={{"width":"1100px", "height":"580px", "borderRadius":"12px", "padding":"20px"}} bgcolor="#FAFAFA">
+                                <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
+                             </td>                           
+                          </tr>
+                       </tbody>   
                      </table>           
                      {this.state.scatterplot}   
                   </td>
                   </tr>
                </tr>
-               
                </tr>
             </tbody>   
             </table>  
