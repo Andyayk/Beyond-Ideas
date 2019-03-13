@@ -148,12 +148,3 @@ li a:active {
   justify-content: right;
 }
 
-#menu{
-    width: 240px;
-    z-index: 100;
-    margin-left:-140px;
-} 
-#options{
-    width: 200px;
-    float: left;
-}

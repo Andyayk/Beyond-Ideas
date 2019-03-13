@@ -38,8 +38,7 @@
       <img src="{{ url_for('static', filename='images/DHL_logo.png') }}" alt="Logo" />
     </div>
     
-    <div id="menu">
-        <div id="options" class="sidebar-layout">
+        <div class="sidebar-layout">
         
           <a id="home" class="sidebar-item" href="/">
             Home
@@ -76,7 +75,6 @@
             <img src="{{ url_for('static', filename='images/AnalysisIcon.png') }}" alt="analysis" />        
           </a>
           
-        </div>      
     </div>
     <div class="content-layout">
       {% block content %}{% endblock %}
@@ -103,11 +101,6 @@
     document.getElementById("openNav").style.display = "inline-block";
   }
   
-  $("#options").hover(function(){
-    $("#menu").css({"margin-left":"0px", "transition":"margin-left .2s ease-in", "-webkit-transition": "margin-left .2s ease-in"});
-    }, function(){
-    $("#menu").css({"margin-left":"-140px","transition":"margin-left .2s ease-in", "-webkit-transition": "margin-left .2s ease-in"});
-  });
 
 
 </script>
