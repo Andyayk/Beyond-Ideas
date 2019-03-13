@@ -295,12 +295,12 @@ class Analysisbi extends Component {
           <table>
           <tbody>
             <tr>
-              <td align="center" style={{"overflow":"auto", "maxWidth":"1000px", "verticalAlign":"top", "align":"center"}}>    
+              <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
                 <div style={{"overflowX":"auto"}}>
                   <table id="message2">
                     <tbody>
                       <tr>
-                        <td align="center" style={{"width":"1000px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                        <td align="center" style={{"width":"850px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
                           <label style={{"verticalAlign":"center"}}>Dataset Display Area</label>                                                     
                         </td>                           
                       </tr>
