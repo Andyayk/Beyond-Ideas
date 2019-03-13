@@ -893,12 +893,17 @@ def create_app(config_name):
 
             columns, values, aggregatedsentiment = modelbi.getDataForAnalysis(tableName) 
 
-            modelbi.topicModeling(tablename, usertablename, current_user.id) 
+            sent_topics_sorteddf_mallet = modelbi.topicModeling(tablename, usertablename, current_user.id) 
+
+            topiccolumns = sent_topics_sorteddf_mallet.columns.tolist()
+            topicvalues = sent_topics_sorteddf_mallet.values.tolist()
 
             return jsonify(
                 columns = columns,
                 values = values,
-                aggregatedsentiment = aggregatedsentiment
+                aggregatedsentiment = aggregatedsentiment,
+                topiccolumns = topiccolumns,
+                topicvalues = topicvalues
             )
 
         @app.route("/twittertrain/", methods = ['POST'])

@@ -17,10 +17,12 @@ class Analysisbi extends Component {
       tablename: "",            
       hideLoadingBar: true,    
       barchart: "",
-      timeseries: "",
       columns: "",
       values: "",
-      tableboolean: false     
+      tableboolean: false,
+      tableboolean: false,
+      topiccolumns: "",
+      topicvalues: ""         
     };
 
     this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -29,7 +31,6 @@ class Analysisbi extends Component {
     this.trainModel = this.trainModel.bind(this);
 
     this.barChart = this.barChart.bind(this);
-    this.timeSeries = this.timeSeries.bind(this);
 
     this.generatePlot = this.generatePlot.bind(this); 
    
@@ -149,46 +150,6 @@ class Analysisbi extends Component {
       })
   }
 
-  //creating time series using plotly
-  timeSeries(xData, yData, yData2){
-    this.setState({    
-      timeseries: <Plot data={[{
-                  x: xData,
-                  y: yData,
-                  type: 'scatter',
-                  marker: {color: 'rgba(123, 239, 178, 1)'},
-                  name: 'Positive Tweets',
-                  hoverlabel: {namelength: -1}
-                  },{
-                  x: xData,
-                  y: yData2,
-                  type: 'scatter',
-                  marker: {color: 'rgba(222, 45, 38, 0.8)'},
-                  name: 'Negative Tweets',
-                  hoverlabel: {namelength: -1}
-                  }]}
-                  layout={{
-                    width: 600, 
-                    height: 500, 
-                    title: '<b>Timelime of Tweets</b>',
-                    hovermode: 'closest',
-                    xaxis: {
-                      title: 'Date',
-                      ticklen: 5,
-                      zeroline: false,
-                      gridwidth: 2,
-                    },
-                    yaxis: {
-                      title: 'No. of Tweets',
-                      ticklen: 5,
-                      zeroline: false,
-                      gridwidth: 2,
-                    }                          
-                  }}
-                />
-      })
-  }
-
   //retrieving chart data from flask and creating chart using plotly
   generatePlot(event){
     $.post(window.location.origin + "/generateplotbi/",
@@ -197,7 +158,6 @@ class Analysisbi extends Component {
     },
     (data) => {
       this.barChart(data['aggregatedsentiment']);
-      this.timeSeries(['2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00'], [1,2,6], [9,5,3]);
 
       var x = document.getElementById("message");
       x.style.display = "none";
@@ -208,8 +168,11 @@ class Analysisbi extends Component {
       this.setState({                  
         columns: data['columns'],
         values: data['values'],
+        topiccolumns: data['topiccolumns'],
+        topicvalues: data['topicvalues'],
         hideLoadingBar: true, //hide loading button
         tableboolean: true,
+        tableboolean2: true,
         tablename: this.state.selectedtable                     
       });
     });  
@@ -305,9 +268,21 @@ class Analysisbi extends Component {
                 <tr>
                   <td>        
                     {this.state.barchart}
-                  </td><td>
-                    {this.state.timeseries}  
-                  </td>                           
+                  </td>
+                  <td align="center" style={{"overflow":"auto", "maxWidth":"600", "verticalAlign":"top", "align":"center"}}>    
+                    <div style={{"overflowX":"auto"}}>
+                      <div className="outputtable" style={{"width":"600","maxWidth":"600"}}>
+                        {this.state.tableboolean2?(                 
+                          <MUIDataTable
+                             title={"Topic Analysis"}
+                             data={this.state.topicvalues}
+                             columns={this.state.topiccolumns}
+                          /> 
+                          ):null
+                        } 
+                      </div> 
+                    </div>
+                  </td>                     
                 </tr>
               </tbody>   
               </table>                  
@@ -345,7 +320,7 @@ class Analysisbi extends Component {
               </td>
             </tr>
           </tbody>
-          </table>                                      
+          </table>                                   
         </div>
       );
    }
