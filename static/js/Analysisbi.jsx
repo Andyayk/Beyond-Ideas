@@ -13,12 +13,9 @@ class Analysisbi extends Component {
     super();
     this.state = {
       options: "",
-      options2: "",
       selectedtable: "", 
-      selectedtable2: "", 
       tablename: "",            
-      hideLoadingBar: true,
-      hideLoadingBarTwo: true,      
+      hideLoadingBar: true,    
       barchart: "",
       timeseries: "",
       columns: "",
@@ -28,7 +25,6 @@ class Analysisbi extends Component {
 
     this.getMySQLTables = this.getMySQLTables.bind(this);
     this.selectTable = this.selectTable.bind(this);
-    this.selectTable2 = this.selectTable2.bind(this);
 
     this.trainModel = this.trainModel.bind(this);
 
@@ -36,19 +32,14 @@ class Analysisbi extends Component {
     this.timeSeries = this.timeSeries.bind(this);
 
     this.generatePlot = this.generatePlot.bind(this); 
-    this.generateHistoricalPlot = this.generateHistoricalPlot.bind(this);     
-    this.formSubmitted = this.formSubmitted.bind(this);
-    this.formSubmitted2 = this.formSubmitted2.bind(this);    
+   
+    this.formSubmitted = this.formSubmitted.bind(this);   
 
     this.callBackendAPI = this.callBackendAPI.bind(this);
 
     this.getMySQLTables(); //retrieving user's uploaded tables
 
     this.loadingBarInstance = (
-      <div className="loader"></div>                                   
-    ); 
-
-    this.loadingBarInstanceTwo = (
       <div className="loader"></div>                                   
     );       
   }
@@ -84,12 +75,11 @@ class Analysisbi extends Component {
   //creating select options for drop down list based on data from flask
   createOptions(data) {
     let options = [];
-    let options2 = [];
     if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
       var mySQLTables = data.toString().split(",");
       for (let i = 0; i < mySQLTables.length; i++) {
         if(mySQLTables[i].includes("_tweets_w_sentiment")){
-          options2.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+          
         } else if(mySQLTables[i].includes("_tweets")){
           options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);          
         }
@@ -97,8 +87,7 @@ class Analysisbi extends Component {
     }
 
     this.setState({
-      options: options,
-      options2: options2      
+      options: options    
     });
   }    
 
@@ -108,13 +97,6 @@ class Analysisbi extends Component {
       selectedtable: event.target.value
     });      
   }
-
-  //store the variable that the user has selected
-  selectTable2(event) {
-    this.setState({
-      selectedtable2: event.target.value
-    });      
-  }  
 
   //this will train the models
   trainModel(event) {
@@ -233,32 +215,6 @@ class Analysisbi extends Component {
     });  
   }      
 
-  //retrieving chart data from flask and creating chart using plotly
-  generateHistoricalPlot(event){
-    $.post(window.location.origin + "/generatehistoricalplotbi/",
-    {
-      selectedtable2: this.state.selectedtable2   
-    },
-    (data) => {    
-      this.barChart(data['aggregatedsentiment']);
-      this.timeSeries(['2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00'], [1,2,6], [9,5,3]);
-
-      var x = document.getElementById("message");
-      x.style.display = "none";
-
-      var x = document.getElementById("message2");
-      x.style.display = "none";
-
-      this.setState({                  
-        columns: data['columns'],
-        values: data['values'],
-        hideLoadingBarTwo: true, //hide loading button
-        tableboolean: true,
-        tablename: this.state.selectedtable2                  
-      }); 
-    });     
-  }    
-
   //handle form submission
   formSubmitted(event){
     event.preventDefault();
@@ -270,21 +226,9 @@ class Analysisbi extends Component {
     this.generatePlot();    
   }  
 
-  //handle form submission 2
-  formSubmitted2(event){
-    event.preventDefault();
-
-    this.setState({
-      hideLoadingBarTwo: false
-    });  
-
-    this.generateHistoricalPlot();    
-  }           
-
    //rendering the html for chart
    render() {
       const style = this.state.hideLoadingBar ? {display: 'none'} : {};
-      const style2 = this.state.hideLoadingBarTwo ? {display: 'none'} : {};
 
       return (
         <div>
@@ -302,7 +246,7 @@ class Analysisbi extends Component {
                   <tr>
                   <td align="center">
                     <div className="cardtitle">
-                      Generate New Analysis
+                      Select Dataset
                     </div>
                   </td>
                   </tr><tr>
@@ -337,51 +281,7 @@ class Analysisbi extends Component {
                 </table>
                 <br/>          
               </form>
-              </td>    
-              <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
-              <form name="submitForm" method="POST" onSubmit={this.formSubmitted2}>                       
-                <br />
-                <table align="center">
-                <tbody>
-                  <tr>
-                  <td align="center">
-                    <div className="cardtitle">
-                      View Previous Analysis
-                    </div>
-                  </td>
-                  </tr><tr>
-                  <td align="center">
-                    <div className="cardsubtitle">
-                      Dataset:
-                    </div>
-                  </td>
-                  </tr><tr>
-                  <td align="center">
-                    <select required defaultValue="" onChange={this.selectTable2} style={{"width":"210px"}}>
-                      <option value="" disabled>---------- select a dataset ----------</option>
-                      {this.state.options2}
-                    </select>
-                  </td>
-                  </tr>
-                  <br/>
-                  <tr>
-                  <td align="center">                                                                              
-                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>View Analysis</button>                             
-                  </td>
-                  </tr>
-                  <br/>
-                  <tr>
-                  <td align="center">                                                            
-                    <div className="LoadingBar" style={style2}>
-                      {this.loadingBarInstanceTwo}
-                    </div>                                
-                  </td>
-                  </tr>                                 
-                </tbody>   
-                </table>
-                <br/>          
-              </form>
-              </td>                             
+              </td>                            
             </tr>
           </tbody>   
           </table>
