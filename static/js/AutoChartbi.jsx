@@ -610,7 +610,6 @@ class AutoChartbi extends Component {
                            </td>
                         </tr><tr>
                            <td align="center">
-
                               <select required defaultValue="" onChange={this.getVariables} style={{"width":"210px"}}>
                                  <option value="" disabled>---------- select a dataset ----------</option>
                                  {this.state.options}
@@ -712,6 +711,10 @@ class AutoChartbi extends Component {
                </tr>
             </tbody>   
             </table>  
+            <br/> 
+            <form action="/correlationpagebi">             
+              <button className="back vis-back" type="submit">Back</button>  
+            </form>             
             </div>                                 
          </div>
       );
