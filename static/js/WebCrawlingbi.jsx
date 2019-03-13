@@ -196,10 +196,10 @@ class WebCrawlingbi extends Component {
       return (
          <div>
             <div className="content">
-               <table style={{"width":"100%", "padding":"10px"}}>
+               <table style={{"width":"100%"}}>
                <tbody>
                   <tr>             
-                     <td style={{"width":"49.8%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"15px"}} valign="top" align="center" bgcolor="white">       
+                     <td style={{ "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">       
                         <form method="POST" onSubmit={this.formSubmitted}>       
                            <br/>
                            <table align="center">
@@ -346,9 +346,13 @@ class WebCrawlingbi extends Component {
                            </table>
                         </form> 
                      </td>
-                  </tr>
-               </tbody>   
-               </table>                   
+                  </tr>         
+               </tbody>     
+               </table> 
+               <br/> 
+               <form action="/webcrawlingpagebi">             
+                  <button className="back vis-back" type="submit">Back</button>  
+               </form>               
             </div>
          </div>
       );

@@ -838,6 +838,10 @@ class Chartbi extends Component {
                </tr>
             </tbody>   
             </table>  
+            <br/> 
+            <form action="/correlationpagebi">             
+              <button className="back vis-back" type="submit">Back</button>  
+            </form>               
             </div>                                 
          </div>
       );
