@@ -904,7 +904,7 @@ def create_app(config_name):
             return jsonify(
                 columns = columns,
                 values = values,
-                aggregatedsentiment = aggregatedsentiment,
+                aggregatedsentiment = aggregatedsentiment[0],
                 topiccolumns = topiccolumns,
                 topicvalues = topicvalues
             )
