@@ -240,7 +240,7 @@ class TwitterCrawlingbi extends Component {
                                  <td style={{"width":"350px", "height":"280px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                                     <tr>
                                        <div className="cardtitle">
-                                          3. Enter File Name
+                                          3. Enter Dataset Name
                                        </div>
                                     </tr><tr>                             
                                        <div className="cardsubtitle">
