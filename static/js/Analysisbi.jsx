@@ -201,7 +201,7 @@ class Analysisbi extends Component {
           <table style={{"width":"100%"}}>
           <tbody>
             <tr>
-              <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
+              <td style={{"width":"22%", "height":"240px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
               <form name="submitForm" method="POST" onSubmit={this.formSubmitted}>                       
                 <br />
                 <table align="center">
@@ -225,15 +225,13 @@ class Analysisbi extends Component {
                       {this.state.options}
                     </select>
                   </td>
-                  </tr>
-                  <br/>
-                  <tr>
+                  </tr><tr>
+                  </tr><tr>
+                  </tr><tr>                      
                   <td align="center">                                                                              
                     <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Analysis</button>                             
                   </td>
-                  </tr>
-                  <br/>
-                  <tr>
+                  </tr><tr>              
                   <td align="center">                                                            
                     <div className="LoadingBar" style={style}>
                       {this.loadingBarInstance}
@@ -257,7 +255,7 @@ class Analysisbi extends Component {
               <table id="message">
               <tbody>
                 <tr>
-                <td align="center" style={{"width":"850px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                <td align="center" style={{"width":"1100px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
                   <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
                 </td>                           
                 </tr>
@@ -295,18 +293,18 @@ class Analysisbi extends Component {
           <table>
           <tbody>
             <tr>
-              <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
+              <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "padding-top":"15px", "padding-bottom":"15px", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
                 <div style={{"overflowX":"auto"}}>
                   <table id="message2">
                     <tbody>
                       <tr>
-                        <td align="center" style={{"width":"850px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                        <td align="center" style={{"width":"1100px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
                           <label style={{"verticalAlign":"center"}}>Dataset Display Area</label>                                                     
                         </td>                           
                       </tr>
                      </tbody>
                   </table>    
-                  <div className="outputtable" style={{"width":"1000px","maxWidth":"1000px"}}>
+                  <div className="outputtable" style={{"width":"1100px","maxWidth":"1100px"}}>
                     {this.state.tableboolean?(                 
                       <MUIDataTable
                          title={"Dataset: "+this.state.tablename}
