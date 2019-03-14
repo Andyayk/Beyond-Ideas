@@ -73,6 +73,31 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
     try:
         sqlstmtQuery = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
         
+        # if("sentiment" in tablename):
+            # if("sentiment" in variablenameX):
+                # sqlstmtQuery = "SELECT COUNT(t1." + variablenameX + ") , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2 GROUP BY date,sentiment HAVING "
+            # else:
+                # sqlstmtQuery = "SELECT SUM(t1." + variablenameX + ") , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2 HAVING "
+                
+            # if "date" in joinvariable.lower(): #join by date
+                # date1 = getDateColumnNamebi(tablename)
+                # date2 = getDateColumnNamebi(tablename2)
+                # sqlstmtQuery = sqlstmtQuery + "t1." + date1[0] + " = t2." + date2[0] 
+            # if("sentiment" in variablenameX):
+                # sqlstmtQuery = sqlstmtQuery + " AND sentiment=1"
+        # elif("sentiment" in tablename2):
+            # if("sentiment" in variablenameY):
+                # sqlstmtQuery = "SELECT t1." + variablenameX + " ,COUNT(t2." + variablenameY + ") FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2 GROUP BY date,sentiment HAVING "
+            # else:
+                # sqlstmtQuery = "SELECT t1." + variablenameX + " , SUM(t2." + variablenameY + ") FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2 HAVING "
+                
+            # if "date" in joinvariable.lower(): #join by date
+                # date1 = getDateColumnNamebi(tablename)
+                # date2 = getDateColumnNamebi(tablename2)
+                # sqlstmtQuery = sqlstmtQuery + "t1." + date1[0] + " = t2." + date2[0] 
+            # if("sentiment" in variablenameY):
+                # sqlstmtQuery = sqlstmtQuery + " AND sentiment=1"
+        # else:
         if "date" in joinvariable.lower(): #join by date
             date1 = getDateColumnNamebi(tablename)
             date2 = getDateColumnNamebi(tablename2)
@@ -80,8 +105,8 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
             sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0]
         else:
             sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable   
-        
-        
+    
+    
         if "date" in filtervariable.lower(): #filter by date
             sqlstmtQuery = sqlstmtQuery + " AND " + filtervariable + " BETWEEN '" + filtervalue + "' AND '" + filtervalue2 + "'"
         elif not filtervariable == "":
@@ -92,8 +117,8 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         sqlstmt = connection.execute(sqlstmtQuery)
         x = []
         y = []
-        
         for row_data in sqlstmt: #add table rows
+            print(row_data)
             if is_emptybi(row_data[0]):
                 x.append(0)
             else: 
@@ -947,4 +972,56 @@ def trainSentimentAnalysisModels():
 
     return ""
 
-
+def sentimentResultAnalysis(tablename, tablename2):
+    positivesentiment = connection.execute("SELECT date, COUNT(*) FROM `" +  tablename +"` GROUP BY date,sentiment HAVING sentiment=1");
+    negativesentiment = connection.execute("SELECT date, COUNT(*) FROM `" +  tablename +"` GROUP BY date,sentiment HAVING sentiment=0");
+    allcounts = connection.execute("SELECT date,SUM(retweet_count) as 'retweet_count',SUM(favorite_count) as 'favorite_count',SUM(followers_count) as 'followers_count',SUM(friends_count) as 'friends_count' FROM `dhltwt_tweets_w_sentiment_4` GROUP BY date");
+    variablesSecond = getNumericalColumnNamebi(tablename2);
+    selectstmt = str(str(variablesSecond).replace("'",""))[1:-1]
+    
+    secondTable = connection.execute("SELECT ActivityDate," + selectstmt + " FROM " + tablename2)
+    allPairs = {}
+    allPairs2 = {}
+    for result in allcounts:
+        currentKey = ""
+        subpair = {}
+        for x,y in result.items():
+            if (x=="date"):
+                currentKey = str(y)
+            else:
+                subpair[x] = int(str(y))
+        allPairs[currentKey] = subpair
+    for result in secondTable:
+        currentKey = ""
+        subpair = {}
+        for x,y in result.items():
+            
+            if (x.lower() == "date" or x.lower() == "activitydate"):
+                currentKey = str(y)
+            else:
+                subpair[x] = int(str(y))
+        allPairs2[currentKey] = subpair
+    for result in positivesentiment:
+        currentKey = ""
+        valy = ""
+        for x,y in result.items():
+            if(x=="date"):
+                currentKey = str(y)
+            else:
+                valy = int(str(y))
+        currentSubPairs = allPairs[currentKey]
+        currentSubPairs["positive_sentiment"] = valy
+        allPairs[currentKey] = currentSubPairs
+    for result in negativesentiment:
+        currentKey = ""
+        valy = ""
+        for x,y in result.items():
+            if(x=="date"):
+                currentKey = str(y)
+            else:
+                valy = int(str(y))
+        currentSubPairs = allPairs[currentKey]
+        currentSubPairs["negative_sentiment"] = valy
+        allPairs[currentKey] = currentSubPairs
+    
+    return allPairs,allPairs2
