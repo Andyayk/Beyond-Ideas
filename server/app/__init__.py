@@ -891,7 +891,13 @@ def create_app(config_name):
 
             tableName = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id) 
 
-            columns, values, aggregatedsentiment = modelbi.getDataForAnalysis(tableName) 
+            results = modelbi.getDataForAnalysis(tableName) 
+            
+            sliceddf = results[0]
+            aggregatedsentiment = results[1]
+
+            columns = sliceddf.columns.tolist() #column names
+            values = sliceddf.values.tolist() #all values
 
             sent_topics_sorteddf_mallet = modelbi.topicModeling(tablename, usertablename, current_user.id) 
 
