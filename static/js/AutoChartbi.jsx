@@ -687,7 +687,7 @@ class AutoChartbi extends Component {
                             {this.state.filterwords2}
                             </td>
                         </tr>
-                        <table id="rtwotables" border="1">
+                        <table id="rtwotables"  class="outputtable" border="1">
                         {this.state.rtworesults}
                         </table>
                      </tbody>   

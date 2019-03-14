@@ -151,7 +151,7 @@ li a:active {
   font-size:18px;
 }
 
-.rxytr:hover{
+.rxytr:hover td{
     background-color: #ffff99;
     cursor: pointer;
 }

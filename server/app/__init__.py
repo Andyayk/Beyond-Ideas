@@ -772,12 +772,17 @@ def create_app(config_name):
                 This method will retrieve mysql data for API call from react
             """     
             tablename = request.form.get("selectedtable")  
-            tablename2 = request.form.get("selectedtable2")   
+            tablename2 = request.form.get("selectedtable2")
 
             if current_user.is_authenticated:      
                 usertablename = tablename + "_" + str(current_user.id)   
                 usertablename2 = tablename2 + "_" + str(current_user.id)             
 
+            # if "sentiment" in tablename:
+                # result = modelbi.sentimentResultAnalysis(usertablename, usertablename2)
+            # if "sentiment" in tablename2:
+                # result = modelbi.sentimentResultAnalysis(usertablename2, usertablename)
+            # print(result[1])
             variablenameX = request.form.get("selectedvariables1")[1:-1].split(",")
             variablenameY = request.form.get("selectedvariables2")[1:-1].split(",")
 
