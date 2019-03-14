@@ -891,7 +891,9 @@ def create_app(config_name):
 
             tableName = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id) 
 
-            sliceddf, aggregatedsentiment = modelbi.getDataForAnalysis(tableName) 
+            sliceddf = modelbi.getDataForAnalysis(tableName) 
+
+            aggregatedsentiment = modelbi.getDataForAnalysis2(tableName) 
 
             columns = sliceddf.columns.tolist() #column names
             values = sliceddf.values.tolist() #all values
@@ -904,7 +906,7 @@ def create_app(config_name):
             return jsonify(
                 columns = columns,
                 values = values,
-                aggregatedsentiment = aggregatedsentiment[0],
+                aggregatedsentiment = aggregatedsentiment,
                 topiccolumns = topiccolumns,
                 topicvalues = topicvalues
             )
