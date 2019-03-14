@@ -315,14 +315,11 @@ def getDataForAnalysis(usertablename):
 
         sliceddf = copydf[['tweet','date','tweettime','sentiment']]
 
-        columns = sliceddf.columns.tolist() #column names
-        values = sliceddf.values.tolist() #all values
-
         sentimentcolumn = copydf2['sentiment'].tolist()
 
         aggregatedsentiment = [sentimentcolumn.count(1), sentimentcolumn.count(0)] #1 is positive, 0 is negative
 
-        return [columns, values, aggregatedsentiment]
+        return [sliceddf, aggregatedsentiment]
     except Exception as e:
         print(str(e))
         return "Something is wrong with sentimentAnalysis method"
