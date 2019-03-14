@@ -310,16 +310,25 @@ def getDataForAnalysis(usertablename):
 
         df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
 
-        copydf = df.copy()
-        copydf2 = df.copy()
+        sliceddf = df[['tweet','date','tweettime','sentiment']]
 
-        sliceddf = copydf[['tweet','date','tweettime','sentiment']]
+        return sliceddf
+    except Exception as e:
+        print(str(e))
+        return "Something is wrong with sentimentAnalysis method"
 
-        sentimentcolumn = copydf2['sentiment'].tolist()
+def getDataForAnalysis2(usertablename):
+    try:
+        # Load dataset 
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
+
+        df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
+
+        sentimentcolumn = df['sentiment'].tolist()
 
         aggregatedsentiment = [sentimentcolumn.count(1), sentimentcolumn.count(0)] #1 is positive, 0 is negative
 
-        return sliceddf, aggregatedsentiment
+        return aggregatedsentiment
     except Exception as e:
         print(str(e))
         return "Something is wrong with sentimentAnalysis method"

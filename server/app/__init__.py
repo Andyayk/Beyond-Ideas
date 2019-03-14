@@ -891,7 +891,9 @@ def create_app(config_name):
 
             tableName = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id) 
 
-            sliceddf, aggregatedsentiment = modelbi.getDataForAnalysis(tableName) 
+            sliceddf = modelbi.getDataForAnalysis(tableName) 
+
+            aggregatedsentiment = modelbi.getDataForAnalysis2(tableName) 
 
             columns = sliceddf.columns.tolist() #column names
             values = sliceddf.values.tolist() #all values
