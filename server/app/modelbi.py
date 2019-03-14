@@ -319,7 +319,7 @@ def getDataForAnalysis(usertablename):
 
         aggregatedsentiment = [sentimentcolumn.count(1), sentimentcolumn.count(0)] #1 is positive, 0 is negative
 
-        return [sliceddf, aggregatedsentiment]
+        return sliceddf, aggregatedsentiment
     except Exception as e:
         print(str(e))
         return "Something is wrong with sentimentAnalysis method"
