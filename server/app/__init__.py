@@ -891,17 +891,17 @@ def create_app(config_name):
 
             tableName = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id) 
 
-            sliceddf = modelbi.getDataForAnalysis(tableName) 
+            results = modelbi.getDataForAnalysis(tableName) 
 
             aggregatedsentiment = modelbi.getDataForAnalysis2(tableName) 
 
-            columns = sliceddf.columns.tolist() #column names
-            values = sliceddf.values.tolist() #all values
+            columns = results[0] #column names
+            values = results[1] #all values
 
-            sent_topics_sorteddf_mallet = modelbi.topicModeling(tablename, usertablename, current_user.id) 
+            results2 = modelbi.topicModeling(tablename, usertablename, current_user.id) 
 
-            topiccolumns = sent_topics_sorteddf_mallet.columns.tolist()
-            topicvalues = sent_topics_sorteddf_mallet.values.tolist()
+            topiccolumns = results2[0]
+            topicvalues = results2[1]
 
             return jsonify(
                 columns = columns,

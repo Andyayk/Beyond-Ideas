@@ -311,8 +311,11 @@ def getDataForAnalysis(usertablename):
         df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
 
         sliceddf = df[['tweet','date','tweettime','sentiment']]
+        
+        columns = sliceddf.columns.tolist()
+        values = sliceddf.values.tolist()
 
-        return sliceddf
+        return [columns, values]
     except Exception as e:
         print(str(e))
         return "Something is wrong with sentimentAnalysis method"
@@ -781,7 +784,12 @@ def topicModeling(tablename, usertablename, userID):
         # Format
         sent_topics_sorteddf_mallet.columns = ['Topics', "Topic Percent Contribution", "Keywords", "Most Representative Tweet"]
 
-        return sent_topics_sorteddf_mallet[['Topics', "Keywords"]]
+        sent_topics_sorteddf_mallet = sent_topics_sorteddf_mallet[['Topics', "Keywords"]]
+
+        topiccolumns = sent_topics_sorteddf_mallet.columns.tolist()
+        topicvalues = sent_topics_sorteddf_mallet.values.tolist()
+
+        return [topiccolumns, topicvalues]
     except Exception as e:
         print(str(e))
         return "Something is wrong with sentimentAnalysis method"  
