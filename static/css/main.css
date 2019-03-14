@@ -239,11 +239,19 @@ div.cardtitle {
 }
 
 div.cardsubtitle{
-  font-size: 15px;
+  font-size: 14px;
   font-family: "Roboto", sans-serif;  
   font-style: italic;
-  color: #696969;  
+  color: #383838;  
 }
+
+div.cardhintmessage{
+  font-size: 12px;
+  font-family: "Roboto", sans-serif;  
+  font-style: italic;
+  color: grey;  
+}
+
 
 div.cardPageButton{
   grid-area: 1/1/2/2;
@@ -262,7 +270,7 @@ div.cardButtonInfo{
   font-size: 14px;
   font-family: "Roboto", sans-serif;  
   font-weight: normal;
-  text-transform: lowercase;
+  text-transform: none;
   color: black;  
 }
 

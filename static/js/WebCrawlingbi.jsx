@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import "../css/main";
-import WeatherCrawlIcon from "../images/WeatherCrawlIcon.png";
+import WeatherCrawlIcon from "../images/WeatherIcon.png";
+import arrowicon from "../images/arrow.png";
 
 var $ = require('jquery');
 
@@ -145,7 +146,7 @@ class WebCrawlingbi extends Component {
          $.each(data, function(key, val) {
             //console.log(val)
             if (val == "success"){
-               message = "Successfully saved weather data into database.";
+               message = "Successfully saved data into database.";
             } else {
                var element = document.createElement('a');
                var newContent = val.replace(/;/g, "\n");
@@ -155,7 +156,7 @@ class WebCrawlingbi extends Component {
                document.body.appendChild(element);
                element.click();
                document.body.removeChild(element);
-               message = "Successfully saved retrieved weather data into CSV file.";
+               message = "Successfully saved data into CSV file.";
             }
          });  
 
@@ -198,150 +199,143 @@ class WebCrawlingbi extends Component {
             <div className="content">
                <table style={{"width":"100%"}}>
                <tbody>
-                  <tr>             
-                     <td style={{ "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">       
+                  <tr>          
+                     <td>       
                         <form method="POST" onSubmit={this.formSubmitted}>       
-                           <br/>
-                           <table align="center">
+                           <table align="left">
                            <tbody>
                               <tr>
-                                 <td align="center">
-                                    <img src={WeatherCrawlIcon} width="100" height="100" />
+                                 <td style={{"width":"350px", "height":"150px", "padding-top":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"50px", "height":"150px", "padding-top":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"350px", "height":"150px", "padding-top":"15px"}} valign="top" align="center">
+                                    <img src={WeatherCrawlIcon} width="150" height="150" />
                                  </td>
-                              </tr>                           
-                              <tr>
-                                 <td align="center">
-                                    <div className="cardtitle">
-                                       Select Date Range
-                                    </div>                                    
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <div className="cardsubtitle">
-                                       Start Date:
-                                    </div>          
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">                                
-                                    <input type="date" style={{"width":"220px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectStartDate} />
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">                                                                 
-                                    <div className="cardsubtitle">
-                                       End Date:
-                                    </div>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">                                
-                                    <input type="date" style={{"width":"220px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectEndDate} />
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <font size="2" color="grey"><i>Safari users, please use "yyyy-mm-dd"</i></font>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <div className="carderrormsg">{this.state.errordatestatement}</div>
-                                 </td>
-                              </tr><br/><tr>
-                                 <td align="center">
-                                    <div className="cardtitle">
-                                       Select Country
-                                    </div>
-                                 </td> 
-                              </tr><tr>                             
-                                 <td align="center">
-                                    <div className="cardsubtitle">
-                                       Country:
-                                    </div>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <select required defaultValue="" onChange={this.selectCountryName} style={{"width":"220px"}}>
-                                       <option value="" disabled>-------- select a country --------</option>
-                                       <option value="Australia">Australia</option>
-                                       <option value="Bangladesh">Bangladesh</option>
-                                       <option value="Bhutan">Bhutan</option> 
-                                       <option value="Brunei">Brunei</option> 
-                                       <option value="Myanmar">Myanmar</option> 
-                                       <option value="Cambodia">Cambodia</option> 
-                                       <option value="China">China</option> 
-                                       <option value="Chile">Chile</option> 
-                                       <option value="Cook Islands">Cook Islands</option> 
-                                       <option value="Fiji">Fiji</option> 
-                                       <option value="India">India</option> 
-                                       <option value="Indonesia">Indonesia</option> 
-                                       <option value="Japan">Japan</option> 
-                                       <option value="Kiribati">Kiribati</option> 
-                                       <option value="Malaysia">Malaysia</option>  
-                                       <option value="Maldives">Maldives</option>  
-                                       <option value="Marshall Islands">Marshall Islands</option>  
-                                       <option value="Micronesia">Micronesia</option>  
-                                       <option value="Mongolia">Mongolia</option>  
-                                       <option value="Nauru">Nauru</option>  
-                                       <option value="New Zealand">New Zealand</option>  
-                                       <option value="Niue">Niue</option>  
-                                       <option value="Pakistan">Pakistan</option>  
-                                       <option value="Palau">Palau</option>  
-                                       <option value="Papua New Guinea">Papua New Guinea</option>  
-                                       <option value="Peru">Peru</option>
-                                       <option value="Philippines">Philippines</option>    
-                                       <option value="Russia">Russia</option>  
-                                       <option value="Samoa">Samoa</option>
-                                       <option value="Singapore">Singapore</option>
-                                       <option value="Solomon Island">Solomon Island</option>
-                                       <option value="South Korea">South Korea</option>   
-                                       <option value="Sri Lanka">Sri Lanka</option>
-                                       <option value="Tuvalu">Tuvalu</option>   
-                                       <option value="Vanuatu">Vanuatu</option>   
-                                       <option value="Vietnam">Vietnam</option>                        
-                                    </select>
-                                 </td>
-                              </tr><br/><tr>
-                                 <td align="center">
-                                    <div className="cardtitle">
-                                       Enter Dataset Name
-                                    </div>
-                                 </td> 
-                              </tr>
-                              <tr>                             
-                                 <td align="center">
-                                    <div className="cardsubtitle">
-                                       Dataset Name:
-                                    </div>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <input required type="text" id="filename" style={{"width":"220px"}} onChange={this.selectFilename}/>
-                                 </td>
+                                 <td style={{"width":"50px", "height":"150px", "padding-top":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"350px", "height":"150px", "padding-top":"15px"}} valign="top" align="center"></td>
                               </tr>
                               <br/>
                               <tr>
-                                 <td align="center">
-                                    <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Retrieve Weather Data</button>    
-                                 </td>                                                              
-                              </tr><tr>
-                                 <td align="center">
-                                    <div id="messageArea" style={{"display":"none"}}> 
-                                       <font color="green"><b>{this.state.message}</b></font>   
-                                    </div>                                 
+                                 <td style={{"width":"350px", "height":"250px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                    <tr>
+                                       <div className="cardtitle">
+                                          1. Select Date Range
+                                       </div>                                    
+                                    </tr><tr>                             
+                                       <div className="cardsubtitle">
+                                          Start Date:
+                                       </div>          
+                                    </tr><tr>
+                                       <input type="date" style={{"width":"220px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectStartDate} />
+                                    </tr><tr>
+                                    </tr><tr>                                    
+                                    </tr><tr>                                    
+                                       <div className="cardsubtitle">
+                                          End Date:
+                                       </div>
+                                    </tr><tr>
+                                       <input type="date" style={{"width":"220px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectEndDate} />
+                                    </tr><tr>
+                                    </tr><tr>
+                                    </tr><tr> 
+                                       <div className="cardhintmessage">
+                                          Safari users, please use "yyyy-mm-dd"
+                                       </div>
+                                    </tr><tr>
+                                       <div className="carderrormsg">{this.state.errordatestatement}</div>
+                                    </tr>
                                  </td>
-                              </tr><tr>
-                              </tr><tr>
-                              </tr><tr>
-                                 <td align="center">                                   
-                                    <div id="csvButton" style={{"display":"none"}}>
+                                 <td style={{"width":"50px", "height":"250px"}} valign="center" align="center">
+                                    <img src={arrowicon} width="45" height="45" />
+                                 </td>                                 
+                                 <td style={{"width":"350px", "height":"250px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                    <tr>
+                                       <div className="cardtitle">
+                                          2. Select Country
+                                       </div>                                  
+                                    </tr><tr>                             
+                                       <div className="cardsubtitle">
+                                          Country:
+                                       </div>
+                                    </tr><tr>
+                                       <select required defaultValue="" onChange={this.selectCountryName} style={{"width":"220px"}}>
+                                          <option value="" disabled>-------- select a country --------</option>
+                                          <option value="Australia">Australia</option>
+                                          <option value="Bangladesh">Bangladesh</option>
+                                          <option value="Bhutan">Bhutan</option> 
+                                          <option value="Brunei">Brunei</option> 
+                                          <option value="Myanmar">Myanmar</option> 
+                                          <option value="Cambodia">Cambodia</option> 
+                                          <option value="China">China</option> 
+                                          <option value="Chile">Chile</option> 
+                                          <option value="Cook Islands">Cook Islands</option> 
+                                          <option value="Fiji">Fiji</option> 
+                                          <option value="India">India</option> 
+                                          <option value="Indonesia">Indonesia</option> 
+                                          <option value="Japan">Japan</option> 
+                                          <option value="Kiribati">Kiribati</option> 
+                                          <option value="Malaysia">Malaysia</option>  
+                                          <option value="Maldives">Maldives</option>  
+                                          <option value="Marshall Islands">Marshall Islands</option>  
+                                          <option value="Micronesia">Micronesia</option>  
+                                          <option value="Mongolia">Mongolia</option>  
+                                          <option value="Nauru">Nauru</option>  
+                                          <option value="New Zealand">New Zealand</option>  
+                                          <option value="Niue">Niue</option>  
+                                          <option value="Pakistan">Pakistan</option>  
+                                          <option value="Palau">Palau</option>  
+                                          <option value="Papua New Guinea">Papua New Guinea</option>  
+                                          <option value="Peru">Peru</option>
+                                          <option value="Philippines">Philippines</option>    
+                                          <option value="Russia">Russia</option>  
+                                          <option value="Samoa">Samoa</option>
+                                          <option value="Singapore">Singapore</option>
+                                          <option value="Solomon Island">Solomon Island</option>
+                                          <option value="South Korea">South Korea</option>   
+                                          <option value="Sri Lanka">Sri Lanka</option>
+                                          <option value="Tuvalu">Tuvalu</option>   
+                                          <option value="Vanuatu">Vanuatu</option>   
+                                          <option value="Vietnam">Vietnam</option>                        
+                                       </select>
+                                    </tr>
+                                 </td>
+                                 <td style={{"width":"50px", "height":"250px"}} valign="center" align="center">
+                                    <img src={arrowicon} width="45" height="45" />
+                                 </td>                                   
+                                 <td style={{"width":"350px", "height":"250px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                    <tr>   
+                                       <div className="cardtitle">
+                                          3. Enter Dataset Name
+                                       </div>
+                                    </tr><tr>
+                                       <div className="cardsubtitle">
+                                          e.g. "sgweather"
+                                       </div>
+                                    </tr><tr>
+                                       <td align="center">
+                                          <input required type="text" id="filename" style={{"width":"220px"}} onChange={this.selectFilename}/>
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td align="center">
+                                          <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Retrieve Weather Data</button>    
+                                       </td>                                                              
+                                    </tr><tr>
+                                       <div id="messageArea" style={{"display":"none"}}> 
+                                          <font color="green"><b>{this.state.message}</b></font>   
+                                       </div>                                 
+                                    </tr><tr>
+                                    </tr><tr>
+                                    </tr><tr>
+                                       <div id="csvButton" style={{"display":"none"}}>
                                           <button onClick={this.switchToCSV} id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV file?</button>    
-                                    </div>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <div className="LoadingBar" style={style}>
-                                       {this.loadingBarInstance}
-                                    </div>                                    
+                                       </div>
+                                    </tr><tr>
+                                       <div className="LoadingBar" style={style}>
+                                          {this.loadingBarInstance}
+                                       </div>                                    
+                                    </tr>
                                  </td>
                               </tr>
-                              <br/>
                            </tbody>   
                            </table>
                         </form> 
@@ -350,7 +344,7 @@ class WebCrawlingbi extends Component {
                </tbody>     
                </table> 
                <br/> 
-               <form action="/webcrawlingpagebi">             
+               <form action="/webcrawlingpagebi"> 
                   <button className="back vis-back" type="submit">Back</button>  
                </form>               
             </div>
@@ -358,6 +352,4 @@ class WebCrawlingbi extends Component {
       );
    }
 }
-
-
 export default WebCrawlingbi;
