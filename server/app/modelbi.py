@@ -79,7 +79,7 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
             if "sentiment" in variablenameX:
                 sqlstmtQuery = "SELECT COUNT(t1." + variablenameX + ") , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
             else:
-                sqlstmtQuery = "SELECT SUM(t1." + variablenameX + ") , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+                sqlstmtQuery = "SELECT CAST(SUM(t1." + variablenameX + ") as UNSIGNED) , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
                 
             if "date" in joinvariable.lower(): #join by date
                 date1 = getDateColumnNamebi(tablename)
@@ -93,7 +93,7 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
             if "sentiment" in variablenameY:
                 sqlstmtQuery = "SELECT t1." + variablenameX + " , COUNT(t2." + variablenameY + ") FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
             else:
-                sqlstmtQuery = "SELECT t1." + variablenameX + " , SUM(t2." + variablenameY + ") FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+                sqlstmtQuery = "SELECT t1." + variablenameX + " , CAST(SUM(t2." + variablenameY + ") as UNSIGNED) FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
                 
             if "date" in joinvariable.lower(): #join by date
                 date1 = getDateColumnNamebi(tablename)
@@ -126,7 +126,7 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
             sqlstmtQuery = sqlstmtQuery + " GROUP BY t1." + date1[0] + " , sentiment"
 
         elif "sentiment" in tablename2:
-            sqlstmtQuery = sqlstmtQuery + " GROUP BY t2." + date1[0] + " , sentiment"
+            sqlstmtQuery = sqlstmtQuery + " GROUP BY t2." + date2[0] + " , sentiment"
             
         sqlstmt = connection.execute(sqlstmtQuery)
         x = []
