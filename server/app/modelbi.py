@@ -71,40 +71,48 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         This method will join tables together using date or company or depot or country name
     """
     try:
-        sqlstmtQuery = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+        sqlstmtQuery = ""
+        date1 = ""
+        date2 = ""
         
-        # if("sentiment" in tablename):
-            # if("sentiment" in variablenameX):
-                # sqlstmtQuery = "SELECT COUNT(t1." + variablenameX + ") , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2 GROUP BY date,sentiment HAVING "
-            # else:
-                # sqlstmtQuery = "SELECT SUM(t1." + variablenameX + ") , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2 HAVING "
+        if "sentiment" in tablename:
+            if "sentiment" in variablenameX:
+                sqlstmtQuery = "SELECT COUNT(t1." + variablenameX + ") , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+            else:
+                sqlstmtQuery = "SELECT SUM(t1." + variablenameX + ") , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
                 
-            # if "date" in joinvariable.lower(): #join by date
-                # date1 = getDateColumnNamebi(tablename)
-                # date2 = getDateColumnNamebi(tablename2)
-                # sqlstmtQuery = sqlstmtQuery + "t1." + date1[0] + " = t2." + date2[0] 
-            # if("sentiment" in variablenameX):
-                # sqlstmtQuery = sqlstmtQuery + " AND sentiment=1"
-        # elif("sentiment" in tablename2):
-            # if("sentiment" in variablenameY):
-                # sqlstmtQuery = "SELECT t1." + variablenameX + " ,COUNT(t2." + variablenameY + ") FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2 GROUP BY date,sentiment HAVING "
-            # else:
-                # sqlstmtQuery = "SELECT t1." + variablenameX + " , SUM(t2." + variablenameY + ") FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2 HAVING "
+            if "date" in joinvariable.lower(): #join by date
+                date1 = getDateColumnNamebi(tablename)
+                date2 = getDateColumnNamebi(tablename2)
+
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0] + " AND sentiment = 1"
+            else:
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable + " AND sentiment = 1"
+
+        elif "sentiment" in tablename2:
+            if "sentiment" in variablenameY:
+                sqlstmtQuery = "SELECT t1." + variablenameX + " , COUNT(t2." + variablenameY + ") FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+            else:
+                sqlstmtQuery = "SELECT t1." + variablenameX + " , SUM(t2." + variablenameY + ") FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
                 
-            # if "date" in joinvariable.lower(): #join by date
-                # date1 = getDateColumnNamebi(tablename)
-                # date2 = getDateColumnNamebi(tablename2)
-                # sqlstmtQuery = sqlstmtQuery + "t1." + date1[0] + " = t2." + date2[0] 
-            # if("sentiment" in variablenameY):
-                # sqlstmtQuery = sqlstmtQuery + " AND sentiment=1"
-        # else:
-        if "date" in joinvariable.lower(): #join by date
-            date1 = getDateColumnNamebi(tablename)
-            date2 = getDateColumnNamebi(tablename2)
-           
-            sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0]
+            if "date" in joinvariable.lower(): #join by date
+                date1 = getDateColumnNamebi(tablename)
+                date2 = getDateColumnNamebi(tablename2)
+
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0] + " AND sentiment = 1"
+            else:
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable + " AND sentiment = 1"
+
         else:
-            sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable   
+            sqlstmtQuery = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+
+            if "date" in joinvariable.lower(): #join by date
+                date1 = getDateColumnNamebi(tablename)
+                date2 = getDateColumnNamebi(tablename2)
+               
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0]
+            else:
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable   
     
     
         if "date" in filtervariable.lower(): #filter by date
@@ -113,6 +121,12 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
             sqlstmtQuery = sqlstmtQuery + " AND " + filtervariable + " = '" + filtervalue + "'"
         else:
             sqlstmtQuery = sqlstmtQuery
+
+        if "sentiment" in tablename:
+            sqlstmtQuery = sqlstmtQuery + " GROUP BY t1." + date1[0] + " , sentiment"
+
+        elif "sentiment" in tablename2:
+            sqlstmtQuery = sqlstmtQuery + " GROUP BY t2." + date1[0] + " , sentiment"
             
         sqlstmt = connection.execute(sqlstmtQuery)
         x = []
