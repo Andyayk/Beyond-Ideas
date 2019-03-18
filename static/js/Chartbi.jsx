@@ -614,7 +614,7 @@ class Chartbi extends Component {
                      <table align="center">
                      <tbody>
                         <tr>
-                          <td style={{"width":"350px", "height":"150px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                          <td style={{"width":"350px", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">
                                 <div className="cardtitle">
@@ -689,7 +689,7 @@ class Chartbi extends Component {
                           <td style={{"width":"50px", "height":"150px"}} valign="center" align="center">
                             <img src={arrowicon} width="45" height="45" />
                           </td>
-                          <td style={{"width":"350px", "height":"150px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                          <td style={{"width":"350px", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">                           
                                 <div className="cardtitle">
@@ -730,7 +730,7 @@ class Chartbi extends Component {
                           <td style={{"width":"50px", "height":"150px"}} valign="center" align="center">
                             <img src={arrowicon} width="45" height="45" />
                           </td>                        
-                          <td style={{"width":"350px", "height":"150px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                          <td style={{"width":"350px", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">
                                 <div className="cardtitle">

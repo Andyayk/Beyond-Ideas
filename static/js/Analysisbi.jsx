@@ -10,6 +10,7 @@ import "../css/main";
 var $ = require('jquery');
 
 class Analysisbi extends Component {  
+
   constructor() {
     super();
     this.state = {
@@ -346,7 +347,7 @@ class Analysisbi extends Component {
           <table>
           <tbody>
             <tr>
-              <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "padding-top":"15px", "padding-bottom":"15px", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
+              <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "paddingTop":"15px", "paddingBottom":"15px", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
                 <div style={{"overflowX":"auto"}}>
                   <table id="message2">
                     <tbody>
@@ -371,7 +372,7 @@ class Analysisbi extends Component {
               </td>
             </tr>
           </tbody>
-          </table>                                   
+          </table>                            
         </div>
       );
    }

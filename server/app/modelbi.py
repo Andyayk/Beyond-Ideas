@@ -342,24 +342,24 @@ def getFilterValuesbi(tablename, tablename2, filtervariable):
     except Exception as e:
         return "" 
 
-def getDataForAnalysis(usertablename):
+def getSentimentDataForTableDisplay(usertablename):
     try:
         # Load dataset 
         sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
 
         df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
 
-        sliceddf = df[['tweet','date','tweettime','sentiment']]
-        
+        sliceddf = df[['tweet','date','tweettime','sentiment_score']]
+
         columns = sliceddf.columns.tolist()
         values = sliceddf.values.tolist()
 
         return [columns, values]
     except Exception as e:
         print(str(e))
-        return "Something is wrong with sentimentAnalysis method"
+        return "Something is wrong with getSentimentDataForTableDisplay method"
 
-def getDataForAnalysis2(usertablename):
+def getSentimentDataForChart(usertablename):
     try:
         # Load dataset 
         sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
@@ -373,7 +373,7 @@ def getDataForAnalysis2(usertablename):
         return aggregatedsentiment
     except Exception as e:
         print(str(e))
-        return "Something is wrong with sentimentAnalysis method"
+        return "Something is wrong with getSentimentDataForChart method"
 
 def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename):
     """
@@ -868,6 +868,12 @@ def sentimentAnalysis(tablename, usertablename, userID):
         # Classify the unseen test dataset with the train model
         test_predicted = classifier_load.predict(stringOfTokenizedTweets)
 
+        # Get probability of labeling sentiment
+        predictionprobability = classifier_load.predict_proba(stringOfTokenizedTweets)[:,1]
+
+        # Adding probability to dataframe       
+        copytestdf['sentiment_score'] = predictionprobability 
+
         # Adding predicted sentiment to dataframe
         copytestdf['sentiment'] = test_predicted 
 
@@ -875,7 +881,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
         connection.execute("DROP TABLE IF EXISTS `" + tableName + "`")
         connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), \
             tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), \
-            friends_count INT(255), date date, tweettime VARCHAR(255), sentiment INT(255));")
+            friends_count INT(255), date date, tweettime VARCHAR(255), sentiment_score FLOAT(4,2), sentiment INT(255));")
         
         connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
@@ -886,7 +892,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
             'tweet': sqlalchemy.types.VARCHAR(), 'retweet_count': sqlalchemy.types.INTEGER(), \
             'favorite_count': sqlalchemy.types.INTEGER(), 'followers_count': sqlalchemy.types.INTEGER(), \
             'friends_count': sqlalchemy.types.INTEGER(), 'date': sqlalchemy.DateTime(), 'tweettime': sqlalchemy.types.VARCHAR(), \
-            'sentiment': sqlalchemy.types.INTEGER()})
+            'sentiment_score': sqlalchemy.types.FLOAT(), 'sentiment': sqlalchemy.types.INTEGER()})
 
         return tableName
     except Exception as e:

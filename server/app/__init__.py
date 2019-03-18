@@ -896,9 +896,9 @@ def create_app(config_name):
 
             tableName = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id) 
 
-            results = modelbi.getDataForAnalysis(tableName) 
+            results = modelbi.getSentimentDataForTableDisplay(tableName) 
 
-            aggregatedsentiment = modelbi.getDataForAnalysis2(tableName) 
+            aggregatedsentiment = modelbi.getSentimentDataForChart(tableName) 
 
             columns = results[0] #column names
             values = results[1] #all values
