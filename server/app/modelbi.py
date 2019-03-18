@@ -702,12 +702,12 @@ def corpus2docs(corpus):
     docs2 = [[w.lower() for w in doc] for doc in docs1] #lower case
     docs3 = [[w for w in doc if re.search('^[a-z]+$', w)] for doc in docs2] #keep only alphabets
     docs4 = [[w for w in doc if w not in stop_list] for doc in docs3] #remove stopwords
-    docs5 = [[w for w in doc if len(w) >= 2] for doc in docs4] #remove single letters
-    docs6 = [[wordnet_lemmatizer.lemmatize(w) for w in doc] for doc in docs5] #lemmatize
+    docs5 = [[wordnet_lemmatizer.lemmatize(w) for w in doc] for doc in docs4] #lemmatize    
+    docs6 = [[w for w in doc if len(w) >= 2] for doc in docs5] #remove single letters
 
     #remove common words - can become noise
     freqarray = []
-    for tweet in docs4:
+    for tweet in docs6:
         for w in tweet:
             freqarray.append(w)
     
