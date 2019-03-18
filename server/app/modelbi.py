@@ -20,11 +20,8 @@ from io import StringIO
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from pandas import DataFrame
-<<<<<<< HEAD
 nltk.download()
-=======
 from gensim.models import CoherenceModel
->>>>>>> be0184bb5d8708b2bb59a70ca796e72b9330ae7f
 
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
 
@@ -769,7 +766,6 @@ def topicModeling(tablename, usertablename, userID):
 
         df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
 
-<<<<<<< HEAD
     # Creating the object for LDA model using gensim library
     # Lda = gensim.models.ldamodel.LdaModel
 
@@ -777,7 +773,7 @@ def topicModeling(tablename, usertablename, userID):
     # ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
 
     # print(ldamodel.print_topics(num_topics=3, num_words=3))[0.168*health + 0.083*sugar + 0.072*bad,0.061*consume + 0.050*drive + 0.050*sister,0.049*pressur + 0.049*father + 0.049*sister]
-=======
+
         copydf = df.copy()
 
         tweetColumnName = 'tweet'
@@ -785,7 +781,6 @@ def topicModeling(tablename, usertablename, userID):
 
         # Preprocess the text
         tweets_docs = corpus2docs(df[tweetColumnName].tolist())
->>>>>>> be0184bb5d8708b2bb59a70ca796e72b9330ae7f
 
         # Generate a vocabulary of text
         tweets_dictionary = gensim.corpora.Dictionary(tweets_docs)
