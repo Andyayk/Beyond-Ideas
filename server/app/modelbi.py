@@ -20,7 +20,6 @@ from io import StringIO
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from pandas import DataFrame
-nltk.download()
 from gensim.models import CoherenceModel
 
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
