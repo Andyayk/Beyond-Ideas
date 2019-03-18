@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Plot from 'react-plotly.js';
+// import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import MUIDataTable from 'mui-datatables';
 
 import "../css/main";
 
@@ -11,18 +13,28 @@ class Analysisbi extends Component {
     super();
     this.state = {
       options: "",
-      selectedtable: "",      
-      selectedtable: "",
-      hideLoadingBar: true,
-      plot: ""                 
+      selectedtable: "", 
+      tablename: "",            
+      hideLoadingBar: true,    
+      barchart: "",
+      columns: "",
+      values: "",
+      tableboolean: false,
+      tableboolean: false,
+      topiccolumns: "",
+      topicvalues: ""         
     };
 
     this.getMySQLTables = this.getMySQLTables.bind(this);
     this.selectTable = this.selectTable.bind(this);
 
     this.trainModel = this.trainModel.bind(this);
+
+    this.barChart = this.barChart.bind(this);
+
     this.generatePlot = this.generatePlot.bind(this); 
-    this.formSubmitted = this.formSubmitted.bind(this);
+   
+    this.formSubmitted = this.formSubmitted.bind(this);   
 
     this.callBackendAPI = this.callBackendAPI.bind(this);
 
@@ -30,7 +42,7 @@ class Analysisbi extends Component {
 
     this.loadingBarInstance = (
       <div className="loader"></div>                                   
-    );    
+    );       
   }
 
   //retrieving user's uploaded tables   
@@ -67,14 +79,16 @@ class Analysisbi extends Component {
     if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
       var mySQLTables = data.toString().split(",");
       for (let i = 0; i < mySQLTables.length; i++) {
-        if(mySQLTables[i].includes("_tweets")){
-          options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+        if(mySQLTables[i].includes("_tweets_w_sentiment")){
+          
+        } else if(mySQLTables[i].includes("_tweets")){
+          options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);          
         }
       };
     }
 
     this.setState({
-      options: options
+      options: options    
     });
   }    
 
@@ -85,7 +99,7 @@ class Analysisbi extends Component {
     });      
   }
 
-  //retrieving chart data from flask and creating chart using plotly
+  //this will train the models
   trainModel(event) {
     this.setState({
       hideLoadingBar: false
@@ -101,29 +115,79 @@ class Analysisbi extends Component {
     });    
   }  
 
+  //creating bar chart using plotly
+  barChart(yData){
+    this.setState({
+      barchart: <Plot data={[{
+                  x: ['Positive','Negative'],
+                  y: yData,
+                  type: 'bar',
+                  marker:{
+                    color: ['rgba(123, 239, 178, 1)', 'rgba(222, 45, 38, 0.8)']
+                  },
+                  name: 'Positive vs Negative Tweets',
+                  hoverlabel: {namelength: -1}
+                  }]}
+                  layout={{
+                    width: 600, 
+                    height: 500, 
+                    title: '<b>Positive vs Negative Tweets</b>',
+                    hovermode: 'closest',
+                    xaxis: {
+                      title: 'Sentiments',
+                      ticklen: 5,
+                      zeroline: false,
+                      gridwidth: 2,
+                    },
+                    yaxis: {
+                      title: 'No. of Tweets',
+                      ticklen: 5,
+                      zeroline: false,
+                      gridwidth: 2,
+                    }                          
+                  }}
+                />
+      })
+  }
+
   //retrieving chart data from flask and creating chart using plotly
-  generatePlot(event) {
+  generatePlot(event){
     $.post(window.location.origin + "/generateplotbi/",
     {
       selectedtable: this.state.selectedtable   
     },
     (data) => {
-      this.setState({
-        plot: data['message'],
-        hideLoadingBar: true //hide loading button             
-      })      
-    });    
-  }        
+      this.barChart(data['aggregatedsentiment']);
+
+      var x = document.getElementById("message");
+      x.style.display = "none";
+
+      var x = document.getElementById("message2");
+      x.style.display = "none";
+
+      this.setState({                  
+        columns: data['columns'],
+        values: data['values'],
+        topiccolumns: data['topiccolumns'],
+        topicvalues: data['topicvalues'],
+        hideLoadingBar: true, //hide loading button
+        tableboolean: true,
+        tableboolean2: true,
+        tablename: this.state.selectedtable                     
+      });
+    });  
+  }      
 
   //handle form submission
   formSubmitted(event){
     event.preventDefault();
-    this.generatePlot();
 
     this.setState({
       hideLoadingBar: false
-    });      
-  }        
+    });  
+
+    this.generatePlot();    
+  }  
 
    //rendering the html for chart
    render() {
@@ -131,13 +195,13 @@ class Analysisbi extends Component {
 
       return (
         <div>
-          This button takes quite long to train the model, don't press unless you want to train model
-          <button id="submitbutton" onClick={this.trainModel} className="button" type="button" style={{"verticalAlign":"middle"}}>Train Model</button>
+          {/*uncomment below to train model*/}
+          {/*<button id="submitbutton" onClick={this.trainModel} className="button" type="button" style={{"verticalAlign":"middle"}}>Train Model</button>*/}
           <div className="content">
           <table style={{"width":"100%"}}>
           <tbody>
-            <tr>             
-              <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
+            <tr>
+              <td style={{"width":"22%", "height":"240px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
               <form name="submitForm" method="POST" onSubmit={this.formSubmitted}>                       
                 <br />
                 <table align="center">
@@ -161,44 +225,100 @@ class Analysisbi extends Component {
                       {this.state.options}
                     </select>
                   </td>
-                  </tr>
-                  <br/>
-                  <tr>
+                  </tr><tr>
+                  </tr><tr>
+                  </tr><tr>                      
                   <td align="center">                                                                              
-                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Analyse Tweets</button>                             
+                    <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Analysis</button>                             
                   </td>
-                  </tr>
-                  <br/>
-                  <tr>
+                  </tr><tr>              
                   <td align="center">                                                            
                     <div className="LoadingBar" style={style}>
                       {this.loadingBarInstance}
-                    </div>                     
-                    Will print in command prompt             
+                    </div>                                
                   </td>
                   </tr>                                 
                 </tbody>   
                 </table>
                 <br/>          
-              </form>                   
-              </td>
-              <td></td>
+              </form>
+              </td>                            
+            </tr>
+          </tbody>   
+          </table>
+          
+          <table style={{"width":"100%"}}>
+          <tbody>                       
+            <tr></tr>
+            <tr>
               <td align="center" style={{"width":"80%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
               <table id="message">
               <tbody>
                 <tr>
-                <td align="center" style={{"width":"850px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                <td align="center" style={{"width":"1100px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
                   <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
                 </td>                           
                 </tr>
               </tbody>   
-              </table>           
-              {this.state.plot}   
-              </td>
+              </table> 
+              <table>
+              <tbody>  
+                <tr>
+                  <td>        
+                    {this.state.barchart}
+                  </td>
+                  <td align="center" style={{"overflow":"auto", "maxWidth":"600", "verticalAlign":"top", "align":"center"}}>    
+                    <div style={{"overflowX":"auto"}}>
+                      <div className="outputtable" style={{"width":"600","maxWidth":"600"}}>
+                        {this.state.tableboolean2?(                 
+                          <MUIDataTable
+                             title={"Topic Analysis"}
+                             data={this.state.topicvalues}
+                             columns={this.state.topiccolumns}
+                          /> 
+                          ):null
+                        } 
+                      </div> 
+                    </div>
+                  </td>                     
+                </tr>
+              </tbody>   
+              </table>                  
+              </td>          
             </tr>
           </tbody>   
           </table>  
-          </div>                                 
+          </div>
+
+          <table>
+          <tbody>
+            <tr>
+              <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "padding-top":"15px", "padding-bottom":"15px", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
+                <div style={{"overflowX":"auto"}}>
+                  <table id="message2">
+                    <tbody>
+                      <tr>
+                        <td align="center" style={{"width":"1100px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                          <label style={{"verticalAlign":"center"}}>Dataset Display Area</label>                                                     
+                        </td>                           
+                      </tr>
+                     </tbody>
+                  </table>    
+                  <div className="outputtable" style={{"width":"1100px","maxWidth":"1100px"}}>
+                    {this.state.tableboolean?(                 
+                      <MUIDataTable
+                         title={"Dataset: "+this.state.tablename}
+                         data={this.state.values}
+                         columns={this.state.columns}
+                      /> 
+                      ):null
+                    } 
+                  </div> 
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          </table>                                   
         </div>
       );
    }

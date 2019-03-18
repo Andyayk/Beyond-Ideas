@@ -772,12 +772,17 @@ def create_app(config_name):
                 This method will retrieve mysql data for API call from react
             """     
             tablename = request.form.get("selectedtable")  
-            tablename2 = request.form.get("selectedtable2")   
+            tablename2 = request.form.get("selectedtable2")
 
             if current_user.is_authenticated:      
                 usertablename = tablename + "_" + str(current_user.id)   
                 usertablename2 = tablename2 + "_" + str(current_user.id)             
 
+            # if "sentiment" in tablename:
+                # result = modelbi.sentimentResultAnalysis(usertablename, usertablename2)
+            # if "sentiment" in tablename2:
+                # result = modelbi.sentimentResultAnalysis(usertablename2, usertablename)
+            # print(result[1])
             variablenameX = request.form.get("selectedvariables1")[1:-1].split(",")
             variablenameY = request.form.get("selectedvariables2")[1:-1].split(",")
 
@@ -889,17 +894,33 @@ def create_app(config_name):
             if current_user.is_authenticated:      
                 usertablename = tablename + "_" + str(current_user.id)   
 
-            sentimentData = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)   
+            tableName = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id) 
 
-            topicModelData = modelbi.topicModeling("hello")     
+            results = modelbi.getDataForAnalysis(tableName) 
+
+            aggregatedsentiment = modelbi.getDataForAnalysis2(tableName) 
+
+            columns = results[0] #column names
+            values = results[1] #all values
+
+            results2 = modelbi.topicModeling(tablename, usertablename, current_user.id) 
+
+            topiccolumns = results2[0]
+            topicvalues = results2[1]
 
             return jsonify(
-                message = str(sentimentData)
+                columns = columns,
+                values = values,
+                aggregatedsentiment = aggregatedsentiment,
+                topiccolumns = topiccolumns,
+                topicvalues = topicvalues
             )
 
-
         @app.route("/twittertrain/", methods = ['POST'])
-        def twittertrain(): #testing
+        def twittertrain(): #train model
+            """
+                This method will train our model
+            """            
             modelbi.trainSentimentAnalysisModels()   
 
             return ""         

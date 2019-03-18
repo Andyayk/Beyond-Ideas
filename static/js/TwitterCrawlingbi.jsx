@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import "../css/main";
-import TwitterIcon from "../images/twitter.png";
+import TwitterIcon from "../images/TwitterIcon.png";
+import arrowicon from "../images/arrow.png";
+
 
 var $ = require('jquery');
 
@@ -58,7 +60,7 @@ class TwitterCrawlingbi extends Component {
          if (!twitterData.includes("no tweets") && twitterData.length > 2) {   
             //console.log(twitterData)
             if (twitterData == "Successfully saved twitter data into the database"){
-               message = "Successfully saved twitter data into the database.";
+               message = "Successfully saved data into the database.";
             } else {            
                var element = document.createElement('a');
                var newContent = twitterData;
@@ -68,7 +70,7 @@ class TwitterCrawlingbi extends Component {
                document.body.appendChild(element);
                element.click();
                document.body.removeChild(element);
-               message = "Successfully saved twitter data into CSV file.";
+               message = "Successfully saved data into CSV file.";
             }
          }
          this.setState({
@@ -78,7 +80,13 @@ class TwitterCrawlingbi extends Component {
             apiCallReset: apiCallReset,
             save: "",            
             hideLoadingBar: true, //hide loading button            
-         });               
+         });       
+
+         var y = document.getElementById("messageArea");
+         y.style.display = "block";
+         var x = document.getElementById("csvButton");
+         x.style.display = "block";
+
       }); 
    }   
 
@@ -131,146 +139,155 @@ class TwitterCrawlingbi extends Component {
       this.setState({
          hideLoadingBar: false
       });
+      var y = document.getElementById("messageArea");
+      y.style.display = "none";
+      var x = document.getElementById("csvButton");
+      x.style.display = "none";
+
    }
 
    //rendering the html for web crawling
    render() {
       const style = this.state.hideLoadingBar ? {display: 'none'} : {};
 
-      return (
+     return (
          <div>      
             <div className="content">
-               <table style={{"width":"100%", "padding":"10px"}}>
+               <table style={{"width":"100%"}}>
                <tbody>
                   <tr>             
-                     <td style={{"width":"49.8%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"15px"}} valign="top" align="center" bgcolor="white">       
+                     <td>       
                         <form method="POST" onSubmit={this.formSubmitted}>       
-                           <br/>
-                           <table align="center">
+                           <table align="left">
                            <tbody>
                               <tr>
-                                 <td align="center">
-                                    <img src={TwitterIcon} width="100" height="100" />
+                                 <td style={{"width":"350px", "height":"150px", "padding-top":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"50px", "height":"150px", "padding-top":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"350px", "height":"150px", "padding-top":"15px"}} valign="top" align="center">
+                                    <img src={TwitterIcon} width="150" height="150" />
                                  </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <div className="cardtitle">
-                                       Enter Tags
-                                    </div>
-                                 </td> 
-                              </tr><tr>                             
-                                 <td align="center">
-                                    <div className="cardsubtitle">
-                                       Tags:
-                                    </div>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <input required type="text" id="tags" onChange={this.selectTags}/>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <font size="2" color="grey"><i>Separate multiple tags with commas</i></font><br/>                            
-                                 </td>
-                              </tr><br/><tr>
-                                 <td align="center">
-                                    <div className="cardtitle">
-                                       Enter No. of Tweets
-                                    </div>
-                                 </td> 
-                              </tr><tr>                             
-                                 <td align="center">
-                                    <div className="cardsubtitle">
-                                       No. of Tweets:
-                                    </div>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <input required type="number" id="nooftweets" onChange={this.selectNoOfTweets} min="100" max="5000"/>                    
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <font size="2" color="grey"><i>Rounded up to the nearest hundreds</i></font>
-                                 </td>
-                              </tr><br/><tr>
-                                 <td align="center">
-                                    <div className="cardtitle">
-                                       Before the Given Date
-                                    </div>
-                                 </td> 
-                              </tr><tr>                             
-                                 <td align="center">
-                                    <div className="cardsubtitle">
-                                       Date:
-                                    </div>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">                                
-                                    <input type="date" min="1900-01-01" max="2100-12-31" required onChange={this.selectDateBefore} />
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <font size="2" color="grey"><i>Only tweets from the past 7 days will be retrieved</i></font><br/>                            
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <font size="2" color="grey"><i>Safari users, please use "yyyy-mm-dd"</i></font>
-                                 </td>
-                              </tr><br/><tr>
-                                 <td align="center">
-                                    <div className="cardtitle">
-                                       Enter File Name
-                                    </div>
-                                 </td> 
-                              </tr>
-                              <tr>                             
-                                 <td align="center">
-                                    <div className="cardsubtitle">
-                                       File Name:
-                                    </div>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <input required type="text" id="filename" onChange={this.selectFilename}/>
-                                 </td>
+                                 <td style={{"width":"50px", "height":"150px", "padding-top":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"350px", "height":"150px", "padding-top":"15px"}} valign="top" align="center"></td>
                               </tr>
                               <br/>
-                              <tr>
-                                 <td align="center">
-                                    <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save into Database</button>    
-                                 </td>                                                              
-                              </tr><tr>
-                                 <td align="center">
-                                    <div className="cardtitle">                                 
-                                    Or
-                                    </div>
+                              <tr> 
+                                 <td style={{"width":"350px", "height":"280px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                    <tr>
+                                       <div className="cardtitle">
+                                          1. Enter Tag(s)
+                                       </div>
+                                    </tr><tr>                             
+                                       <div className="cardsubtitle">
+                                          e.g. "dhl"
+                                       </div>
+                                    </tr><tr>
+                                       <input required type="text" id="tags" style={{"width":"220px"}} onChange={this.selectTags}/>
+                                    </tr><tr>
+                                    </tr><tr>
+                                    </tr><tr>                                    
+                                       <div className="cardhintmessage">
+                                          *Separate multiple tags with commas
+                                       </div>                            
+                                    </tr><tr>
+                                    </tr><tr>
+                                    </tr><tr>
+                                    </tr><tr>
+                                    </tr><tr>
+                                    </tr><tr>                                    
+                                    </tr><tr>                                    
+                                       <div className="cardsubtitle">
+                                          No. of Tweets to Retrieve:
+                                       </div>
+                                    </tr><tr>
+                                       <input required type="number" id="nooftweets" style={{"width":"220px"}} onChange={this.selectNoOfTweets} min="100" max="5000"/>                    
+                                    </tr><tr>
+                                    </tr><tr>
+                                    </tr><tr>                                        
+                                       <div className="cardhintmessage">
+                                          *Rounded up to the nearest hundreds
+                                       </div>
+                                    </tr>
                                  </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <button onClick={this.switchToCSV} id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV File</button>    
+                                 <td style={{"width":"50px", "height":"280px"}} valign="center" align="center">
+                                    <img src={arrowicon} width="45" height="45" />
+                                 </td>                                     
+                                 <td style={{"width":"350px", "height":"280px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                    <tr>
+                                       <div className="cardtitle">
+                                          2. Enter Date
+                                       </div>
+                                    </tr><tr>                             
+                                       <div className="cardsubtitle">
+                                          Date:
+                                       </div>
+                                    </tr><tr>
+                                       <input type="date" min="1900-01-01" max="2100-12-31" style={{"width":"220px"}} required onChange={this.selectDateBefore} />
+                                    </tr><tr>
+                                    </tr><tr>
+                                    </tr><tr>                                        
+                                       <div className="cardhintmessage">
+                                          *Only tweets from the past 7 days will be retrieved
+                                       </div>                          
+                                    </tr><tr>
+                                       <div className="cardhintmessage">
+                                          *Safari users, please use "yyyy-mm-dd"
+                                       </div>
+                                    </tr>
                                  </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <font size="2"><i>No. of Twitter Requests Remaining: {this.state.apiCallLimit} (Reset at: {this.state.apiCallReset})</i></font>                          
+                                 <td style={{"width":"50px", "height":"280px"}} valign="center" align="center">
+                                    <img src={arrowicon} width="45" height="45" />
+                                 </td>                                      
+                                 <td style={{"width":"350px", "height":"280px", "padding-top":"15px", "padding-bottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                    <tr>
+                                       <div className="cardtitle">
+                                          3. Enter Dataset Name
+                                       </div>
+                                    </tr><tr>                             
+                                       <div className="cardsubtitle">
+                                          e.g. "dhltweets"
+                                       </div>
+                                    </tr><tr>
+                                       <input required type="text" id="filename" style={{"width":"220px"}} onChange={this.selectFilename}/>
+                                    </tr><tr>
+                                       <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Retrieve Tweets</button>    
+                                    </tr><tr>
+                                    </tr><tr>
+                                    </tr><tr> 
+                                       <div className="cardhintmessage">
+                                          No. of Twitter Requests Remaining: {this.state.apiCallLimit}
+                                       </div>                         
+                                    </tr><tr>
+                                       <div className="cardhintmessage">
+                                          (Reset at: {this.state.apiCallReset})
+                                       </div> 
+                                    </tr><tr>                                
+                                       <div id="messageArea" style={{"display":"none"}}> 
+                                          <font color="green"><b>{this.state.message}</b></font>   
+                                       </div>                                 
+                                    </tr><tr>
+                                    </tr><tr>
+                                    </tr><tr>
+                                       <div id="csvButton" style={{"display":"none"}}>
+                                          <button onClick={this.switchToCSV} id="submitbutton2" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Save as CSV file?</button>    
+                                       </div>
+                                    </tr><tr>
+                                       <div className="LoadingBar" style={style}>
+                                          {this.loadingBarInstance}
+                                       </div>                                    
+                                    </tr>
                                  </td>
                               </tr>
-                              <br/>
-                              <tr>
-                                 <td align="center">
-                                    <font color="green"><b>{this.state.message}</b></font>  
-                                    <div className="LoadingBar" style={style}>
-                                       {this.loadingBarInstance}
-                                    </div>                                    
-                                 </td>
-                              </tr>
-                              <br/>                           
                            </tbody>   
                            </table>
                         </form> 
                      </td>
-                  </tr>              
-               </tbody>   
-               </table>                   
+                  </tr>         
+               </tbody>     
+               </table> 
+               <br/> 
+               <form action="/webcrawlingpagebi">             
+                  <button className="back vis-back" type="submit">Back</button>  
+               </form>                                   
             </div>
          </div>
       );      

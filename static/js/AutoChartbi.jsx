@@ -462,6 +462,7 @@ class AutoChartbi extends Component {
          }
 
       });
+        
     }
     
     filterresults(event){
@@ -480,6 +481,12 @@ class AutoChartbi extends Component {
     }
     
     displayChart(event){
+        
+        $(".rxytr").click(function(){
+            $(this).addClass("selected").siblings().removeClass("selected");
+        });
+        
+        
         var plotpointname = "";
         var index = event.currentTarget.rowIndex;
         var currentrow = document.body.getElementsByClassName("rxytr")[index-1];
@@ -603,7 +610,6 @@ class AutoChartbi extends Component {
                            </td>
                         </tr><tr>
                            <td align="center">
-
                               <select required defaultValue="" onChange={this.getVariables} style={{"width":"210px"}}>
                                  <option value="" disabled>---------- select a dataset ----------</option>
                                  {this.state.options}
@@ -681,7 +687,7 @@ class AutoChartbi extends Component {
                             {this.state.filterwords2}
                             </td>
                         </tr>
-                        <table id="rtwotables" border="1">
+                        <table id="rtwotables"  class="outputtable" border="1">
                         {this.state.rtworesults}
                         </table>
                      </tbody>   
@@ -705,6 +711,10 @@ class AutoChartbi extends Component {
                </tr>
             </tbody>   
             </table>  
+            <br/> 
+            <form action="/correlationpagebi">             
+              <button className="back vis-back" type="submit">Back</button>  
+            </form>             
             </div>                                 
          </div>
       );

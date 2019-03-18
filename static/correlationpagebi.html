@@ -1,14 +1,36 @@
 {% extends "layout.html" %}
 {% block content %}   
+
 	<table align="center">
-		<tr><td>
-		<form action="/chartpagebi">
-			<button class="block" type="submit">Correlation 1</button> 
-		</form>
-		</td><td>  
-		<form action="/chartpagebi">
-			<button class="block" type="submit">Correlation 2</button> 
-		</form>
-		</td></tr> 
-	</table> 	   
+
+		<tr>
+			<td style="width:49%">
+				<form action="/chartpagebi">
+					<button class="block" type="submit">
+						<div class="cardPageButton">Manual Correlation<div>
+						<p>
+						<div class="cardButtonInfo">This feature will perform correlation analysis based on the attributes you select.</div>
+						<p>
+						<div class="cardClickHere">Click To Begin</div>							
+						<br>
+					</button> 
+				</form>
+			</td>
+			<td>
+			</td>
+			<td style="width:49%">  
+				<form action="/autochartpagebi">
+					<button class="block" type="submit">				
+						<div class="cardPageButton">Smart Correlation<div>
+						<p>
+						<div class="cardButtonInfo">This feature will perform smart correlation analysis and recommend you the most correlated attributes.</div>
+						<p>
+						<div class="cardClickHere">Click To Begin</div>							
+						<br>
+					</button> 
+				</form>
+			</td>
+		</tr> 
+	</table> 	 
+	
 {% endblock content %}

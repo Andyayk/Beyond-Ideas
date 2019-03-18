@@ -87,8 +87,9 @@
 
 .sidebar-item > img {
   height: 2em;
-  padding-right: 0.5em;
   filter: grayscale(100%);
+  margin-left:auto;
+ 
 }
 
 .sidebar-item:hover {
@@ -109,7 +110,6 @@
   padding: 1rem 1.5rem;
   width: 100%;
   height: 100%;
-  border: 1px solid black;
 }
 
 .horizontal {
@@ -147,3 +147,4 @@ li a:active {
   align-content: right;
   justify-content: right;
 }
+

@@ -8,6 +8,7 @@ import numpy as np
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import *
+from nltk.stem import WordNetLemmatizer
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
@@ -19,7 +20,11 @@ from io import StringIO
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from pandas import DataFrame
+<<<<<<< HEAD
 nltk.download()
+=======
+from gensim.models import CoherenceModel
+>>>>>>> be0184bb5d8708b2bb59a70ca796e72b9330ae7f
 
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
 
@@ -70,29 +75,68 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         This method will join tables together using date or company or depot or country name
     """
     try:
-        sqlstmtQuery = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+        sqlstmtQuery = ""
+        date1 = ""
+        date2 = ""
         
-        if "date" in joinvariable.lower(): #join by date
-            date1 = getDateColumnNamebi(tablename)
-            date2 = getDateColumnNamebi(tablename2)
-           
-            sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0]
+        if "sentiment" in tablename:
+            if "sentiment" in variablenameX:
+                sqlstmtQuery = "SELECT COUNT(t1." + variablenameX + ") , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+            else:
+                sqlstmtQuery = "SELECT CAST(SUM(t1." + variablenameX + ") as UNSIGNED) , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+                
+            if "date" in joinvariable.lower(): #join by date
+                date1 = getDateColumnNamebi(tablename)
+                date2 = getDateColumnNamebi(tablename2)
+
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0] + " AND sentiment = 1"
+            else:
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable + " AND sentiment = 1"
+
+        elif "sentiment" in tablename2:
+            if "sentiment" in variablenameY:
+                sqlstmtQuery = "SELECT t1." + variablenameX + " , COUNT(t2." + variablenameY + ") FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+            else:
+                sqlstmtQuery = "SELECT t1." + variablenameX + " , CAST(SUM(t2." + variablenameY + ") as UNSIGNED) FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+                
+            if "date" in joinvariable.lower(): #join by date
+                date1 = getDateColumnNamebi(tablename)
+                date2 = getDateColumnNamebi(tablename2)
+
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0] + " AND sentiment = 1"
+            else:
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable + " AND sentiment = 1"
+
         else:
-            sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable   
-        
-        
+            sqlstmtQuery = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+
+            if "date" in joinvariable.lower(): #join by date
+                date1 = getDateColumnNamebi(tablename)
+                date2 = getDateColumnNamebi(tablename2)
+               
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0]
+            else:
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable   
+    
+    
         if "date" in filtervariable.lower(): #filter by date
             sqlstmtQuery = sqlstmtQuery + " AND " + filtervariable + " BETWEEN '" + filtervalue + "' AND '" + filtervalue2 + "'"
         elif not filtervariable == "":
             sqlstmtQuery = sqlstmtQuery + " AND " + filtervariable + " = '" + filtervalue + "'"
         else:
             sqlstmtQuery = sqlstmtQuery
+
+        if "sentiment" in tablename:
+            sqlstmtQuery = sqlstmtQuery + " GROUP BY t1." + date1[0] + " , sentiment"
+
+        elif "sentiment" in tablename2:
+            sqlstmtQuery = sqlstmtQuery + " GROUP BY t2." + date2[0] + " , sentiment"
             
         sqlstmt = connection.execute(sqlstmtQuery)
         x = []
         y = []
-        
         for row_data in sqlstmt: #add table rows
+            print(row_data)
             if is_emptybi(row_data[0]):
                 x.append(0)
             else: 
@@ -301,6 +345,39 @@ def getFilterValuesbi(tablename, tablename2, filtervariable):
         return cols
     except Exception as e:
         return "" 
+
+def getDataForAnalysis(usertablename):
+    try:
+        # Load dataset 
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
+
+        df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
+
+        sliceddf = df[['tweet','date','tweettime','sentiment']]
+        
+        columns = sliceddf.columns.tolist()
+        values = sliceddf.values.tolist()
+
+        return [columns, values]
+    except Exception as e:
+        print(str(e))
+        return "Something is wrong with sentimentAnalysis method"
+
+def getDataForAnalysis2(usertablename):
+    try:
+        # Load dataset 
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
+
+        df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
+
+        sentimentcolumn = df['sentiment'].tolist()
+
+        aggregatedsentiment = [sentimentcolumn.count(1), sentimentcolumn.count(0)] #1 is positive, 0 is negative
+
+        return aggregatedsentiment
+    except Exception as e:
+        print(str(e))
+        return "Something is wrong with sentimentAnalysis method"
 
 def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename):
     """
@@ -572,7 +649,9 @@ def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
     if saveToDB == "true":        
         tableName = filename + "_tweets_" + str(userID)
         connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
-        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), friends_count INT(255), date date, tweettime VARCHAR(255));")
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), \
+            tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), \
+            friends_count INT(255), date date, tweettime VARCHAR(255));")
         
         connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
@@ -593,6 +672,9 @@ def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
         return results   
   
 def insertToDatabase(header, bodyArray, tableName):
+    """
+        This method will insert to database
+    """    
     try:
         sqlstmt = "INSERT INTO `" + tableName + "` (" + header + ") VALUES"
         for i in bodyArray:
@@ -608,59 +690,86 @@ def insertToDatabase(header, bodyArray, tableName):
         return False
 
 def corpus2docs(corpus):
-    # corpus is a object returned by load_corpus that represents a corpus.
-    fids = corpus.fileids()
+    """
+        This method will preprocess the data
+    """    
+    stop_list = nltk.corpus.stopwords.words('english')
+    stop_list += ['would', 'said', 'say', 'year', 'day', 'also', 'first', 'last', 'one', 'two', 'people', 'told', 'new', 'could', \
+        'three', 'may', 'like', 'world', 'since', 'rt', 'http', 'https']
+    
+    wordnet_lemmatizer = WordNetLemmatizer()
+
     docs1 = []
-    for fid in fids:
-        doc_raw = corpus.raw(fid)
-        doc = nltk.word_tokenize(doc_raw)
+    for tweet in corpus:
+        doc = nltk.word_tokenize(tweet)
         docs1.append(doc)
-    docs2 = [[w.lower() for w in doc] for doc in docs1]
-    docs3 = [[w for w in doc if re.search('^[a-z]+$', w)] for doc in docs2]
-    docs4 = [[w for w in doc if w not in stop_list] for doc in docs3]
-    return docs4
+    docs2 = [[w.lower() for w in doc] for doc in docs1] #lower case
+    docs3 = [[w for w in doc if re.search('^[a-z]+$', w)] for doc in docs2] #keep only alphabets
+    docs4 = [[w for w in doc if w not in stop_list] for doc in docs3] #remove stopwords
+    docs5 = [[w for w in doc if len(w) >= 2] for doc in docs4] #remove single letters
+    docs6 = [[wordnet_lemmatizer.lemmatize(w) for w in doc] for doc in docs5] #lemmatize
+
+    #remove common words - can become noise
+    freqarray = []
+    for tweet in docs4:
+        for w in tweet:
+            freqarray.append(w)
+    
+    fdist = nltk.FreqDist(freqarray)
+    mostcommon = fdist.most_common(2)
+    freq = []
+    for tuples in mostcommon:
+        freq.append(tuples[0])
+
+    docs7 = [[w for w in doc if w not in freq] for doc in docs6] #remove top 2 words
+    
+    return docs7
 
 def docs2vecs(docs, dictionary):
+    """
+        This method convert documents to vectors
+    """
     # docs is a list of documents returned by corpus2docs.
     # dictionary is a gensim.corpora.Dictionary object.
-    vecs1 = [dictionary.doc2bow(doc) for doc in docs]
-    return vecs1
+    vecs = [dictionary.doc2bow(doc) for doc in docs]
+    return vecs
 
-def topicModeling(data):
+def format_topics_sentences(ldamodel, corpus, data):
+    """
+        This method will find the most dominant topic
+    """    
+    # Init output
+    sent_topics_df = pd.DataFrame()
+
+    # Get main topic in each document
+    for i, row in enumerate(ldamodel[corpus]):
+        row = sorted(row[0], key=lambda x: (x[1]), reverse=True)
+        # Get the Dominant topic, Perc Contribution and Keywords for each document
+        for j, (topic_num, prop_topic) in enumerate(row):
+            if j == 0:  # => dominant topic
+                wp = ldamodel.show_topic(topic_num)
+                topic_keywords = ", ".join([word for word, prop in wp])
+                sent_topics_df = sent_topics_df.append(pd.Series([int(topic_num), round(prop_topic,4), topic_keywords]), ignore_index=True)
+            else:
+                break
+    sent_topics_df.columns = ['Dominant_Topic', 'Perc_Contribution', 'Topic_Keywords']
+
+    # Add original text to the end of the output
+    contents = pd.Series(data)
+    sent_topics_df = pd.concat([sent_topics_df, contents], axis=1)
+    return (sent_topics_df)
+
+def topicModeling(tablename, usertablename, userID):
     """
         This method will implement best topic modeling model
     """   
-    tweetColumnName2 = 'tweet'
-    isTrainData = False
-    # print(data)
-    print("testtesthii")
+    try:
+        # Load unseen testing dataset 
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
 
-    #test data
-    doc1 = "Sugar is bad to consume. My sister likes to have sugar, but not my father."
-    doc2 = "My father spends a lot of time driving my sister around to dance practice."
-    doc3 = "Doctors suggest that driving may cause increased stress and blood pressure."
-    doc4 = "Sometimes I feel pressure to perform well at school, but my father never seems to drive my sister to do better."
-    doc5 = "Health experts say that Sugar is not good for your lifestyle."
+        df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
 
-    # compile documents
-    doc_complete = [doc1, doc2, doc3, doc4, doc5]
-
-    #Clearning & Preprocessing
-    stop = set(stopwords.words('english'))
-    exclude = set(string.punctuation) 
-    lemma = WordNetLemmatizer()
-    
-    doc_clean = [clean(doc).split() for doc in doc_complete]
-    #Load the corpus and convert to vectors
-    # corpus = nltk.corpus.PlaintextCorpusReader('./server', '.+\.txt')
-    # docs = corpus2docs(corpus)
-    
-    # Converting list of documents (corpus) into Document Term Matrix using dictionary prepared above.
-    doc_term_matrix = [dictionary.doc2bow(doc) for doc in doc_clean]
-    
-    # dictionary = gensim.corpora.Dictionary(docs) 
-    # vecs = docs2vecs(docs, dictionary)
-
+<<<<<<< HEAD
     # Creating the object for LDA model using gensim library
     # Lda = gensim.models.ldamodel.LdaModel
 
@@ -668,25 +777,75 @@ def topicModeling(data):
     # ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
 
     # print(ldamodel.print_topics(num_topics=3, num_words=3))[0.168*health + 0.083*sugar + 0.072*bad,0.061*consume + 0.050*drive + 0.050*sister,0.049*pressur + 0.049*father + 0.049*sister]
+=======
+        copydf = df.copy()
 
-    # Call LDA model from disk and print the topics for each document in the TestLDA
-    # lda_disk=gensim.models.ldamodel.LdaModel.load("sg_lda")
+        tweetColumnName = 'tweet'
+        nooftopics = 5
 
-    #I choose model_list[1] where the number of topics is 4
-    # df_topic_sents_keywords2 = format_topics_sentences(ldamodel=lda_disk, corpus=test_vecs, data=test_docs)
+        # Preprocess the text
+        tweets_docs = corpus2docs(df[tweetColumnName].tolist())
+>>>>>>> be0184bb5d8708b2bb59a70ca796e72b9330ae7f
 
-    # Format
-    # df_dominant_topic2 = df_topic_sents_keywords2.reset_index()
-    # df_dominant_topic2.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contrib', 'Keywords', 'Text']
+        # Generate a vocabulary of text
+        tweets_dictionary = gensim.corpora.Dictionary(tweets_docs)
 
-    # Show
-    # df_dominant_topic2.head(10)
+        # Convert text into vectors
+        tweets_vecs = docs2vecs(tweets_docs, tweets_dictionary)        
 
-    # Print the top words in the topics displayed above for test doc 0. 
-    # Change the topic number accrodingly - the one with high probability
-    # lda_disk.print_topic(3, topn=10)
+        # Train lda model with the unseen test dataset
+        lda = gensim.models.ldamodel.LdaModel(corpus=tweets_vecs, 
+                                              id2word=tweets_dictionary,
+                                              num_topics=nooftopics,  
+                                              random_state=0,
+                                              update_every=1,
+                                              chunksize=100,
+                                              passes=10,
+                                              alpha='auto',
+                                              per_word_topics=True)
+        """
+        # Compute Perplexity
+        print('\nPerplexity: ', lda.log_perplexity(tweets_vecs)) # a measure of how good the model is. lower the better.
 
-    return ""
+        # Compute Coherence Score
+        coherence_model_lda = CoherenceModel(model=lda, texts=tweets_docs, dictionary=tweets_dictionary, coherence='c_v')
+        coherence_lda = coherence_model_lda.get_coherence()
+        print('\nCoherence Score: ', coherence_lda)      
+        """
+
+        # Format
+        df_topic_sents_keywords = format_topics_sentences(ldamodel=lda, corpus=tweets_vecs, data=tweets_docs)
+
+        """
+        df_dominant_topic = df_topic_sents_keywords.reset_index()
+        df_dominant_topic.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contrib', 'Keywords', 'Text']
+        """
+
+        # Group top 5 sentences under each topic
+        sent_topics_sorteddf_mallet = pd.DataFrame()
+
+        sent_topics_outdf_grpd = df_topic_sents_keywords.groupby('Dominant_Topic')
+
+        for i, grp in sent_topics_outdf_grpd:
+            sent_topics_sorteddf_mallet = pd.concat([sent_topics_sorteddf_mallet, 
+                                                     grp.sort_values(['Perc_Contribution'], ascending=[0]).head(1)], 
+                                                    axis=0)
+
+        # Reset Index    
+        sent_topics_sorteddf_mallet.reset_index(drop=True, inplace=True)
+
+        # Format
+        sent_topics_sorteddf_mallet.columns = ['Topics', "Topic Percent Contribution", "Keywords", "Most Representative Tweet"]
+
+        sent_topics_sorteddf_mallet = sent_topics_sorteddf_mallet[['Topics', "Keywords"]]
+
+        topiccolumns = sent_topics_sorteddf_mallet.columns.tolist()
+        topicvalues = sent_topics_sorteddf_mallet.values.tolist()
+
+        return [topiccolumns, topicvalues]
+    except Exception as e:
+        print(str(e))
+        return "Something is wrong with sentimentAnalysis method"  
 
 def sentimentAnalysis(tablename, usertablename, userID):
     """
@@ -715,41 +874,34 @@ def sentimentAnalysis(tablename, usertablename, userID):
         # Classify the unseen test dataset with the train model
         test_predicted = classifier_load.predict(stringOfTokenizedTweets)
 
+        # Adding predicted sentiment to dataframe
+        copytestdf['sentiment'] = test_predicted 
+
         tableName = tablename + "_w_sentiment_" + str(userID)
         connection.execute("DROP TABLE IF EXISTS `" + tableName + "`")
-        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), friends_count INT(255), date date, tweettime VARCHAR(255));")
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), \
+            tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), \
+            friends_count INT(255), date date, tweettime VARCHAR(255), sentiment INT(255));")
         
         connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
         connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
 
-        copytestdf.to_sql(name=tableName, con=engine, if_exists = 'append', index=False, chunksize=1000, dtype={'tweetid': sqlalchemy.types.VARCHAR(), 'userid': sqlalchemy.types.VARCHAR(), 'name': sqlalchemy.types.VARCHAR(), 'tweet': sqlalchemy.types.VARCHAR(), 'retweet_count': sqlalchemy.types.INTEGER(), 'favorite_count': sqlalchemy.types.INTEGER(), 'followers_count': sqlalchemy.types.INTEGER(), 'friends_count': sqlalchemy.types.INTEGER(), 'date': sqlalchemy.DateTime(), 'tweettime': sqlalchemy.types.VARCHAR()})
+        copytestdf.to_sql(name=tableName, con=engine, if_exists = 'append', index=False, chunksize=1000, \
+            dtype={'tweetid': sqlalchemy.types.VARCHAR(), 'userid': sqlalchemy.types.VARCHAR(), 'name': sqlalchemy.types.VARCHAR(), \
+            'tweet': sqlalchemy.types.VARCHAR(), 'retweet_count': sqlalchemy.types.INTEGER(), \
+            'favorite_count': sqlalchemy.types.INTEGER(), 'followers_count': sqlalchemy.types.INTEGER(), \
+            'friends_count': sqlalchemy.types.INTEGER(), 'date': sqlalchemy.DateTime(), 'tweettime': sqlalchemy.types.VARCHAR(), \
+            'sentiment': sqlalchemy.types.INTEGER()})
 
-        return test_predicted
+        return tableName
     except Exception as e:
-        print(str(e))
         return "Something is wrong with sentimentAnalysis method"  
 
 def preprocessingDataset(df, tweetColumnName, isTrainData):
     """
     This method will pre-process the dataset
     """
-
-    # Change all to lowercase letters
-    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x.lower() for x in x.split()))
-
-    # Remove punctuation
-    df[tweetColumnName] = df[tweetColumnName].str.replace('[^\w\s]', '')
-
-    # Remove stopwords
-    stop = stopwords.words('english')
-    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x for x in x.split() if x not in stop))
-
-    if isTrainData:
-        # Remove uncommon words - can become noise
-        freq = pd.Series(' '.join(df[tweetColumnName]).split()).value_counts()[-10:]
-        freq = list(freq.index)
-        df[tweetColumnName] = df[tweetColumnName].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
 
     # Tokenize each tweet and save into data frame
     listOfTokenizedTweets = []
@@ -758,16 +910,32 @@ def preprocessingDataset(df, tweetColumnName, isTrainData):
         listOfTokenizedTweets.append(tokenized_word)
     df[tweetColumnName] = listOfTokenizedTweets
 
+    # Change all to lowercase letters
+    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y.lower() for y in x])
+
+    # Remove punctuation
+    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if re.search('^[a-z]+$', y)])
+    """
+    # Remove stopwords
+    stop = stopwords.words('english')
+    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if y not in stop])
+    """
     # Stemming each tweet
     stemmer = PorterStemmer()
     df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [stemmer.stem(y) for y in x])
+    """
+    if isTrainData:
+        # Remove uncommon words - can become noise
+        freq = pd.Series(' '.join(df[tweetColumnName]).split()).value_counts()[-10:]
+        freq = list(freq.index)
+        df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if y not in freq])
+    """
+    # Convert processed tweets from data frame to a list
+    processedTweets = df[tweetColumnName].tolist()
 
-    # Convert stemmed tweets from data frame to a list
-    listOfStemmedTweets = df[tweetColumnName].tolist()
-
-    # Rejoin the tokenize words into a sentence after stemming as count vectorizer need it to be a string
+    # Rejoin the tokenize words into a sentence after preprocessing as count vectorizer need it to be a string
     stringOfTokenizedTweets = []
-    for x in listOfStemmedTweets:
+    for x in processedTweets:
         sentenceTweet = (' '.join(x))
         stringOfTokenizedTweets.append(sentenceTweet)
 
@@ -823,9 +991,65 @@ def trainSentimentAnalysisModels():
     # Best hyperparameters to use for model
     print(clf.best_params_)
 
+    # Fit full data into model
+    X_train, X_test, y_train, y_test = train_test_split(stringOfTokenizedTweets, listOfLabels, test_size=0, random_state=0)
+    clf.fit(X_train, y_train)
+
     # Save model into file
     pickle.dump(clf, open(os.getcwd()+'/sentimentanalysis.pickle', "wb")) #binary write
 
     return ""
 
-
+def sentimentResultAnalysis(tablename, tablename2):
+    positivesentiment = connection.execute("SELECT date, COUNT(*) FROM `" +  tablename +"` GROUP BY date,sentiment HAVING sentiment=1");
+    negativesentiment = connection.execute("SELECT date, COUNT(*) FROM `" +  tablename +"` GROUP BY date,sentiment HAVING sentiment=0");
+    allcounts = connection.execute("SELECT date,SUM(retweet_count) as 'retweet_count',SUM(favorite_count) as 'favorite_count',SUM(followers_count) as 'followers_count',SUM(friends_count) as 'friends_count' FROM `dhltwt_tweets_w_sentiment_4` GROUP BY date");
+    variablesSecond = getNumericalColumnNamebi(tablename2);
+    selectstmt = str(str(variablesSecond).replace("'",""))[1:-1]
+    
+    secondTable = connection.execute("SELECT ActivityDate," + selectstmt + " FROM " + tablename2)
+    allPairs = {}
+    allPairs2 = {}
+    for result in allcounts:
+        currentKey = ""
+        subpair = {}
+        for x,y in result.items():
+            if (x=="date"):
+                currentKey = str(y)
+            else:
+                subpair[x] = int(str(y))
+        allPairs[currentKey] = subpair
+    for result in secondTable:
+        currentKey = ""
+        subpair = {}
+        for x,y in result.items():
+            
+            if (x.lower() == "date" or x.lower() == "activitydate"):
+                currentKey = str(y)
+            else:
+                subpair[x] = int(str(y))
+        allPairs2[currentKey] = subpair
+    for result in positivesentiment:
+        currentKey = ""
+        valy = ""
+        for x,y in result.items():
+            if(x=="date"):
+                currentKey = str(y)
+            else:
+                valy = int(str(y))
+        currentSubPairs = allPairs[currentKey]
+        currentSubPairs["positive_sentiment"] = valy
+        allPairs[currentKey] = currentSubPairs
+    for result in negativesentiment:
+        currentKey = ""
+        valy = ""
+        for x,y in result.items():
+            if(x=="date"):
+                currentKey = str(y)
+            else:
+                valy = int(str(y))
+        currentSubPairs = allPairs[currentKey]
+        currentSubPairs["negative_sentiment"] = valy
+        allPairs[currentKey] = currentSubPairs
+    
+    return allPairs,allPairs2
