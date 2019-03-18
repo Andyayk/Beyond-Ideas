@@ -68,6 +68,7 @@
     "mui-datatables": "^2.0.0-beta.56",
     "node-correlation": "^1.0.2",
     "plotly.js": "^1.44.1",
+    "react-d3-cloud": "^0.7.0",
     "react-html-parser": "^2.0.2",
     "react-mui-datatables": "^1.1.2",
     "react-plotly.js": "^2.2.0",

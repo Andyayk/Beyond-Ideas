@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Plot from 'react-plotly.js';
+import WordCloud from 'react-d3-cloud'
 // import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import MUIDataTable from 'mui-datatables';
 
@@ -22,7 +23,10 @@ class Analysisbi extends Component {
       tableboolean: false,
       tableboolean: false,
       topiccolumns: "",
-      topicvalues: ""         
+      topicvalues: "",
+      textdata: [],
+      fontSizeMapper: word => Math.log2(word.value) * 5,
+      rotate: word => word.value % 360
     };
 
     this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -33,6 +37,8 @@ class Analysisbi extends Component {
     this.barChart = this.barChart.bind(this);
 
     this.generatePlot = this.generatePlot.bind(this); 
+
+    this.generateWordCloud = this.generateWordCloud.bind(this);
    
     this.formSubmitted = this.formSubmitted.bind(this);   
 
@@ -165,6 +171,9 @@ class Analysisbi extends Component {
       var x = document.getElementById("message2");
       x.style.display = "none";
 
+      var x = document.getElementById("message3");
+      x.style.display = "none";
+
       this.setState({                  
         columns: data['columns'],
         values: data['values'],
@@ -176,6 +185,17 @@ class Analysisbi extends Component {
         tablename: this.state.selectedtable                     
       });
     });  
+  }
+
+  generateWordCloud(){
+    let textdata = [
+      {text:'first',value:200},
+      {text:'second',value:100},
+    ];
+
+    this.setState({
+      textdata: textdata
+    })
   }      
 
   //handle form submission
@@ -186,7 +206,8 @@ class Analysisbi extends Component {
       hideLoadingBar: false
     });  
 
-    this.generatePlot();    
+    this.generatePlot();   
+    this.generateWordCloud(); 
   }  
 
    //rendering the html for chart
@@ -289,6 +310,38 @@ class Analysisbi extends Component {
           </tbody>   
           </table>  
           </div>
+
+          <table style={{"width":"100%"}}>
+          <tbody>                       
+            <tr></tr>
+            <tr>
+              <td align="center" style={{"width":"80%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
+              <table id="message3">
+              <tbody>
+                <tr>
+                <td align="center" style={{"width":"1100px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                  <label style={{"verticalAlign":"center"}}>Word Cloud Display Area</label>          
+                </td>                           
+                </tr>
+              </tbody>   
+              </table> 
+              <table>
+              <tbody>  
+                <tr>
+                  <td>        
+                    <WordCloud
+                      data={this.state.textdata}
+                      fontSizeMapper={this.state.fontSizeMapper}
+                      rotate={this.state.rotate}
+                    />
+                  </td>                   
+                </tr>
+              </tbody>   
+              </table>                  
+              </td>          
+            </tr>
+          </tbody>   
+          </table>  
 
           <table>
           <tbody>
