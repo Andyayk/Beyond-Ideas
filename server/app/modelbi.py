@@ -19,7 +19,7 @@ from io import StringIO
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from pandas import DataFrame
-
+nltk.download()
 
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
 
@@ -662,12 +662,12 @@ def topicModeling(data):
     # vecs = docs2vecs(docs, dictionary)
 
     # Creating the object for LDA model using gensim library
-    Lda = gensim.models.ldamodel.LdaModel
+    # Lda = gensim.models.ldamodel.LdaModel
 
     #Running and Trainign LDA model on the document term matrix.
-    ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
+    # ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
 
-    print(ldamodel.print_topics(num_topics=3, num_words=3))[0.168*health + 0.083*sugar + 0.072*bad,0.061*consume + 0.050*drive + 0.050*sister,0.049*pressur + 0.049*father + 0.049*sister]
+    # print(ldamodel.print_topics(num_topics=3, num_words=3))[0.168*health + 0.083*sugar + 0.072*bad,0.061*consume + 0.050*drive + 0.050*sister,0.049*pressur + 0.049*father + 0.049*sister]
 
     # Call LDA model from disk and print the topics for each document in the TestLDA
     # lda_disk=gensim.models.ldamodel.LdaModel.load("sg_lda")
