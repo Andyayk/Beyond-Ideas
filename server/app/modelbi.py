@@ -705,21 +705,7 @@ def corpus2docs(corpus):
     docs5 = [[wordnet_lemmatizer.lemmatize(w) for w in doc] for doc in docs4] #lemmatize    
     docs6 = [[w for w in doc if len(w) >= 2] for doc in docs5] #remove single letters
 
-    #remove common words - can become noise
-    freqarray = []
-    for tweet in docs6:
-        for w in tweet:
-            freqarray.append(w)
-    
-    fdist = nltk.FreqDist(freqarray)
-    mostcommon = fdist.most_common(2)
-    freq = []
-    for tuples in mostcommon:
-        freq.append(tuples[0])
-
-    docs7 = [[w for w in doc if w not in freq] for doc in docs6] #remove top 2 words
-    
-    return docs7
+    return docs6
 
 def docs2vecs(docs, dictionary):
     """
@@ -787,8 +773,14 @@ def topicModeling(tablename, usertablename, userID):
         # Convert text into vectors
         tweets_vecs = docs2vecs(tweets_docs, tweets_dictionary)        
 
+        # Computes the inverse document frequencies for all words in the input corpus
+        tfidf = gensim.models.TfidfModel(tweets_vecs)
+
+        # Transform each tweet to tfidf
+        tweets_vecs_w_tfidf = [tfidf[vec] for vec in tweets_vecs]
+
         # Train lda model with the unseen test dataset
-        lda = gensim.models.ldamodel.LdaModel(corpus=tweets_vecs, 
+        lda = gensim.models.ldamodel.LdaModel(corpus=tweets_vecs_w_tfidf, 
                                               id2word=tweets_dictionary,
                                               num_topics=nooftopics,  
                                               random_state=0,
