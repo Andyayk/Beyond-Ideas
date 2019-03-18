@@ -277,7 +277,7 @@ class Analysisbi extends Component {
               <table id="message">
               <tbody>
                 <tr>
-                <td align="center" style={{"width":"1100px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                <td align="center" style={{"width":"1000px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
                   <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
                 </td>                           
                 </tr>
@@ -320,7 +320,7 @@ class Analysisbi extends Component {
               <table id="message3">
               <tbody>
                 <tr>
-                <td align="center" style={{"width":"1100px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                <td align="center" style={{"width":"1000px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
                   <label style={{"verticalAlign":"center"}}>Word Cloud Display Area</label>          
                 </td>                           
                 </tr>
@@ -352,13 +352,13 @@ class Analysisbi extends Component {
                   <table id="message2">
                     <tbody>
                       <tr>
-                        <td align="center" style={{"width":"1100px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                        <td align="center" style={{"width":"1000px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
                           <label style={{"verticalAlign":"center"}}>Dataset Display Area</label>                                                     
                         </td>                           
                       </tr>
                      </tbody>
                   </table>    
-                  <div className="outputtable" style={{"width":"1100px","maxWidth":"1100px"}}>
+                  <div className="outputtable" style={{"width":"1000px","maxWidth":"1100px"}}>
                     {this.state.tableboolean?(                 
                       <MUIDataTable
                          title={"Dataset: "+this.state.tablename}

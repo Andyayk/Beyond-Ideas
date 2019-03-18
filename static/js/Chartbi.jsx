@@ -605,16 +605,19 @@ class Chartbi extends Component {
       return (
          <div>
             <div className="content">
-            <table style={{"width":"100%"}}>
+            <form action="/correlationpagebi">             
+              <button className="back vis-back" type="submit">Back</button>  
+            </form> 
+            <br/>            
+            <table style={{"width":"1000px"}}>   
             <tbody>
-            <tr>
-               <tr><tr>             
+              <tr>            
                   <td>   
                   <form name="submitForm" method="POST" onSubmit={this.formSubmitted}>                       
-                     <table align="center">
+                     <table align="left">
                      <tbody>
                         <tr>
-                          <td style={{"width":"350px", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                          <td style={{"width":"300px", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">
                                 <div className="cardtitle">
@@ -689,7 +692,7 @@ class Chartbi extends Component {
                           <td style={{"width":"50px", "height":"150px"}} valign="center" align="center">
                             <img src={arrowicon} width="45" height="45" />
                           </td>
-                          <td style={{"width":"350px", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                          <td style={{"width":"300px", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">                           
                                 <div className="cardtitle">
@@ -730,7 +733,7 @@ class Chartbi extends Component {
                           <td style={{"width":"50px", "height":"150px"}} valign="center" align="center">
                             <img src={arrowicon} width="45" height="45" />
                           </td>                        
-                          <td style={{"width":"350px", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                          <td style={{"width":"300px", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">
                                 <div className="cardtitle">
@@ -821,11 +824,11 @@ class Chartbi extends Component {
                   </td>
                   </tr>
                   <tr>
-                  <td align="center" style={{"width":"1100px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
+                  <td align="center" style={{"width":"1000px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                      <table id="message">
                        <tbody>
                           <tr>
-                             <td align="center" style={{"width":"1100px", "height":"580px", "borderRadius":"12px", "padding":"20px"}} bgcolor="#FAFAFA">
+                             <td align="center" style={{"width":"1000px", "height":"580px", "borderRadius":"12px", "padding":"20px"}} bgcolor="#FAFAFA">
                                 <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
                              </td>                           
                           </tr>
@@ -834,14 +837,8 @@ class Chartbi extends Component {
                      {this.state.scatterplot}   
                   </td>
                   </tr>
-               </tr>
-               </tr>
             </tbody>   
-            </table>  
-            <br/> 
-            <form action="/correlationpagebi">             
-              <button className="back vis-back" type="submit">Back</button>  
-            </form>               
+            </table>             
             </div>                                 
          </div>
       );

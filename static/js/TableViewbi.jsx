@@ -480,10 +480,10 @@ class TableViewbi extends Component {
                   <table>
                      <tbody>
                			<tr>
-               				<td align="center" style={{"overflow":"auto", "maxWidth":"1155px", "position":"relative", "verticalAlign":"top"}}>
+               				<td align="center" style={{"overflow":"auto", "maxWidth":"1000px", "position":"relative", "verticalAlign":"top"}}>
                               <div style={{"overflowX":"auto"}}>
 
-                                 <div className="outputtable" style={{"width":"1150px","maxWidth":"1150px"}}>
+                                 <div className="outputtable" style={{"width":"1000px","maxWidth":"1150px"}}>
 
                                     {this.state.combinedtableboolean?(   
                                      <MUIDataTable
@@ -504,19 +504,19 @@ class TableViewbi extends Component {
                   <table>
                   <tbody>
                      <tr>
-                        <td align="center" style={{"overflow":"auto", "maxWidth":"550px", "verticalAlign":"top", "align":"center"}}>
+                        <td align="center" style={{"overflow":"auto", "maxWidth":"1000px", "verticalAlign":"top", "align":"center"}}>
                            <div style={{"overflowX":"auto"}}>
                               <table id="data1area">
                                  <tbody>
                                     <tr>
-                                       <td align="center" style={{"width":"550px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                                       <td align="center" style={{"width":"1000px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
                                              <label style={{"verticalAlign":"center"}}>Dataset One Display Area</label>                                                     
                                        </td>                           
                                     </tr>
                                  </tbody>
                               </table>
 
-                              <div className="outputtable" style={{"width":"550px","maxWidth":"550px"}}>
+                              <div className="outputtable" style={{"width":"1000px","maxWidth":"1000px"}}>
                                  {this.state.table1boolean?(   
                                   <MUIDataTable
                                      title={"Dataset One: "+this.state.exporttable1}
@@ -526,22 +526,22 @@ class TableViewbi extends Component {
                                   ):null
                                  } 
                               </div>               
-
                            </div>
-                        </td><td></td><td></td><td></td><td></td><td></td>
-                        <td align="center" style={{"overflow":"auto", "maxWidth":"550px", "verticalAlign":"top", "align":"center"}}>
+                        </td>
+                     </tr><tr>
+                        <td align="center" style={{"overflow":"auto", "maxWidth":"1000px", "verticalAlign":"top", "align":"center"}}>
                            <div style={{"overflowX":"auto"}}>
                               <table id="data2area">
                               <tbody>
                                  <tr>
-                                    <td align="center" style={{"width":"550px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                                    <td align="center" style={{"width":"1000px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
                                           <label style={{"verticalAlign":"center"}}>Dataset Two Display Area</label>                  
                                     </td>                           
                                  </tr>
                               </tbody>
                               </table> 
 
-                              <div className="outputtable" style={{"width":"550px","maxWidth":"550px"}}>
+                              <div className="outputtable" style={{"width":"1000px","maxWidth":"1000px"}}>
                                  {this.state.table2boolean?(  
                                   <MUIDataTable
                                      title={"Dataset Two: "+this.state.exporttable2}
