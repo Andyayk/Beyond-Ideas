@@ -197,6 +197,9 @@ class WebCrawlingbi extends Component {
       return (
          <div>
             <div className="content">
+               <form action="/webcrawlingpagebi"> 
+                  <button className="back vis-back" type="submit">Back</button>  
+               </form>                         
                <table style={{"width":"100%"}}>
                <tbody>
                   <tr>          
@@ -205,17 +208,17 @@ class WebCrawlingbi extends Component {
                            <table align="left">
                            <tbody>
                               <tr>
-                                 <td style={{"width":"350px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"300px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
                                  <td style={{"width":"50px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
-                                 <td style={{"width":"350px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center">
+                                 <td style={{"width":"300px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center">
                                     <img src={WeatherCrawlIcon} width="150" height="150" />
                                  </td>
                                  <td style={{"width":"50px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
-                                 <td style={{"width":"350px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"300px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
                               </tr>
                               <br/>
                               <tr>
-                                 <td style={{"width":"350px", "height":"250px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                 <td style={{"width":"300px", "height":"250px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                                     <tr>
                                        <div className="cardtitle">
                                           1. Select Date Range
@@ -247,7 +250,7 @@ class WebCrawlingbi extends Component {
                                  <td style={{"width":"50px", "height":"250px"}} valign="center" align="center">
                                     <img src={arrowicon} width="45" height="45" />
                                  </td>                                 
-                                 <td style={{"width":"350px", "height":"250px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                 <td style={{"width":"300px", "height":"250px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                                     <tr>
                                        <div className="cardtitle">
                                           2. Select Country
@@ -301,7 +304,7 @@ class WebCrawlingbi extends Component {
                                  <td style={{"width":"50px", "height":"250px"}} valign="center" align="center">
                                     <img src={arrowicon} width="45" height="45" />
                                  </td>                                   
-                                 <td style={{"width":"350px", "height":"250px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                 <td style={{"width":"300px", "height":"250px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                                     <tr>   
                                        <div className="cardtitle">
                                           3. Enter Dataset Name
@@ -342,11 +345,7 @@ class WebCrawlingbi extends Component {
                      </td>
                   </tr>         
                </tbody>     
-               </table> 
-               <br/> 
-               <form action="/webcrawlingpagebi"> 
-                  <button className="back vis-back" type="submit">Back</button>  
-               </form>               
+               </table>   
             </div>
          </div>
       );
