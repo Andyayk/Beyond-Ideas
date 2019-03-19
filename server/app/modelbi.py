@@ -905,10 +905,12 @@ def sentimentAnalysis(tablename, usertablename, userID):
 
         # Create data table with positive sentiment tweets selected from sentiment data table
         tableName2 = tablename + "_w_+sentiment_" + str(userID)
+        connection.execute("DROP TABLE IF EXISTS `" + tableName2 + "`")
         connection.execute("CREATE TABLE `" + tableName2 + "` AS SELECT * FROM `" + tableName + "` where sentiment = 1")
 
         # Create data table with negative sentiment tweets selected from sentiment data table
         tableName3 = tablename + "_w_-sentiment_" + str(userID)
+        connection.execute("DROP TABLE IF EXISTS `" + tableName3 + "`")
         connection.execute("CREATE TABLE `" + tableName3 + "` AS SELECT * FROM `" + tableName + "` where sentiment = 0")
 
         tableNames = [tableName, tableName2, tableName3]
