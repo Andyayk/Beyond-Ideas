@@ -588,6 +588,10 @@ class AutoChartbi extends Component {
 
          <div>
             <div className="content">
+            <form action="/correlationpagebi">             
+              <button className="back vis-back" type="submit">Back</button>  
+            </form>     
+            <br/>            
             <table style={{"width":"100%"}}>
             <tbody>
                <tr>             
@@ -711,10 +715,6 @@ class AutoChartbi extends Component {
                </tr>
             </tbody>   
             </table>  
-            <br/> 
-            <form action="/correlationpagebi">             
-              <button className="back vis-back" type="submit">Back</button>  
-            </form>             
             </div>                                 
          </div>
       );
