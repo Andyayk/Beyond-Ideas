@@ -25,9 +25,12 @@ class Analysisbi extends Component {
       tableboolean: false,
       topiccolumns: "",
       topicvalues: "",
-      textdata: [],
+      topicvalues2: "",
+      topicvalues3: "",
+      textdataPositive: [],
+      textdataNegative: [],
       fontSizeMapper: word => Math.log2(word.value) * 5,
-      rotate: word => word.value % 360
+      rotate: word => word.value % 180
     };
 
     this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -180,22 +183,45 @@ class Analysisbi extends Component {
         values: data['values'],
         topiccolumns: data['topiccolumns'],
         topicvalues: data['topicvalues'],
+        topicvalues2: data['topicvalues2'],
+        topicvalues3: data['topicvalues3'],
         hideLoadingBar: true, //hide loading button
         tableboolean: true,
         tableboolean2: true,
         tablename: this.state.selectedtable                     
       });
+      this.generateWordCloud(); 
     });  
   }
 
   generateWordCloud(){
-    let textdata = [
-      {text:'first',value:200},
-      {text:'second',value:100},
-    ];
+    let textdataPositive = [];
+    let textdataNegative = [];
+      // {text:'first',value:200},
+      // {text:'second',value:100},
+
+    let topicvalues2 = this.state.topicvalues2
+    let topicvalues3 = this.state.topicvalues3;
+    
+    for (let i = 0; i < topicvalues2.length; i++) {
+      let topicvalues2words = topicvalues2[i][1];
+      let words = topicvalues2words.split(',');
+      for (let k = 0; k < words.length; k++) {
+        textdataPositive.push({'text':words[k],'value':200});
+      }
+    }
+
+    for (let i = 0; i < topicvalues3.length; i++) {
+      let topicvalues3words = topicvalues3[i][1];
+      let words = topicvalues3words.split(',');
+      for (let k = 0; k < words.length; k++) {
+        textdataNegative.push({'text':words[k],'value':200});
+      }
+    }
 
     this.setState({
-      textdata: textdata
+      textdataPositive: textdataPositive,
+      textdataNegative: textdataNegative
     })
   }      
 
@@ -208,7 +234,6 @@ class Analysisbi extends Component {
     });  
 
     this.generatePlot();   
-    this.generateWordCloud(); 
   }  
 
    //rendering the html for chart
@@ -329,13 +354,28 @@ class Analysisbi extends Component {
               <table>
               <tbody>  
                 <tr>
-                  <td>        
+                  <td align="center">   
+                    <h1>
+                      <span style={{"color":"#4CAF50"}}>Positive Keywords</span> in Tweets
+                    </h1>     
+                    <br/>
                     <WordCloud
-                      data={this.state.textdata}
+                      data={this.state.textdataPositive}
                       fontSizeMapper={this.state.fontSizeMapper}
                       rotate={this.state.rotate}
                     />
-                  </td>                   
+                  </td>  
+                  <td align="center">    
+                     <h1>
+                      <span style={{"color":"red"}}>Negative Keywords</span> in Tweets
+                    </h1>
+                    <br/>
+                    <WordCloud
+                      data={this.state.textdataNegative}
+                      fontSizeMapper={this.state.fontSizeMapper}
+                      rotate={this.state.rotate}
+                    />
+                  </td>            
                 </tr>
               </tbody>   
               </table>                  
