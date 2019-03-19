@@ -354,13 +354,30 @@ class Analysisbi extends Component {
               <table>
               <tbody>  
                 <tr>
-                  <td>        
+                  <td>   
+                    <br/>
+                    <div className="cardtitle">
+                      <span style={{"color":"#4CAF50"}}>Positive Keywords</span> in Tweets
+                    </div>     
+                    <br/>
                     <WordCloud
                       data={this.state.textdataPositive}
                       fontSizeMapper={this.state.fontSizeMapper}
                       rotate={this.state.rotate}
                     />
-                  </td>                   
+                  </td>  
+                  <td>   
+                     <br/>  
+                     <div className="cardtitle">
+                      <span style={{"color":"red"}}>Negative Keywords</span> in Tweets
+                    </div>
+                    <br/>
+                    <WordCloud
+                      data={this.state.textdataNegative}
+                      fontSizeMapper={this.state.fontSizeMapper}
+                      rotate={this.state.rotate}
+                    />
+                  </td>            
                 </tr>
               </tbody>   
               </table>                  
