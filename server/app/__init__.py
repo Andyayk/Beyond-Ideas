@@ -894,26 +894,37 @@ def create_app(config_name):
             if current_user.is_authenticated:      
                 usertablename = tablename + "_" + str(current_user.id)   
 
-            tableName = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id) 
+            tableName = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)[0]
+            tableName2 = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)[1]
+            tableName3 = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)[2]
 
-            results = modelbi.getSentimentDataForTableDisplay(tableName) 
+            results = modelbi.getSentimentDataForTableDisplay(tableName)
 
             aggregatedsentiment = modelbi.getSentimentDataForChart(tableName) 
 
             columns = results[0] #column names
             values = results[1] #all values
 
+            #topic modeling overall result 
             results2 = modelbi.topicModeling(tablename, usertablename, current_user.id) 
+
+            #topic modeling result for positive and negative sentiment separately
+            results3 = modelbi.topicModeling(tableName2, tableName2, current_user.id) 
+            results4 = modelbi.topicModeling(tableName3, tableName3, current_user.id) 
 
             topiccolumns = results2[0]
             topicvalues = results2[1]
+            topicvalues2 = results3[1]
+            topicvalues3 = results4[1]
 
             return jsonify(
                 columns = columns,
                 values = values,
                 aggregatedsentiment = aggregatedsentiment,
                 topiccolumns = topiccolumns,
-                topicvalues = topicvalues
+                topicvalues = topicvalues,
+                topicvalues2 = topicvalues2,
+                topicvalues3 = topicvalues3
             )
 
         @app.route("/twittertrain/", methods = ['POST'])
