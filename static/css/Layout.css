@@ -19,6 +19,7 @@
     "logo header"
     "sidebar content";
   font-family: "Nunito Sans", sans-serif;
+  overflow-x: scroll;
 }
 
 .header-layout {
