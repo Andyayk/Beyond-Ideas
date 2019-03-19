@@ -180,11 +180,14 @@ class Analysisbi extends Component {
         values: data['values'],
         topiccolumns: data['topiccolumns'],
         topicvalues: data['topicvalues'],
+        // topicvalues2: data['topicvalues2'],
+        // topicvalues3: data['topicvalues3'],
         hideLoadingBar: true, //hide loading button
         tableboolean: true,
         tableboolean2: true,
         tablename: this.state.selectedtable                     
       });
+      // console.log(this.state.topicvalues2);
     });  
   }
 

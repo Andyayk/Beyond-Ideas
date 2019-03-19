@@ -922,9 +922,9 @@ def create_app(config_name):
                 values = values,
                 aggregatedsentiment = aggregatedsentiment,
                 topiccolumns = topiccolumns,
-                topicvalues = topicvalues,
-                topicvalues2 = topicvalues2,
-                topicvalues3 = topicvalues3
+                topicvalues = topicvalues
+                # topicvalues2 = topicvalues2,
+                # topicvalues3 = topicvalues3
             )
 
         @app.route("/twittertrain/", methods = ['POST'])
