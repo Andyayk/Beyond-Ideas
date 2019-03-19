@@ -733,6 +733,52 @@ def docs2vecs(docs, dictionary):
     vecs = [dictionary.doc2bow(doc) for doc in docs]
     return vecs
 
+def gettop_n_words(usertablename):
+
+    try:
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
+
+        df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
+
+    # Creating the object for LDA model using gensim library
+    # Lda = gensim.models.ldamodel.LdaModel
+
+    #Running and Trainign LDA model on the document term matrix.
+    # ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
+
+    # print(ldamodel.print_topics(num_topics=3, num_words=3))[0.168*health + 0.083*sugar + 0.072*bad,0.061*consume + 0.050*drive + 0.050*sister,0.049*pressur + 0.049*father + 0.049*sister]
+
+        # copydf = df.copy()
+
+        tweetColumnName = 'tweet'
+        nooftopics = 5
+
+        # Preprocess the text
+        tweets_docs = corpus2docs(df[tweetColumnName].tolist())
+
+        # Generate a vocabulary of text
+        tweets_dictionary = gensim.corpora.Dictionary(tweets_docs)
+
+        # Convert text into vectors
+        tweets_vecs = docs2vecs(tweets_docs, tweets_dictionary) 
+
+        # Computes the inverse document frequencies for all words in the input corpus
+        tfidf = gensim.models.TfidfModel(tweets_vecs)
+
+        # Transform each tweet to tfidf
+        tweets_vecs_w_tfidf = [tfidf[vec] for vec in tweets_vecs]
+
+        tfidf_weights = {tweets_dictionary.get(id): value
+                     for tweets_docs in tweets_vecs_w_tfidf
+                     for id, value in tweets_docs}
+
+        sorted_tfidf_weights = sorted(tfidf_weights.items(), key=lambda w: w[1])[:20]
+
+        return sorted_tfidf_weights 
+    except Exception as e:
+        print(str(e))
+        return "Something is wrong with gettop_n_words method"  
+
 def format_topics_sentences(ldamodel, corpus, data):
     """
         This method will find the most dominant topic
