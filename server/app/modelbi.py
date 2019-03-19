@@ -546,6 +546,7 @@ def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
 
     tweetsPerQuery = 100
     tweets = []
+    tweetslist = []
     apicalllimit = ""
     apicallreset = ""
     maxTweets = int(nooftweets)
@@ -621,8 +622,8 @@ def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
 
                 tweetid = str(result['id'])
                 userid = str(result['user']['id'])
-                name = re.sub(r'[^a-zA-Z]+', ' ', result['user']['name'])
-                tweet = re.sub(r'https?://\S+|[^a-zA-Z]+', ' ', result['text'])
+                name = result['user']['name'].encode('ascii','ignore').decode("utf-8")
+                tweet = result['text'].encode('ascii','ignore').decode("utf-8")
                 retweet_count = str(result['retweet_count'])
                 favorite_count = str(result['favorite_count'])
                 followers_count = str(result['user']['followers_count'])
@@ -634,9 +635,11 @@ def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
                     + "\"" + retweet_count + "\"" + "," + "\"" + favorite_count + "\"" + "," + "\"" + followers_count + "\"" \
                     + "," + "\"" + friends_count + "\"" + "," + "\"" + date + "\"" + "," + "\"" + tweettime + "\""
 
+                tweetslist.append([tweetid, userid, name, tweet, retweet_count, favorite_count, followers_count, friends_count, date, tweettime])
+
                 tweets.append(row)                       
         except Exception as e:
-            #print(str(e))
+            print(str(e))
             return ["no tweets", "Twitter Requests Limit Reached", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(twitter.get_lastfunction_header('x-rate-limit-reset'))))]
 
     apicalllimit = twitter.get_lastfunction_header('x-rate-limit-remaining')
@@ -645,14 +648,14 @@ def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
     if saveToDB == "true":        
         tableName = filename + "_tweets_" + str(userID)
         connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
-        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), \
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255) COLLATE utf8_unicode_ci, \
             tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), \
             friends_count INT(255), date date, tweettime VARCHAR(255));")
         
         connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
         connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
-        status = insertToDatabase(headerArray, tweets, tableName)
+        status = insertTweetsToDatabase(headerArray, tweetslist, tableName)
 
         results = ["Successfully saved twitter data into the database", apicalllimit, apicallreset]        
         return results
@@ -666,7 +669,7 @@ def twitterCrawlerbi(tags, nooftweets, datebefore, saveToDB, userID, filename):
 
         results = [returnStr, apicalllimit, apicallreset]
         return results   
-  
+
 def insertToDatabase(header, bodyArray, tableName):
     """
         This method will insert to database
@@ -683,6 +686,20 @@ def insertToDatabase(header, bodyArray, tableName):
         connection.execute(sqlstmt)
         return True
     except Exception as e:
+        return False
+  
+def insertTweetsToDatabase(header, bodyArray, tableName):
+    """
+        This method will insert to database
+    """    
+    try:
+        sqlstmt = "INSERT INTO `" + tableName + "` (" + header + ") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        
+        bodyArray = tuple(map(tuple, bodyArray))
+        connection.execute(sqlstmt, bodyArray)
+        return True
+    except Exception as e:
+        print(e)
         return False
 
 def corpus2docs(corpus):
@@ -871,7 +888,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
 
         tableName = tablename + "_w_sentiment_" + str(userID)
         connection.execute("DROP TABLE IF EXISTS `" + tableName + "`")
-        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255), \
+        connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255) COLLATE utf8_unicode_ci, \
             tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), \
             friends_count INT(255), date date, tweettime VARCHAR(255), sentiment_score FLOAT(4,2), sentiment INT(255));")
         
