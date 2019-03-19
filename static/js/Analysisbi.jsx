@@ -30,7 +30,8 @@ class Analysisbi extends Component {
       textdataPositive: [],
       textdataNegative: [],
       fontSizeMapper: word => Math.log2(word.value) * 5,
-      rotate: word => word.value % 180
+      rotate: word => word.value % 180,
+      test: ""
     };
 
     this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -185,12 +186,14 @@ class Analysisbi extends Component {
         topicvalues: data['topicvalues'],
         topicvalues2: data['topicvalues2'],
         topicvalues3: data['topicvalues3'],
+        test:data['test'],
         hideLoadingBar: true, //hide loading button
         tableboolean: true,
         tableboolean2: true,
-        tablename: this.state.selectedtable                     
+        tablename: this.state.selectedtable           
       });
       this.generateWordCloud(); 
+      console.log(this.state.test);
     });  
   }
 

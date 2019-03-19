@@ -905,6 +905,9 @@ def create_app(config_name):
             columns = results[0] #column names
             values = results[1] #all values
 
+            #testing for sentiment wordcloud
+            test = modelbi.gettop_n_words(tableName2);
+
             #topic modeling overall result 
             results2 = modelbi.topicModeling(tablename, usertablename, current_user.id) 
 
@@ -924,7 +927,8 @@ def create_app(config_name):
                 topiccolumns = topiccolumns,
                 topicvalues = topicvalues,
                 topicvalues2 = topicvalues2,
-                topicvalues3 = topicvalues3
+                topicvalues3 = topicvalues3,
+                test = test
             )
 
         @app.route("/twittertrain/", methods = ['POST'])
