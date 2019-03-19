@@ -891,7 +891,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
         connection.execute("CREATE TABLE `" + tableName + "` (tweetid VARCHAR(255), userid VARCHAR(255), name VARCHAR(255) COLLATE utf8_unicode_ci, \
             tweet VARCHAR(255) COLLATE utf8_unicode_ci, retweet_count INT(255), favorite_count INT(255), followers_count INT(255), \
             friends_count INT(255), date date, tweettime VARCHAR(255), sentiment_score FLOAT(4,2), sentiment INT(255));")
-        
+
         connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
         connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
@@ -902,6 +902,14 @@ def sentimentAnalysis(tablename, usertablename, userID):
             'favorite_count': sqlalchemy.types.INTEGER(), 'followers_count': sqlalchemy.types.INTEGER(), \
             'friends_count': sqlalchemy.types.INTEGER(), 'date': sqlalchemy.DateTime(), 'tweettime': sqlalchemy.types.VARCHAR(), \
             'sentiment_score': sqlalchemy.types.FLOAT(), 'sentiment': sqlalchemy.types.INTEGER()})
+
+        # Create data table with positive sentiment tweets selected from sentiment data table
+        tableName2 = tablename + "_w_+sentiment_" + str(userID)
+        connection.execute("CREATE TABLE `" + tableName2 + "` AS SELECT * FROM `" + tableName + "` where sentiment = 1")
+
+        # Create data table with negative sentiment tweets selected from sentiment data table
+        tableName2 = tablename + "_w_-sentiment_" + str(userID)
+        connection.execute("CREATE TABLE `" + tableName2 + "` AS SELECT * FROM `" + tableName + "` where sentiment = 0")
 
         return tableName
     except Exception as e:
