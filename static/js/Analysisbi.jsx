@@ -27,7 +27,8 @@ class Analysisbi extends Component {
       topicvalues: "",
       topicvalues2: "",
       topicvalues3: "",
-      textdata: [],
+      textdataPositive: [],
+      textdataNegative: [],
       fontSizeMapper: word => Math.log2(word.value) * 5,
       rotate: word => word.value % 180
     };
@@ -194,7 +195,8 @@ class Analysisbi extends Component {
   }
 
   generateWordCloud(){
-    let textdata = [];
+    let textdataPositive = [];
+    let textdataNegative = [];
       // {text:'first',value:200},
       // {text:'second',value:100},
 
@@ -205,12 +207,21 @@ class Analysisbi extends Component {
       let topicvalues2words = topicvalues2[i][1];
       let words = topicvalues2words.split(',');
       for (let k = 0; k < words.length; k++) {
-        textdata.push({'text':words[k],'value':200});
+        textdataPositive.push({'text':words[k],'value':200});
+      }
+    }
+
+    for (let i = 0; i < topicvalues3.length; i++) {
+      let topicvalues3words = topicvalues3[i][1];
+      let words = topicvalues3words.split(',');
+      for (let k = 0; k < words.length; k++) {
+        textdataNegative.push({'text':words[k],'value':200});
       }
     }
 
     this.setState({
-      textdata: textdata
+      textdataPositive: textdataPositive,
+      textdataNegative: textdataNegative
     })
   }      
 
@@ -345,7 +356,7 @@ class Analysisbi extends Component {
                 <tr>
                   <td>        
                     <WordCloud
-                      data={this.state.textdata}
+                      data={this.state.textdataPositive}
                       fontSizeMapper={this.state.fontSizeMapper}
                       rotate={this.state.rotate}
                     />
