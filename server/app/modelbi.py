@@ -908,10 +908,12 @@ def sentimentAnalysis(tablename, usertablename, userID):
         connection.execute("CREATE TABLE `" + tableName2 + "` AS SELECT * FROM `" + tableName + "` where sentiment = 1")
 
         # Create data table with negative sentiment tweets selected from sentiment data table
-        tableName2 = tablename + "_w_-sentiment_" + str(userID)
-        connection.execute("CREATE TABLE `" + tableName2 + "` AS SELECT * FROM `" + tableName + "` where sentiment = 0")
+        tableName3 = tablename + "_w_-sentiment_" + str(userID)
+        connection.execute("CREATE TABLE `" + tableName3 + "` AS SELECT * FROM `" + tableName + "` where sentiment = 0")
 
-        return tableName
+        tableNames = [tableName, tableName2, tableName3]
+
+        return tableNames
     except Exception as e:
         return "Something is wrong with sentimentAnalysis method"  
 
