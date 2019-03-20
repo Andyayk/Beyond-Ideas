@@ -25,13 +25,12 @@ class Analysisbi extends Component {
       tableboolean: false,
       topiccolumns: "",
       topicvalues: "",
-      topicvalues2: "",
-      topicvalues3: "",
+      topwords_positive: "",
+      topwords_negative: "",
       textdataPositive: [],
       textdataNegative: [],
-      fontSizeMapper: word => Math.log2(word.value) * 5,
-      rotate: word => word.value % 180,
-      test: ""
+      fontSizeMapper: word => Math.log2(word.value) * 15,
+      rotate: word => 10
     };
 
     this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -184,16 +183,16 @@ class Analysisbi extends Component {
         values: data['values'],
         topiccolumns: data['topiccolumns'],
         topicvalues: data['topicvalues'],
-        topicvalues2: data['topicvalues2'],
-        topicvalues3: data['topicvalues3'],
-        test:data['test'],
+        topwords_positive: data['topwords_positive'],
+        topwords_negative: data['topwords_negative'],
         hideLoadingBar: true, //hide loading button
         tableboolean: true,
         tableboolean2: true,
         tablename: this.state.selectedtable           
       });
+      console.log(this.state.topwords_positive);
+      console.log(this.state.topwords_negative);
       this.generateWordCloud(); 
-      console.log(this.state.test);
     });  
   }
 
@@ -203,25 +202,22 @@ class Analysisbi extends Component {
       // {text:'first',value:200},
       // {text:'second',value:100},
 
-    let test = this.state.test
-    let topicvalues2 = this.state.topicvalues2
-    let topicvalues3 = this.state.topicvalues3;
+    let topwords_positive = this.state.topwords_positive;
+    let topwords_negative = this.state.topwords_negative;
     
-    for (let i = 0; i < test.length; i++) {
-      let word = test[i][0];
-      let word_fdist = test[i][1];
-      textdataPositive.push({'text':word,'value':word_fdist});
-      
+    for (let i = 0; i < topwords_positive.length; i++) {
+      let topword_positive = topwords_positive[i][0];
+      let topword_fdist= topwords_positive[i][1];
+      textdataPositive.push({'text':topword_positive,'value':topword_fdist});
     }
 
-    for (let i = 0; i < topicvalues3.length; i++) {
-      let topicvalues3words = topicvalues3[i][1];
-      let words = topicvalues3words.split(',');
-      for (let k = 0; k < words.length; k++) {
-        textdataNegative.push({'text':words[k],'value':200});
-      }
+    for (let i = 0; i < topwords_negative.length; i++) {
+      let topword_negative = topwords_negative[i][0];
+      let topword_fdist= topwords_negative[i][1]*20;
+      textdataNegative.push({'text':topword_negative,'value':topword_fdist});
     }
 
+    
     this.setState({
       textdataPositive: textdataPositive,
       textdataNegative: textdataNegative

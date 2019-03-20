@@ -739,65 +739,32 @@ def docs2vecs(docs, dictionary):
     vecs = [dictionary.doc2bow(doc) for doc in docs]
     return vecs
 
-def gettop_n_words(usertablename):
+def gettopn_words(usertablename, sentiment, n):
     isTrainData = False
+
     try:
-        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "` where sentiment = 1"
+        if sentiment == 0:
+            sqlstmtQuery = "SELECT * FROM `" + usertablename + "` where sentiment = 0"
 
         df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
 
-    # Creating the object for LDA model using gensim library
-    # Lda = gensim.models.ldamodel.LdaModel
-
-    #Running and Trainign LDA model on the document term matrix.
-    # ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
-
-    # print(ldamodel.print_topics(num_topics=3, num_words=3))[0.168*health + 0.083*sugar + 0.072*bad,0.061*consume + 0.050*drive + 0.050*sister,0.049*pressur + 0.049*father + 0.049*sister]
-
-        # copydf = df.copy()
-
         tweetColumnName = 'tweet'
-
-        # # # Preprocess the text
-        # tweets_docs = corpus2docs(df[tweetColumnName].tolist())
-
-        # # # Generate a vocabulary of text
-        # tweets_dictionary = gensim.corpora.Dictionary(tweets_docs)
-
-        # tokenized_word = word_tokenize(df[tweetColumnName])
-
-        # Tokenize each tweet and save into data frame
-        # listOfTokenizedWords = []
-        # for x in df[tweetColumnName]:
-        #     tokenized_word = word_tokenize(x)
-        #     listOfTokenizedWords.append(tokenized_word)
-        # df[tweetColumnName] = listOfTokenizedTweets
-        # fdist = FreqDist(listOfTokenizedWords)
-
-        # # Convert text into vectors
-        # tweets_vecs = docs2vecs(tweets_docs, tweets_dictionary) 
 
         # Preprocess the text
         stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, isTrainData)
+        #tokenize words from sentences of tweets
         tokenized_words = [word_tokenize(i) for i in stringOfTokenizedTweets]
         tokens = list(itertools.chain(*tokenized_words))
+        #get frequency distribution from tweet words
         fdist = FreqDist(tokens)
-        fdist_topn = fdist.most_common(20)
+        #get most commo or least common words based on frequency distribution
+        fdist_topn = fdist.most_common(n)
+        if sentiment == 0:
+            # fdist_topn = FreqDist(dict(fdist.most_common()[-20:]))
+            fdist_topn = fdist.most_common()[-n:]
 
-        # # Computes the inverse document frequencies for all words in the input corpus
-        # tfidf = gensim.models.TfidfModel(tweets_vecs)
-
-        # # Transform each tweet to tfidf
-        # tweets_vecs_w_tfidf = [tfidf[vec] for vec in tweets_vecs]
-
-        # tfidf_weights = {tweets_dictionary.get(id): value
-        #              for tweets_docs in tweets_vecs_w_tfidf
-        #              for id, value in tweets_docs}
-
-        # sorted_tfidf_weights = sorted(tfidf_weights.items(), key=lambda w: w[1])[:20]
-
-
-        return fdist.most_common(20)
+        return fdist_topn
     except Exception as e:
         print(str(e))
         return "Something is wrong with gettop_n_words method"  
