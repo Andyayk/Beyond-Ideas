@@ -5,10 +5,12 @@
 import mysql.connector, datetime, requests, json, csv, os, time, io, math, random, operator, re, sqlalchemy, pickle, nltk, gensim
 import pandas as pd
 import numpy as np
+import itertools
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import *
 from nltk.stem import WordNetLemmatizer
+from nltk.probability import FreqDist
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
@@ -21,6 +23,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from pandas import DataFrame
 from gensim.models import CoherenceModel
+
 
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
 
@@ -734,7 +737,7 @@ def docs2vecs(docs, dictionary):
     return vecs
 
 def gettop_n_words(usertablename):
-
+    isTrainData = False
     try:
         sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
 
@@ -751,30 +754,47 @@ def gettop_n_words(usertablename):
         # copydf = df.copy()
 
         tweetColumnName = 'tweet'
-        nooftopics = 5
+
+        # # # Preprocess the text
+        # tweets_docs = corpus2docs(df[tweetColumnName].tolist())
+
+        # # # Generate a vocabulary of text
+        # tweets_dictionary = gensim.corpora.Dictionary(tweets_docs)
+
+        # tokenized_word = word_tokenize(df[tweetColumnName])
+
+        # Tokenize each tweet and save into data frame
+        # listOfTokenizedWords = []
+        # for x in df[tweetColumnName]:
+        #     tokenized_word = word_tokenize(x)
+        #     listOfTokenizedWords.append(tokenized_word)
+        # df[tweetColumnName] = listOfTokenizedTweets
+        # fdist = FreqDist(listOfTokenizedWords)
+
+        # # Convert text into vectors
+        # tweets_vecs = docs2vecs(tweets_docs, tweets_dictionary) 
 
         # Preprocess the text
-        tweets_docs = corpus2docs(df[tweetColumnName].tolist())
+        stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, isTrainData)
+        tokenized_words = [word_tokenize(i) for i in stringOfTokenizedTweets]
+        tokens = list(itertools.chain(*tokenized_words))
+        fdist = FreqDist(tokens)
+        fdist_topn = fdist.most_common(20)
 
-        # Generate a vocabulary of text
-        tweets_dictionary = gensim.corpora.Dictionary(tweets_docs)
+        # # Computes the inverse document frequencies for all words in the input corpus
+        # tfidf = gensim.models.TfidfModel(tweets_vecs)
 
-        # Convert text into vectors
-        tweets_vecs = docs2vecs(tweets_docs, tweets_dictionary) 
+        # # Transform each tweet to tfidf
+        # tweets_vecs_w_tfidf = [tfidf[vec] for vec in tweets_vecs]
 
-        # Computes the inverse document frequencies for all words in the input corpus
-        tfidf = gensim.models.TfidfModel(tweets_vecs)
+        # tfidf_weights = {tweets_dictionary.get(id): value
+        #              for tweets_docs in tweets_vecs_w_tfidf
+        #              for id, value in tweets_docs}
 
-        # Transform each tweet to tfidf
-        tweets_vecs_w_tfidf = [tfidf[vec] for vec in tweets_vecs]
+        # sorted_tfidf_weights = sorted(tfidf_weights.items(), key=lambda w: w[1])[:20]
 
-        tfidf_weights = {tweets_dictionary.get(id): value
-                     for tweets_docs in tweets_vecs_w_tfidf
-                     for id, value in tweets_docs}
 
-        sorted_tfidf_weights = sorted(tfidf_weights.items(), key=lambda w: w[1])[:20]
-
-        return sorted_tfidf_weights 
+        return fdist.most_common(20)
     except Exception as e:
         print(str(e))
         return "Something is wrong with gettop_n_words method"  

@@ -203,15 +203,15 @@ class Analysisbi extends Component {
       // {text:'first',value:200},
       // {text:'second',value:100},
 
+    let test = this.state.test
     let topicvalues2 = this.state.topicvalues2
     let topicvalues3 = this.state.topicvalues3;
     
-    for (let i = 0; i < topicvalues2.length; i++) {
-      let topicvalues2words = topicvalues2[i][1];
-      let words = topicvalues2words.split(',');
-      for (let k = 0; k < words.length; k++) {
-        textdataPositive.push({'text':words[k],'value':200});
-      }
+    for (let i = 0; i < test.length; i++) {
+      let word = test[i][0];
+      let word_fdist = test[i][1];
+      textdataPositive.push({'text':word,'value':word_fdist});
+      
     }
 
     for (let i = 0; i < topicvalues3.length; i++) {
