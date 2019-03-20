@@ -867,6 +867,31 @@ def create_app(config_name):
                 tweets = results[0],
                 apicalllimit = results[1],
                 apicallreset = results[2]
+            )
+
+        @app.route("/stockcrawlingpagebi/")
+        def stockrawlingpagebi(): #rendering our stock crawling page
+            """
+                This method will render our stock crawling page
+            """      
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('stockcrawlingpagebi.html') 
+
+        @app.route("/stockcrawlingbi/", methods = ['POST'])
+        def stockcrawlingbi(): 
+            """
+                This method will crawl stock
+            """            
+            stockname = request.form.get("stockname") 
+            saveToDB = request.form.get("save") 
+            filename = request.form.get("filename")               
+            #print("here is init")
+            #print(saveToDB)
+            message = modelbi.stockCrawlerbi(stockname, saveToDB, current_user.id, filename)
+            return jsonify(
+                message = message
             )            
 
     class AnalysisClassbi():

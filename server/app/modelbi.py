@@ -473,7 +473,10 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
                     if start_crawl_month == 4 or start_crawl_month == 6 or start_crawl_month == 9 or start_crawl_month == 11:
                         end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-30" 
                     elif start_crawl_month == 2:
-                        end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-28" 
+                        if start_crawl_year % 4 == 0:
+                            end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-29" 
+                        else:
+                            end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-28" 
                     else:
                         end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-31" 
                     url = base_url + "?key=" + api_key + "&q=" + country_name + "&date=" + start_crawl_date + "&enddate=" + end_crawl_date + "&tp=24&format=json"
@@ -1140,3 +1143,47 @@ def sentimentResultAnalysis(tablename, tablename2):
         allPairs[currentKey] = currentSubPairs
     
     return allPairs,allPairs2
+
+def stockCrawlerbi(stockname, saveToDB, userID, filename):
+    with open(os.getcwd()+"\\instance\\stock_credentials.json", "r") as file:  
+        creds = json.load(file)
+    api_key = str(creds['API_KEY'])    
+    symbol = stockname
+    #Basic URL for crawling
+    base_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="
+    #Setting the header and body array to be placed into csv file.
+    url = base_url + symbol + "&apikey=" + api_key
+    headerArray = "date,open,high,low,close,volume"
+    bodyArray = []
+    stock_r = requests.get(url)
+    stock_text = stock_r.text
+    stock_dic = json.loads(stock_text)
+    for i in stock_dic["Time Series (Daily)"]:
+        date = str(i)
+        stockOpen = stock_dic["Time Series (Daily)"][i]["1. open"]
+        high = stock_dic["Time Series (Daily)"][i]["2. high"]
+        low = stock_dic["Time Series (Daily)"][i]["3. low"]
+        close = stock_dic["Time Series (Daily)"][i]["4. close"]
+        volume = stock_dic["Time Series (Daily)"][i]["5. volume"]
+        row = "\"" + date + "\"" + "," + stockOpen + "," + high + "," + low + "," + close + "," + volume
+        bodyArray.append(row)
+
+    if saveToDB == "true":        
+        tableName = filename + "_" + str(userID)
+        connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
+        connection.execute("CREATE TABLE `" + tableName + "` (date date, open float(7,2), high float(7,2), low float(7,2), close float(7,2), volume int(9));")
+        
+        connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
+        timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+        connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
+        status = insertToDatabase(headerArray, bodyArray, tableName)
+        return "success"
+    else:
+        #write the data into a csv file
+        returnStr = headerArray
+        returnStr += "\n"
+        for i in bodyArray:
+            returnStr += i
+            returnStr += "\n"
+        #print(returnStr)
+        return returnStr

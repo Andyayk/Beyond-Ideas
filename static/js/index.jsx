@@ -8,6 +8,8 @@ import AutoChartbi from './AutoChartbi';
 import WebCrawlingbi from './WebCrawlingbi';
 import TwitterCrawlingbi from './TwitterCrawlingbi';
 import Analysisbi from './Analysisbi';
+import StockCrawlingbi from './StockCrawlingbi';
+
 
 // PANDACONDA ----
 import App from "./App";
@@ -90,4 +92,9 @@ if (twittercrawlingbi) {
 const analysisbi = document.getElementById('analysisbi');
 if (analysisbi) {
    ReactDOM.render(<Analysisbi />, analysisbi);
+}
+
+const stockcrawlingbi = document.getElementById('stockcrawlingbi');
+if (stockcrawlingbi) {
+   ReactDOM.render(<StockCrawlingbi />, stockcrawlingbi);
 }
