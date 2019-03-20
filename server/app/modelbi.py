@@ -740,7 +740,7 @@ def docs2vecs(docs, dictionary):
     return vecs
 
 def gettopn_words(usertablename, sentiment, n):
-    isTrainData = False
+    requireAdditionalProcessing = True
 
     try:
         sqlstmtQuery = "SELECT * FROM `" + usertablename + "` where sentiment = 1"
@@ -752,7 +752,7 @@ def gettopn_words(usertablename, sentiment, n):
         tweetColumnName = 'tweet'
 
         # Preprocess the text
-        stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, isTrainData)
+        stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing)
         #tokenize words from sentences of tweets
         tokenized_words = [word_tokenize(i) for i in stringOfTokenizedTweets]
         tokens = list(itertools.chain(*tokenized_words))
@@ -803,14 +803,6 @@ def topicModeling(tablename, usertablename, userID):
         sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
 
         df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
-
-    # Creating the object for LDA model using gensim library
-    # Lda = gensim.models.ldamodel.LdaModel
-
-    #Running and Trainign LDA model on the document term matrix.
-    # ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
-
-    # print(ldamodel.print_topics(num_topics=3, num_words=3))[0.168*health + 0.083*sugar + 0.072*bad,0.061*consume + 0.050*drive + 0.050*sister,0.049*pressur + 0.049*father + 0.049*sister]
 
         copydf = df.copy()
 
@@ -897,7 +889,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
     
     # Sentiment Analysis
     tweetColumnName = 'tweet'
-    isTrainData = False
+    requireAdditionalProcessing = False
 
     try:
         # Load unseen testing dataset 
@@ -908,7 +900,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
         copytestdf = testdf.copy()
 
         # Preprocess the text
-        stringOfTokenizedTweets = preprocessingDataset(testdf, tweetColumnName, isTrainData)
+        stringOfTokenizedTweets = preprocessingDataset(testdf, tweetColumnName, requireAdditionalProcessing)
 
         # Classify the unseen test dataset with the train model
         test_predicted = classifier_load.predict(stringOfTokenizedTweets)
@@ -939,23 +931,11 @@ def sentimentAnalysis(tablename, usertablename, userID):
             'friends_count': sqlalchemy.types.INTEGER(), 'date': sqlalchemy.DateTime(), 'tweettime': sqlalchemy.types.VARCHAR(), \
             'sentiment_score': sqlalchemy.types.FLOAT(), 'sentiment': sqlalchemy.types.INTEGER()})
 
-        # Create data table with positive sentiment tweets selected from sentiment data table
-        tableName2 = tablename + "_w_+sentiment_" + str(userID)
-        connection.execute("DROP TABLE IF EXISTS `" + tableName2 + "`")
-        connection.execute("CREATE TABLE `" + tableName2 + "` AS SELECT * FROM `" + tableName + "` where sentiment = 1")
-
-        # Create data table with negative sentiment tweets selected from sentiment data table
-        tableName3 = tablename + "_w_-sentiment_" + str(userID)
-        connection.execute("DROP TABLE IF EXISTS `" + tableName3 + "`")
-        connection.execute("CREATE TABLE `" + tableName3 + "` AS SELECT * FROM `" + tableName + "` where sentiment = 0")
-
-        tableNames = [tableName, tableName2, tableName3]
-
-        return tableNames
+        return tableName
     except Exception as e:
         return "Something is wrong with sentimentAnalysis method"  
 
-def preprocessingDataset(df, tweetColumnName, isTrainData):
+def preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing):
     """
     This method will pre-process the dataset
     """
@@ -972,16 +952,20 @@ def preprocessingDataset(df, tweetColumnName, isTrainData):
 
     # Remove punctuation
     df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if re.search('^[a-z]+$', y)])
-    """
-    # Remove stopwords
-    stop = stopwords.words('english')
-    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if y not in stop])
-    """
+
+    if requireAdditionalProcessing:
+        # Remove stopwords
+        stop_list = stopwords.words('english')
+        stop_list += ['would', 'said', 'say', 'year', 'day', 'also', 'first', 'last', 'one', 'two', 'people', 'told', 'new', \
+        'could', 'three', 'may', 'like', 'world', 'since', 'rt', 'http', 'https'] 
+               
+        df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if y not in stop_list])
+
     # Stemming each tweet
     stemmer = PorterStemmer()
     df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [stemmer.stem(y) for y in x])
     """
-    if isTrainData:
+    if requireAdditionalProcessing:
         # Remove uncommon words - can become noise
         freq = pd.Series(' '.join(df[tweetColumnName]).split()).value_counts()[-10:]
         freq = list(freq.index)
@@ -1006,13 +990,13 @@ def trainSentimentAnalysisModels():
 
     labelColumnName = 'Sentiment'
     tweetColumnName = 'SentimentText'
-    isTrainData = True
+    requireAdditionalProcessing = False
 
     # Convert the labellings in data frame to a list
     listOfLabels = df[labelColumnName].tolist()
 
     # Preprocess the text
-    stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, isTrainData)
+    stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing)
 
     # Generate document term matrix - bag of words
     vectorizer = CountVectorizer()
@@ -1056,60 +1040,6 @@ def trainSentimentAnalysisModels():
     pickle.dump(clf, open(os.getcwd()+'/sentimentanalysis.pickle', "wb")) #binary write
 
     return ""
-
-def sentimentResultAnalysis(tablename, tablename2):
-    positivesentiment = connection.execute("SELECT date, COUNT(*) FROM `" +  tablename +"` GROUP BY date,sentiment HAVING sentiment=1");
-    negativesentiment = connection.execute("SELECT date, COUNT(*) FROM `" +  tablename +"` GROUP BY date,sentiment HAVING sentiment=0");
-    allcounts = connection.execute("SELECT date,SUM(retweet_count) as 'retweet_count',SUM(favorite_count) as 'favorite_count',SUM(followers_count) as 'followers_count',SUM(friends_count) as 'friends_count' FROM `dhltwt_tweets_w_sentiment_4` GROUP BY date");
-    variablesSecond = getNumericalColumnNamebi(tablename2);
-    selectstmt = str(str(variablesSecond).replace("'",""))[1:-1]
-    
-    secondTable = connection.execute("SELECT ActivityDate," + selectstmt + " FROM " + tablename2)
-    allPairs = {}
-    allPairs2 = {}
-    for result in allcounts:
-        currentKey = ""
-        subpair = {}
-        for x,y in result.items():
-            if (x=="date"):
-                currentKey = str(y)
-            else:
-                subpair[x] = int(str(y))
-        allPairs[currentKey] = subpair
-    for result in secondTable:
-        currentKey = ""
-        subpair = {}
-        for x,y in result.items():
-            
-            if (x.lower() == "date" or x.lower() == "activitydate"):
-                currentKey = str(y)
-            else:
-                subpair[x] = int(str(y))
-        allPairs2[currentKey] = subpair
-    for result in positivesentiment:
-        currentKey = ""
-        valy = ""
-        for x,y in result.items():
-            if(x=="date"):
-                currentKey = str(y)
-            else:
-                valy = int(str(y))
-        currentSubPairs = allPairs[currentKey]
-        currentSubPairs["positive_sentiment"] = valy
-        allPairs[currentKey] = currentSubPairs
-    for result in negativesentiment:
-        currentKey = ""
-        valy = ""
-        for x,y in result.items():
-            if(x=="date"):
-                currentKey = str(y)
-            else:
-                valy = int(str(y))
-        currentSubPairs = allPairs[currentKey]
-        currentSubPairs["negative_sentiment"] = valy
-        allPairs[currentKey] = currentSubPairs
-    
-    return allPairs,allPairs2
 
 def stockCrawlerbi(stockname, saveToDB, userID, filename):
     with open(os.getcwd()+"\\instance\\stock_credentials.json", "r") as file:  
