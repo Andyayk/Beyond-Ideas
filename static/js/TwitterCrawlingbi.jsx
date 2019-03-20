@@ -164,17 +164,17 @@ class TwitterCrawlingbi extends Component {
                            <table align="left">
                            <tbody>
                               <tr>
-                                 <td style={{"width":"300px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
-                                 <td style={{"width":"50px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
-                                 <td style={{"width":"300px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center">
+                                 <td style={{"width":"28%", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"2%", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"28%", "height":"150px", "paddingTop":"15px"}} valign="top" align="center">
                                     <img src={TwitterIcon} width="150" height="150" />
                                  </td>
-                                 <td style={{"width":"50px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
-                                 <td style={{"width":"300px", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"2%", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
+                                 <td style={{"width":"28%", "height":"150px", "paddingTop":"15px"}} valign="top" align="center"></td>
                               </tr>
                               <br/>
                               <tr> 
-                                 <td style={{"width":"300px", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                 <td style={{"width":"28%", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                                     <tr>
                                        <div className="cardtitle">
                                           1. Enter Tag(s)
@@ -211,10 +211,10 @@ class TwitterCrawlingbi extends Component {
                                        </div>
                                     </tr>
                                  </td>
-                                 <td style={{"width":"50px", "height":"280px"}} valign="center" align="center">
+                                 <td style={{"width":"2%", "height":"280px"}} valign="center" align="center">
                                     <img src={arrowicon} width="45" height="45" />
                                  </td>                                     
-                                 <td style={{"width":"300px", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                 <td style={{"width":"28%", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                                     <tr>
                                        <div className="cardtitle">
                                           2. Enter Date
@@ -237,10 +237,10 @@ class TwitterCrawlingbi extends Component {
                                        </div>
                                     </tr>
                                  </td>
-                                 <td style={{"width":"50px", "height":"280px"}} valign="center" align="center">
+                                 <td style={{"width":"2%", "height":"280px"}} valign="center" align="center">
                                     <img src={arrowicon} width="45" height="45" />
                                  </td>                                      
-                                 <td style={{"width":"300px", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                                 <td style={{"width":"28%", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                                     <tr>
                                        <div className="cardtitle">
                                           3. Enter Dataset Name
