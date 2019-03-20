@@ -867,6 +867,31 @@ def create_app(config_name):
                 tweets = results[0],
                 apicalllimit = results[1],
                 apicallreset = results[2]
+            )
+
+        @app.route("/stockcrawlingpagebi/")
+        def stockrawlingpagebi(): #rendering our stock crawling page
+            """
+                This method will render our stock crawling page
+            """      
+            if not current_user.is_authenticated:
+                return redirect(url_for('login_r'))
+            else:
+                return render_template('stockcrawlingpagebi.html') 
+
+        @app.route("/stockcrawlingbi/", methods = ['POST'])
+        def stockcrawlingbi(): 
+            """
+                This method will crawl stock
+            """            
+            stockname = request.form.get("stockname") 
+            saveToDB = request.form.get("save") 
+            filename = request.form.get("filename")               
+            #print("here is init")
+            #print(saveToDB)
+            message = modelbi.stockCrawlerbi(stockname, saveToDB, current_user.id, filename)
+            return jsonify(
+                message = message
             )            
 
     class AnalysisClassbi():
@@ -895,8 +920,6 @@ def create_app(config_name):
                 usertablename = tablename + "_" + str(current_user.id)   
 
             tableName = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)[0]
-            tableName2 = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)[1]
-            tableName3 = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)[2]
 
             results = modelbi.getSentimentDataForTableDisplay(tableName)
 
@@ -905,20 +928,15 @@ def create_app(config_name):
             columns = results[0] #column names
             values = results[1] #all values
 
-            #testing for sentiment wordcloud
-            test = modelbi.gettop_n_words(tableName2);
+            #retrieve top positive & negative words for sentiment wordcloud
+            topwords_positive = modelbi.gettopn_words(tableName, 1, 80);
+            topwords_negative = modelbi.gettopn_words(tableName, 0, 80);
 
             #topic modeling overall result 
             results2 = modelbi.topicModeling(tablename, usertablename, current_user.id) 
 
-            #topic modeling result for positive and negative sentiment separately
-            results3 = modelbi.topicModeling(tableName2, tableName2, current_user.id) 
-            results4 = modelbi.topicModeling(tableName3, tableName3, current_user.id) 
-
             topiccolumns = results2[0]
             topicvalues = results2[1]
-            topicvalues2 = results3[1]
-            topicvalues3 = results4[1]
 
             return jsonify(
                 columns = columns,
@@ -926,9 +944,8 @@ def create_app(config_name):
                 aggregatedsentiment = aggregatedsentiment,
                 topiccolumns = topiccolumns,
                 topicvalues = topicvalues,
-                topicvalues2 = topicvalues2,
-                topicvalues3 = topicvalues3,
-                test = test
+                topwords_positive = topwords_positive,
+                topwords_negative = topwords_negative
             )
 
         @app.route("/twittertrain/", methods = ['POST'])

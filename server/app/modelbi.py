@@ -5,10 +5,12 @@
 import mysql.connector, datetime, requests, json, csv, os, time, io, math, random, operator, re, sqlalchemy, pickle, nltk, gensim
 import pandas as pd
 import numpy as np
+import itertools
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import *
 from nltk.stem import WordNetLemmatizer
+from nltk.probability import FreqDist
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
@@ -21,6 +23,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from pandas import DataFrame
 from gensim.models import CoherenceModel
+
 
 engine = create_engine('mysql://root:@localhost/is480-term1-2018-19')
 
@@ -470,7 +473,10 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
                     if start_crawl_month == 4 or start_crawl_month == 6 or start_crawl_month == 9 or start_crawl_month == 11:
                         end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-30" 
                     elif start_crawl_month == 2:
-                        end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-28" 
+                        if start_crawl_year % 4 == 0:
+                            end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-29" 
+                        else:
+                            end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-28" 
                     else:
                         end_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-31" 
                     url = base_url + "?key=" + api_key + "&q=" + country_name + "&date=" + start_crawl_date + "&enddate=" + end_crawl_date + "&tp=24&format=json"
@@ -733,48 +739,32 @@ def docs2vecs(docs, dictionary):
     vecs = [dictionary.doc2bow(doc) for doc in docs]
     return vecs
 
-def gettop_n_words(usertablename):
+def gettopn_words(usertablename, sentiment, n):
+    isTrainData = False
 
     try:
-        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "` where sentiment = 1"
+        if sentiment == 0:
+            sqlstmtQuery = "SELECT * FROM `" + usertablename + "` where sentiment = 0"
 
         df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
 
-    # Creating the object for LDA model using gensim library
-    # Lda = gensim.models.ldamodel.LdaModel
-
-    #Running and Trainign LDA model on the document term matrix.
-    # ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
-
-    # print(ldamodel.print_topics(num_topics=3, num_words=3))[0.168*health + 0.083*sugar + 0.072*bad,0.061*consume + 0.050*drive + 0.050*sister,0.049*pressur + 0.049*father + 0.049*sister]
-
-        # copydf = df.copy()
-
         tweetColumnName = 'tweet'
-        nooftopics = 5
 
         # Preprocess the text
-        tweets_docs = corpus2docs(df[tweetColumnName].tolist())
+        stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, isTrainData)
+        #tokenize words from sentences of tweets
+        tokenized_words = [word_tokenize(i) for i in stringOfTokenizedTweets]
+        tokens = list(itertools.chain(*tokenized_words))
+        #get frequency distribution from tweet words
+        fdist = FreqDist(tokens)
+        #get most commo or least common words based on frequency distribution
+        fdist_topn = fdist.most_common(n)
+        if sentiment == 0:
+            # fdist_topn = FreqDist(dict(fdist.most_common()[-20:]))
+            fdist_topn = fdist.most_common()[-n:]
 
-        # Generate a vocabulary of text
-        tweets_dictionary = gensim.corpora.Dictionary(tweets_docs)
-
-        # Convert text into vectors
-        tweets_vecs = docs2vecs(tweets_docs, tweets_dictionary) 
-
-        # Computes the inverse document frequencies for all words in the input corpus
-        tfidf = gensim.models.TfidfModel(tweets_vecs)
-
-        # Transform each tweet to tfidf
-        tweets_vecs_w_tfidf = [tfidf[vec] for vec in tweets_vecs]
-
-        tfidf_weights = {tweets_dictionary.get(id): value
-                     for tweets_docs in tweets_vecs_w_tfidf
-                     for id, value in tweets_docs}
-
-        sorted_tfidf_weights = sorted(tfidf_weights.items(), key=lambda w: w[1])[:20]
-
-        return sorted_tfidf_weights 
+        return fdist_topn
     except Exception as e:
         print(str(e))
         return "Something is wrong with gettop_n_words method"  
@@ -1120,3 +1110,47 @@ def sentimentResultAnalysis(tablename, tablename2):
         allPairs[currentKey] = currentSubPairs
     
     return allPairs,allPairs2
+
+def stockCrawlerbi(stockname, saveToDB, userID, filename):
+    with open(os.getcwd()+"\\instance\\stock_credentials.json", "r") as file:  
+        creds = json.load(file)
+    api_key = str(creds['API_KEY'])    
+    symbol = stockname
+    #Basic URL for crawling
+    base_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="
+    #Setting the header and body array to be placed into csv file.
+    url = base_url + symbol + "&apikey=" + api_key
+    headerArray = "date,open,high,low,close,volume"
+    bodyArray = []
+    stock_r = requests.get(url)
+    stock_text = stock_r.text
+    stock_dic = json.loads(stock_text)
+    for i in stock_dic["Time Series (Daily)"]:
+        date = str(i)
+        stockOpen = stock_dic["Time Series (Daily)"][i]["1. open"]
+        high = stock_dic["Time Series (Daily)"][i]["2. high"]
+        low = stock_dic["Time Series (Daily)"][i]["3. low"]
+        close = stock_dic["Time Series (Daily)"][i]["4. close"]
+        volume = stock_dic["Time Series (Daily)"][i]["5. volume"]
+        row = "\"" + date + "\"" + "," + stockOpen + "," + high + "," + low + "," + close + "," + volume
+        bodyArray.append(row)
+
+    if saveToDB == "true":        
+        tableName = filename + "_" + str(userID)
+        connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
+        connection.execute("CREATE TABLE `" + tableName + "` (date date, open float(7,2), high float(7,2), low float(7,2), close float(7,2), volume int(9));")
+        
+        connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
+        timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+        connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
+        status = insertToDatabase(headerArray, bodyArray, tableName)
+        return "success"
+    else:
+        #write the data into a csv file
+        returnStr = headerArray
+        returnStr += "\n"
+        for i in bodyArray:
+            returnStr += i
+            returnStr += "\n"
+        #print(returnStr)
+        return returnStr
