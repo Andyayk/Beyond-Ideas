@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}   
-	<table align="center">
+	<table align="center" style="width:100%">
 		<tr>
-			<td style="width:33%">
+			<td style="width:30%, max-width:30%">
 				<form action="/weathercrawlingpagebi">
 					<button class="block" type="submit">
 						<div class="cardPageButton">Historical Weather<div>
@@ -13,10 +13,8 @@
 						<br>
 					</button> 
 				</form>
-			</td>
-			<td>
-			</td>			
-			<td style="width:33%">  
+			</td>		
+			<td style="width:30%, max-width:30%">  
 				<form action="/twittercrawlingpagebi">
 					<button class="block" type="submit">				
 						<div class="cardPageButton">Twitter<div>
@@ -28,14 +26,12 @@
 					</button> 
 				</form>
 			</td>
-			<td>
-			</td>			
-			<td style="width:33%">  
+			<td style="width:30%, max-width:30%">  
 				<form action="/stockcrawlingpagebi">
 					<button class="block" type="submit">				
 						<div class="cardPageButton">Share Prices<div>
 						<p>
-						<div class="cardButtonInfo">This feature allows you to retrieve historical share prices.</div>
+						<div class="cardButtonInfo">This feature allows you to retrieve historical share prices from various logistic companies, e.g. Fedex, UPS & DHLs.</div>
 						<p>
 						<div class="cardClickHere">Click To Begin</div>							
 						<br>
