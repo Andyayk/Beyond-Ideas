@@ -778,11 +778,6 @@ def create_app(config_name):
                 usertablename = tablename + "_" + str(current_user.id)   
                 usertablename2 = tablename2 + "_" + str(current_user.id)             
 
-            # if "sentiment" in tablename:
-                # result = modelbi.sentimentResultAnalysis(usertablename, usertablename2)
-            # if "sentiment" in tablename2:
-                # result = modelbi.sentimentResultAnalysis(usertablename2, usertablename)
-            # print(result[1])
             variablenameX = request.form.get("selectedvariables1")[1:-1].split(",")
             variablenameY = request.form.get("selectedvariables2")[1:-1].split(",")
 
@@ -919,7 +914,7 @@ def create_app(config_name):
             if current_user.is_authenticated:      
                 usertablename = tablename + "_" + str(current_user.id)   
 
-            tableName = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)[0]
+            tableName = modelbi.sentimentAnalysis(tablename, usertablename, current_user.id)
 
             results = modelbi.getSentimentDataForTableDisplay(tableName)
 

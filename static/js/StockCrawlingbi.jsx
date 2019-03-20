@@ -163,7 +163,7 @@ class StockCrawlingbi extends Component {
       return (
          <div>
             <div className="content">
-               <form action="/stockcrawlingpagebi"> 
+               <form action="/webcrawlingpagebi"> 
                   <button className="back vis-back" type="submit">Back</button>  
                </form>                         
                <table style={{"width":"100%"}}>
@@ -214,7 +214,7 @@ class StockCrawlingbi extends Component {
                                        </div>
                                     </tr><tr>
                                        <div className="cardsubtitle">
-                                          e.g. "DHL Share Price"
+                                          e.g. "dhl_shareprice"
                                        </div>
                                     </tr><tr>
                                        <td align="center">
