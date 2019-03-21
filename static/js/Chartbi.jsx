@@ -550,6 +550,7 @@ class Chartbi extends Component {
                            mode: 'markers',
                            marker: {color: 'blue'},
                            name: plotpointname,
+                           showlegend: false,
                            hoverlabel: {namelength: -1}
                            },{
                            x: xarray,
@@ -558,12 +559,13 @@ class Chartbi extends Component {
                            mode: 'lines',
                            marker: {color: 'red'},
                            name: "Equation: " + equation,
+                           showlegend: false,
                            hoverlabel: {namelength: -1}                          
                            }]}
                            layout={{
                               width: 1000, 
                               height: 700, 
-                              title: '<b>Generated Time:' + currentTimeStamp + '</b><br>' + '<b>Correlation between ' + this.state.selectedvariable + ' and ' + this.state.selectedvariable2 + '</b><br>R: ' + r + ', Rho: ' + rho.toFixed(2) + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
+                              title: '<b>Generated Time:' + currentTimeStamp + '</b><br>' + '<b>Correlation between ' + this.state.selectedvariable + ' and ' + this.state.selectedvariable2 + '</b><br>R: ' + r + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
                               hovermode: 'closest',
                               xaxis: {
                                  title: this.state.selectedvariable,
@@ -604,20 +606,20 @@ class Chartbi extends Component {
 
       return (
          <div>
-            <div className="content">
+            <div style={{"width":"100%"}} className="content">
             <form action="/correlationpagebi">             
               <button className="back vis-back" type="submit">Back</button>  
             </form> 
             <br/>            
-            <table style={{"width":"100%"}}>   
+            <table id="innertable">   
             <tbody>
               <tr>            
                   <td>   
                   <form name="submitForm" method="POST" onSubmit={this.formSubmitted}>                       
-                     <table align="left">
+                     <table style={{"width":"100%"}} align="left">
                      <tbody>
                         <tr>
-                          <td style={{"width":"28%", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                          <td class="tablerowdata" valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">
                                 <div className="cardtitle">
@@ -677,22 +679,22 @@ class Chartbi extends Component {
                               <table align="center">
                                 <tbody>
                                   <tr>                        
-                                    <td><input id="dateradio" type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/></td><td><label id="labeldate">Activity Date</label></td>
+                                    <td><input id="dateradio" type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/><label id="labeldate">Activity Date</label></td>
                                     
-                                    <td><input id="companyradio" type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/></td><td><label id ="labelcompany">Company</label></td>
+                                    <td><input id="companyradio" type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/><label id ="labelcompany">Company</label></td>
                                   </tr><tr>
-                                    <td><input id="locationradio" type="radio" name="joinvariable" value="countryname" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "countryname"} disabled required/></td><td><label id="labelcountry">Country Name</label></td>
+                                    <td><input id="locationradio" type="radio" name="joinvariable" value="countryname" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "countryname"} disabled required/><label id="labelcountry">Country Name</label></td>
                                                       
-                                    <td><input id="depotradio" type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/></td><td><label id="labeldepot">Depot</label></td>                  
+                                    <td><input id="depotradio" type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/><label id="labeldepot">Depot</label></td>                  
                                   </tr>
                                 </tbody>
                               </table>
                             </tr>        
                           </td>
-                          <td style={{"width":"2%", "height":"150px"}} valign="center" align="center">
-                            <img src={arrowicon} width="45" height="45" />
+                          <td valign="center" align="center">
+                            <img class="arrowclass" src={arrowicon} width="45" height="45" />
                           </td>
-                          <td style={{"width":"28%", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                          <td class="tablerowdata" valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">                           
                                 <div className="cardtitle">
@@ -730,10 +732,10 @@ class Chartbi extends Component {
                               </td>
                             </tr>
                           </td>
-                          <td style={{"width":"2%", "height":"150px"}} valign="center" align="center">
-                            <img src={arrowicon} width="45" height="45" />
+                          <td valign="center" align="center">
+                            <img class="arrowclass" src={arrowicon} width="45" height="45" />
                           </td>                        
-                          <td style={{"width":"30%", "height":"150px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                          <td class="tablerowdata" valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">
                                 <div className="cardtitle">
@@ -823,7 +825,7 @@ class Chartbi extends Component {
                   </form>                   
                   </td>
                   </tr>
-                  <tr>
+                  <tr style={{"width":"90%"}}>
                   <td align="center" style={{"width":"88%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                      <table id="message">
                        <tbody>
@@ -833,8 +835,10 @@ class Chartbi extends Component {
                              </td>                           
                           </tr>
                        </tbody>   
-                     </table>           
-                     {this.state.scatterplot}   
+                     </table>
+                     <div style={{"width":"100%"}}>
+                     {this.state.scatterplot}
+                     </div>
                   </td>
                   </tr>
             </tbody>   
