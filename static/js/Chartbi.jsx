@@ -636,8 +636,8 @@ class Chartbi extends Component {
                             </tr>
                             <tr>                             
                               <td align="center">
-                                <select required defaultValue="" onChange={this.getVariables} style={{"width":"210px"}}>
-                                  <option value="" disabled>-------- select a dataset --------</option>
+                                <select required defaultValue="" onChange={this.getVariables} style={{"width":"80%"}}>
+                                  <option value="" disabled>- select a dataset -</option>
                                     {this.state.options}
                                 </select>
                               </td>
@@ -653,8 +653,8 @@ class Chartbi extends Component {
                             </tr>                         
                             <tr>
                               <td align="center">                                                
-                                <select required defaultValue="" onChange={this.getVariables2} style={{"width":"210px"}}>
-                                  <option value="" disabled>-------- select a dataset --------</option>
+                                <select required defaultValue="" onChange={this.getVariables2} style={{"width":"80%"}}>
+                                  <option value="" disabled>- select a dataset -</option>
                                     {this.state.options}
                                 </select>
                               </td>
@@ -709,8 +709,8 @@ class Chartbi extends Component {
                               </td>
                             </tr><tr>
                               <td align="center">
-                                <select id="xvariabledropdownid" required defaultValue="" onChange={this.selectVariable} style={{"width":"210px"}}>
-                                  <option value="" disabled>---------- select a variable ----------</option>
+                                <select id="xvariabledropdownid" required defaultValue="" onChange={this.selectVariable} style={{"width":"80%"}}>
+                                  <option value="" disabled>- select a variable -</option>
                                     {this.state.variablesoptions}
                                 </select>
                               </td>
@@ -725,8 +725,8 @@ class Chartbi extends Component {
                               </td>
                             </tr><tr>
                               <td align="center">
-                                <select id="yvariabledropdownid" required defaultValue="" onChange={this.selectVariable2} style={{"width":"210px"}}>
-                                  <option value="" disabled>---------- select a variable ----------</option>
+                                <select id="yvariabledropdownid" required defaultValue="" onChange={this.selectVariable2} style={{"width":"80%"}}>
+                                  <option value="" disabled>- select a variable -</option>
                                     {this.state.variablesoptions2}
                                 </select>
                               </td>
@@ -750,13 +750,13 @@ class Chartbi extends Component {
                               </td>
                             </tr><tr>
                               <td align="center">       
-                                <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"210px"}}>
-                                  <option value="">--------------- optional ---------------</option>
+                                <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"80%"}}>
+                                  <option value="">- optional -</option>
                                     {this.state.datevariablesoptions}
                                     {this.state.companyvariablesoptions}               
                                     {this.state.depotvariablesoptions}                 
                                     {this.state.countrynamevariablesoptions}
-                                  <option disabled>----------------------------------------</option>                                                                
+                                  <option disabled>----------</option>                                                                
                                     {this.state.datevariablesoptions2}
                                     {this.state.companyvariablesoptions2}              
                                     {this.state.depotvariablesoptions2}                
@@ -776,12 +776,12 @@ class Chartbi extends Component {
                                         <div className="cardsubtitle">
                                            Start Date:
                                         </div>                   
-                                        <input type="date" style={{"width":"210px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue} />
+                                        <input type="date" style={{"width":"80%"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue} />
                                         <td></td>
                                         <div className="cardsubtitle">
                                            End Date:
                                         </div>
-                                        <input type="date" style={{"width":"210px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
+                                        <input type="date" style={{"width":"80%"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
                                         <br/>
                                         <tr>
                                         <td align="center">
@@ -796,7 +796,7 @@ class Chartbi extends Component {
                                            {this.state.selectedfiltervariable.substring(3,)}:
                                         </div>
                                         <select id="filtervaluedropdownid" defaultValue="" required onChange={this.selectFilterValue}>
-                                           <option value="" disabled>---------- select a variable ----------</option>
+                                           <option value="" disabled>- select a variable -</option>
                                            {this.state.filtervaluelistoptions}                         
                                         </select>
                                         <br/>
@@ -825,12 +825,12 @@ class Chartbi extends Component {
                   </form>                   
                   </td>
                   </tr>
-                  <tr style={{"width":"90%"}}>
-                  <td align="center" style={{"width":"88%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
+                  <tr>
+                  <td align="center" style={{"width":"80%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                      <table id="message">
                        <tbody>
                           <tr>
-                             <td align="center" style={{"width":"88%", "height":"580px", "borderRadius":"12px", "padding":"20px"}} bgcolor="white">
+                             <td align="center" style={{"width":"850px", "height":"580px", "borderRadius":"12px", "padding":"20px"}} bgcolor="white">
                                 <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
                              </td>                           
                           </tr>

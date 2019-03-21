@@ -51,6 +51,25 @@ class AutoChartbi extends Component {
          filterwords2: "",
          rxyKeyValues : "",
          correlationresultexplanation : "",
+         instruction: "",
+         selectedfiltervalue: "",
+         selectedfiltervalue2: "",
+         datevariablesoptions: "", 
+         datevariablesoptions2: "", 
+         selectedfiltervariable: "",       
+         companyvariablesoptions: "",
+         companyvariablesoptions2: "",
+         depotvariablesoptions: "",
+         depotvariablesoptions2: "",
+         countrynamevariablesoptions: "",
+         countrynamevariablesoptions2: "",
+         companyvaluelistoptions: "",
+         companyvaluelistoptions2: "",
+         depotvaluelistoptions: "",
+         depotvaluelistoptions2: "", 
+         countrynamevaluelistoptions: "",
+         countrynamevaluelistoptions2: "",
+         errordatestatement: "",
       };
       
      
@@ -64,7 +83,10 @@ class AutoChartbi extends Component {
       this.createVariablesOptions = this.createVariablesOptions.bind(this);
 
       this.selectJoinVariable = this.selectJoinVariable.bind(this);     
-
+      this.selectFilterVariable = this.selectFilterVariable.bind(this); 
+      this.selectFilterValue = this.selectFilterValue.bind(this);  
+      this.selectFilterValue2 = this.selectFilterValue2.bind(this);  
+      
       this.displayChart = this.displayChart.bind(this);
       
       this.checkradiobutton = this.checkradiobutton.bind(this);
@@ -180,7 +202,68 @@ class AutoChartbi extends Component {
       }
    }
 
-    
+    //store the variable that the user has selected
+   selectVariable(event) {
+      this.setState({
+         selectedvariable: event.target.value
+      });      
+   }
+
+   //store the variable that the user has selected
+   selectVariable2(event) {
+      this.setState({
+         selectedvariable2: event.target.value
+      });      
+   }   
+   
+   selectFilterVariable(event) {
+      this.resetfiltervaluedropdown();
+      
+      this.setState({
+         selectedfiltervariable: event.target.value
+      });
+
+      $.post(window.location.origin + "/filtervariablebi/",
+      {
+         selectedfiltervariable: event.target.value,
+         tablename: this.state.selectedtable,
+         tablename2: this.state.selectedtable2
+      },
+      (data) => {
+         var filtervalueslistdata = data['filtervalueslist']
+         let filtervalues = []
+         if (filtervalueslistdata.toString().replace(/\s/g, '').length) { //checking data is not empty 
+            var variablelist = filtervalueslistdata.toString().split(",");
+            for (let i = 0; i < variablelist.length; i++) {
+               filtervalues.push(<option value={variablelist[i]}>{variablelist[i]}</option>);
+            };
+         }
+         
+         this.setState({
+             filtervaluelistoptions: filtervalues
+         });
+                             
+      });        
+   }    
+   
+   selectFilterValue(event) {
+      if(this.state.selectedfiltervariable.toLowerCase().includes("date")){
+            this.validateDateRange(event.target.value, this.state.selectedfiltervalue2);
+      }
+      this.setState({
+         selectedfiltervalue: event.target.value
+      });      
+   } 
+
+   //store the  filter values 2 (if any) that the user has selected
+   selectFilterValue2(event) {    
+      if(this.state.selectedfiltervariable.toLowerCase().includes("date")){
+         this.validateDateRange(this.state.selectedfiltervalue, event.target.value);
+      }
+      this.setState({
+         selectedfiltervalue2: event.target.value
+      });      
+   } 
   
 
 
@@ -456,13 +539,14 @@ class AutoChartbi extends Component {
             rxypairs.push(<tr class="rxytr" onClick={this.displayChart}><input type="text" name="xval[]" value={rxyKeyVal[keys[i]][j][2]} hidden/><input type="text" name="yval[]" value={rxyKeyVal[keys[i]][j][3]} hidden/><td>{rxyKeyVal[keys[i]][j][0]}</td><td>{rxyKeyVal[keys[i]][j][1]}</td><td>{keys[i]}</td></tr>);
             }
         }
+        this.setState({instruction: [<i>click row to view result</i>]});
         this.setState({hideLoadingBar: true, rtworesults:rxypairs, rxyKeyValues:rxyKeyVal});
          
          if(keys.length > 0){
              this.setState({
                  correlationresultexplanation : "Based on the datasets of " + this.state.selectedtable + " and " + this.state.selectedtable2 + " the highest correlated variables are " + rxyKeyVal[keys[0]][0][0] + " and " + rxyKeyVal[keys[0]][0][1] + " with the R value of " + keys[0],
                  filterwords1 : "Filter by top ",
-                 filterwords2 : " K's result",
+                 filterwords2 : " R's result",
                  filterresultoptions : <select required defaultValue={keys.length} onChange={this.filterresults}> + {filteroptions} + </select>
              });
          }
@@ -527,6 +611,9 @@ class AutoChartbi extends Component {
          var currentTimeStamp = new Date().getTime();
          currentTimeStamp = new Intl.DateTimeFormat('en-SG', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(currentTimeStamp);
          
+         var x = document.getElementById("message");
+         x.style.display = "none";
+         
          spearmanrho.calc()
            .then(rho =>
             
@@ -578,8 +665,7 @@ class AutoChartbi extends Component {
 
    //handle form submission
    formSubmitted(event){
-      var x = document.getElementById("message");
-         x.style.display = "none";
+     
 
       event.preventDefault();
       this.generateScatterplot();
@@ -624,7 +710,7 @@ class AutoChartbi extends Component {
                             </tr><tr>
                                <td align="center">
                                   <select required defaultValue="" onChange={this.getVariables} style={{"width":"210px"}}>
-                                     <option value="" disabled>---------- select a dataset ----------</option>
+                                     <option value="" disabled>- select a dataset -</option>
                                      {this.state.options}
                                   </select>
                                </td>
@@ -637,7 +723,7 @@ class AutoChartbi extends Component {
                             </tr><tr>
                                <td align="center">                                                
                                   <select required defaultValue="" onChange={this.getVariables2} style={{"width":"210px"}}>
-                                     <option value="" disabled>---------- select a dataset ----------</option>
+                                     <option value="" disabled>- select a dataset -</option>
                                      {this.state.options}
                                   </select>
                                </td>
@@ -648,18 +734,7 @@ class AutoChartbi extends Component {
                                   </div>
                                </td>
                             </tr>
-                        </td>
-                         <td valign="center" align="center">
-                            <img class="arrowclass" src={arrowicon} width="45" height="45" />
-                          </td>
-                        <td class="tablerowdata" valign="top" align="center" bgcolor="white">
                             <tr>
-                              <td align="center">                           
-                                <div className="cardtitle">
-                                  2. Combine Datasets
-                                </div>
-                              </td>
-                            </tr><tr>
                                <td align="center">
                                   <div className="cardsubtitle">
                                      Combine both datasets based on:
@@ -679,13 +754,35 @@ class AutoChartbi extends Component {
                                   </tr>
                                </tbody>
                                </table>
-                            </tr>                        
-                            <br/>
+                            </tr>       
                             <tr>
                                <td align="center">                                                            
-                                  <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Result</button>                             
+                                  <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Top R</button>                             
                                </td>
                             </tr>
+                        </td>
+                         <td valign="center" align="center">
+                            <img class="arrowclass" src={arrowicon} width="45" height="45" />
+                          </td>
+                        <td class="tablerowdata" valign="top" align="center" bgcolor="white">
+                            <tr>
+                              <td align="center">                           
+                                <div className="cardtitle">
+                                  2. Correlation Results
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                {this.state.filterwords1}
+                                {this.state.filterresultoptions}
+                                {this.state.filterwords2}
+                                </td>
+                            </tr>
+                            <table id="rtwotables"  class="outputtable" border="1">
+                            {this.state.rtworesults}                            
+                            </table>
+                            {this.state.instruction}
                             <br/>
                             <tr>
                                <td align="center">                                                            
@@ -696,19 +793,77 @@ class AutoChartbi extends Component {
                             </tr>
                         </td>
                          <td valign="center" align="center">
-                            <img id="arrowclassid" style={{"visibility":"hidden"}} class="arrowclass" src={arrowicon} width="45" height="45" />
+                            <img id="arrowclassid" class="arrowclass" src={arrowicon} width="45" height="45" />
                           </td>
-                        <td id="tablerowdataid" style={{"visibility":"hidden"}} class="tablerowdata" valign="top" align="center" bgcolor="white">                         
+                        <td id="tablerowdataid" class="tablerowdata" valign="top" align="center" bgcolor="white">                         
                             <tr>
-                                <td>
-                                {this.state.filterwords1}
-                                {this.state.filterresultoptions}
-                                {this.state.filterwords2}
-                                </td>
+                              <td align="center">
+                                <div className="cardtitle">
+                                  3. Filtering
+                                </div>
+                              </td>
+                            </tr><tr>
+                              <td align="center">
+                                <div className="cardsubtitle">
+                                  Filter By:
+                                </div>
+                              </td>
+                            </tr><tr>
+                              <td align="center">       
+                                <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"80%"}}>
+                                  <option value="">- optional -</option>
+                                    {this.state.datevariablesoptions}
+                                    {this.state.companyvariablesoptions}               
+                                    {this.state.depotvariablesoptions}                 
+                                    {this.state.countrynamevariablesoptions}
+                                  <option disabled>----------</option>                                                                
+                                    {this.state.datevariablesoptions2}
+                                    {this.state.companyvariablesoptions2}              
+                                    {this.state.depotvariablesoptions2}                
+                                   {this.state.countrynamevariablesoptions2}                                              
+                                </select>
+                              </td>
                             </tr>
-                            <table id="rtwotables"  class="outputtable" border="1">
-                            {this.state.rtworesults}
-                            </table>
+                            <tr>
+                               <td align="center">
+                                  <div className="carderrormsg">{this.state.errordatestatement}</div>
+                               </td>
+                            </tr>
+                            <tr>
+                               <td align="center">  
+                                  {this.state.selectedfiltervariable.toLowerCase().includes("date") &&
+                                     <div>
+                                        <div className="cardsubtitle">
+                                           Start Date:
+                                        </div>                   
+                                        <input type="date" style={{"width":"80%"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue} />
+                                        <td></td>
+                                        <div className="cardsubtitle">
+                                           End Date:
+                                        </div>
+                                        <input type="date" style={{"width":"80%"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
+                                        <br/>
+                                        <tr>
+                                        <td align="center">
+                                           <font size="2" color="grey"><i>Safari users, please use "yyyy-mm-dd"</i></font>
+                                        </td>
+                                        </tr>
+                                     </div>
+                                  }
+                                  {this.state.selectedfiltervariable && !this.state.selectedfiltervariable.toLowerCase().includes("date") &&
+                                     <div>
+                                        <div className="cardsubtitle">
+                                           {this.state.selectedfiltervariable.substring(3,)}:
+                                        </div>
+                                        <select id="filtervaluedropdownid" defaultValue="" required onChange={this.selectFilterValue}>
+                                           <option value="" disabled>- select a variable -</option>
+                                           {this.state.filtervaluelistoptions}                         
+                                        </select>
+                                        <br/>
+                                     </div>
+                                  }  
+                               </td>
+                          </tr>
                         </td></tr>
                      </tbody>   
                      </table>
