@@ -57,6 +57,8 @@
   flex-direction: column;
   justify-content: flex-start;
   padding-top: 20px;
+  z-index: 100;
+  position: absolute;
 }
 
 .sidebar-item.active {
@@ -102,6 +104,30 @@
   filter: none;
 }
 
+.sidebar-menubutton>img{
+    display: none;
+}
+
+@media only screen and (max-width:599px){
+    #menu{
+        display:none;
+    }
+    .sidebar-menubutton>img{
+      display: block;
+      height: 2em;
+      padding-right: 0.5em;  
+    }
+    .sidebar-menubutton:hover>img {
+      cursor:pointer;
+    }
+    .content-layout{
+        width:200%;
+        margin-left: -200px;
+    }
+    #innertable{
+        width:200%;
+    }
+}
 .noHover {
   pointer-events: none;
 }
@@ -109,6 +135,7 @@
 .content-layout {
   grid-area: content;
   padding: 1.5rem 2rem;
+  width:100%;
 }
 
 .horizontal {

@@ -6,6 +6,7 @@ import Correlation from 'node-correlation';
 import SpearmanRHO from 'spearman-rho';
 
 import "../css/main";
+import arrowicon from "../images/arrow.png";
 
 var $ = require('jquery');
 
@@ -438,7 +439,12 @@ class AutoChartbi extends Component {
          
 
         });
-        
+
+        var arrowelement = document.getElementById("arrowclassid");
+        arrowelement.style.visibility = "visible";
+        var tablerowdataelement = document.getElementById("tablerowdataid");
+        tablerowdataelement.style.visibility = "visible";
+
         var keys = Object.keys(rxyKeyVal);
         keys.sort(function ( a, b ) { return b - a; });
         let rxypairs = [<tr><th>X</th><th>Y</th><th>R</th></tr>]
@@ -532,6 +538,7 @@ class AutoChartbi extends Component {
                            mode: 'markers',
                            marker: {color: 'blue'},
                            name: plotpointname,
+                           showlegend: false,
                            hoverlabel: {namelength: -1}
                            },{
                            x: xarray,
@@ -540,12 +547,13 @@ class AutoChartbi extends Component {
                            mode: 'lines',
                            marker: {color: 'red'},
                            name: "Equation: " + equation,
+                           showlegend: false,
                            hoverlabel: {namelength: -1}                          
                            }]}
                            layout={{
                               width: 800, 
                               height: 700, 
-                              title: '<b>Generated Time:' + currentTimeStamp + '</b><br>' + '<b>Correlation between ' + xname + ' and ' + yname + '</b><br>R: ' + r + ', Rho: ' + rho.toFixed(2) + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
+                              title: '<b>Generated Time:' + currentTimeStamp + '</b><br>' + '<b>Correlation between ' + xname + ' and ' + yname + '</b><br>R: ' + r + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
                               hovermode: 'closest',
                               xaxis: {
                                  title: xname,
@@ -587,119 +595,128 @@ class AutoChartbi extends Component {
       return (
 
          <div>
-            <div className="content">
+            <div style={{"width":"100%"}} className="content">
             <form action="/correlationpagebi">             
               <button className="back vis-back" type="submit">Back</button>  
             </form>     
             <br/>            
-            <table style={{"width":"100%"}}>
+            <table id="innertable">
             <tbody>
                <tr>             
-                  <td style={{"width":"22%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">   
+                  <td>   
                   <form name="submitForm" method="POST" onSubmit={this.formSubmitted}>                       
-                     <br />
-                     <table align="center">
+                     <table style={{"width":"100%"}} align="left">
                      <tbody>
                         <tr>
-                           <td align="center">
-                              <div className="cardtitle">
-                                 Select Datasets
-                              </div>
-                           </td>
-                        </tr><tr>
-                           <td align="center">
-                              <div className="cardsubtitle">
-                                 Dataset One:
-                              </div>
-                           </td>
-                        </tr><tr>
-                           <td align="center">
-                              <select required defaultValue="" onChange={this.getVariables} style={{"width":"210px"}}>
-                                 <option value="" disabled>---------- select a dataset ----------</option>
-                                 {this.state.options}
-                              </select>
-                           </td>
-                        </tr><tr>
-                           <td align="center">                        
-                              <div className="cardsubtitle">
-                                 Dataset Two:
-                              </div>
-                           </td>
-                        </tr><tr>
-                           <td align="center">                                                
-                              <select required defaultValue="" onChange={this.getVariables2} style={{"width":"210px"}}>
-                                 <option value="" disabled>---------- select a dataset ----------</option>
-                                 {this.state.options}
-                              </select>
-                           </td>
-                        </tr><tr>
-                           <td align="center">                  
-                              <div className="carderrormsg">
-                                 {this.state.errorstatement}
-                              </div>
-                           </td>
-                        </tr><tr>
-                           <td align="center">
-                              <div className="cardsubtitle">
-                                 Combine both datasets based on:
-                              </div>
-                           </td>
-                        </tr><tr>
-                           <table align="center">
-                           <tbody>
-                              <tr>                        
-                                 <td><input id="dateradio" type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/></td><td><label id="labeldate">Activity Date</label></td>
-                              </tr><tr>
-                                  <td><input id="companyradio" type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/></td><td><label id ="labelcompany">Company</label></td>
-                              </tr><tr>
-                                 <td><input id="locationradio" type="radio" name="joinvariable" value="countryname" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "countryname"} disabled required/></td><td><label id="labelcountry">Country Name</label></td>
-                              </tr><tr>                  
-                                 <td><input id="depotradio" type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/></td><td><label id="labeldepot">Depot</label></td>                  
-                              </tr>
-                           </tbody>
-                           </table>
-                        </tr>
-                        <br/>
-                        
-                        
-                        <br/>
-                        <tr>
-                           <td align="center">                                                            
-                              <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Result</button>                             
-                           </td>
-                        </tr>
-                        <br/>
-                        <tr>
-                           <td align="center">                                                            
-                              <div className="LoadingBar" style={style}>
-                                 {this.loadingBarInstance}
-                              </div>                                  
-                           </td>
-                        </tr>
-                        <tr>
-                        <td>
-                        <i>
-                        {this.state.correlationresultexplanation}
-                        </i>
+                        <td class="tablerowdata" valign="top" align="center" bgcolor="white">
+                            <tr>
+                               <td align="center">
+                                  <div className="cardtitle">
+                                     1. Select Datasets
+                                  </div>
+                               </td>
+                            </tr><tr>
+                               <td align="center">
+                                  <div className="cardsubtitle">
+                                     Dataset One:
+                                  </div>
+                               </td>
+                            </tr><tr>
+                               <td align="center">
+                                  <select required defaultValue="" onChange={this.getVariables} style={{"width":"210px"}}>
+                                     <option value="" disabled>---------- select a dataset ----------</option>
+                                     {this.state.options}
+                                  </select>
+                               </td>
+                            </tr><tr>
+                               <td align="center">                        
+                                  <div className="cardsubtitle">
+                                     Dataset Two:
+                                  </div>
+                               </td>
+                            </tr><tr>
+                               <td align="center">                                                
+                                  <select required defaultValue="" onChange={this.getVariables2} style={{"width":"210px"}}>
+                                     <option value="" disabled>---------- select a dataset ----------</option>
+                                     {this.state.options}
+                                  </select>
+                               </td>
+                            </tr><tr>
+                               <td align="center">                  
+                                  <div className="carderrormsg">
+                                     {this.state.errorstatement}
+                                  </div>
+                               </td>
+                            </tr>
                         </td>
-                        <br/>
-                        </tr>
-                        <tr>
-                            <td>
-                            {this.state.filterwords1}
-                            {this.state.filterresultoptions}
-                            {this.state.filterwords2}
-                            </td>
-                        </tr>
-                        <table id="rtwotables"  class="outputtable" border="1">
-                        {this.state.rtworesults}
-                        </table>
+                         <td valign="center" align="center">
+                            <img class="arrowclass" src={arrowicon} width="45" height="45" />
+                          </td>
+                        <td class="tablerowdata" valign="top" align="center" bgcolor="white">
+                            <tr>
+                              <td align="center">                           
+                                <div className="cardtitle">
+                                  2. Combine Datasets
+                                </div>
+                              </td>
+                            </tr><tr>
+                               <td align="center">
+                                  <div className="cardsubtitle">
+                                     Combine both datasets based on:
+                                  </div>
+                               </td>
+                            </tr><tr>
+                               <table align="center">
+                               <tbody>
+                                  <tr>                        
+                                     <td><input id="dateradio" type="radio" name="joinvariable" value="activitydate" required onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "activitydate"} disabled required/></td><td><label id="labeldate">Activity Date</label></td>
+                                  
+                                      <td><input id="companyradio" type="radio" name="joinvariable" value="company" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "company"} disabled required/></td><td><label id ="labelcompany">Company</label></td>
+                                  </tr><tr>
+                                     <td><input id="locationradio" type="radio" name="joinvariable" value="countryname" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "countryname"} disabled required/></td><td><label id="labelcountry">Country Name</label></td>
+                                                    
+                                     <td><input id="depotradio" type="radio" name="joinvariable" value="depot" onChange={this.selectJoinVariable} checked={this.state.selectedjoinvariable === "depot"} disabled required/></td><td><label id="labeldepot">Depot</label></td>                  
+                                  </tr>
+                               </tbody>
+                               </table>
+                            </tr>                        
+                            <br/>
+                            <tr>
+                               <td align="center">                                                            
+                                  <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Result</button>                             
+                               </td>
+                            </tr>
+                            <br/>
+                            <tr>
+                               <td align="center">                                                            
+                                  <div className="LoadingBar" style={style}>
+                                     {this.loadingBarInstance}
+                                  </div>                                  
+                               </td>
+                            </tr>
+                        </td>
+                         <td valign="center" align="center">
+                            <img id="arrowclassid" style={{"visibility":"hidden"}} class="arrowclass" src={arrowicon} width="45" height="45" />
+                          </td>
+                        <td id="tablerowdataid" style={{"visibility":"hidden"}} class="tablerowdata" valign="top" align="center" bgcolor="white">                         
+                            <tr>
+                                <td>
+                                {this.state.filterwords1}
+                                {this.state.filterresultoptions}
+                                {this.state.filterwords2}
+                                </td>
+                            </tr>
+                            <table id="rtwotables"  class="outputtable" border="1">
+                            {this.state.rtworesults}
+                            </table>
+                        </td></tr>
                      </tbody>   
                      </table>
                      <br/>          
                   </form>                   
                   </td>
-                  <td></td>
+                  </tr>
+                  <tr>
                   <td align="center" style={{"width":"80%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                      <table id="message">
                      <tbody>
