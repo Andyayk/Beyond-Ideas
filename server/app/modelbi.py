@@ -397,7 +397,7 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
         #Basic URL for crawling
         base_url = "http://api.worldweatheronline.com/premium/v1/past-weather.ashx"
         #Setting the header and body array to be placed into csv file.
-        headerArray = "date,meanTemperatureC,meanTemperatureF"
+        headerArray = "date,meanTemperatureC"
         bodyArray = []
         #extracting the months in integer
         startMonth = int(input_start_date[5:7])
@@ -417,10 +417,8 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
                 date = str(i["date"])
                 #retrieve mean temperature in celcius
                 meanTemperatureC = str(i["hourly"][0]["tempC"])
-                #retrieve mean temperature in fahrenheit
-                meanTemperatureF = str(i["hourly"][0]["tempF"])
                 #combine the rows
-                rows = "\"" + date + "\"" + "," + meanTemperatureC + "," + meanTemperatureF
+                rows = "\"" + date + "\"" + "," + meanTemperatureC
                 #add the rows in to an array to be placed in csv file later on
                 bodyArray.append(rows)
         #if not, deduct the number of months needed to crawl and send 1 api for each month.
@@ -461,10 +459,8 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
                         date = str(i["date"])
                         #retrieve mean temperature in celcius
                         meanTemperatureC = str(i["hourly"][0]["tempC"])
-                        #retrieve mean temperature in fahrenheit
-                        meanTemperatureF = str(i["hourly"][0]["tempF"])
                         #combine the rows
-                        rows = "\"" + date + "\"" + "," + meanTemperatureC + "," + meanTemperatureF
+                        rows = "\"" + date + "\"" + "," + meanTemperatureC
                         #add the rows in to an array to be placed in csv file later on
                         bodyArray.append(rows)        
                 else:
@@ -489,10 +485,8 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
                         date = str(i["date"])
                         #retrieve mean temperature in celcius
                         meanTemperatureC = str(i["hourly"][0]["tempC"])
-                        #retrieve mean temperature in fahrenheit
-                        meanTemperatureF = str(i["hourly"][0]["tempF"])
                         #combine the rows
-                        rows = "\"" + date + "\"" + "," + meanTemperatureC + "," + meanTemperatureF
+                        rows = "\"" + date + "\"" + "," + meanTemperatureC
                         #add the rows in to an array to be placed in csv file later on
                         bodyArray.append(rows)
                     if start_crawl_month == 12:
@@ -505,7 +499,7 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
         if saveToDB == "true":        
             tableName = filename + "_" + str(userID)
             connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
-            connection.execute("CREATE TABLE `" + tableName + "` (date date, meanTemperatureC int(2), meanTemperatureF int(2));")
+            connection.execute("CREATE TABLE `" + tableName + "` (date date, meanTemperatureC int(2));")
             
             connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
             timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
