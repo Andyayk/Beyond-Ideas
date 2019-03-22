@@ -714,13 +714,14 @@ def corpus2docs(corpus):
 
     docs1 = []
     for tweet in corpus:
+        tweet = re.sub(r'@[\w]*', '', tweet) #remove @user
         doc = nltk.word_tokenize(tweet)
         docs1.append(doc)
     docs2 = [[w.lower() for w in doc] for doc in docs1] #lower case
     docs3 = [[w for w in doc if re.search('^[a-z]+$', w)] for doc in docs2] #keep only alphabets
     docs4 = [[w for w in doc if w not in stop_list] for doc in docs3] #remove stopwords
     docs5 = [[wordnet_lemmatizer.lemmatize(w) for w in doc] for doc in docs4] #lemmatize    
-    docs6 = [[w for w in doc if len(w) >= 2] for doc in docs5] #remove single letters
+    docs6 = [[w for w in doc if len(w) >= 3] for doc in docs5] #remove single and double letters
 
     return docs6
 
@@ -872,6 +873,18 @@ def topicModeling(tablename, usertablename, userID):
         print(str(e))
         return "Something is wrong with sentimentAnalysis method"  
 
+def assignSentiment(row):
+    """
+        This method will assign positive, negative or neutral sentiment based on probability
+    """        
+    if row['sentiment_score'] > 0.75:
+        val = 1 #positive
+    elif row['sentiment_score'] < 0.5:
+        val = 0 #negative
+    else:
+        val = 2 #neutral
+    return val
+
 def sentimentAnalysis(tablename, usertablename, userID):
     """
         This method will implement best sentiment analysis model
@@ -906,7 +919,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
         copytestdf['sentiment_score'] = predictionprobability 
 
         # Adding predicted sentiment to dataframe
-        copytestdf['sentiment'] = test_predicted 
+        copytestdf['sentiment'] = copytestdf.apply(assignSentiment, axis=1) 
 
         tableName = tablename + "_w_sentiment_" + str(userID)
         connection.execute("DROP TABLE IF EXISTS `" + tableName + "`")
@@ -937,6 +950,7 @@ def preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing):
     # Tokenize each tweet and save into data frame
     listOfTokenizedTweets = []
     for x in df[tweetColumnName]:
+        x = re.sub(r'@[\w]*', '', x) #remove @user
         tokenized_word = word_tokenize(x)
         listOfTokenizedTweets.append(tokenized_word)
     df[tweetColumnName] = listOfTokenizedTweets
@@ -958,13 +972,10 @@ def preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing):
     # Stemming each tweet
     stemmer = PorterStemmer()
     df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [stemmer.stem(y) for y in x])
-    """
-    if requireAdditionalProcessing:
-        # Remove uncommon words - can become noise
-        freq = pd.Series(' '.join(df[tweetColumnName]).split()).value_counts()[-10:]
-        freq = list(freq.index)
-        df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if y not in freq])
-    """
+
+    # Remove single and double letters
+    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if len(y) >= 3])
+
     # Convert processed tweets from data frame to a list
     processedTweets = df[tweetColumnName].tolist()
 
