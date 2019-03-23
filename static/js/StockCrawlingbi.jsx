@@ -24,7 +24,7 @@ class StockCrawlingbi extends Component {
       this.selectStockName = this.selectStockName.bind(this);  
       this.selectFilename = this.selectFilename.bind(this);                
       this.switchToDatabase = this.switchToDatabase.bind(this);
-      this.switchToCSV = this.switchToCSV.bind(this);           
+      this.switchToCSV = this.switchToCSV.bind(this);    
       this.stockCrawler = this.stockCrawler.bind(this);
 
       this.formSubmitted = this.formSubmitted.bind(this);  
@@ -96,6 +96,13 @@ class StockCrawlingbi extends Component {
       });
    }    
 
+   validation(e) {
+      const re = /[0-9a-fA-F_]+/g;
+      if (!re.test(e.key)) {
+         e.preventDefault();
+      }
+   }
+
    //retrieve web crawl results
    stockCrawler(event){
       var stock = this.state.stockname;
@@ -156,6 +163,8 @@ class StockCrawlingbi extends Component {
       y.style.display = "none";
    }
 
+
+
    //rendering the html for web crawling
    render() {
       const style = this.state.hideLoadingBar ? {display: 'none'} : {};
@@ -212,7 +221,8 @@ class StockCrawlingbi extends Component {
                                        </div>
                                     </tr><tr>
                                        <td align="center">
-                                          <input required type="text" id="filename" style={{"width":"220px"}} onChange={this.selectFilename}/>
+                                          <input required type="text" id="filename" onKeyPress={(e) => this.validation(e)}
+                                          style={{"width":"220px"}} onChange={this.selectFilename}/>
                                        </td>
                                     </tr>
                                     <tr>
