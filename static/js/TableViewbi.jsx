@@ -307,7 +307,14 @@ class TableViewbi extends Component {
          selectedjoinvariable: event.target.value
       });      
    }  
-   
+
+   validation(e) {
+      const re = /[0-9a-zA-Z_]+/g;
+      if (!re.test(e.key)) {
+         e.preventDefault();
+      }
+   }
+
    //retrieving csv export from flask
    save(event) {
       $.post(window.location.origin + "/savejoinedtablebi/",
@@ -455,7 +462,7 @@ class TableViewbi extends Component {
                                  </td>
                               </tr><tr>
                                  <td align="center">
-                                    <input required type="text" id="filename" onChange={this.selectFilename}/>
+                                    <input required type="text" id="filename" onKeyPress={(e) => this.validation(e)} onChange={this.selectFilename}/>
                                  </td>
                               </tr>
                               <br/><tr> 
