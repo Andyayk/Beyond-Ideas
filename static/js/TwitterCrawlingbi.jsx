@@ -132,6 +132,13 @@ class TwitterCrawlingbi extends Component {
       });
    } 
 
+   validation(e) {
+      const re = /[0-9a-fA-F_]+/g;
+      if (!re.test(e.key)) {
+         e.preventDefault();
+      }
+   }
+
    //handle form submission
    formSubmitted(event){
       event.preventDefault();
@@ -250,7 +257,7 @@ class TwitterCrawlingbi extends Component {
                                           e.g. "dhltweets"
                                        </div>
                                     </tr><tr>
-                                       <input required type="text" id="filename" style={{"width":"220px"}} onChange={this.selectFilename}/>
+                                       <input required type="text" id="filename" onKeyPress={(e) => this.validation(e)} style={{"width":"220px"}} onChange={this.selectFilename}/>
                                     </tr><tr>
                                        <button onClick={this.switchToDatabase} id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"220px"}}>Retrieve Tweets</button>    
                                     </tr><tr>

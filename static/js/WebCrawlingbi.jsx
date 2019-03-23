@@ -126,6 +126,13 @@ class WebCrawlingbi extends Component {
       });
    }    
 
+   validation(e) {
+      const re = /[0-9a-fA-F_]+/g;
+      if (!re.test(e.key)) {
+         e.preventDefault();
+      }
+   }
+
    //retrieve web crawl results
    weatherCrawler(event){
       var country = this.state.countryname;
@@ -315,7 +322,7 @@ class WebCrawlingbi extends Component {
                                        </div>
                                     </tr><tr>
                                        <td align="center">
-                                          <input required type="text" id="filename" style={{"width":"220px"}} onChange={this.selectFilename}/>
+                                          <input required type="text" id="filename" onKeyPress={(e) => this.validation(e)} style={{"width":"220px"}} onChange={this.selectFilename}/>
                                        </td>
                                     </tr>
                                     <tr>
