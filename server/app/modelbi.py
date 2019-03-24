@@ -736,6 +736,7 @@ def docs2vecs(docs, dictionary):
 
 def gettopn_words(usertablename, sentiment, n):
     requireAdditionalProcessing = True
+    requireStemmer = False
 
     try:
         sqlstmtQuery = "SELECT * FROM `" + usertablename + "` where sentiment = 1"
@@ -747,7 +748,7 @@ def gettopn_words(usertablename, sentiment, n):
         tweetColumnName = 'tweet'
 
         # Preprocess the text
-        stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing)
+        stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing, requireStemmer)
         #tokenize words from sentences of tweets
         tokenized_words = [word_tokenize(i) for i in stringOfTokenizedTweets]
         tokens = list(itertools.chain(*tokenized_words))
@@ -897,6 +898,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
     # Sentiment Analysis
     tweetColumnName = 'tweet'
     requireAdditionalProcessing = False
+    requireStemmer = True
 
     try:
         # Load unseen testing dataset 
@@ -907,7 +909,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
         copytestdf = testdf.copy()
 
         # Preprocess the text
-        stringOfTokenizedTweets = preprocessingDataset(testdf, tweetColumnName, requireAdditionalProcessing)
+        stringOfTokenizedTweets = preprocessingDataset(testdf, tweetColumnName, requireAdditionalProcessing, requireStemmer)
 
         # Classify the unseen test dataset with the train model
         test_predicted = classifier_load.predict(stringOfTokenizedTweets)
@@ -942,7 +944,7 @@ def sentimentAnalysis(tablename, usertablename, userID):
     except Exception as e:
         return "Something is wrong with sentimentAnalysis method"  
 
-def preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing):
+def preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing, requireStemmer):
     """
     This method will pre-process the dataset
     """
@@ -969,9 +971,10 @@ def preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing):
                
         df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if y not in stop_list])
 
-    # Stemming each tweet
-    stemmer = PorterStemmer()
-    df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [stemmer.stem(y) for y in x])
+    if requireStemmer:
+        # Stemming each tweet
+        stemmer = PorterStemmer()
+        df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [stemmer.stem(y) for y in x])
 
     # Remove single and double letters
     df[tweetColumnName] = df[tweetColumnName].apply(lambda x: [y for y in x if len(y) >= 3])
@@ -996,12 +999,13 @@ def trainSentimentAnalysisModels():
     labelColumnName = 'Sentiment'
     tweetColumnName = 'SentimentText'
     requireAdditionalProcessing = False
+    requireStemmer = True
 
     # Convert the labellings in data frame to a list
     listOfLabels = df[labelColumnName].tolist()
 
     # Preprocess the text
-    stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing)
+    stringOfTokenizedTweets = preprocessingDataset(df, tweetColumnName, requireAdditionalProcessing, requireStemmer)
 
     # Generate document term matrix - bag of words
     vectorizer = CountVectorizer()
