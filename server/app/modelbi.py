@@ -1047,45 +1047,49 @@ def trainSentimentAnalysisModels():
     return ""
 
 def stockCrawlerbi(stockname, saveToDB, userID, filename):
-    with open(os.getcwd()+"\\instance\\stock_credentials.json", "r") as file:  
-        creds = json.load(file)
-    api_key = str(creds['API_KEY'])    
-    symbol = stockname
-    #Basic URL for crawling
-    base_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="
-    #Setting the header and body array to be placed into csv file.
-    url = base_url + symbol + "&apikey=" + api_key
-    headerArray = "date,open,high,low,close,volume"
-    bodyArray = []
-    stock_r = requests.get(url)
-    stock_text = stock_r.text
-    stock_dic = json.loads(stock_text)
-    for i in stock_dic["Time Series (Daily)"]:
-        date = str(i)
-        stockOpen = stock_dic["Time Series (Daily)"][i]["1. open"]
-        high = stock_dic["Time Series (Daily)"][i]["2. high"]
-        low = stock_dic["Time Series (Daily)"][i]["3. low"]
-        close = stock_dic["Time Series (Daily)"][i]["4. close"]
-        volume = stock_dic["Time Series (Daily)"][i]["5. volume"]
-        row = "\"" + date + "\"" + "," + stockOpen + "," + high + "," + low + "," + close + "," + volume
-        bodyArray.append(row)
+    try:
+        with open(os.getcwd()+"\\instance\\stock_credentials.json", "r") as file:  
+            creds = json.load(file)
+        api_key = str(creds['API_KEY'])    
+        symbol = stockname
+        #Basic URL for crawling
+        base_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="
+        #Setting the header and body array to be placed into csv file.
+        url = base_url + symbol + "&apikey=" + api_key
+        headerArray = "date,open,high,low,close,volume"
+        bodyArray = []
+        stock_r = requests.get(url)
+        stock_text = stock_r.text
+        stock_dic = json.loads(stock_text)
+        for i in stock_dic["Time Series (Daily)"]:
+            date = str(i)
+            stockOpen = stock_dic["Time Series (Daily)"][i]["1. open"]
+            high = stock_dic["Time Series (Daily)"][i]["2. high"]
+            low = stock_dic["Time Series (Daily)"][i]["3. low"]
+            close = stock_dic["Time Series (Daily)"][i]["4. close"]
+            volume = stock_dic["Time Series (Daily)"][i]["5. volume"]
+            row = "\"" + date + "\"" + "," + stockOpen + "," + high + "," + low + "," + close + "," + volume
+            bodyArray.append(row)
 
-    if saveToDB == "true":        
-        tableName = filename + "_" + str(userID)
-        connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
-        connection.execute("CREATE TABLE `" + tableName + "` (date date, open float(7,2), high float(7,2), low float(7,2), close float(7,2), volume int(9));")
-        
-        connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
-        timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-        connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
-        status = insertToDatabase(headerArray, bodyArray, tableName)
-        return "success"
-    else:
-        #write the data into a csv file
-        returnStr = headerArray
-        returnStr += "\n"
-        for i in bodyArray:
-            returnStr += i
+        if saveToDB == "true":        
+            tableName = filename + "_" + str(userID)
+            connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
+            connection.execute("CREATE TABLE `" + tableName + "` (date date, open float(7,2), high float(7,2), low float(7,2), close float(7,2), volume int(9));")
+            
+            connection.execute("DELETE FROM user_data WHERE data_name = '" + tableName + "'")
+            timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+            connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + tableName + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
+            status = insertToDatabase(headerArray, bodyArray, tableName)
+            return "success"
+        else:
+            #write the data into a csv file
+            returnStr = headerArray
             returnStr += "\n"
-        #print(returnStr)
-        return returnStr
+            for i in bodyArray:
+                returnStr += i
+                returnStr += "\n"
+            #print(returnStr)
+            return returnStr
+    except Exception as e:
+        print(e)
+        return "Retrieval of stock data unsuccessful. The maximum call limit may have been reached. Please try again in 1 minute."   
