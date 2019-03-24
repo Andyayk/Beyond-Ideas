@@ -190,8 +190,6 @@ class Analysisbi extends Component {
         tableboolean2: true,
         tablename: this.state.selectedtable           
       });
-      console.log(this.state.topwords_positive);
-      console.log(this.state.topwords_negative);
       this.generateWordCloud(); 
     });  
   }
@@ -321,6 +319,10 @@ class Analysisbi extends Component {
                              title={"Topic Analysis"}
                              data={this.state.topicvalues}
                              columns={this.state.topiccolumns}
+                             options={{
+                               rowsPerPage:5 , 
+                               rowsPerPageOptions: [5,10,15]
+                             }}
                           /> 
                           ):null
                         } 
@@ -403,6 +405,9 @@ class Analysisbi extends Component {
                          title={"Dataset: "+this.state.tablename}
                          data={this.state.values}
                          columns={this.state.columns}
+                         options={{
+                           rowsPerPageOptions: [10,15,20]
+                         }}
                       /> 
                       ):null
                     } 

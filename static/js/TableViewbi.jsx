@@ -497,6 +497,9 @@ class TableViewbi extends Component {
                                         title={"Combined Dataset"}
                                         data={this.state.combinedcolvalues}
                                         columns={this.state.combinedcolnames}
+                                        options={{
+                                          rowsPerPageOptions: [10,15,20]
+                                        }}
                                      />  
                                      ):null
                                     } 
@@ -529,6 +532,9 @@ class TableViewbi extends Component {
                                      title={"Dataset One: "+this.state.exporttable1}
                                      data={this.state.colvalues}
                                      columns={this.state.colnames}
+                                     options={{
+                                       rowsPerPageOptions: [10,15,20]
+                                     }}
                                   />  
                                   ):null
                                  } 
@@ -554,6 +560,9 @@ class TableViewbi extends Component {
                                      title={"Dataset Two: "+this.state.exporttable2}
                                      data={this.state.colvalues2}
                                      columns={this.state.colnames2}
+                                     options={{
+                                       rowsPerPageOptions: [10,15,20]
+                                     }}
                                   />  
                                   ):null
                                  }   
