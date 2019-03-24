@@ -133,7 +133,7 @@ class TwitterCrawlingbi extends Component {
    } 
 
    validation(e) {
-      const re = /[0-9a-zA-Z_]+/g;
+      const re = /[0-9a-zA-Z_ ]+/g;
       if (!re.test(e.key)) {
          e.preventDefault();
       }
