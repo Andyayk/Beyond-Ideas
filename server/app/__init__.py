@@ -921,6 +921,7 @@ def create_app(config_name):
             aggregatedsentiment = modelbi.getSentimentDataForChart(tableName) 
 
             columns = results[0] #column names
+            columns[3] = "sentiment score" #rename column name for easier reading
             values = results[1] #all values
 
             #retrieve top positive & negative words for sentiment wordcloud
