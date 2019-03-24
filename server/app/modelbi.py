@@ -803,7 +803,7 @@ def topicModeling(tablename, usertablename, userID):
         copydf = df.copy()
 
         tweetColumnName = 'tweet'
-        nooftopics = 5
+        nooftopics = 15
 
         # Preprocess the text
         tweets_docs = corpus2docs(df[tweetColumnName].tolist())
