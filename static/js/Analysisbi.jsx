@@ -27,8 +27,8 @@ class Analysisbi extends Component {
       topicvalues: "",
       topwords_positive: "",
       topwords_negative: "",
-      textdataPositive: [],
-      textdataNegative: [],
+      positivewordcloud: "",
+      negativewordcloud: "",      
       fontSizeMapper: word => Math.log2(word.value) * 15,
       rotate: word => 10
     };
@@ -215,10 +215,17 @@ class Analysisbi extends Component {
       textdataNegative.push({'text':topword_negative,'value':topword_fdist});
     }
 
-    
     this.setState({
-      textdataPositive: textdataPositive,
-      textdataNegative: textdataNegative
+      positivewordcloud: <WordCloud
+                          data={textdataPositive}
+                          fontSizeMapper={this.state.fontSizeMapper}
+                          rotate={this.state.rotate}
+                         />,
+      negativewordcloud: <WordCloud
+                          data={textdataNegative}
+                          fontSizeMapper={this.state.fontSizeMapper}
+                          rotate={this.state.rotate}
+                         />
     })
   }      
 
@@ -360,22 +367,14 @@ class Analysisbi extends Component {
                       Most common words in<span style={{"color":"#4CAF50"}}> positive tweets</span>
                     </h1>     
                     <br/>
-                    <WordCloud
-                      data={this.state.textdataPositive}
-                      fontSizeMapper={this.state.fontSizeMapper}
-                      rotate={this.state.rotate}
-                    />
+                    {this.state.positivewordcloud}
                   </td>  
                   <td align="center">    
-                     <h1>
+                    <h1>
                       Most comon words in<span style={{"color":"red"}}> negative tweets</span>
                     </h1>
                     <br/>
-                    <WordCloud
-                      data={this.state.textdataNegative}
-                      fontSizeMapper={this.state.fontSizeMapper}
-                      rotate={this.state.rotate}
-                    />
+                    {this.state.negativewordcloud}
                   </td>            
                 </tr>
               </tbody>   
