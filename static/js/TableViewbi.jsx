@@ -5,6 +5,7 @@ import MUIDataTable from 'mui-datatables';
 
 import "../css/TableViewbi";
 import "../css/main";
+import arrowicon from "../images/arrow.png";
 
 
 var $ = require('jquery');
@@ -362,74 +363,80 @@ class TableViewbi extends Component {
          <table align="center" style={{"width":"100%"}}>
          <tbody>                   
             <tr>                       
-               <td style={{"width":"50%"}}>                             
-                  <div className="cardview">
-                     <div className="containerview">                      
-                        <table align="center">
-                        <tbody>                        
-                           <tr>
-                              <th colSpan="2" align="center">
-                                 <div className="cardtitle">Select Dataset(s) to View</div>
-                              </th>
-                           </tr><tr></tr><tr></tr><tr></tr><tr></tr><tr>
-                              <td align="center">
-                                 <div className="cardsubtitle">Dataset One:</div>
-                              </td>
-                              <td align="center">
-                                 <div className="cardsubtitle">Dataset Two:</div>
-                              </td>                              
-                           </tr><tr>
-                              <td align="center">
-                                <select required defaultValue="" onChange={this.display} style={{"width":"250px"}}>
-                                  <option value="" disabled>--------------- select a dataset ---------------</option>
-                                  {this.state.options} 
-                                </select>
-                              </td>
-                              <td align="center">
-                                <select required defaultValue="" onChange={this.display2} style={{"width":"250px"}}>
-                                  <option value="" disabled>--------------- select a dataset ---------------</option>8
-                                  {this.state.options}
-                                </select>                  
-                              </td>    
-                           </tr><tr></tr><tr></tr><tr></tr><tr></tr><tr>
-                              <td align="center">
-                                 <div className="LoadingBarOne" style={style}>
-                                    {this.loadingBarInstanceOne}
-                                 </div>
-                              </td>
-                              <td align="center">
-                                 <div className="LoadingBarTwo" style={style2}>
-                                    {this.loadingBarInstanceTwo}
-                                 </div>
-                              </td>                              
-                           </tr>
-                        </tbody> 
-                        </table>                        
-                     </div>
-                  </div>   
+               <td style={{"width":"28%", "height":"230px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">                    
+                  <table align="center">
+                     <tbody>                        
+                        <tr>                                                         
+                           <div className="cardtitle">1. Select Dataset(s) to View</div>
+                        </tr><tr>
+                        </tr><tr>
+                        </tr><tr>   
+                           <td align="center">
+                              <div className="cardsubtitle">Dataset One:</div>
+                           </td>                            
+                        </tr>
+                        <tr>
+                           <td align="center">
+                              <select required defaultValue="" onChange={this.display} style={{"width":"210px"}}>
+                                 <option value="" disabled>- select a dataset -</option>
+                                    {this.state.options} 
+                              </select>
+                           </td>
+                        </tr><tr>
+                        </tr><tr>
+                        </tr><tr>   
+                           <td align="center">
+                              <div className="cardsubtitle">Dataset Two:</div>
+                           </td> 
+                        </tr>
+                        <tr>
+                           <td align="center">
+                              <select required defaultValue="" onChange={this.display2} style={{"width":"210px"}}>
+                                 <option value="" disabled>- select a dataset -</option>
+                                    {this.state.options}
+                              </select>                  
+                           </td>       
+                        </tr><tr>
+                        </tr><tr>
+                        </tr><tr>   
+                           <td align="center">
+                              <div className="LoadingBarOne" style={style}>
+                                 {this.loadingBarInstanceOne}
+                              </div>
+
+                              <div className="LoadingBarTwo" style={style2}>
+                                 {this.loadingBarInstanceTwo}
+                              </div>
+                           </td>                                                                      
+                        </tr>
+                     </tbody> 
+                  </table>                        
                </td>
-               <td style={{"width":"50%"}}>
-                  <div className="cardcombine">
-                     <div className="containercombine">                 
-                        <table align="center">
-                        <tbody>
-                           <tr>
-                              <td colSpan="2" align="center">
-                                 <div className="cardtitle">
-                                    Combine Selected Datasets
+               <td style={{"width":"2%", "height":"230px", "paddingTop":"15px"}} valign="center" align="center">
+                  <img class="arrowclass" src={arrowicon} width="45" height="45" />
+               </td>               
+               <td style={{"width":"28%", "height":"230px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                  <table align="center">
+                     <tbody>
+                        <tr>
+                           <td colSpan="2" align="center">
+                              <div className="cardtitle">
+                                 2. Combine Selected Datasets
+                              </div>
+                           </td>
+                        </tr><tr>
+                        </tr><tr>
+                        </tr><tr> 
+                           <td colSpan="2" align="center">
+                              <div className="cardsubtitle">
+                                 <div className="tooltip">
+                                    Select variable to combine both datasets:<span className="tooltiptext">Select a common variable between both datasets</span>
                                  </div>
-                              </td>
-                           </tr><tr></tr><tr></tr><tr></tr><tr>
-                              <td colSpan="2" align="center">
-                                 <div className="cardsubtitle">
-                                    <div className="tooltip">
-                                       Select variable to combine both datasets:<span className="tooltiptext">Tip for user (?)</span>
-                                    </div>
-                                 </div>
-                              </td> 
-                           </tr><tr>
-                              <td colSpan="2" align="center">
-                                 <table>
+                              </div>
+                           </td> 
+                        </tr><tr>
+                           <td colSpan="2" align="center">
+                              <table>
                                  <tbody>
                                     <tr>
                                        <td>
@@ -447,51 +454,61 @@ class TableViewbi extends Component {
                                  </tbody>                        
                                  </table>
                               </td>
-                           </tr><br/><tr>
-                                 <td align="center">
-                                    <div className="cardtitle">
-                                       Enter Combined Dataset Name
-                                    </div>
-                                 </td> 
-                              </tr>
-                              <tr>                             
-                                 <td align="center">
-                                    <div className="cardsubtitle">
-                                       Combined Dataset Name:
-                                    </div>
-                                 </td>
-                              </tr><tr>
-                                 <td align="center">
-                                    <input required type="text" id="filename" onKeyPress={(e) => this.validation(e)} onChange={this.selectFilename}/>
-                                 </td>
-                              </tr>
-                              <br/><tr> 
-                              <td align="center">
-                                 <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}><span>Combine Datasets & Save</span></button>
-                              </td><td>   
-                                 <div className="LoadingBarThree" style={style3}>
-                                    {this.loadingBarInstanceThree}
-                                 </div>                              
-                              </td>
                            </tr>
-                        </tbody>
-                        </table> 
-                     </div>                     
-                  </div>                 
-               </td>              
-            </tr>           
-            <tr>
+                     </tbody>
+                  </table>     
+               </td>
+               <td style={{"width":"2%", "height":"230px", "paddingTop":"15px"}} valign="center" align="center">
+                  <img class="arrowclass" src={arrowicon} width="45" height="45" />
+               </td>
+               <td style={{"width":"28%", "height":"230px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                  <table>     
+                     <tr>
+                        <td align="center">
+                           <div className="cardtitle">
+                              3. Enter Combined Dataset Name
+                           </div>
+                        </td> 
+                     </tr><tr>
+                     </tr><tr>
+                     </tr><tr>                           
+                        <td align="center">
+                           <div className="cardsubtitle">
+                              Combined Dataset Name:
+                           </div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td align="center">
+                           <input required type="text" id="filename" onKeyPress={(e) => this.validation(e)} onChange={this.selectFilename} style={{"width":"210px"}}/>
+                        </td>
+                     </tr>
+                     <tr></tr>
+                     <tr> 
+                        <td align="center">
+                           <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"240px"}}><span>Combine Datasets & Save</span></button>
+                        </td>
+                     </tr><tr>
+                     </tr><tr>
+                     </tr><tr> 
+                        <td align="center">
+                           <div className="LoadingBarThree" style={style3}>
+                             {this.loadingBarInstanceThree}
+                           </div>                              
+                        </td>
+                     </tr> 
+                  </table>                        
+               </td>                                                               
             </tr>
+            <tr></tr>
             <tr>
-               <td id="testing" colSpan="2" align="center" style={{"height":"400px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
+               <td id="testing" colSpan="5" align="center" style={{"height":"400px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
                   <table>
                      <tbody>
                			<tr>
-               				<td align="center" style={{"overflow":"auto", "maxWidth":"1000px", "position":"relative", "verticalAlign":"top"}}>
+               				<td align="center" style={{"overflow":"auto", "maxWidth":"750px", "position":"relative", "verticalAlign":"top"}}>
                               <div style={{"overflowX":"auto"}}>
-
-                                 <div className="outputtable" style={{"width":"1000px","maxWidth":"1150px"}}>
-
+                                 <div className="outputtable" style={{"width":"750px","maxWidth":"750px"}}>
                                     {this.state.combinedtableboolean?(   
                                      <MUIDataTable
                                         title={"Combined Dataset"}
@@ -510,23 +527,22 @@ class TableViewbi extends Component {
                			</tr>
                      </tbody>
                   </table>
-
                   <table>
                   <tbody>
                      <tr>
-                        <td align="center" style={{"overflow":"auto", "maxWidth":"1000px", "verticalAlign":"top", "align":"center"}}>
+                        <td align="center" style={{"overflow":"auto", "maxWidth":"750px", "verticalAlign":"top", "align":"center"}}>
                            <div style={{"overflowX":"auto"}}>
                               <table id="data1area">
                                  <tbody>
                                     <tr>
-                                       <td align="center" style={{"width":"1000px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                                       <td align="center" style={{"width":"750px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                                              <label style={{"verticalAlign":"center"}}>Dataset One Display Area</label>                                                     
                                        </td>                           
                                     </tr>
                                  </tbody>
                               </table>
 
-                              <div className="outputtable" style={{"width":"1000px","maxWidth":"1000px"}}>
+                              <div className="outputtable" style={{"width":"750px","maxWidth":"750px"}}>
                                  {this.state.table1boolean?(   
                                   <MUIDataTable
                                      title={"Dataset One: "+this.state.exporttable1}
@@ -542,19 +558,19 @@ class TableViewbi extends Component {
                            </div>
                         </td>
                      </tr><tr>
-                        <td align="center" style={{"overflow":"auto", "maxWidth":"1000px", "verticalAlign":"top", "align":"center"}}>
+                        <td align="center" style={{"overflow":"auto", "maxWidth":"750px", "verticalAlign":"top", "align":"center"}}>
                            <div style={{"overflowX":"auto"}}>
                               <table id="data2area">
                               <tbody>
                                  <tr>
-                                    <td align="center" style={{"width":"1000px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                                    <td align="center" style={{"width":"750px", "height":"500px", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                                           <label style={{"verticalAlign":"center"}}>Dataset Two Display Area</label>                  
                                     </td>                           
                                  </tr>
                               </tbody>
                               </table> 
 
-                              <div className="outputtable" style={{"width":"1000px","maxWidth":"1000px"}}>
+                              <div className="outputtable" style={{"width":"750px","maxWidth":"750px"}}>
                                  {this.state.table2boolean?(  
                                   <MUIDataTable
                                      title={"Dataset Two: "+this.state.exporttable2}

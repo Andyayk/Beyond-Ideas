@@ -200,7 +200,7 @@ class StockCrawlingbi extends Component {
                                        </div>
                                     </tr><tr>
                                        <select required defaultValue="" onChange={this.selectStockName} style={{"width":"220px"}}>
-                                          <option value="" disabled>-------- select a stock --------</option>
+                                          <option value="" disabled>- select a stock -</option>
                                           <option value="ETR:DPW">Deutsche Post AG</option>
                                           <option value="FDX">FedEx Corporation</option>
                                           <option value="UPS">United Parcel Service, Inc.</option>                     

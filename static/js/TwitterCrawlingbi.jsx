@@ -188,7 +188,7 @@ class TwitterCrawlingbi extends Component {
                                        </div>
                                     </tr><tr>                             
                                        <div className="cardsubtitle">
-                                          e.g. "dhl"
+                                          e.g. "dhl, innovation"
                                        </div>
                                     </tr><tr>
                                        <input required type="text" id="tags" style={{"width":"220px"}} onChange={this.selectTags}/>

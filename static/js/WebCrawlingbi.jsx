@@ -268,7 +268,7 @@ class WebCrawlingbi extends Component {
                                        </div>
                                     </tr><tr>
                                        <select required defaultValue="" onChange={this.selectCountryName} style={{"width":"220px"}}>
-                                          <option value="" disabled>-------- select a country --------</option>
+                                          <option value="" disabled>- select a country -</option>
                                           <option value="Australia">Australia</option>
                                           <option value="Bangladesh">Bangladesh</option>
                                           <option value="Bhutan">Bhutan</option> 
