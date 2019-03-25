@@ -357,7 +357,7 @@ class Analysisbi extends Component {
                 <tr>
                   <td align="center">   
                     <h1>
-                      <span style={{"color":"#4CAF50"}}>Positive Keywords</span> in Tweets
+                      Most common words in<span style={{"color":"#4CAF50"}}> positive tweets</span>
                     </h1>     
                     <br/>
                     <WordCloud
@@ -368,7 +368,7 @@ class Analysisbi extends Component {
                   </td>  
                   <td align="center">    
                      <h1>
-                      <span style={{"color":"red"}}>Negative Keywords</span> in Tweets
+                      Most comon words in<span style={{"color":"red"}}> negative tweets</span>
                     </h1>
                     <br/>
                     <WordCloud
