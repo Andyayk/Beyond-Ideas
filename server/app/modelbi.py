@@ -830,15 +830,15 @@ def topicModeling(tablename, usertablename, userID):
                                               passes=10,
                                               alpha='auto',
                                               per_word_topics=True)
-        """
+        
         # Compute Perplexity
         print('\nPerplexity: ', lda.log_perplexity(tweets_vecs)) # a measure of how good the model is. lower the better.
 
         # Compute Coherence Score
-        coherence_model_lda = CoherenceModel(model=lda, texts=tweets_docs, dictionary=tweets_dictionary, coherence='c_v')
-        coherence_lda = coherence_model_lda.get_coherence()
-        print('\nCoherence Score: ', coherence_lda)      
-        """
+        # coherence_model_lda = CoherenceModel(model=lda, texts=tweets_docs, dictionary=tweets_dictionary, coherence='c_v')
+        # coherence_lda = coherence_model_lda.get_coherence()
+        # print('\nCoherence Score: ', coherence_lda)    
+        
 
         # Format
         df_topic_sents_keywords = format_topics_sentences(ldamodel=lda, corpus=tweets_vecs, data=tweets_docs)
@@ -872,7 +872,83 @@ def topicModeling(tablename, usertablename, userID):
         return [topiccolumns, topicvalues]
     except Exception as e:
         print(str(e))
-        return "Something is wrong with sentimentAnalysis method"  
+        return "Something is wrong with topicModeling method"  
+
+def topicModeling2(tablename, usertablename, userID):
+    """
+        This method will implement best topic modeling model
+    """   
+    try:
+        # Load unseen testing dataset 
+        sqlstmtQuery = "SELECT * FROM `" + usertablename + "`"
+
+        df = pd.read_sql(sqlstmtQuery, connection) # Change sql to dataframe
+
+        copydf = df.copy()
+
+        tweetColumnName = 'tweet'
+        nooftopics = 15
+
+        # Preprocess the text
+        tweets_docs = corpus2docs(df[tweetColumnName].tolist())
+
+        # Generate a vocabulary of text
+        tweets_dictionary = gensim.corpora.Dictionary(tweets_docs)
+
+        # Convert text into vectors
+        tweets_vecs = docs2vecs(tweets_docs, tweets_dictionary)        
+
+        # Computes the inverse document frequencies for all words in the input corpus
+        tfidf = gensim.models.TfidfModel(tweets_vecs)
+
+        # Transform each tweet to tfidf
+        tweets_vecs_w_tfidf = [tfidf[vec] for vec in tweets_vecs]
+
+        # Train lda model with the unseen test dataset
+        lsa = gensim.models.lsimodel.LsiModel(tweets_vecs, num_topics=nooftopics, id2word = tweets_dictionary)
+        
+        # Compute Perplexity
+        # print('\nPerplexity2: ', lsa.log_perplexity(tweets_vecs)) # a measure of how good the model is. lower the better.
+
+        # # Compute Coherence Score
+        # coherence_model_lsa = CoherenceModel(model=lsa, texts=tweets_docs, dictionary=tweets_dictionary, coherence='c_v')
+        # coherence_lsa = coherence_model_lsa.get_coherence()
+        # print('\nCoherence Score2: ', coherence_lsa)    
+        
+
+        # Format
+        # df_topic_sents_keywords = format_topics_sentences(ldamodel=lsa, corpus=tweets_vecs, data=tweets_docs)
+
+        # """
+        # df_dominant_topic = df_topic_sents_keywords.reset_index()
+        # df_dominant_topic.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contrib', 'Keywords', 'Text']
+        # """
+
+        # # Group top 5 sentences under each topic
+        # sent_topics_sorteddf_mallet = pd.DataFrame()
+
+        # sent_topics_outdf_grpd = df_topic_sents_keywords.groupby('Dominant_Topic')
+
+        # for i, grp in sent_topics_outdf_grpd:
+        #     sent_topics_sorteddf_mallet = pd.concat([sent_topics_sorteddf_mallet, 
+        #                                              grp.sort_values(['Perc_Contribution'], ascending=[0]).head(1)], 
+        #                                             axis=0)
+
+        # # Reset Index    
+        # sent_topics_sorteddf_mallet.reset_index(drop=True, inplace=True)
+
+        # # Format
+        # sent_topics_sorteddf_mallet.columns = ['Topics', "Topic Percent Contribution", "Keywords", "Most Representative Tweet"]
+
+        # sent_topics_sorteddf_mallet = sent_topics_sorteddf_mallet[['Topics', "Keywords"]]
+
+        # topiccolumns = sent_topics_sorteddf_mallet.columns.tolist()
+        # topicvalues = sent_topics_sorteddf_mallet.values.tolist()
+
+        return coherence_lsa
+    except Exception as e:
+        print(str(e))
+        return "Something is wrong with topicModeling2 method"  
 
 def assignSentiment(row):
     """
