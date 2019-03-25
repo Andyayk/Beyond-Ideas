@@ -665,7 +665,8 @@ class AutoChartbi extends Component {
 
    //handle form submission
    formSubmitted(event){
-     
+      var x = document.getElementById("generatemessage");
+      x.style.display = "none";     
 
       event.preventDefault();
       this.generateScatterplot();
@@ -773,6 +774,11 @@ class AutoChartbi extends Component {
                               </td>
                             </tr>
                             <tr>
+                                 <div id="generatemessage">
+                                    <div className="cardsubtitle">
+                                       Generate Top R to get results
+                                    </div>         
+                                  </div>                                
                                 <td>
                                 {this.state.filterwords1}
                                 {this.state.filterresultoptions}
@@ -785,7 +791,7 @@ class AutoChartbi extends Component {
                             {this.state.instruction}
                             <br/>
                             <tr>
-                               <td align="center">                                                            
+                               <td align="center">                                                        
                                   <div className="LoadingBar" style={style}>
                                      {this.loadingBarInstance}
                                   </div>                                  
@@ -810,7 +816,7 @@ class AutoChartbi extends Component {
                               </td>
                             </tr><tr>
                               <td align="center">       
-                                <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"80%"}}>
+                                <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"210px"}}>
                                   <option value="">- optional -</option>
                                     {this.state.datevariablesoptions}
                                     {this.state.companyvariablesoptions}               
@@ -876,7 +882,7 @@ class AutoChartbi extends Component {
                      <table id="message">
                      <tbody>
                         <tr>
-                           <td align="center" style={{"width":"850px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                           <td align="center" style={{"width":"850px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                               <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
                            </td>                           
                         </tr>

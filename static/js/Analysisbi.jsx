@@ -271,8 +271,8 @@ class Analysisbi extends Component {
                   </td>
                   </tr><tr>
                   <td align="center">
-                    <select required defaultValue="" onChange={this.selectTable} style={{"width":"210px"}}>
-                      <option value="" disabled>---------- select a dataset ----------</option>
+                    <select required defaultValue="" onChange={this.selectTable} style={{"width":"160px"}}>
+                      <option value="" disabled>- select a dataset -</option>
                       {this.state.options}
                     </select>
                   </td>
@@ -306,7 +306,7 @@ class Analysisbi extends Component {
               <table id="message">
               <tbody>
                 <tr>
-                <td align="center" style={{"width":"1000px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                <td align="center" style={{"width":"800px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                   <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
                 </td>                           
                 </tr>
@@ -353,7 +353,7 @@ class Analysisbi extends Component {
               <table id="message3">
               <tbody>
                 <tr>
-                <td align="center" style={{"width":"1000px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                <td align="center" style={{"width":"800px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                   <label style={{"verticalAlign":"center"}}>Word Cloud Display Area</label>          
                 </td>                           
                 </tr>
@@ -363,16 +363,16 @@ class Analysisbi extends Component {
               <tbody>  
                 <tr>
                   <td align="center">   
-                    <h1>
-                      Most common words in<span style={{"color":"#4CAF50"}}> positive tweets</span>
-                    </h1>     
+                    <div className="cardsubtitle">
+                      <b>Most common words in<span style={{"color":"#4CAF50"}}> positive tweets</span></b>
+                    </div>     
                     <br/>
                     {this.state.positivewordcloud}
                   </td>  
                   <td align="center">    
-                    <h1>
-                      Most comon words in<span style={{"color":"red"}}> negative tweets</span>
-                    </h1>
+                    <div className="cardsubtitle">
+                      <b>Most comon words in<span style={{"color":"red"}}> negative tweets</span></b>
+                    </div>     
                     <br/>
                     {this.state.negativewordcloud}
                   </td>            
@@ -392,13 +392,13 @@ class Analysisbi extends Component {
                   <table id="message2">
                     <tbody>
                       <tr>
-                        <td align="center" style={{"width":"1000px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="#FAFAFA">
+                        <td align="center" style={{"width":"800px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                           <label style={{"verticalAlign":"center"}}>Dataset Display Area</label>                                                     
                         </td>                           
                       </tr>
                      </tbody>
                   </table>    
-                  <div className="outputtable" style={{"width":"1000px","maxWidth":"1100px"}}>
+                  <div className="outputtable" style={{"width":"800px","maxWidth":"800px"}}>
                     {this.state.tableboolean?(                 
                       <MUIDataTable
                          title={"Dataset: "+this.state.tablename}
