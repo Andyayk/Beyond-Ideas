@@ -198,7 +198,9 @@ class TableViewbi extends Component {
       this.setState({radioButtonCount : 0});
 
       this.setState({
-         hideLoadingBarOne: false
+         hideLoadingBarOne: false,
+         combinedtableboolean: false,
+         table2boolean: false
       });
 
       this.setState({
@@ -506,9 +508,9 @@ class TableViewbi extends Component {
                   <table>
                      <tbody>
                			<tr>
-               				<td align="center" style={{"overflow":"auto", "maxWidth":"750px", "position":"relative", "verticalAlign":"top"}}>
+               				<td align="center" style={{"overflow":"auto","position":"relative", "verticalAlign":"top"}}>
                               <div style={{"overflowX":"auto"}}>
-                                 <div className="outputtable" style={{"width":"750px","maxWidth":"750px"}}>
+                                 <div className="outputtable">
                                     {this.state.combinedtableboolean?(   
                                      <MUIDataTable
                                         title={"Combined Dataset"}
@@ -530,7 +532,7 @@ class TableViewbi extends Component {
                   <table>
                   <tbody>
                      <tr>
-                        <td align="center" style={{"overflow":"auto", "maxWidth":"750px", "verticalAlign":"top", "align":"center"}}>
+                        <td align="center" style={{"overflow":"auto","verticalAlign":"top", "align":"center"}}>
                            <div style={{"overflowX":"auto"}}>
                               <table id="data1area">
                                  <tbody>
@@ -542,14 +544,15 @@ class TableViewbi extends Component {
                                  </tbody>
                               </table>
 
-                              <div className="outputtable" style={{"width":"750px","maxWidth":"750px"}}>
+                              <div className="outputtable">
                                  {this.state.table1boolean?(   
                                   <MUIDataTable
                                      title={"Dataset One: "+this.state.exporttable1}
                                      data={this.state.colvalues}
                                      columns={this.state.colnames}
                                      options={{
-                                       rowsPerPageOptions: [10,15,20]
+                                       rowsPerPage:5, 
+                                       rowsPerPageOptions: [5,10,15]
                                      }}
                                   />  
                                   ):null
@@ -558,7 +561,7 @@ class TableViewbi extends Component {
                            </div>
                         </td>
                      </tr><tr>
-                        <td align="center" style={{"overflow":"auto", "maxWidth":"750px", "verticalAlign":"top", "align":"center"}}>
+                        <td align="center" style={{"overflow":"auto","verticalAlign":"top", "align":"center"}}>
                            <div style={{"overflowX":"auto"}}>
                               <table id="data2area">
                               <tbody>
@@ -570,14 +573,15 @@ class TableViewbi extends Component {
                               </tbody>
                               </table> 
 
-                              <div className="outputtable" style={{"width":"750px","maxWidth":"750px"}}>
+                              <div className="outputtable">
                                  {this.state.table2boolean?(  
                                   <MUIDataTable
                                      title={"Dataset Two: "+this.state.exporttable2}
                                      data={this.state.colvalues2}
                                      columns={this.state.colnames2}
                                      options={{
-                                       rowsPerPageOptions: [10,15,20]
+                                       rowsPerPage:5, 
+                                       rowsPerPageOptions: [5,10,15]
                                      }}
                                   />  
                                   ):null
