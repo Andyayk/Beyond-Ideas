@@ -217,7 +217,7 @@ class StockCrawlingbi extends Component {
                                        </div>
                                     </tr><tr>
                                        <div className="cardsubtitle">
-                                          e.g. "dhl_shareprice"
+                                          e.g. "dhlshareprice"
                                        </div>
                                     </tr><tr>
                                        <td align="center">

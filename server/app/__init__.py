@@ -865,7 +865,7 @@ def create_app(config_name):
             )
 
         @app.route("/stockcrawlingpagebi/")
-        def stockrawlingpagebi(): #rendering our stock crawling page
+        def stockcrawlingpagebi(): #rendering our stock crawling page
             """
                 This method will render our stock crawling page
             """      
@@ -930,7 +930,7 @@ def create_app(config_name):
 
             #topic modeling overall result 
             results2 = modelbi.topicModeling(tablename, usertablename, current_user.id) 
-            results3 = modelbi.topicModeling2(tablename, usertablename, current_user.id) 
+            #results3 = modelbi.topicModeling2(tablename, usertablename, current_user.id) 
 
             topiccolumns = results2[0]
             topicvalues = results2[1]

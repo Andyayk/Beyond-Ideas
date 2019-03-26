@@ -832,7 +832,7 @@ def topicModeling(tablename, usertablename, userID):
                                               per_word_topics=True)
         
         # Compute Perplexity
-        print('\nPerplexity: ', lda.log_perplexity(tweets_vecs)) # a measure of how good the model is. lower the better.
+        #print('\nPerplexity: ', lda.log_perplexity(tweets_vecs)) # a measure of how good the model is. lower the better.
 
         # Compute Coherence Score
         # coherence_model_lda = CoherenceModel(model=lda, texts=tweets_docs, dictionary=tweets_dictionary, coherence='c_v')
