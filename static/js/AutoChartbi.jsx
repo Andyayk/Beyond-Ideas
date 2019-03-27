@@ -74,6 +74,7 @@ class AutoChartbi extends Component {
          countrynamevaluelistoptions2: "",
          errordatestatement: "",
          regenerate: "",
+         correlationNote: "",
       };
       
      
@@ -610,7 +611,6 @@ class AutoChartbi extends Component {
          
          if(keys.length > 0){
              this.setState({
-                 correlationresultexplanation : "Based on the datasets of " + this.state.selectedtable + " and " + this.state.selectedtable2 + " the highest correlated variables are " + rxyKeyVal[keys[0]][0][0] + " and " + rxyKeyVal[keys[0]][0][1] + " with the R value of " + keys[0],
                  filterwords1 : "Filter by top ",
                  filterwords2 : " R's result",
                  filterresultoptions : <select required defaultValue={keys.length} onChange={this.filterresults}> + {filteroptions} + </select>
@@ -668,6 +668,28 @@ class AutoChartbi extends Component {
         
          var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; }); //calculating the predicted y values, y = mx+c
          var r = Correlation.calc(xarray, yarray).toFixed(2); //rounding r to 2 decimal place
+         var correlationStrength = "";
+         var correlationTrend = "";
+         
+         if(r > 0.5 || r < -0.5){
+             correlationStrength = "Strong";
+         } else if (r > 0.3 || r < -0.3){
+             correlationStrength = "Moderate";
+         } else if (r > 0.1 || r < -0.1){
+             correlationStrength = "Weak";
+         } else if (r > 0.0 || r < 0.0){
+             correlationStrength = "Very Weak";
+         } else {
+             correlationStrength = "No";
+         }
+         
+         if (r > 0.0){
+            correlationTrend = "Positive";
+         } else if (r < 0.0){
+             correlationTrend = "Negative";
+         } else {
+             correlationTrend = "";
+         }
          
          var maxY = Math.max(...yarray);
          var minY = Math.min(...yarray);
@@ -706,7 +728,7 @@ class AutoChartbi extends Component {
                            layout={{
                               width: 800, 
                               height: 700, 
-                              title: '<b>Generated Time:' + currentTimeStamp + '</b><br>' + '<b>Correlation between ' + xname + ' and ' + yname + '</b><br>R: ' + r + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
+                              title: 'Generated Time:' + currentTimeStamp + '<br><b>' + xname + ' and ' + yname + ' has ' + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + "</b>",
                               hovermode: 'closest',
                               xaxis: {
                                  title: xname,
@@ -723,6 +745,8 @@ class AutoChartbi extends Component {
                            }}
                         />,
             hideLoadingBar: true, //hide loading button
+            correlationresultexplanation : "This chart shows that " + xname + " and " + yname + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r,
+            correlationNote : "R: >0.5=Strong >0.3=Moderate >0.1=Weak >0=VeryWeak",
                            
             }))
            .catch(err => console.error(err));   
@@ -957,8 +981,11 @@ class AutoChartbi extends Component {
                            </td>                           
                         </tr>
                      </tbody>   
-                     </table>           
-                    {this.state.scatterplot}   
+                     </table>
+                     <div style={{"width":"100%"}}>
+                     {this.state.scatterplot}
+                      </div>
+                    <small>{this.state.correlationNote}</small>
                   </td>
                </tr>
             </tbody>   

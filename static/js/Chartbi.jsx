@@ -43,7 +43,9 @@ class Chartbi extends Component {
          errorstatement: "",
          errordatestatement: "",
          radioButtonCount: "",
-         hideLoadingBar: true,                  
+         hideLoadingBar: true,  
+         correlationresultexplanation: "",
+         correlationNote: "",
       };
 
       this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -535,6 +537,31 @@ class Chartbi extends Component {
      
          var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; }); //calculating the predicted y values, y = mx+c
          var r = Correlation.calc(xarray, yarray).toFixed(2); //rounding r to 2 decimal place
+         
+         var correlationStrength = "";
+         var correlationTrend = "";
+         
+         if(r > 0.5 || r < -0.5){
+             correlationStrength = "Strong";
+         } else if (r > 0.3 || r < -0.3){
+             correlationStrength = "Moderate";
+         } else if (r > 0.1 || r < -0.1){
+             correlationStrength = "Weak";
+         } else if (r > 0.0 || r < 0.0){
+             correlationStrength = "Very Weak";
+         } else {
+             correlationStrength = "No";
+         }
+         
+         if (r > 0.0){
+            correlationTrend = "Positive";
+         } else if (r < 0.0){
+             correlationTrend = "Negative";
+         } else {
+             correlationTrend = "";
+         }
+         
+         
 
          var maxY = Math.max(...yarray);
          var minY = Math.min(...yarray);
@@ -570,7 +597,7 @@ class Chartbi extends Component {
                            layout={{
                               width: 1000, 
                               height: 700, 
-                              title: '<b>Generated Time:' + currentTimeStamp + '</b><br>' + '<b>Correlation between ' + this.state.selectedvariable + ' and ' + this.state.selectedvariable2 + '</b><br>R: ' + r + ', R-Squared: ' + r2 + ', Min Y: ' + minY + ', Max Y: ' + maxY,
+                              title: 'Generated Time:' + currentTimeStamp + '<br><b>' + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + "</b>",
                               hovermode: 'closest',
                               xaxis: {
                                  title: this.state.selectedvariable,
@@ -587,7 +614,8 @@ class Chartbi extends Component {
                            }}
                         />,
             hideLoadingBar: true, //hide loading button
-                           
+            correlationresultexplanation : "This chart shows that " + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r,
+            correlationNote : "R: >0.5=Strong >0.3=Moderate >0.1=Weak >0=VeryWeak",
             }))
            .catch(err => console.error(err));       
       });    
@@ -844,6 +872,7 @@ class Chartbi extends Component {
                      <div style={{"width":"100%"}}>
                      {this.state.scatterplot}
                      </div>
+                    <small>{this.state.correlationNote}</small>
                   </td>
                   </tr>
             </tbody>   
