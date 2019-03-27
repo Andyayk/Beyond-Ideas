@@ -178,7 +178,7 @@ class Chartbi extends Component {
       }
    }
 
-   validateDateRange(fromDate, toDate){
+     validateDateRange(fromDate, toDate){
       if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
          if(fromDate && toDate && fromDate > toDate){
             this.setState({
@@ -186,11 +186,16 @@ class Chartbi extends Component {
             });
             this.enablesubmitbutton(false);
          } else {
-            this.setState({errordatestatement: ""});
-            this.enablesubmitbutton(true);
+             if(this.state.selectedtable == this.state.selectedtable2){
+                 this.setState({errordatestatement: "Please select two different datasets"});
+             } else{
+                this.setState({errordatestatement: ""});
+                this.enablesubmitbutton(true);
+             }
          }
       }
     }
+
     
    resetxvariabledropdown(){
        this.setState({

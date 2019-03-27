@@ -24,6 +24,8 @@ class AutoChartbi extends Component {
          selectedjoinvariable: "", 
          scatterplot: "",  
          scatterplots: "",
+         selectedfiltervalue: "",
+         selectedfiltervalue2: "", 
          datevariablesoptions: "", 
          datevariablesoptions2: "",        
          companyvariablesoptions: "",
@@ -52,6 +54,7 @@ class AutoChartbi extends Component {
          rxyKeyValues : "",
          correlationresultexplanation : "",
          instruction: "",
+         selectedfiltervariable: "",
          selectedfiltervalue: "",
          selectedfiltervalue2: "",
          datevariablesoptions: "", 
@@ -70,6 +73,7 @@ class AutoChartbi extends Component {
          countrynamevaluelistoptions: "",
          countrynamevaluelistoptions2: "",
          errordatestatement: "",
+         regenerate: "",
       };
       
      
@@ -82,10 +86,13 @@ class AutoChartbi extends Component {
       this.createVariables = this.createVariables.bind(this);   
       this.createVariablesOptions = this.createVariablesOptions.bind(this);
 
+      this.validateDateRange = this.validateDateRange.bind(this);
       this.selectJoinVariable = this.selectJoinVariable.bind(this);     
       this.selectFilterVariable = this.selectFilterVariable.bind(this); 
       this.selectFilterValue = this.selectFilterValue.bind(this);  
       this.selectFilterValue2 = this.selectFilterValue2.bind(this);  
+      this.resetfiltervariabledropdown = this.resetfiltervariabledropdown.bind(this);  
+      this.resetfiltervaluedropdown = this.resetfiltervaluedropdown.bind(this);  
       
       this.displayChart = this.displayChart.bind(this);
       
@@ -247,25 +254,74 @@ class AutoChartbi extends Component {
    }    
    
    selectFilterValue(event) {
+      let regenerate = [];
       if(this.state.selectedfiltervariable.toLowerCase().includes("date")){
             this.validateDateRange(event.target.value, this.state.selectedfiltervalue2);
       }
+      regenerate.push(<button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Regenerate R</button>);
       this.setState({
-         selectedfiltervalue: event.target.value
-      });      
+         selectedfiltervalue: event.target.value,
+         regenerate : regenerate,
+      });
    } 
 
    //store the  filter values 2 (if any) that the user has selected
    selectFilterValue2(event) {    
+      let regenerate = [];
       if(this.state.selectedfiltervariable.toLowerCase().includes("date")){
          this.validateDateRange(this.state.selectedfiltervalue, event.target.value);
       }
+      regenerate.push(<button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Regenerate R</button>);
       this.setState({
-         selectedfiltervalue2: event.target.value
-      });      
+         selectedfiltervalue2: event.target.value,
+         regenerate : regenerate,
+      });
    } 
-  
+      
+    resetfiltervariabledropdown(){
+          this.setState({
+             selectedfiltervariable: "",
+             selectedfiltervalue: "",
+             regenerate: "",
+          });
+          document.getElementById("filtervariabledropdownid").selectedIndex = -1;
+    }
 
+       
+   resetfiltervaluedropdown(){
+      this.setState({
+         selectedfiltervalue : "",
+         regenerate: "",
+      });
+      if(this.state.selectedfiltervariable != "" && !this.state.selectedfiltervariable.toLowerCase().includes("date")){
+        document.getElementById("filtervaluedropdownid").selectedIndex = 0; 
+      }
+      // if(this.state.selectedfiltervariable != ""){
+         // var thisElement = document.getElementById("filtervaluedropdownid");
+         // thisElement.default = true;
+         // thisElement.selectedIndex = "0";
+      // }
+      
+   }
+   
+   
+   validateDateRange(fromDate, toDate){
+      if(this.state.selectedfiltervariable.toLowerCase().includes("date")){ 
+         if(fromDate && toDate && fromDate > toDate){
+            this.setState({
+               errordatestatement: "Please select a valid date range"
+            });
+            this.enablesubmitbutton(false);
+         } else {
+             if(this.state.selectedtable == this.state.selectedtable2){
+                 this.setState({errordatestatement: "Please select two different datasets"});
+             } else{
+                this.setState({errordatestatement: ""});
+                this.enablesubmitbutton(true);
+             }
+         }
+      }
+    }
 
 
    //retrieving variables from flask
@@ -470,11 +526,21 @@ class AutoChartbi extends Component {
          selectedvariables1: '"' + this.state.variables1 + '"',
          selectedvariables2: '"' + this.state.variables2 + '"',    
          selectedjoinvariable: this.state.selectedjoinvariable,
+         selectedfiltervalue: this.state.selectedfiltervalue,
+         selectedfiltervalue2: this.state.selectedfiltervalue2,
+         selectedfiltervariable: this.state.selectedfiltervariable
       },
       (data) => {
 
 
         var plotpointname = "";
+        
+         if (this.state.selectedfiltervariable.toLowerCase().includes("date")) {
+            plotpointname = "Filter: " + this.state.selectedfiltervalue + " to " + this.state.selectedfiltervalue2;
+         } else if (this.state.selectedfiltervariable != "") {
+            plotpointname = "Filter: " + this.state.selectedfiltervalue;
+         }
+        
         var xVariables = this.state.variables1;
         var yVariables = this.state.variables2;
 
@@ -869,6 +935,10 @@ class AutoChartbi extends Component {
                                      </div>
                                   }  
                                </td>
+                          </tr>
+                          <tr><td>
+                          {this.state.regenerate}
+                          </td>
                           </tr>
                         </td></tr>
                      </tbody>   
