@@ -508,7 +508,7 @@ class TableViewbi extends Component {
                   <table>
                      <tbody>
                			<tr>
-               				<td align="center" style={{"overflow":"auto","position":"relative", "verticalAlign":"top"}}>
+               				<td align="center" style={{"overflow":"auto","position":"relative", "verticalAlign":"top", "z-index":"1"}}>
                               <div style={{"overflowX":"auto"}}>
                                  <div className="outputtable">
                                     {this.state.combinedtableboolean?(   
@@ -544,7 +544,7 @@ class TableViewbi extends Component {
                                  </tbody>
                               </table>
 
-                              <div className="outputtable">
+                              <div className="outputtable" style={{"position":"relative", "z-index":"1"}}>
                                  {this.state.table1boolean?(   
                                   <MUIDataTable
                                      title={"Dataset One: "+this.state.exporttable1}
@@ -573,7 +573,7 @@ class TableViewbi extends Component {
                               </tbody>
                               </table> 
 
-                              <div className="outputtable">
+                              <div className="outputtable" style={{"position":"relative", "z-index":"1"}}>
                                  {this.state.table2boolean?(  
                                   <MUIDataTable
                                      title={"Dataset Two: "+this.state.exporttable2}
