@@ -129,19 +129,19 @@ class Analysisbi extends Component {
   barChart(yData){
     this.setState({
       barchart: <Plot data={[{
-                  x: ['Positive','Negative'],
+                  x: ['Positive', 'Neutral', 'Negative'],
                   y: yData,
                   type: 'bar',
                   marker:{
-                    color: ['rgba(123, 239, 178, 1)', 'rgba(222, 45, 38, 0.8)']
+                    color: ['rgba(123, 239, 178, 0.8)', 'rgba(129, 207, 224, 0.8)', 'rgba(222, 45, 38, 0.8)']
                   },
-                  name: 'Positive vs Negative Tweets',
+                  name: 'Positive vs Neutral vs Negative Tweets',
                   hoverlabel: {namelength: -1}
                   }]}
                   layout={{
                     width: 600, 
                     height: 500, 
-                    title: '<b>Positive vs Negative Tweets</b>',
+                    title: '<b>Positive vs Neutral vs Negative Tweets</b>',
                     hovermode: 'closest',
                     xaxis: {
                       title: 'Sentiments',

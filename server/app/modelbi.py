@@ -371,7 +371,7 @@ def getSentimentDataForChart(usertablename):
 
         sentimentcolumn = df['sentiment'].tolist()
 
-        aggregatedsentiment = [sentimentcolumn.count(1), sentimentcolumn.count(0)] #1 is positive, 0 is negative
+        aggregatedsentiment = [sentimentcolumn.count(1), sentimentcolumn.count(2), sentimentcolumn.count(0)] #1 is positive, 2 is neutral, 0 is negative
 
         return aggregatedsentiment
     except Exception as e:
