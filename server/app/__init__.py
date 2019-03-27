@@ -782,11 +782,16 @@ def create_app(config_name):
             variablenameY = request.form.get("selectedvariables2")[1:-1].split(",")
 
             joinvariable = request.form.get("selectedjoinvariable") 
+            filtervalue = request.form.get("selectedfiltervalue")
+            filtervalue2 = request.form.get("selectedfiltervalue2")               
+            
+            filtervariable = request.form.get("selectedfiltervariable")
+            
             print(variablenameX);
             allcombinedxyarrays = [];
             for x in variablenameX:
                 for y in variablenameY:
-                    combinedxyarray = modelbi.tablesJoinbi(usertablename, usertablename2, x, y, joinvariable, "", "", "")
+                    combinedxyarray = modelbi.tablesJoinbi(usertablename, usertablename2, x, y, joinvariable, filtervalue, filtervalue2, filtervariable)
                     allcombinedxyarrays.append(combinedxyarray)
             return jsonify(
                 allcombinedxyarrays
