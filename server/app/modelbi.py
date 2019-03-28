@@ -756,9 +756,9 @@ def gettopn_words(usertablename, sentiment, n):
         fdist = FreqDist(tokens)
         #get most commo or least common words based on frequency distribution
         fdist_topn = fdist.most_common(n)
-        if sentiment == 0:
-            # fdist_topn = FreqDist(dict(fdist.most_common()[-20:]))
-            fdist_topn = fdist.most_common()[-n:]
+        # if sentiment == 0:
+        #     # fdist_topn = FreqDist(dict(fdist.most_common()[-20:]))
+        #     fdist_topn = fdist.most_common()[-n:]
 
         return fdist_topn
     except Exception as e:
