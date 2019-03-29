@@ -728,7 +728,7 @@ class AutoChartbi extends Component {
                            layout={{
                               width: 800, 
                               height: 700, 
-                              title: 'Equation ' + equation +'<br><b>' + xname + ' and ' + yname + ' has ' + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + " and rho value of " + rho + "</b>",
+                              title: 'Equation ' + equation +'<br><b>' + xname + ' and ' + yname + ' has ' + correlationStrength + " " + correlationTrend + " correlation<br>with the R value of " + r + " and rho value of " + rho + "</b>",
                               hovermode: 'closest',
                               xaxis: {
                                  title: xname,
