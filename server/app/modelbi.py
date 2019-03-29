@@ -863,6 +863,7 @@ def topicModeling(tablename, usertablename, userID):
 
         # Format
         sent_topics_sorteddf_mallet.columns = ['Topics', "Topic Percent Contribution", "Keywords", "Most Representative Tweet"]
+        sent_topics_sorteddf_mallet['Topics'] += 1 #start counting from 1 instead of 0
 
         sent_topics_sorteddf_mallet = sent_topics_sorteddf_mallet[['Topics', "Keywords"]]
 
