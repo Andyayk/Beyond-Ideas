@@ -74,7 +74,7 @@ class AutoChartbi extends Component {
          countrynamevaluelistoptions2: "",
          errordatestatement: "",
          regenerate: "",
-         correlationNote: "",
+         currenttime: "",
       };
       
      
@@ -564,21 +564,25 @@ class AutoChartbi extends Component {
          for (var i = 0; i < xarray.length; i++) { //2D array needed for regression calculation only
             twoDArray.push([xarray[i], yarray[i]]);
          }
-         var result = regression.linear(twoDArray, {order: 2, precision: 10});
+         var result = regression.linear(twoDArray);
          var gradient = result.equation[0];
          var yIntercept = result.equation[1];
-         //var r2 = result.r2;
+         var r2 = result.r2.toFixed(2);
+
          var equation = result.string;
          var r = Correlation.calc(xarray, yarray).toFixed(2); //rounding r to 2 decimal place
          
          var xname = xVariables[currentXNo];
          var yname = yVariables[currentYNo];
-
          
-         if(rxyKeyVal[r]){
-            rxyKeyVal[r].push([xname,yname,xarray,yarray]);
+         if(r < 0){
+             r2 = -r2 * 1.00
+         }
+         
+         if(rxyKeyVal[r2]){
+            rxyKeyVal[r2].push([xname,yname,xarray,yarray]);
          } else {
-            rxyKeyVal[r] = [[xname,yname, xarray, yarray]];          
+            rxyKeyVal[r2] = [[xname,yname, xarray, yarray]];          
          }
          if(currentYNo < yVariables.length-1){
             currentYNo++;
@@ -660,10 +664,10 @@ class AutoChartbi extends Component {
          for (var i = 0; i < xarray.length; i++) { //2D array needed for regression calculation only
             twoDArray.push([xarray[i], yarray[i]]);
          }
-         var result = regression.linear(twoDArray, {order: 2, precision: 10});
+         var result = regression.linear(twoDArray);
          var gradient = result.equation[0];
          var yIntercept = result.equation[1];
-         //var r2 = result.r2;
+         var r2 = result.r2.toFixed(2);
          var equation = result.string;
         
          var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; }); //calculating the predicted y values, y = mx+c
@@ -671,24 +675,25 @@ class AutoChartbi extends Component {
          var correlationStrength = "";
          var correlationTrend = "";
          
-         if(r > 0.5 || r < -0.5){
+         if(r2 > 0.25){
              correlationStrength = "Strong";
-         } else if (r > 0.3 || r < -0.3){
+         } else if (r2 > 0.09){
              correlationStrength = "Moderate";
-         } else if (r > 0.1 || r < -0.1){
+         } else if (r2 > 0.01){
              correlationStrength = "Weak";
-         } else if (r > 0.0 || r < 0.0){
+         } else if (r2 > 0.0){
              correlationStrength = "Very Weak";
          } else {
              correlationStrength = "No";
          }
          
-         if (r > 0.0){
-            correlationTrend = "Positive";
-         } else if (r < 0.0){
-             correlationTrend = "Negative";
-         } else {
+         if (r == 0){
              correlationTrend = "";
+         } else if (r < 0){
+             correlationTrend = "Negative";
+             r2 = -r2;
+         } else {
+            correlationTrend = "Positive";
          }
          
          var maxY = Math.max(...yarray);
@@ -728,7 +733,7 @@ class AutoChartbi extends Component {
                            layout={{
                               width: 800, 
                               height: 700, 
-                              title: 'Generated Time:' + currentTimeStamp + '<br><b>' + xname + ' and ' + yname + ' has ' + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + " and rho value of " + rho + "</b>",
+                              title: 'Equation ' + equation +'<br><b>' + xname + ' and ' + yname + ' has ' + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r2 + "</b>",
                               hovermode: 'closest',
                               xaxis: {
                                  title: xname,
@@ -745,9 +750,8 @@ class AutoChartbi extends Component {
                            }}
                         />,
             hideLoadingBar: true, //hide loading button
-            correlationresultexplanation : "This chart shows that " + xname + " and " + yname + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + " and rho value of " + rho,
-            correlationNote : "R: >0.5=Strong >0.3=Moderate >0.1=Weak >0=VeryWeak",
-                           
+            correlationresultexplanation : "This chart shows that " + xname + " and " + yname + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r2,
+            currenttime: "Generated Time:" + currentTimeStamp,              
             }))
            .catch(err => console.error(err));   
 
@@ -985,7 +989,7 @@ class AutoChartbi extends Component {
                      <div style={{"width":"100%"}}>
                      {this.state.scatterplot}
                       </div>
-                    <small>{this.state.correlationNote}</small>
+                    <small>{this.state.currenttime}</small>
                   </td>
                </tr>
             </tbody>   
