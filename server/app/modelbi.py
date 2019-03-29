@@ -690,7 +690,7 @@ def insertToDatabase(header, bodyArray, tableName):
   
 def insertTweetsToDatabase(header, bodyArray, tableName):
     """
-        This method will insert to database
+        This method will insert tweets to database
     """    
     try:
         sqlstmt = "INSERT INTO `" + tableName + "` (" + header + ") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -1128,6 +1128,9 @@ def trainSentimentAnalysisModels():
     return ""
 
 def stockCrawlerbi(stockname, saveToDB, userID, filename):
+    """
+        This method will retrieve past 100 share price data for the input stock name.
+    """   
     try:
         with open(os.getcwd()+"\\instance\\stock_credentials.json", "r") as file:  
             creds = json.load(file)
@@ -1139,9 +1142,12 @@ def stockCrawlerbi(stockname, saveToDB, userID, filename):
         url = base_url + symbol + "&apikey=" + api_key
         headerArray = "date,open,high,low,close,volume"
         bodyArray = []
+        #retrieve data from alpha vantage
         stock_r = requests.get(url)
         stock_text = stock_r.text
+        #set it into a json format
         stock_dic = json.loads(stock_text)
+        #loop through the json dictionary can retrieve the data points needed
         for i in stock_dic["Time Series (Daily)"]:
             date = str(i)
             stockOpen = stock_dic["Time Series (Daily)"][i]["1. open"]
@@ -1151,7 +1157,7 @@ def stockCrawlerbi(stockname, saveToDB, userID, filename):
             volume = stock_dic["Time Series (Daily)"][i]["5. volume"]
             row = "\"" + date + "\"" + "," + stockOpen + "," + high + "," + low + "," + close + "," + volume
             bodyArray.append(row)
-
+        #save to database if specified by the user
         if saveToDB == "true":        
             tableName = filename + "_" + str(userID)
             connection.execute("DROP TABLE IF EXISTS `"+ tableName + "`")
