@@ -597,7 +597,7 @@ class Chartbi extends Component {
                            layout={{
                               width: 1000, 
                               height: 700, 
-                              title: 'Equation ' + equation +'<br><b>' + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + " and rho value of " + rho + "</b>",
+                              title: 'Equation ' + equation +'<br><b>' + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + "<br/>and rho value of " + rho + "</b>",
                               hovermode: 'closest',
                               xaxis: {
                                  title: this.state.selectedvariable,
