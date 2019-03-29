@@ -135,7 +135,7 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         x = []
         y = []
         for row_data in sqlstmt: #add table rows
-            print(row_data)
+            #print(row_data)
             if is_emptybi(row_data[0]):
                 x.append(0)
             else: 
