@@ -575,14 +575,10 @@ class AutoChartbi extends Component {
          var xname = xVariables[currentXNo];
          var yname = yVariables[currentYNo];
          
-         if(r < 0){
-             r2 = -r2 * 1.00
-         }
-         
-         if(rxyKeyVal[r2]){
-            rxyKeyVal[r2].push([xname,yname,xarray,yarray]);
+         if(rxyKeyVal[r]){
+            rxyKeyVal[r].push([xname,yname,xarray,yarray]);
          } else {
-            rxyKeyVal[r2] = [[xname,yname, xarray, yarray]];          
+            rxyKeyVal[r] = [[xname,yname, xarray, yarray]];          
          }
          if(currentYNo < yVariables.length-1){
             currentYNo++;
@@ -664,7 +660,7 @@ class AutoChartbi extends Component {
          for (var i = 0; i < xarray.length; i++) { //2D array needed for regression calculation only
             twoDArray.push([xarray[i], yarray[i]]);
          }
-         var result = regression.linear(twoDArray);
+         var result = regression.linear(twoDArray, {order: 2, precision: 10});
          var gradient = result.equation[0];
          var yIntercept = result.equation[1];
          var r2 = result.r2.toFixed(2);
@@ -675,25 +671,24 @@ class AutoChartbi extends Component {
          var correlationStrength = "";
          var correlationTrend = "";
          
-         if(r2 > 0.25){
+         if(r > 0.5 || r < -0.5){
              correlationStrength = "Strong";
-         } else if (r2 > 0.09){
+         } else if (r > 0.3 || r < -0.3){
              correlationStrength = "Moderate";
-         } else if (r2 > 0.01){
+         } else if (r > 0.1 || r < -0.1){
              correlationStrength = "Weak";
-         } else if (r2 > 0.0){
+         } else if (r > 0.0 || r < 0.0){
              correlationStrength = "Very Weak";
          } else {
              correlationStrength = "No";
          }
-         
-         if (r == 0){
-             correlationTrend = "";
-         } else if (r < 0){
-             correlationTrend = "Negative";
-             r2 = -r2;
-         } else {
+
+         if (r > 0.0){
             correlationTrend = "Positive";
+         } else if (r < 0.0){
+             correlationTrend = "Negative";
+         } else {
+             correlationTrend = "";
          }
          
          var maxY = Math.max(...yarray);
@@ -733,7 +728,7 @@ class AutoChartbi extends Component {
                            layout={{
                               width: 800, 
                               height: 700, 
-                              title: 'Equation ' + equation +'<br><b>' + xname + ' and ' + yname + ' has ' + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r2 + "</b>",
+                              title: 'Equation ' + equation +'<br><b>' + xname + ' and ' + yname + ' has ' + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + " and rho value of " + rho + "</b>",
                               hovermode: 'closest',
                               xaxis: {
                                  title: xname,
@@ -750,7 +745,6 @@ class AutoChartbi extends Component {
                            }}
                         />,
             hideLoadingBar: true, //hide loading button
-            correlationresultexplanation : "This chart shows that " + xname + " and " + yname + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r2,
             currenttime: "Generated Time:" + currentTimeStamp,              
             }))
            .catch(err => console.error(err));   

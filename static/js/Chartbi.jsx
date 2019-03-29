@@ -529,7 +529,7 @@ class Chartbi extends Component {
             twoDArray.push([xarray[i], yarray[i]]);
          }
          
-         var result = regression.linear(twoDArray);
+         var result = regression.linear(twoDArray, {order: 2, precision: 10});
          var gradient = result.equation[0];
          var yIntercept = result.equation[1];
          var r2 = result.r2toFixed(2);
@@ -541,26 +541,24 @@ class Chartbi extends Component {
          var correlationStrength = "";
          var correlationTrend = "";
          
-        if(r2 > 0.25){
+        if(r > 0.5 || r < -0.5){
              correlationStrength = "Strong";
-         } else if (r2 > 0.09){
+         } else if (r > 0.3 || r < -0.3){
              correlationStrength = "Moderate";
-         } else if (r2 > 0.01){
+         } else if (r > 0.1 || r < -0.1){
              correlationStrength = "Weak";
-         } else if (r2 > 0.0){
+         } else if (r > 0.0 || r < 0.0){
              correlationStrength = "Very Weak";
          } else {
              correlationStrength = "No";
          }
-         
-         
-          if (r == 0){
-             correlationTrend = "";
-         } else if (r < 0){
-             correlationTrend = "Negative";
-             r2 = -r2;
-         } else {
+
+         if (r > 0.0){
             correlationTrend = "Positive";
+         } else if (r < 0.0){
+             correlationTrend = "Negative";
+         } else {
+             correlationTrend = "";
          }
          
          
@@ -599,7 +597,7 @@ class Chartbi extends Component {
                            layout={{
                               width: 1000, 
                               height: 700, 
-                              title: 'Equation ' + equation +'<br><b>' + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r2 + "</b>",
+                              title: 'Equation ' + equation +'<br><b>' + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + " and rho value of " + rho + "</b>",
                               hovermode: 'closest',
                               xaxis: {
                                  title: this.state.selectedvariable,
@@ -616,7 +614,6 @@ class Chartbi extends Component {
                            }}
                         />,
             hideLoadingBar: true, //hide loading button
-            correlationresultexplanation : "This chart shows that " + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r2,
             currenttime: "Generated Time:" + currentTimeStamp, 
             }))
            .catch(err => console.error(err));       
