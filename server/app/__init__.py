@@ -787,7 +787,7 @@ def create_app(config_name):
             
             filtervariable = request.form.get("selectedfiltervariable")
             
-            print(variablenameX);
+            #print(variablenameX);
             allcombinedxyarrays = [];
             for x in variablenameX:
                 for y in variablenameY:

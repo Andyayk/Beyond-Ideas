@@ -529,15 +529,15 @@ class Chartbi extends Component {
             twoDArray.push([xarray[i], yarray[i]]);
          }
          
-         var result = regression.linear(twoDArray);
+         var result = regression.linear(twoDArray, {order: 2, precision: 10});
          var gradient = result.equation[0];
          var yIntercept = result.equation[1];
-         var r2 = result.r2;
+         //var r2 = result.r2;
          var equation = result.string;
      
          var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; }); //calculating the predicted y values, y = mx+c
          var r = Correlation.calc(xarray, yarray).toFixed(2); //rounding r to 2 decimal place
-         
+
          var correlationStrength = "";
          var correlationTrend = "";
          
@@ -559,9 +559,7 @@ class Chartbi extends Component {
              correlationTrend = "Negative";
          } else {
              correlationTrend = "";
-         }
-         
-         
+         }    
 
          var maxY = Math.max(...yarray);
          var minY = Math.min(...yarray);
@@ -597,7 +595,7 @@ class Chartbi extends Component {
                            layout={{
                               width: 1000, 
                               height: 700, 
-                              title: 'Generated Time:' + currentTimeStamp + '<br><b>' + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + "</b>",
+                              title: 'Generated Time:' + currentTimeStamp + '<br><b>' + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + " and rho value of " + rho + "</b>",
                               hovermode: 'closest',
                               xaxis: {
                                  title: this.state.selectedvariable,
@@ -614,7 +612,7 @@ class Chartbi extends Component {
                            }}
                         />,
             hideLoadingBar: true, //hide loading button
-            correlationresultexplanation : "This chart shows that " + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r,
+            correlationresultexplanation : "This chart shows that " + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + " and rho value of " + rho,
             correlationNote : "R: >0.5=Strong >0.3=Moderate >0.1=Weak >0=VeryWeak",
             }))
            .catch(err => console.error(err));       
