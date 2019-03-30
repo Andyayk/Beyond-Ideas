@@ -567,7 +567,7 @@ class AutoChartbi extends Component {
          var result = regression.linear(twoDArray);
          var gradient = result.equation[0];
          var yIntercept = result.equation[1];
-         var r2 = result.r2.toFixed(2);
+         //var r2 = result.r2.toFixed(2);
 
          var equation = result.string;
          var r = Correlation.calc(xarray, yarray).toFixed(2); //rounding r to 2 decimal place
@@ -663,7 +663,7 @@ class AutoChartbi extends Component {
          var result = regression.linear(twoDArray, {order: 2, precision: 10});
          var gradient = result.equation[0];
          var yIntercept = result.equation[1];
-         var r2 = result.r2.toFixed(2);
+         //var r2 = result.r2.toFixed(2);
          var equation = result.string;
         
          var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; }); //calculating the predicted y values, y = mx+c
@@ -722,13 +722,12 @@ class AutoChartbi extends Component {
                            mode: 'lines',
                            marker: {color: 'red'},
                            name: "Equation: " + equation,
-                           showlegend: false,
                            hoverlabel: {namelength: -1}                          
                            }]}
                            layout={{
-                              width: 800, 
+                              width: 1000, 
                               height: 700, 
-                              title: 'Equation ' + equation +'<br><b>' + xname + ' and ' + yname + ' has ' + correlationStrength + " " + correlationTrend + " correlation<br>with the R value of " + r + " and rho value of " + rho + "</b>",
+                              title: "<b>" + xname + " and " + yname + " has " + correlationStrength + " " + correlationTrend + " correlation</b><br>R: " + r + " and rho: " + rho.toFixed(2),
                               hovermode: 'closest',
                               xaxis: {
                                  title: xname,
@@ -741,7 +740,9 @@ class AutoChartbi extends Component {
                                  ticklen: 5,
                                  zeroline: false,
                                  gridwidth: 2,
-                              }                          
+                              },
+                              showlegend: true,
+                              legend: {x: 0.28, y: 1.05, orientation: "h"}                     
                            }}
                         />,
             hideLoadingBar: true, //hide loading button

@@ -532,7 +532,7 @@ class Chartbi extends Component {
          var result = regression.linear(twoDArray, {order: 2, precision: 10});
          var gradient = result.equation[0];
          var yIntercept = result.equation[1];
-         var r2 = result.r2toFixed(2);
+         //var r2 = result.r2.toFixed(2);
          var equation = result.string;
      
          var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; }); //calculating the predicted y values, y = mx+c
@@ -591,13 +591,12 @@ class Chartbi extends Component {
                            mode: 'lines',
                            marker: {color: 'red'},
                            name: "Equation: " + equation,
-                           showlegend: false,
                            hoverlabel: {namelength: -1}                          
                            }]}
                            layout={{
                               width: 1000, 
                               height: 700, 
-                              title: 'Equation ' + equation +'<br><b>' + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation with the R value of " + r + "<br/>and rho value of " + rho + "</b>",
+                              title: "<b>" + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation</b><br>R: " + r + " and rho: " + rho.toFixed(2),
                               hovermode: 'closest',
                               xaxis: {
                                  title: this.state.selectedvariable,
@@ -610,7 +609,9 @@ class Chartbi extends Component {
                                  ticklen: 5,
                                  zeroline: false,
                                  gridwidth: 2,
-                              }                          
+                              },
+                              showlegend: true,
+                              legend: {x: 0.28, y: 1.05, orientation: "h"}                       
                            }}
                         />,
             hideLoadingBar: true, //hide loading button
