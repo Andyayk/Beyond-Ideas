@@ -644,15 +644,15 @@ class Chartbi extends Component {
               <button className="back vis-back" type="submit">Back</button>  
             </form> 
             <br/>            
-            <table id="innertable">   
+            <table style={{"width":"100%"}}>
             <tbody>
               <tr>            
                   <td>   
                   <form name="submitForm" method="POST" onSubmit={this.formSubmitted}>                       
-                     <table style={{"width":"100%"}} align="left">
-                     <tbody>
+                    <table align="left">
+                      <tbody>
                         <tr>
-                          <td class="tablerowdata" valign="top" align="center" bgcolor="white">
+                          <td style={{"width":"28%", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">
                                 <div className="cardtitle">
@@ -724,10 +724,10 @@ class Chartbi extends Component {
                               </table>
                             </tr>        
                           </td>
-                          <td valign="center" align="center">
-                            <img class="arrowclass" src={arrowicon} width="45" height="45" />
-                          </td>
-                          <td class="tablerowdata" valign="top" align="center" bgcolor="white">
+                          <td style={{"width":"2%", "height":"280px"}} valign="center" align="center">
+                            <img src={arrowicon} width="45" height="45" />
+                          </td>      
+                          <td style={{"width":"28%", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">                           
                                 <div className="cardtitle">
@@ -765,10 +765,10 @@ class Chartbi extends Component {
                               </td>
                             </tr>
                           </td>
-                          <td valign="center" align="center">
-                            <img class="arrowclass" src={arrowicon} width="45" height="45" />
-                          </td>                        
-                          <td class="tablerowdata" valign="top" align="center" bgcolor="white">
+                          <td style={{"width":"2%", "height":"280px"}} valign="center" align="center">
+                            <img src={arrowicon} width="45" height="45" />
+                          </td>  
+                          <td style={{"width":"28%", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">
                                 <div className="cardtitle">
@@ -783,7 +783,7 @@ class Chartbi extends Component {
                               </td>
                             </tr><tr>
                               <td align="center">       
-                                <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"160px"}}>
+                                <select id="filtervariabledropdownid" defaultValue="" onChange={this.selectFilterVariable} style={{"width":"210px"}}>
                                   <option value="">- optional -</option>
                                     {this.state.datevariablesoptions}
                                     {this.state.companyvariablesoptions}               
@@ -809,12 +809,12 @@ class Chartbi extends Component {
                                         <div className="cardsubtitle">
                                            Start Date:
                                         </div>                   
-                                        <input type="date" style={{"width":"80%"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue} />
+                                        <input type="date" style={{"width":"210px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue} />
                                         <td></td>
                                         <div className="cardsubtitle">
                                            End Date:
                                         </div>
-                                        <input type="date" style={{"width":"80%"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
+                                        <input type="date" style={{"width":"210px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
                                         <br/>
                                         <tr>
                                         <td align="center">
@@ -828,7 +828,7 @@ class Chartbi extends Component {
                                         <div className="cardsubtitle">
                                            {this.state.selectedfiltervariable.substring(3,)}:
                                         </div>
-                                        <select id="filtervaluedropdownid" defaultValue="" required onChange={this.selectFilterValue}>
+                                        <select id="filtervaluedropdownid" defaultValue="" required onChange={this.selectFilterValue} style={{"width":"210px"}}>
                                            <option value="" disabled>- select a variable -</option>
                                            {this.state.filtervaluelistoptions}                         
                                         </select>
@@ -839,7 +839,7 @@ class Chartbi extends Component {
                           </tr>
                           <tr>
                             <td align="center">                                                            
-                              <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Scatterplot</button>                             
+                              <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"240px"}}>Generate Scatterplot</button>                             
                             </td>
                           </tr><tr>
                           </tr><tr>
@@ -858,12 +858,13 @@ class Chartbi extends Component {
                   </form>                   
                   </td>
                   </tr>
+                  <br/>
                   <tr>
                   <td align="center" style={{"width":"80%", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                      <table id="message">
                        <tbody>
                           <tr>
-                             <td align="center" style={{"width":"850px", "height":"580px", "borderRadius":"12px", "padding":"20px"}} bgcolor="white">
+                             <td align="center" style={{"width":"60%", "height":"580px", "borderRadius":"12px", "padding":"20px"}} bgcolor="white">
                                 <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
                              </td>                           
                           </tr>

@@ -502,7 +502,7 @@ class TableViewbi extends Component {
                   </table>                        
                </td>                                                               
             </tr>
-            <tr></tr>
+            <br/>
             <tr>
                <td id="testing" colSpan="5" align="center" style={{"height":"400px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px", "padding":"10px"}} valign="top" align="center" bgcolor="white">   
                   <table>

@@ -297,7 +297,7 @@ class Analysisbi extends Component {
             </tr>
           </tbody>   
           </table>
-          
+          <br/>
           <table style={{"width":"100%"}}>
           <tbody>                       
             <tr></tr>
