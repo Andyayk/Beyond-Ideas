@@ -567,7 +567,7 @@ class AutoChartbi extends Component {
          var result = regression.linear(twoDArray);
          var gradient = result.equation[0];
          var yIntercept = result.equation[1];
-         //var r2 = result.r2.toFixed(2);
+         var r2 = result.r2.toFixed(2);
 
          var equation = result.string;
          var r = Correlation.calc(xarray, yarray).toFixed(2); //rounding r to 2 decimal place
@@ -663,7 +663,7 @@ class AutoChartbi extends Component {
          var result = regression.linear(twoDArray, {order: 2, precision: 10});
          var gradient = result.equation[0];
          var yIntercept = result.equation[1];
-         //var r2 = result.r2.toFixed(2);
+         var r2 = result.r2.toFixed(2);
          var equation = result.string;
         
          var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; }); //calculating the predicted y values, y = mx+c
@@ -722,12 +722,13 @@ class AutoChartbi extends Component {
                            mode: 'lines',
                            marker: {color: 'red'},
                            name: "Equation: " + equation,
+                           showlegend: false,
                            hoverlabel: {namelength: -1}                          
                            }]}
                            layout={{
-                              width: 1000, 
+                              width: 800, 
                               height: 700, 
-                              title: "<b>" + xname + " and " + yname + " has " + correlationStrength + " " + correlationTrend + " correlation</b><br>R: " + r + " and rho: " + rho.toFixed(2),
+                              title: 'Equation ' + equation +'<br><b>' + xname + ' and ' + yname + ' has ' + correlationStrength + " " + correlationTrend + " correlation<br>with the R value of " + r + " and rho value of " + rho + "</b>",
                               hovermode: 'closest',
                               xaxis: {
                                  title: xname,
@@ -740,9 +741,7 @@ class AutoChartbi extends Component {
                                  ticklen: 5,
                                  zeroline: false,
                                  gridwidth: 2,
-                              },
-                              showlegend: true,
-                              legend: {x: 0.28, y: 1.05, orientation: "h"}                     
+                              }                          
                            }}
                         />,
             hideLoadingBar: true, //hide loading button
@@ -776,15 +775,15 @@ class AutoChartbi extends Component {
               <button className="back vis-back" type="submit">Back</button>  
             </form>     
             <br/>            
-            <table style={{"width":"100%"}}>
+            <table id="innertable">
             <tbody>
                <tr>             
                   <td>   
                   <form name="submitForm" method="POST" onSubmit={this.formSubmitted}>                       
-                    <table align="left">
+                     <table style={{"width":"100%"}} align="left">
                      <tbody>
                         <tr>
-                          <td style={{"width":"28%", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                        <td class="tablerowdata" valign="top" align="center" bgcolor="white">
                             <tr>
                                <td align="center">
                                   <div className="cardtitle">
@@ -847,14 +846,14 @@ class AutoChartbi extends Component {
                             </tr>       
                             <tr>
                                <td align="center">                                                            
-                                  <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle", "width":"240px"}}>Generate Top R</button>                             
+                                  <button id="submitbutton" className="button" type="submit" style={{"verticalAlign":"middle"}}>Generate Top R</button>                             
                                </td>
                             </tr>
                         </td>
-                        <td style={{"width":"2%", "height":"280px"}} valign="center" align="center">
-                          <img src={arrowicon} width="45" height="45" />
-                        </td>      
-                        <td style={{"width":"28%", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">
+                         <td valign="center" align="center">
+                            <img class="arrowclass" src={arrowicon} width="45" height="45" />
+                          </td>
+                        <td class="tablerowdata" valign="top" align="center" bgcolor="white">
                             <tr>
                               <td align="center">                           
                                 <div className="cardtitle">
@@ -887,10 +886,10 @@ class AutoChartbi extends Component {
                                </td>
                             </tr>
                         </td>
-                          <td style={{"width":"2%", "height":"280px"}} valign="center" align="center">
-                            <img src={arrowicon} width="45" height="45" />
-                          </td>      
-                          <td style={{"width":"28%", "height":"280px", "paddingTop":"15px", "paddingBottom":"15px", "boxShadow":"0 4px 8px 0 rgba(0,0,0,0.2)", "borderRadius":"12px"}} valign="top" align="center" bgcolor="white">                         
+                         <td valign="center" align="center">
+                            <img id="arrowclassid" class="arrowclass" src={arrowicon} width="45" height="45" />
+                          </td>
+                        <td id="tablerowdataid" class="tablerowdata" valign="top" align="center" bgcolor="white">                         
                             <tr>
                               <td align="center">
                                 <div className="cardtitle">
@@ -931,12 +930,12 @@ class AutoChartbi extends Component {
                                         <div className="cardsubtitle">
                                            Start Date:
                                         </div>                   
-                                        <input type="date" style={{"width":"210px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue} />
+                                        <input type="date" style={{"width":"80%"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue} />
                                         <td></td>
                                         <div className="cardsubtitle">
                                            End Date:
                                         </div>
-                                        <input type="date" style={{"width":"210px"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
+                                        <input type="date" style={{"width":"80%"}} min="1900-01-01" max="2100-12-31" required onChange={this.selectFilterValue2} />
                                         <br/>
                                         <tr>
                                         <td align="center">
@@ -950,7 +949,7 @@ class AutoChartbi extends Component {
                                         <div className="cardsubtitle">
                                            {this.state.selectedfiltervariable.substring(3,)}:
                                         </div>
-                                        <select id="filtervaluedropdownid" defaultValue="" required onChange={this.selectFilterValue} style={{"width":"210px"}}>
+                                        <select id="filtervaluedropdownid" defaultValue="" required onChange={this.selectFilterValue}>
                                            <option value="" disabled>- select a variable -</option>
                                            {this.state.filtervaluelistoptions}                         
                                         </select>
@@ -976,7 +975,7 @@ class AutoChartbi extends Component {
                      <table id="message">
                      <tbody>
                         <tr>
-                           <td align="center" style={{"width":"60%", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
+                           <td align="center" style={{"width":"850px", "height":"580px", "borderRadius":"12px", "padding":"10px"}} bgcolor="white">
                               <label style={{"verticalAlign":"center"}}>Plot Display Area</label>          
                            </td>                           
                         </tr>
