@@ -672,21 +672,21 @@ class AutoChartbi extends Component {
          var correlationTrend = "";
          
          if(r > 0.5 || r < -0.5){
-             correlationStrength = "Strong";
+             correlationStrength = "strong";
          } else if (r > 0.3 || r < -0.3){
-             correlationStrength = "Moderate";
+             correlationStrength = "moderate";
          } else if (r > 0.1 || r < -0.1){
-             correlationStrength = "Weak";
+             correlationStrength = "weak";
          } else if (r > 0.0 || r < 0.0){
-             correlationStrength = "Very Weak";
+             correlationStrength = "very Weak";
          } else {
-             correlationStrength = "No";
+             correlationStrength = "no";
          }
 
          if (r > 0.0){
-            correlationTrend = "Positive";
+            correlationTrend = "positive";
          } else if (r < 0.0){
-             correlationTrend = "Negative";
+             correlationTrend = "negative";
          } else {
              correlationTrend = "";
          }
@@ -728,7 +728,7 @@ class AutoChartbi extends Component {
                            layout={{
                               width: 800, 
                               height: 700, 
-                              title: 'Equation ' + equation +'<br><b>' + xname + ' and ' + yname + ' has ' + correlationStrength + " " + correlationTrend + " correlation<br>with the R value of " + r + " and rho value of " + rho + "</b>",
+                              title: 'Equation ' + equation +'<br>' + xname + ' and ' + yname + ' has <b>' + correlationStrength + "</b> " + correlationTrend + " correlation<br>with the R value of " + r + " and rho value of " + rho + "",
                               hovermode: 'closest',
                               xaxis: {
                                  title: xname,
