@@ -728,6 +728,10 @@ class AutoChartbi extends Component {
                               width: 1000, 
                               height: 700, 
                               title: "" + xname + " and " + yname + " has <b>" + correlationStrength + "</b> " + correlationTrend + " correlation<br>R: " + r + " and rho: " + rho.toFixed(2),
+                              "titlefont": {
+                                "size": 20,
+                                "color": 'blue'
+                              },
                               hovermode: 'closest',
                               xaxis: {
                                  title: xname,
