@@ -542,21 +542,21 @@ class Chartbi extends Component {
          var correlationTrend = "";
          
         if(r > 0.5 || r < -0.5){
-             correlationStrength = "Strong";
+             correlationStrength = "strong";
          } else if (r > 0.3 || r < -0.3){
-             correlationStrength = "Moderate";
+             correlationStrength = "moderate";
          } else if (r > 0.1 || r < -0.1){
-             correlationStrength = "Weak";
+             correlationStrength = "weak";
          } else if (r > 0.0 || r < 0.0){
-             correlationStrength = "Very Weak";
+             correlationStrength = "very Weak";
          } else {
-             correlationStrength = "No";
+             correlationStrength = "no";
          }
 
          if (r > 0.0){
-            correlationTrend = "Positive";
+            correlationTrend = "positive";
          } else if (r < 0.0){
-             correlationTrend = "Negative";
+             correlationTrend = "negative";
          } else {
              correlationTrend = "";
          }
@@ -596,7 +596,7 @@ class Chartbi extends Component {
                            layout={{
                               width: 1000, 
                               height: 700, 
-                              title: "<b>" + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has " + correlationStrength + " " + correlationTrend + " correlation</b><br>R: " + r + " and rho: " + rho.toFixed(2),
+                              title: "" + this.state.selectedvariable + " and " + this.state.selectedvariable2 + " has <b>" + correlationStrength + "</b> " + correlationTrend + " correlation<br>R: " + r + " and rho: " + rho.toFixed(2),
                               hovermode: 'closest',
                               xaxis: {
                                  title: this.state.selectedvariable,
