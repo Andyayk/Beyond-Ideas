@@ -30,7 +30,7 @@ class Analysisbi extends Component {
       positivewordcloud: "",
       negativewordcloud: "",      
       fontSizeMapper: word => Math.log2(word.value) * 15,
-      rotate: word => 10
+      rotate: word => word.value % 100
     };
 
     this.getMySQLTables = this.getMySQLTables.bind(this);
@@ -211,7 +211,7 @@ class Analysisbi extends Component {
 
     for (let i = 0; i < topwords_negative.length; i++) {
       let topword_negative = topwords_negative[i][0];
-      let topword_fdist= topwords_negative[i][1]*20;
+      let topword_fdist= topwords_negative[i][1]*10;
       textdataNegative.push({'text':topword_negative,'value':topword_fdist});
     }
 
@@ -364,10 +364,12 @@ class Analysisbi extends Component {
                 <tr>
                   <td align="center">   
                     <div className="cardsubtitle">
-                      <b>Most common words in<span style={{"color":"#4CAF50"}}> positive tweets</span></b>
+                      <b><h2>Most common words in<span style={{"color":"#4CAF50"}}> positive tweets</span></h2></b>
                     </div>     
                     <br/>
+                    <div >
                     {this.state.positivewordcloud}
+                    </div>
                   </td>  
                   <td align="center">    
                     <div className="cardsubtitle">
