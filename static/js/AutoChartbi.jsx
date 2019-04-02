@@ -558,7 +558,8 @@ class AutoChartbi extends Component {
             } else {
                yarray = val[i].toString().split(",").map(Number);
             }   
-        }
+          }
+        
          var twoDArray = [];
             
          for (var i = 0; i < xarray.length; i++) { //2D array needed for regression calculation only
@@ -571,7 +572,9 @@ class AutoChartbi extends Component {
 
          var equation = result.string;
          var r = Correlation.calc(xarray, yarray).toFixed(2); //rounding r to 2 decimal place
-         
+         if(r=='NaN'){
+          r=0
+         }
          var xname = xVariables[currentXNo];
          var yname = yVariables[currentYNo];
          
@@ -580,6 +583,7 @@ class AutoChartbi extends Component {
          } else {
             rxyKeyVal[r] = [[xname,yname, xarray, yarray]];          
          }
+         
          if(currentYNo < yVariables.length-1){
             currentYNo++;
          } else {
@@ -668,6 +672,10 @@ class AutoChartbi extends Component {
         
          var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; }); //calculating the predicted y values, y = mx+c
          var r = Correlation.calc(xarray, yarray).toFixed(2); //rounding r to 2 decimal place
+         if(r=='NaN'){
+          r=0
+         }
+
          var correlationStrength = "";
          var correlationTrend = "";
          
@@ -678,7 +686,7 @@ class AutoChartbi extends Component {
          } else if (r > 0.1 || r < -0.1){
              correlationStrength = "weak";
          } else if (r > 0.0 || r < 0.0){
-             correlationStrength = "very Weak";
+             correlationStrength = "very weak";
          } else {
              correlationStrength = "no";
          }

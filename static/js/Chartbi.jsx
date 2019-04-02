@@ -537,7 +537,9 @@ class Chartbi extends Component {
      
          var predictedyarray = xarray.map(function(x) { return gradient * x + yIntercept; }); //calculating the predicted y values, y = mx+c
          var r = Correlation.calc(xarray, yarray).toFixed(2); //rounding r to 2 decimal place
-         
+         if(r=='NaN'){
+          r=0
+         }         
          var correlationStrength = "";
          var correlationTrend = "";
          
