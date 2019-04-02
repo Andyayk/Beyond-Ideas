@@ -29,7 +29,7 @@ class Analysisbi extends Component {
       topwords_negative: "",
       positivewordcloud: "",
       negativewordcloud: "",      
-      fontSizeMapper: word => Math.log2(word.value) * 15,
+      fontSizeMapper: word => Math.log2(word.value) * 7,
       rotate: word => word.value % 100
     };
 
@@ -211,7 +211,7 @@ class Analysisbi extends Component {
 
     for (let i = 0; i < topwords_negative.length; i++) {
       let topword_negative = topwords_negative[i][0];
-      let topword_fdist= topwords_negative[i][1]*10;
+      let topword_fdist= topwords_negative[i][1];
       textdataNegative.push({'text':topword_negative,'value':topword_fdist});
     }
 
