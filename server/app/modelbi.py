@@ -79,7 +79,9 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         date2 = ""
         
         if "sentiment" in tablename:
-            if "sentiment" in variablenameX:
+            if "sentiment_score" in variablenameX:
+                sqlstmtQuery = "SELECT AVG(t1." + variablenameX + ") , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+            elif "sentiment" in variablenameX:
                 sqlstmtQuery = "SELECT COUNT(t1." + variablenameX + ") , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
             else:
                 sqlstmtQuery = "SELECT CAST(SUM(t1." + variablenameX + ") as UNSIGNED) , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
@@ -88,12 +90,14 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
                 date1 = getDateColumnNamebi(tablename)
                 date2 = getDateColumnNamebi(tablename2)
 
-                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0] + " AND sentiment = 1"
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0]
             else:
-                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable + " AND sentiment = 1"
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable
 
         elif "sentiment" in tablename2:
-            if "sentiment" in variablenameY:
+            if "sentiment_score" in variablenameY:
+                sqlstmtQuery = "SELECT t1." + variablenameX + " , AVG(t2." + variablenameY + ") FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
+            elif "sentiment" in variablenameY:
                 sqlstmtQuery = "SELECT t1." + variablenameX + " , COUNT(t2." + variablenameY + ") FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
             else:
                 sqlstmtQuery = "SELECT t1." + variablenameX + " , CAST(SUM(t2." + variablenameY + ") as UNSIGNED) FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
@@ -102,9 +106,9 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
                 date1 = getDateColumnNamebi(tablename)
                 date2 = getDateColumnNamebi(tablename2)
 
-                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0] + " AND sentiment = 1"
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0]
             else:
-                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable + " AND sentiment = 1"
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable
 
         else:
             sqlstmtQuery = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
@@ -130,7 +134,7 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
 
         elif "sentiment" in tablename2:
             sqlstmtQuery = sqlstmtQuery + " GROUP BY t2." + date2[0] + " , sentiment"
-            
+        #print(sqlstmtQuery)
         sqlstmt = connection.execute(sqlstmtQuery)
         x = []
         y = []
@@ -149,7 +153,7 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         combinedxyarray = []
         combinedxyarray.append(x)
         combinedxyarray.append(y)
-
+        #print(combinedxyarray)
         return combinedxyarray
     except Exception as e:
         return "Something is wrong with tablesJoinbi method"   

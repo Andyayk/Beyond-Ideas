@@ -373,7 +373,7 @@ class Analysisbi extends Component {
                   </td>  
                   <td align="center">    
                     <div className="cardsubtitle">
-                      <b>Most comon words in<span style={{"color":"red"}}> negative tweets</span></b>
+                      <b><h2>Most common words in<span style={{"color":"red"}}> negative tweets</span></h2></b>
                     </div>     
                     <br/>
                     {this.state.negativewordcloud}

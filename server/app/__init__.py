@@ -788,7 +788,7 @@ def create_app(config_name):
             filtervariable = request.form.get("selectedfiltervariable")
             
             #print(variablenameX);
-            allcombinedxyarrays = [];
+            allcombinedxyarrays = []
             for x in variablenameX:
                 for y in variablenameY:
                     combinedxyarray = modelbi.tablesJoinbi(usertablename, usertablename2, x, y, joinvariable, filtervalue, filtervalue2, filtervariable)
