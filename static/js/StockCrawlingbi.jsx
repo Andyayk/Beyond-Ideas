@@ -206,6 +206,11 @@ class StockCrawlingbi extends Component {
                                           <option value="UPS">United Parcel Service, Inc.</option>                     
                                        </select>
                                     </tr>
+                                    <tr>
+                                       <div className="cardhintmessage">
+                                          *Retrieves 100 most recent data points for the stock selected.
+                                       </div>
+                                    </tr>
                                  </td>
                                  <td style={{"width":"2%", "height":"250px"}} valign="center" align="center">
                                     <img src={arrowicon} width="45" height="45" />
