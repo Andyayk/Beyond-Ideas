@@ -930,8 +930,8 @@ def create_app(config_name):
             values = results[1] #all values
 
             #retrieve top positive & negative words for sentiment wordcloud
-            topwords_positive = modelbi.gettopn_words(tableName, 1, 80);
-            topwords_negative = modelbi.gettopn_words(tableName, 0, 80);
+            topwords_positive = modelbi.gettopn_words(tableName, 1, 30);
+            topwords_negative = modelbi.gettopn_words(tableName, 0, 30);
 
             #topic modeling overall result 
             results2 = modelbi.topicModeling(tablename, usertablename, current_user.id) 
