@@ -52,6 +52,8 @@ class TableViewbi extends Component {
 
       this.selectFilename = this.selectFilename.bind(this);    
 
+      this.formatDate = this.formatDate.bind(this);
+
       this.loadingBarInstanceOne = (
          <div className="loader"></div>                                      
       );
@@ -239,15 +241,27 @@ class TableViewbi extends Component {
          
          this.setState({
             colnames: (data['colnames']),
-            colvalues: (data['coldata']),
+            colvalues: (this.formatDate(data['coldata'])),
             hideLoadingBarOne: true, //hide loading button
             table1boolean: true,
          });
-
-         // console.log(this.state.colnames);
       });
 
 
+   }
+
+   formatDate(colvalues) {
+      for (let i=0; i<colvalues.length; i++) {
+         for (let k=0; k<colvalues[i].length; k++) {
+            let data = colvalues[i][k];
+            if (isNaN(data)&&!isNaN(new Date(data).getTime())) {
+               let d = new Date(data);
+               data = d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear();                  
+               colvalues[i][k] = data;
+            }
+         }
+      }
+      return colvalues;
    }
    
    //retrieving table display from flask
@@ -296,7 +310,7 @@ class TableViewbi extends Component {
          
          this.setState({
             colnames2: (data['colnames']),
-            colvalues2: (data['coldata']),
+            colvalues2: (this.formatDate(data['coldata'])),
             hideLoadingBarTwo: true, //hide loading button            
             table2boolean: true,
          });       
@@ -336,7 +350,7 @@ class TableViewbi extends Component {
             // console.log(data);
    			this.setState({
    			    combinedcolnames: (data['colnames']),
-                combinedcolvalues: (data['coldata']),
+                combinedcolvalues: (this.formatDate(data['coldata'])),
                 hideLoadingBarThree: true,
                 combinedtableboolean: true
    			})
@@ -517,7 +531,8 @@ class TableViewbi extends Component {
                                         data={this.state.combinedcolvalues}
                                         columns={this.state.combinedcolnames}
                                         options={{
-                                          rowsPerPageOptions: [10,15,20]
+                                          rowsPerPageOptions: [10,15,20],
+                                          selectableRows: false
                                         }}
                                      />  
                                      ):null
@@ -552,8 +567,9 @@ class TableViewbi extends Component {
                                      columns={this.state.colnames}
                                      options={{
                                        rowsPerPage:5, 
-                                       rowsPerPageOptions: [5,10,15]
-                                     }}
+                                       rowsPerPageOptions: [5,10,15],
+                                       selectableRows: false
+                                    }}
                                   />  
                                   ):null
                                  } 
