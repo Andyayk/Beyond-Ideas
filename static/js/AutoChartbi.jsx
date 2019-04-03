@@ -193,20 +193,23 @@ class AutoChartbi extends Component {
    }
    
    enablesubmitbutton(enable){
+      var element = document.getElementsByClassName('button');
       if(enable){
-         var element = document.getElementById('submitbutton');
-         element.disabled = false;
-         element.style.background = "#fecb2f";
-         element.style.color = "black";                           
-         element.style.opacity = "1";            
-         element.style.cursor = "pointer";
+         for( var i=0, len=element.length; i<len; i++) {
+             element[i].disabled = false;
+             element[i].style.background = "#fecb2f";
+             element[i].style.color = "black";                           
+             element[i].style.opacity = "1";            
+             element[i].style.cursor = "pointer";
+        }
       } else {
-         var element = document.getElementById('submitbutton');
-         element.disabled = true;
-         element.style.background = "red";
-         element.style.color = "white";                  
-         element.style.opacity = "0.6";
-         element.style.cursor = "not-allowed";
+         for( var i=0, len=element.length; i<len; i++) {
+             element[i].disabled = true;
+             element[i].style.background = "red";
+             element[i].style.color = "white";                  
+             element[i].style.opacity = "0.6";
+             element[i].style.cursor = "not-allowed";
+        }
       }
    }
 
@@ -284,6 +287,7 @@ class AutoChartbi extends Component {
              selectedfiltervariable: "",
              selectedfiltervalue: "",
              regenerate: "",
+             errordatestatement: ""
           });
           document.getElementById("filtervariabledropdownid").selectedIndex = -1;
     }
@@ -293,15 +297,12 @@ class AutoChartbi extends Component {
       this.setState({
          selectedfiltervalue : "",
          regenerate: "",
+         errordatestatement: ""
       });
       if(this.state.selectedfiltervariable != "" && !this.state.selectedfiltervariable.toLowerCase().includes("date")){
         document.getElementById("filtervaluedropdownid").selectedIndex = 0; 
       }
-      // if(this.state.selectedfiltervariable != ""){
-         // var thisElement = document.getElementById("filtervaluedropdownid");
-         // thisElement.default = true;
-         // thisElement.selectedIndex = "0";
-      // }
+ 
       
    }
    
@@ -316,6 +317,7 @@ class AutoChartbi extends Component {
          } else {
              if(this.state.selectedtable == this.state.selectedtable2){
                  this.setState({errordatestatement: "Please select two different datasets"});
+                 this.enablesubmitbutton(false);
              } else{
                 this.setState({errordatestatement: ""});
                 this.enablesubmitbutton(true);
@@ -331,7 +333,10 @@ class AutoChartbi extends Component {
          selectedtable: event.target.value
       });
       this.setState({radioButtonCount : 0});
-
+      
+      this.resetfiltervaluedropdown();
+      this.resetfiltervariabledropdown();
+      
       $.post(window.location.origin + "/variablesbi/",
       {
          tablename: event.target.value,
@@ -386,6 +391,9 @@ class AutoChartbi extends Component {
       });
  
       this.setState({radioButtonCount : 0});
+
+      this.resetfiltervaluedropdown();
+      this.resetfiltervariabledropdown();
       
       $.post(window.location.origin + "/variablesbi/",
       {
