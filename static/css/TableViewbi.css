@@ -11,6 +11,7 @@ div.outputtable th{
   background-color: #4CAF50;
   color: white;  
   padding: 5px;
+  text-align: center;
 }
 
 div.outputtable tr:nth-child(even){background-color: white}
