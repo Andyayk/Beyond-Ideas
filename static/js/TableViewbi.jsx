@@ -193,6 +193,21 @@ class TableViewbi extends Component {
       });     
    } 
 
+   //formate the date type data
+   formatDate(colvalues) {
+      for (let i=0; i<colvalues.length; i++) {
+         for (let k=0; k<colvalues[i].length; k++) {
+            let data = colvalues[i][k];
+            if (isNaN(data)&&!isNaN(new Date(data).getTime())) {
+               let d = new Date(data);
+               data = d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear();                  
+               colvalues[i][k] = data;
+            }
+         }
+      }
+      return colvalues;
+   }
+
    //retrieving table display from flask
    display(event) {  
       var x = document.getElementById("data1area");
@@ -248,20 +263,6 @@ class TableViewbi extends Component {
       });
 
 
-   }
-
-   formatDate(colvalues) {
-      for (let i=0; i<colvalues.length; i++) {
-         for (let k=0; k<colvalues[i].length; k++) {
-            let data = colvalues[i][k];
-            if (isNaN(data)&&!isNaN(new Date(data).getTime())) {
-               let d = new Date(data);
-               data = d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear();                  
-               colvalues[i][k] = data;
-            }
-         }
-      }
-      return colvalues;
    }
    
    //retrieving table display from flask
@@ -597,7 +598,8 @@ class TableViewbi extends Component {
                                      columns={this.state.colnames2}
                                      options={{
                                        rowsPerPage:5, 
-                                       rowsPerPageOptions: [5,10,15]
+                                       rowsPerPageOptions: [5,10,15],
+                                       selectableRows: false
                                      }}
                                   />  
                                   ):null
