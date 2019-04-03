@@ -50,6 +50,8 @@ class Analysisbi extends Component {
 
     this.getMySQLTables(); //retrieving user's uploaded tables
 
+    this.formatDate = this.formatDate.bind(this);
+
     this.loadingBarInstance = (
       <div className="loader"></div>                                   
     );       
@@ -160,6 +162,21 @@ class Analysisbi extends Component {
       })
   }
 
+  //formate the date type data
+   formatDate(colvalues) {
+      for (let i=0; i<colvalues.length; i++) {
+         for (let k=0; k<colvalues[i].length; k++) {
+            let data = colvalues[i][k];
+            if (isNaN(data)&&!isNaN(new Date(data).getTime())) {
+               let d = new Date(data);
+               data = d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear();                  
+               colvalues[i][k] = data;
+            }
+         }
+      }
+      return colvalues;
+   }
+
   //retrieving chart data from flask and creating chart using plotly
   generatePlot(event){
     $.post(window.location.origin + "/generateplotbi/",
@@ -180,9 +197,9 @@ class Analysisbi extends Component {
 
       this.setState({                  
         columns: data['columns'],
-        values: data['values'],
+        values: this.formatDate(data['values']),
         topiccolumns: data['topiccolumns'],
-        topicvalues: data['topicvalues'],
+        topicvalues: this.formatDate(data['topicvalues']),
         topwords_positive: data['topwords_positive'],
         topwords_negative: data['topwords_negative'],
         hideLoadingBar: true, //hide loading button
@@ -328,7 +345,8 @@ class Analysisbi extends Component {
                              columns={this.state.topiccolumns}
                              options={{
                                rowsPerPage:5 , 
-                               rowsPerPageOptions: [5,10,15]
+                               rowsPerPageOptions: [5,10,15],
+                               selectableRows: false
                              }}
                           /> 
                           ):null
@@ -407,7 +425,8 @@ class Analysisbi extends Component {
                          data={this.state.values}
                          columns={this.state.columns}
                          options={{
-                           rowsPerPageOptions: [10,15,20]
+                           rowsPerPageOptions: [10,15,20],
+                           selectableRows: false
                          }}
                       /> 
                       ):null
