@@ -169,7 +169,7 @@ class Analysisbi extends Component {
             let data = colvalues[i][k];
             if (isNaN(data)&&!isNaN(new Date(data).getTime())) {
                let d = new Date(data);
-               data = d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear();                  
+               data = d.getFullYear()  + "/" + (d.getMonth()+1) + "/" + ('0' + d.getDate()).slice(-2);                  
                colvalues[i][k] = data;
             }
          }
