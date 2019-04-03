@@ -217,6 +217,7 @@ class Chartbi extends Component {
       this.setState({
          selectedfiltervariable: "",
          selectedfiltervalue: "",
+         errordatestatement: ""
       });
       document.getElementById("filtervariabledropdownid").selectedIndex = -1;
    }
@@ -224,7 +225,8 @@ class Chartbi extends Component {
    
    resetfiltervaluedropdown(){
       this.setState({
-         selectedfiltervalue : "" 
+         selectedfiltervalue : "",
+         errordatestatement: ""         
       });
       if(this.state.selectedfiltervariable != "" && !this.state.selectedfiltervariable.toLowerCase().includes("date")){
         document.getElementById("filtervaluedropdownid").selectedIndex = 0; 
