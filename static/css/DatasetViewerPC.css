@@ -8,6 +8,7 @@
     position:relative;
     cursor: pointer;
     transition: all 0.3s ease;
+    z-index: 100;
 }
 .datasetpcs {
     width:100%;
@@ -19,6 +20,7 @@
     position:relative;
     cursor: pointer;
     transition: all 0.3s ease;
+    z-index: 100;
 }
 
 .datasetindexpc {
@@ -27,6 +29,7 @@
     left:10%;
     transform:translate(-20%, -50%);
     background: transparent;
+    user-select: none;
 }
 
 .datasetnamepc {
@@ -35,9 +38,23 @@
     left:50%;
     transform:translate(-50%, -50%);
     background: transparent;
+    user-select: none;
 }
 
 .dsactive {
     color:white;
     background:#d2002e;
+    z-index: 1000;
+}
+
+.dsactive .datasetnamepc {
+    color:white;
+    background:#d2002e;
+    user-select: none;
+}
+
+.dsactive .datasetindexpc {
+    color:white;
+    background:#d2002e;
+    user-select: none;
 }

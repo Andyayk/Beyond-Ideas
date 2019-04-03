@@ -134,12 +134,10 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
 
         elif "sentiment" in tablename2:
             sqlstmtQuery = sqlstmtQuery + " GROUP BY t2." + date2[0] + " , sentiment"
-        #print(sqlstmtQuery)
         sqlstmt = connection.execute(sqlstmtQuery)
         x = []
         y = []
         for row_data in sqlstmt: #add table rows
-            #print(row_data)
             if is_emptybi(row_data[0]):
                 x.append(0)
             else: 
@@ -153,7 +151,6 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
         combinedxyarray = []
         combinedxyarray.append(x)
         combinedxyarray.append(y)
-        #print(combinedxyarray)
         return combinedxyarray
     except Exception as e:
         return "Something is wrong with tablesJoinbi method"   
@@ -386,8 +383,6 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
     """
         This method crawl weather data from worldweatheronline
     """ 
-    #print("line 315")
-    #print(saveToDB)
     try:
         #Key to call the API, expire 27 April
         with open(os.getcwd()+"\\instance\\weather_credentials.json", "r") as file:  
@@ -440,13 +435,7 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
             end_crawl_day = int(input_end_date[8:10])  
             #loop based on the number of months input by the user  
             while num_of_months >= 0:
-                """
-                print("this is number of months " + str(num_of_months))
-                print("this is start month " + str(start_crawl_month))
-                print("this is start year " + str(start_crawl_year))
-                print("this is end month " + str(end_crawl_month))
-                print("this is end year " + str(end_crawl_year))
-                """
+                
                 start_crawl_date = str(start_crawl_year) + "-" + str(start_crawl_month) + "-" + str(start_crawl_day)
                 end_crawl_date = str(end_crawl_year) + "-" + str(end_crawl_month) + "-" + str(end_crawl_day)
                 #for last input month, the last date to crawl would be the input date
@@ -517,7 +506,6 @@ def weatherCrawlerbi(startdate, enddate, countryname, saveToDB, userID, filename
             for i in bodyArray:
                 returnStr += i
                 returnStr += "\n"
-            #print(returnStr)
             return returnStr
     except Exception as e:
         print(e)
@@ -1179,7 +1167,6 @@ def stockCrawlerbi(stockname, saveToDB, userID, filename):
             for i in bodyArray:
                 returnStr += i
                 returnStr += "\n"
-            #print(returnStr)
             return returnStr
     except Exception as e:
         print(e)

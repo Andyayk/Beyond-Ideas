@@ -118,7 +118,7 @@ class Chartbi extends Component {
       if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
          var mySQLTables = data.toString().split(",");
          for (let i = 0; i < mySQLTables.length; i++) {
-            options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+            options.push(<option value={mySQLTables[i].substr(0,mySQLTables[i].length-2)}>{mySQLTables[i].substr(0,mySQLTables[i].length-2)}</option>);
          };
       }
 

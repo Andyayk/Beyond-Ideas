@@ -92,7 +92,7 @@ class Analysisbi extends Component {
         if(mySQLTables[i].includes("_tweets_w_sentiment")){
           
         } else if(mySQLTables[i].includes("_tweets")){
-          options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);          
+          options.push(<option value={mySQLTables[i].substr(0,mySQLTables[i].length-2)}>{mySQLTables[i].substr(0,mySQLTables[i].length-2)}</option>);          
         }
       };
     }

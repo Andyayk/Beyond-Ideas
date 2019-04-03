@@ -89,8 +89,7 @@
 .sidebar-item > img {
   height: 2em;
   filter: grayscale(100%);
-  margin-left:auto;
- 
+  padding-right: 0.5em; 
 }
 
 .sidebar-item:hover {
@@ -149,25 +148,6 @@ li a:active {
   justify-content: right;
 }
 
-
-
-@media only screen and (max-width:599px){
-.tablerowdata{
-    width:100%;
-}
-td{
-    display:block;
-}
-.arrowclass{
-    transform: rotate(90deg);
-}
-
-.radioclass{
-
-}
-}
-
-@media only screen and (min-width:600px){
 .tablerowdata{
     width:30%;
     height:150px;
@@ -176,8 +156,7 @@ td{
     box-shadow:0 4px 8px 0 rgba(0,0,0,0.2);
     border-radius:12px;
 }
-}
+
 footer{
   text-align: center;
 }
-

@@ -8,7 +8,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     fullname = db.Column(db.String(80), nullable=False)
-    group_id = db.Column(db.Integer, default=0)
+    group_id = db.Column(db.Integer)
     isManager = db.Column(db.Boolean, default=False)
 
     @property
@@ -28,6 +28,7 @@ class User(UserMixin, db.Model):
 
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    group_name = db.Column(db.String(120), nullable=False)
     manager_id = db.Column(db.Integer)
 
     def __repr__(self):
@@ -64,12 +65,14 @@ class GroupValidHeaders(db.Model):
     group_id = db.Column(db.Integer, primary_key=True)
     header_name = db.Column(db.String(255), nullable=False, primary_key=True)
     data_type = db.Column(db.String(255), nullable=False)
+    isCategory = db.Column(db.Boolean)
 
     def __repr__(self):
         return '<Group_ValidHeaders %d >' % self.group_id
 
 class UserVisualization(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    viz_name = db.Column(db.String(120), nullable=False)
     upload_date = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
     configs = db.Column(db.JSON, nullable=False)

@@ -68,7 +68,7 @@ class ApplyGroup extends React.Component{
                 <h1>Apply for Group</h1>    
                 <div style={{width:300, height:300, background:`white`, padding:20, display:`flex`, flexDirection:`column`, justifyContent:`space-around`, alignItems:`center`}}>
                     <div style={{display:`flex`, flexDirection:`column`, justifyContent:`center`, alignItems:`center`}}>
-                        <div>Apply for Group:</div>
+                        <div>Apply for Group ID:</div>
                         <select style={{margin:`auto`, marginTop:10}} onChange={e => this.update(e)}>
                             <option selected disabled hidden style={{ color: `gray` }}>-</option>
                             {this.state.groupList.map(function(value, i) {

@@ -100,7 +100,7 @@ class TableViewbi extends Component {
       if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
          var mySQLTables = data.toString().split(",");
          for (let i = 0; i < mySQLTables.length; i++) {
-            options.push(<option value={mySQLTables[i]}>{mySQLTables[i]}</option>);
+            options.push(<option value={mySQLTables[i].substr(0,mySQLTables[i].length-2)}>{mySQLTables[i].substr(0,mySQLTables[i].length-2)}</option>);
          };
       }
 
@@ -508,7 +508,7 @@ class TableViewbi extends Component {
                   <table>
                      <tbody>
                			<tr>
-               				<td align="center" style={{"overflow":"auto","position":"relative", "verticalAlign":"top", "z-index":"1"}}>
+               				<td align="center" style={{"overflow":"auto","position":"relative", "verticalAlign":"top", "zIndex":"1"}}>
                               <div style={{"overflowX":"auto"}}>
                                  <div className="outputtable">
                                     {this.state.combinedtableboolean?(   
@@ -544,7 +544,7 @@ class TableViewbi extends Component {
                                  </tbody>
                               </table>
 
-                              <div className="outputtable" style={{"position":"relative", "z-index":"1"}}>
+                              <div className="outputtable" style={{"position":"relative", "zIndex":"1"}}>
                                  {this.state.table1boolean?(   
                                   <MUIDataTable
                                      title={"Dataset One: "+this.state.exporttable1}
@@ -573,7 +573,7 @@ class TableViewbi extends Component {
                               </tbody>
                               </table> 
 
-                              <div className="outputtable" style={{"position":"relative", "z-index":"1"}}>
+                              <div className="outputtable" style={{"position":"relative", "zIndex":"1"}}>
                                  {this.state.table2boolean?(  
                                   <MUIDataTable
                                      title={"Dataset Two: "+this.state.exporttable2}

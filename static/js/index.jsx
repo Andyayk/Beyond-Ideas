@@ -62,6 +62,11 @@ if (managePage) {
   ReactDOM.render(<Manage />, managePage);
 }
 
+const datasetsPage = document.getElementById("datasetsPage");
+if (datasetsPage) {
+  ReactDOM.render(<Datasets />, datasetsPage);
+}
+
 // ========================================================= Beyond Ideas Classes START HERE ================================================
 
 const tableviewbi = document.getElementById('tableviewbi');

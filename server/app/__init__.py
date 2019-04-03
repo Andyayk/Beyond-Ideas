@@ -16,6 +16,8 @@ from sqlalchemy import text
 from werkzeug.utils import secure_filename
 import pandas as pd
 import re
+import dateparser
+import math
 from flask_sslify import SSLify
 # db variable initialization
 db = SQLAlchemy()
@@ -77,7 +79,10 @@ def create_app(config_name):
         if not current_user.is_authenticated:
             return redirect(url_for('login_r'))
         else:
-            return render_template('upload.html')
+            if current_user.group_id is not None:
+                return render_template('upload.html')
+            else:
+                return render_template('upload_nogroup.html')
 
     @app.route("/visualisation/")
     def visualisation():
@@ -92,7 +97,7 @@ def create_app(config_name):
             return redirect(url_for('login_r'))
         else:
             return render_template('manage.html')
-            
+
     @app.route("/datasets/")
     def datasets():
         if not current_user.is_authenticated:
@@ -120,8 +125,7 @@ def create_app(config_name):
     def allowed_file(filename):
         return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# ========================================================= Panda Conda Classes START HERE ================================================
+# ========================================================= API START HERE ================================================
 
     @app.route('/register_api', methods=['POST'])  # API - User Registration
     def register():
@@ -209,7 +213,7 @@ def create_app(config_name):
                 for row in valid:
                     valid_headers.append(row.header_name)
                     header_types[row.header_name] = row.data_type
-                value = json.loads(check_headers.suggest_headers('app/uploads/' + filename, valid_headers, header_types))
+                value = json.loads(check_headers.suggest_headers('app/uploads/' + filename, valid_headers, header_types, filename))
 
                 if value['status'] == 400:
                     session['editData'] = value
@@ -217,7 +221,7 @@ def create_app(config_name):
                 else:
                     f = filename[0:len(filename) - 4]+ "_" +str(current_user.id)
                     has = UserData.query.filter_by(data_name=f).first()
-
+                    print(value)
                     if has is None:
                         header = "("
                         headerNoType ="("
@@ -230,19 +234,17 @@ def create_app(config_name):
                             headerOrder.append(k)
                             if(v == 'int'):
                                 header = header + "INT"
-                            elif(v == 'string'):
-                                header = header + "VARCHAR(MAX)"
+                            elif(v == 'text'):
+                                header = header + "TEXT"
                             elif(v == 'date'):
-                                header = header + "DATE"
+                                header = header + "DATETIME"
                                 dateIndex.append(d)
-                            elif(v == 'double'):
+                            elif(v == 'double' or v == 'float'):
                                 header = header + "FLOAT"
                             header = header + ','
                             d = d + 1
                         header = header[0:len(header)-1] +')'
-
                         sql = f'CREATE TABLE {filename[0:len(filename)-4]+"_"+str(current_user.id)} {header}'
-
                         insertSQL = f'INSERT INTO {filename[0:len(filename)-4]+"_"+str(current_user.id)} {headerNoType[0: len(headerNoType) - 1] + ")"} VALUES '
                         v=""
                         for item in json.loads(value['data']):
@@ -290,9 +292,9 @@ def create_app(config_name):
                 d = ds_names[dd]
                 temp = {}
                 temp["id"] = f'dataset-name-{dd+1}'
-                temp["name"] = d.data_name[0: d.data_name.rfind("_")]
+                temp["name"] = d.data_name
                 returnList.append(temp)
-                # print(returnList)
+                # # print(returnList)
             return jsonify({'datasetNames':returnList})
         else:
             return jsonify({'status':400})
@@ -302,7 +304,7 @@ def create_app(config_name):
     def get_headers_api():
         if current_user.is_authenticated:
             req = request.get_json()
-            dataset = req['selectedData'] + "_" + str(current_user.id)
+            dataset = req['selectedData']
             headers = db.engine.execute(f'Show columns from {dataset}')
             head_list = [row[0] for row in headers]
             return jsonify({'status':200, 'headers': head_list})
@@ -312,18 +314,24 @@ def create_app(config_name):
     def get_headers_unique_values_api():
         if current_user.is_authenticated:      
             req = request.get_json()
-            # print("Request", req)
-            dataset = req['dataset'] + "_" + str(current_user.id)
-            # print("DATASET::: ", dataset)
+            # # print("Request", req)
+            dataset = req['dataset']
+            # # print("DATASET::: ", dataset)
             col = req['column']
-            # print("COLUMN::: ", col)
+            # # print("COLUMN::: ", col)
             sql_data = db.engine.execute(f'Select distinct {col} from {dataset} ORDER BY {col} ASC')
             result = []
-            # print("DATA::: ", sql_data)
+            # # print("DATA::: ", sql_data)
             for row in sql_data:
                 result.append(row[0])
             return jsonify({'status':200, 'data': result})
         return jsonify({'status':400})
+        
+    def fixDate(dateStr):
+        dateObj = { 'Jan' : 1, 'Feb' : 2, 'Mar' : 3, 'Apr' : 4, 'May' : 5, 'Jun' : 6, 'Jul' : 7, 'Aug' : 8, 'Sep' : 9, 'Oct' : 10, 'Nov' : 11, 'Dec' : 12}
+        dateList = dateStr.split(" ")
+        date = datetime.date(int(dateList[3]), int(dateObj[dateList[2]]), int(dateList[1]))
+        return date
     
     @app.route('/viz_filter_api', methods=["POST"])
     def viz_filter_api():
@@ -349,7 +357,7 @@ def create_app(config_name):
 
             req = request.get_json()
 
-            dataset = req['selectedData'] + "_" + str(current_user.id)
+            dataset = req['selectedData']
             x_axis = req['headers'][0]
             y_axis = req['headers'][1]
             aggre = req['aggregate']
@@ -361,7 +369,7 @@ def create_app(config_name):
                 for f in filters:
                     if header_types[f['column']] == 'date':
                         val = fixDate(f['value'])
-                        # print(val)
+                        # # print(val)
                         conditions += f['column'] + " " + f['condition'] + " '" + str(val) + "' AND "
                     else:
                         conditions += f['column'] + " " + f['condition'] + " '" + f['value'] + "' AND "
@@ -403,7 +411,7 @@ def create_app(config_name):
     
     @app.route("/update_api")
     def update_api():
-        # print("here")
+        # # print("here")
         if 'editData' not in session or session['editData'] == None:
             return jsonify({"status":500})
         else:
@@ -425,6 +433,9 @@ def create_app(config_name):
             elif("/" in i):
                 dateList = i.split("/")
             date = datetime.date(int(dateList[0]), int(dateList[1]), int(dateList[2]))
+        else:
+            dateList = i.split('/')
+            date = datetime.date(int(dateList[2]), int(dateList[1]), int(dateList[0]))
         if len(dateList) != 3:
             return None
         
@@ -437,6 +448,7 @@ def create_app(config_name):
         filename = session.get('fileName')
 
         df = pd.read_csv(filePath)
+        df.columns = df.columns.str.replace(' ', '_')
         
         to_drop = []
         rename_dict = {}
@@ -450,17 +462,37 @@ def create_app(config_name):
         df.drop(columns=to_drop, axis=1, inplace=True)
         df.rename(columns=rename_dict, inplace=True)
 
-        date_columns = list(df.select_dtypes(include=['object']).columns)
+        sql = f'SELECT header_name FROM group_valid_headers WHERE data_type="date"'
+        result_date = db.engine.execute(text(sql))
+
+        sql2 = f'SELECT header_name FROM group_valid_headers WHERE data_type="float"'
+        result_float = db.engine.execute(text(sql2))
+
+        #HOW TO QUERY WHICH ARE THE DATE COLUMNS INSTEAD?
+        date_columns = []
+
+        for row in result_date:
+            date_columns.append(row['header_name'])
 
         for column in date_columns:
-            df[column] = pd.to_datetime(df[column], format = "%d/%m/%y")
+            if column in df.columns:
+                df[column] = [dateparser.parse(x) for x in df[column] if x != 'NaN']
+
+        float_columns = []
+
+        for row in result_float:
+            float_columns.append(row['header_name'])
+
+        for column in float_columns:
+            if column in df.columns:
+                df[column] = [round(x,2) for x in df[column]]
 
         df.to_sql(name = filename[0:len(filename)-4]+"_"+str(current_user.id), con=db.engine, index=False)
 
         userData = UserData(data_name=filename[0:len(filename)-4]+"_"+str(current_user.id), user_id=current_user.id, upload_date=datetime.datetime.now())
         db.session.add(userData)
         db.session.commit()
-
+        os.remove(filepath)
         return jsonify({'status':200})
 
     @app.route('/view_data_api', methods=["GET"])
@@ -485,7 +517,7 @@ def create_app(config_name):
     @app.route('/save_visualization', methods=["POST"])
     def save_visualization():
         userID = current_user.id
-        userViz = UserVisualization(upload_date=datetime.datetime.now(), configs=request.get_json(),user_id=userID)
+        userViz = UserVisualization(upload_date=datetime.datetime.now(), configs=request.get_json(),user_id=userID, viz_name=request.get_json()['vizName'])
         db.session.add(userViz)
         db.session.commit()
         return jsonify({'status':200})
@@ -497,22 +529,34 @@ def create_app(config_name):
         returnList = []
         for item in res:
             temp = {}
-            temp[str(item.upload_date)] = item.configs
+            temp[str(item.viz_name)] = item.configs
             returnList.append(temp)
         
         return jsonify({'data':returnList, 'status': 200})
 
     @app.route('/has_group')
     def has_group():
-        if(current_user.group_id is not None):
-            returnObj = {}
-            returnObj['status'] = 200
-            group = Group.query.filter_by(id=current_user.group_id).one()
-            returnObj['managerId'] = group.manager_id
-            members = GroupMember.query.filter_by(group_id=current_user.group_id).all()
-            returnObj['numMember'] = len(members)
-            returnObj['group_id'] = current_user.group_id
-            return jsonify(returnObj)
+        if current_user.isManager == 1:
+            if current_user.group_id is not None:
+                return jsonify({
+                    'status': 300,
+                    'group_id': current_user.group_id,
+                    'managerId': current_user.id
+                })
+            else:
+                return jsonify({
+                    'status': 301,
+                })
+        else:
+            if(current_user.group_id is not None):
+                returnObj = {}
+                returnObj['status'] = 200
+                group = Group.query.filter_by(id=current_user.group_id).first()
+                returnObj['managerId'] = group.manager_id
+                members = GroupMember.query.filter_by(group_id=current_user.group_id).all()
+                returnObj['numMember'] = len(members)
+                returnObj['group_id'] = current_user.group_id
+                return jsonify(returnObj)
         return jsonify({'status':400})
 
     @app.route('/get_manager_info',methods=["POST"])
@@ -537,20 +581,20 @@ def create_app(config_name):
             gList = []
             for dd in range(len(ds_names)):
                 d = ds_names[dd]
-                yourList.append(d.data_name[0: d.data_name.rfind("_")])
+                yourList.append(d.data_name)
 
             for dd in range(len(gds_names)):
                 d = gds_names[dd]
-                gList.append(d.data_name[0:d.data_name.rfind("_")])
+                gList.append(d.data_name)
 
-            return jsonify({'yourData':yourList,'groupData':gList})
+            return jsonify({'yourData':yourList,'groupData':gList, 'status':200})
         else:
             return jsonify({'status':400})
 
     @app.route('/push_to_group', methods=["post"])
     def push_to_group():
         d = request.get_json()
-        dsname = d['data_name']+"_" + str(current_user.id)
+        dsname = d['data_name']
         has = GroupDataset.query.filter_by(data_name=dsname).first()
         if has is None:
             g_id = current_user.group_id
@@ -567,12 +611,136 @@ def create_app(config_name):
         returnList = []
         for data in groups:
             temp = {}
-            temp['id'] = data.id
+            temp['id'] = data.group_name
             temp['manager_id'] = data.manager_id
             returnList.append(temp)
 
         return jsonify({'data':returnList, 'status':200})
 
+    @app.route('/create_groups', methods=["POST"])
+    def create_groups():
+        req = request.get_json()
+        g_name = req['groupname']
+        has = Group.query.filter_by(group_name=g_name).first()
+        if has:
+            return jsonify({'status': 400})
+        
+        group = Group(group_name=g_name, manager_id=current_user.id)
+        db.session.add(group)
+        db.session.commit()
+
+        g_id = Group.query.filter_by(group_name=g_name).first()
+        datas = req['data']
+        for data in datas:
+            vh = GroupValidHeaders(group_id = g_id.id, header_name = data['header'], data_type = data['type'])
+            db.session.add(vh)
+            db.session.commit()
+
+        db.engine.execute(text(f"UPDATE `user` SET group_id = {g_id.id} where id={current_user.id}"))
+        return jsonify({
+            'status' : 200
+        })
+    
+    @app.route('/apply_to_group', methods=['POST'])
+    def apply_to_group():
+        data = request.get_json()
+        groupName = data['group_name']
+        groupId = Group.query.filter_by(group_name=groupName).first()
+        db.engine.execute(text(f"UPDATE `user` SET group_id = {groupId.id} where id={current_user.id}"))
+        groupMember =GroupMember(group_id=groupId.id, user_id=current_user.id)
+        db.session.add(groupMember)
+        db.session.commit()
+        return jsonify({'status':200})
+
+    @app.route('/get_valid_headers')
+    def get_valid_headers():
+        valid = GroupValidHeaders.query.filter_by(group_id=current_user.group_id).all()
+        toRet = [[row.header_name, row.data_type] for row in valid]
+        return jsonify({'data':toRet})
+
+    @app.route('/get_num_group_members')
+    def get_num_group_members():
+        members = GroupMember.query.filter_by(group_id=current_user.group_id).all()
+        return jsonify({'member': len(members)})
+
+    @app.route('/get_data_for_export', methods=['POST'])
+    def get_data_for_export():
+        dic = request.get_json()
+        ds = dic['dataset']
+        headers = db.engine.execute(f'Show columns from {ds}')
+        head_list = [row[0] for row in headers]
+        sql = db.engine.execute(text(f'SELECT * FROM {ds}'))
+        data = []
+        data.append(head_list)
+        s= [row for row in sql]
+        i = 0
+        for row in s:
+            temp = []
+            for val in row:
+                if isinstance(val, datetime.datetime):
+                    val = str(val)
+                temp.append(val)
+            data.append(temp)
+        return jsonify({'data':data,'status':200})
+
+
+    @app.route('/get_entities_from_dataset_api', methods=['POST'])
+    def get_entities_from_dataset_api():
+        dic = request.get_json()
+        ds = dic['dataset']
+        headers = db.engine.execute(f'Show columns from {ds}')
+        head_list = [row[0] for row in headers]
+        valid = GroupValidHeaders.query.filter_by(group_id=current_user.group_id).all()
+        validHeaders= []
+        for row in valid:
+            if row.isCategory == True:
+                validHeaders.append(row.header_name)
+
+        validHeaders = set(validHeaders)
+        toRet = []
+        for head in head_list:
+            if head in validHeaders:
+                toRet.append(head)
+        
+        return jsonify({'data': toRet, 'status': 200})
+
+    @app.route('/get_prebuilt_analysis', methods=['POST'])
+    def get_prebuilt_analysis():
+        req = request.get_json()
+        dataset = req['dataset']
+        entity = req['entity']
+        analysis = req['analysis']
+        headers = db.engine.execute(f'Show columns from {dataset}')
+        head_list = [row[0] for row in headers]
+        valid = GroupValidHeaders.query.filter_by(group_id=current_user.group_id).all()
+        validHeaders= []
+        for row in valid:
+            if row.isCategory == False and (row.data_type == 'int' or row.data_type == 'float'):
+                validHeaders.append(row.header_name)
+
+        validHeaders = set(validHeaders)
+        values = []
+        for head in head_list:
+            if head in validHeaders:
+                values.append(head)
+
+        data = {}
+        for item in values:
+            returnSQL = db.engine.execute(text(f'SELECT AVG({item}), {entity} FROM {dataset} GROUP BY {entity} ORDER BY AVG({item}) DESC LIMIT 10'))
+            
+            returnDict = {}
+            returnDict["xaxis"] = []
+            returnDict["yaxis"] = []
+            
+            for row in returnSQL:
+                returnDict["xaxis"].append(str(row[1]))
+                returnDict["yaxis"].append(float(row[0]))
+            
+            data[item] = returnDict
+
+        return jsonify({'headers': values, 'values':data})
+
+        
 # ========================================================= Beyond-Ideas Classes START HERE ================================================
 
     class TableClassbi():
@@ -787,7 +955,6 @@ def create_app(config_name):
             
             filtervariable = request.form.get("selectedfiltervariable")
             
-            #print(variablenameX);
             allcombinedxyarrays = []
             for x in variablenameX:
                 for y in variablenameY:
@@ -833,8 +1000,7 @@ def create_app(config_name):
             countryname = request.form.get("countryname") 
             saveToDB = request.form.get("save") 
             filename = request.form.get("filename")               
-            #print("here is init")
-            #print(saveToDB)
+
             message = modelbi.weatherCrawlerbi(startdate, enddate, countryname, saveToDB, current_user.id, filename)
             return jsonify(
                 message = message
@@ -887,8 +1053,7 @@ def create_app(config_name):
             stockname = request.form.get("stockname") 
             saveToDB = request.form.get("save") 
             filename = request.form.get("filename")               
-            #print("here is init")
-            #print(saveToDB)
+
             message = modelbi.stockCrawlerbi(stockname, saveToDB, current_user.id, filename)
             return jsonify(
                 message = message
