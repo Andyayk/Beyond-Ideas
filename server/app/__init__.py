@@ -476,6 +476,7 @@ def create_app(config_name):
 
         for column in date_columns:
             if column in df.columns:
+                df[column] = df[column].astype(str)
                 df[column] = [dateparser.parse(x) for x in df[column] if x != 'NaN']
 
         float_columns = []
