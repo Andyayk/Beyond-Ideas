@@ -148,7 +148,7 @@ class AutoChartbi extends Component {
       if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
          var mySQLTables = data.toString().split(",");
          for (let i = 0; i < mySQLTables.length; i++) {
-            options.push(<option value={mySQLTables[i].substr(0,mySQLTables[i].length-2)}>{mySQLTables[i].substr(0,mySQLTables[i].length-2)}</option>);
+            options.push(<option value={mySQLTables[i].substr(0,mySQLTables[i].lastIndexOf('_'))}>{mySQLTables[i].substr(0,mySQLTables[i].lastIndexOf('_'))}</option>); 
          };
       }
 
