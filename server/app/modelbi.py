@@ -90,9 +90,9 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
                 date1 = getDateColumnNamebi(tablename)
                 date2 = getDateColumnNamebi(tablename2)
 
-                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0]
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0] + " AND sentiment = 1"
             else:
-                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable + " AND sentiment = 1"
 
         elif "sentiment" in tablename2:
             if "sentiment_score" in variablenameY:
@@ -106,9 +106,9 @@ def tablesJoinbi(tablename, tablename2, variablenameX, variablenameY, joinvariab
                 date1 = getDateColumnNamebi(tablename)
                 date2 = getDateColumnNamebi(tablename2)
 
-                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0]
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + date1[0] + " = t2." + date2[0] + " AND sentiment = 1"
             else:
-                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable
+                sqlstmtQuery = sqlstmtQuery + " WHERE t1." + joinvariable + " = t2." + joinvariable + " AND sentiment = 1"
 
         else:
             sqlstmtQuery = "SELECT t1." + variablenameX + " , t2." + variablenameY + " FROM `" + tablename + "` as t1 , `" + tablename2 + "` as t2"
