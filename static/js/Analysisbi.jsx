@@ -30,7 +30,7 @@ class Analysisbi extends Component {
       positivewordcloud: "",
       negativewordcloud: "",      
       fontSizeMapper: word => Math.log2(word.value) * 7,
-      rotate: word => word.value % 100
+      rotate: word => Math.random() < 0.5 ? -(Math.floor(Math.random() * 40) + 10) : Math.floor(Math.random() * 40) + 10 // returns from 10 to 40 or -40 to -10
     };
 
     this.getMySQLTables = this.getMySQLTables.bind(this);
