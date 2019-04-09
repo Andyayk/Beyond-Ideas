@@ -120,15 +120,25 @@ class AutoChartbi extends Component {
 
    //retrieving user's uploaded tables   
    getMySQLTables() {
-      var mySQLTables = "";
-      this.callBackendAPI("/get_all_dataset_api")
+      this.callBackendAPI("/get_group_user_dataset")
       .then(res => {
-         var datasetNames = res.datasetNames;
+         // console.log(res);
+         // console.log(res.datasetNames);
+         // this.setState({ datasetNames: res.datasets });
          var mySQLTables = [];
-         datasetNames.map((datasetName, key) =>
-            mySQLTables.push(datasetName.name)
-         );
-         this.createOptions(mySQLTables);
+         var groupSQLTables = [];
+         var yourDatasetNames = res.yourData;
+         var groupDatasetNames = res.groupData;
+          
+        Object.keys(yourDatasetNames).forEach(function(key) {
+            mySQLTables.push(yourDatasetNames[key]);
+        });
+        Object.keys(groupDatasetNames).forEach(function(key) {
+            groupSQLTables.push(groupDatasetNames[key]);
+        });
+         
+        this.createOptions(mySQLTables, groupSQLTables);
+         // console.log(mySQLTables);
       })
    }
 
@@ -143,19 +153,20 @@ class AutoChartbi extends Component {
    }   
 
    //creating select options for drop down list based on data from flask
-   createOptions(data) {
+   createOptions(data, data2) {
       let options = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
-         var mySQLTables = data.toString().split(",");
-         for (let i = 0; i < mySQLTables.length; i++) {
-            options.push(<option value={mySQLTables[i].substr(0,mySQLTables[i].lastIndexOf('_'))}>{mySQLTables[i].substr(0,mySQLTables[i].lastIndexOf('_'))}</option>); 
-         };
-      }
+      
+      data.forEach(currentData => {
+            options.push(<option value={currentData.substr(0,currentData.lastIndexOf('_'))}>{currentData.substr(0,currentData.lastIndexOf('_'))}</option>);
+      });
+      data2.forEach(currentData => {
+            options.push(<option value={currentData+"_grp"}>{currentData}</option>); 
+      });
 
       this.setState({
          options: options
       });
-   }        
+   }         
 
    checkradiobutton(datavariable1, datavariable2, radiobutton, labelnames){
       if (datavariable1.toString().replace(/\s/g, '').length && datavariable2.toString().replace(/\s/g, '').length && (this.state.selectedtable != this.state.selectedtable2)){

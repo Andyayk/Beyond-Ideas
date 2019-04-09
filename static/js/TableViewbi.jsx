@@ -70,19 +70,27 @@ class TableViewbi extends Component {
 
    //retrieving user's uploaded tables   
    getMySQLTables() {
-      var mySQLTables = "";
-      this.callBackendAPI("/get_all_dataset_api")
+      this.callBackendAPI("/get_group_user_dataset")
       .then(res => {
          // console.log(res);
          // console.log(res.datasetNames);
          // this.setState({ datasetNames: res.datasets });
-         var datasetNames = res.datasetNames;
          var mySQLTables = [];
-         datasetNames.map((datasetName, key) =>
-            mySQLTables.push(datasetName.name)
-         );
+         var groupSQLTables = [];
+         var yourDatasetNames = res.yourData;
+         var groupDatasetNames = res.groupData;
+          
+        Object.keys(yourDatasetNames).forEach(function(key) {
+            mySQLTables.push(yourDatasetNames[key]);
+        });
+        Object.keys(groupDatasetNames).forEach(function(key) {
+            groupSQLTables.push(groupDatasetNames[key]);
+        });
+         
+         
+        this.createOptions(mySQLTables, groupSQLTables);
+         
          // console.log(mySQLTables);
-         this.createOptions(mySQLTables);
       })
    }  
 
@@ -97,14 +105,15 @@ class TableViewbi extends Component {
    }
 
    //creating select options for drop down list based on data from flask
-   createOptions(data) {
+   createOptions(data, data2) {
       let options = [];
-      if (data.toString().replace(/\s/g, '').length) { //checking data is not empty       
-         var mySQLTables = data.toString().split(",");
-         for (let i = 0; i < mySQLTables.length; i++) {
-            options.push(<option value={mySQLTables[i].substr(0,mySQLTables[i].lastIndexOf('_'))}>{mySQLTables[i].substr(0,mySQLTables[i].lastIndexOf('_'))}</option>); 
-         };
-      }
+      
+      data.forEach(currentData => {
+            options.push(<option value={currentData.substr(0,currentData.lastIndexOf('_'))}>{currentData.substr(0,currentData.lastIndexOf('_'))}</option>);
+      });
+      data2.forEach(currentData => {
+            options.push(<option value={currentData+"_grp"}>{currentData}</option>); 
+      });
 
       this.setState({
          options: options

@@ -163,7 +163,9 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable, combinedtab
         connection.execute("DROP TABLE IF EXISTS `"+ combinedtablename + "`")
         sqlstmt = "CREATE TABLE `"+ combinedtablename + "` AS SELECT "+ variables + " FROM `" + tablename + "` as t1 INNER JOIN `" + tablename2 + "` as t2"
         
+        
         if "date" in joinvariable.lower(): #join by date
+            
             date1 = getDateColumnNamebi(tablename)
             date2 = getDateColumnNamebi(tablename2)
            
@@ -171,8 +173,8 @@ def tablesViewJoinbi(variables, tablename, tablename2, joinvariable, combinedtab
         else:
             sqlstmt = sqlstmt + " WHERE t1." + joinvariable + " = t2." + joinvariable
         connection.execute(sqlstmt)
-
         connection.execute("DELETE FROM user_data WHERE data_name = '" + combinedtablename + "'")
+   
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
         connection.execute("INSERT INTO user_data (data_name,user_id,upload_date) VALUES ( \"" + combinedtablename + "\", " + str(userID) + ", \"" + str(timestamp) + "\");")
 
@@ -217,14 +219,14 @@ def getDateColumnNamebi(tablename):
         This method will get date variables column names only
     """ 
     try:
-        result = connection.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND DATA_TYPE = 'date'")
-
+        result = connection.execute("SELECT DISTINCT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tablename + "' AND DATA_TYPE in ('datetime', 'date')")
+        
         cols = []
 
         for col in result: #add table cols
             for cl in col:
                 cols.append(cl)
-
+        
         return cols
     except Exception as e:
         return "Something is wrong with getDateColumnNamebi method"    

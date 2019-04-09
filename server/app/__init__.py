@@ -765,12 +765,13 @@ def create_app(config_name):
                 This method will retrieve table display for API call from react 
             """           
             tablename = request.form.get("tablename") 
-
-            usertablename = ""
-            if current_user.is_authenticated:      
-                usertablename = tablename + "_" + str(current_user.id)       
+            if current_user.is_authenticated:
+                if(tablename[tablename.rfind('_')+1:] == "grp"):
+                    tablename = tablename[0:tablename.rfind('_')]
+                else:
+                    tablename = tablename + "_" + str(current_user.id)       
             
-            table = modelbi.displayTablebi(usertablename)
+            table = modelbi.displayTablebi(tablename)
 
             return jsonify(
                 colnames = table[0],
@@ -781,9 +782,21 @@ def create_app(config_name):
         def savejoinedtablebi(): #retrieving combined table for API call from react
             """
                 This method will retrieve table display for API call from react 
-            """   
-            usertablename = request.form.get("tablename1")+ "_" + str(current_user.id) 
-            usertablename2 = request.form.get("tablename2")+ "_" + str(current_user.id) 
+            """
+            usertablename = request.form.get("tablename1") 
+            usertablename2 = request.form.get("tablename2")
+            
+            if(usertablename[usertablename.rfind('_')+1:] == "grp"):
+                usertablename = usertablename[0:usertablename.rfind('_')]
+            else:
+                usertablename = usertablename + "_" + str(current_user.id)
+            if(usertablename2[usertablename2.rfind('_')+1:] == "grp"):
+                usertablename2 = usertablename2[0:usertablename2.rfind('_')]
+            else:
+                usertablename2 = usertablename2 + "_" + str(current_user.id)
+            print(usertablename)
+            print(usertablename2)
+            
 			
             joinvariable = request.form.get("selectedjoinvariable")
 
@@ -808,7 +821,7 @@ def create_app(config_name):
             variables = variables1 + "," + variables2	
 			
             combinetable = modelbi.tablesViewJoinbi(variables, usertablename, usertablename2, joinvariable, combinedtablename, current_user.id)
-			
+            
             combinedtable = modelbi.displayTablebi(combinedtablename)
             
             return jsonify(
